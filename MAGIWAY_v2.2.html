@@ -2212,6 +2212,31 @@ window.ADMIN_ONLY_PANELS=['geral','vendedores','config'];
 async function doLogin(){
   const e=document.getElementById('l-email').value.trim();
   const p=document.getElementById('l-pass').value;
+
+  // ── NUVEM (Supabase): se configurada, autentica primeiro na nuvem ──
+  try{
+    const ready = (window.CLOUD && CLOUD.ready) ? await CLOUD.ready : false;
+    if(ready && CLOUD.enabled){
+      const {data, error} = await CLOUD.client.auth.signInWithPassword({email:e, password:p});
+      if(!error && data && data.user){
+        const uid=data.user.id;
+        let role='vendedor', prof=null;
+        try{ const r=await CLOUD.client.from('profiles').select('role,nome,vendor_id').eq('id',uid).single(); if(r&&r.data){prof=r.data; role=r.data.role||'vendedor';} }catch(_){}
+        CLOUD.session=data.session; CLOUD.uid=uid; CLOUD.role=role; CLOUD.email=e;
+        if(role==='admin'){
+          window.IS_MASTER=true; window.CURRENT_VENDOR_ID=null;
+          try{ if(typeof toast==='function')toast('☁ Carregando dados da nuvem...'); await cloudHydrateAdmin(); }catch(err){ console.warn('[nuvem] hydrate admin',err); }
+        } else {
+          window.IS_MASTER=false; window.CURRENT_VENDOR_ID=uid;
+          try{ await cloudHydrateSeller(uid, prof); }catch(err){ console.warn('[nuvem] hydrate vendedor',err); }
+        }
+        _enterApp();
+        return;
+      }
+      // Nuvem ativa mas login falhou → cai para o login local (rede de segurança do admin)
+    }
+  }catch(err){ console.warn('[nuvem] login',err); }
+
   const h=await hashCreds(e,p);
   let _cfgLogin=null;
   try{ if(typeof cfgLoad==='function')cfgLoad(); _cfgLogin=(typeof _CFG!=='undefined')?_CFG.login:null; }catch(_){}
@@ -2284,9 +2309,108 @@ function applyRoleAccess(){
   }
 }
 
+// ═══════════════════════════════════════════════════════════════════
+// NUVEM (SUPABASE) — login + sincronização, mantendo a tela igual.
+// Se a nuvem não carregar/estiver offline, o app funciona 100% local.
+// ═══════════════════════════════════════════════════════════════════
+window.CLOUD = {
+  URL : 'https://zistteznkgctjwakwsnc.supabase.co',
+  ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inppc3R0ZXpua2djdGp3YWt3c25jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MDUzMzIsImV4cCI6MjA5ODk4MTMzMn0.KSW0CjiV334g3Z1cAhgSOpwZhxqb0Lm4-ohEtTBqtec',
+  enabled:false, client:null, session:null, uid:null, role:null, email:null, ready:null,
+  _pending:{}, _timer:null
+};
+(function loadSupabase(){
+  if(!CLOUD.URL || !CLOUD.ANON){ CLOUD.ready=Promise.resolve(false); return; }
+  CLOUD.ready = new Promise((resolve)=>{
+    let done=false; const finish=(ok)=>{ if(done)return; done=true; resolve(ok); };
+    try{
+      const s=document.createElement('script');
+      s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+      s.onload=()=>{ try{ CLOUD.client=window.supabase.createClient(CLOUD.URL,CLOUD.ANON); CLOUD.enabled=true; console.log('[nuvem] Supabase conectado'); finish(true);}catch(err){ console.warn('[nuvem] init falhou',err); finish(false);} };
+      s.onerror=()=>{ console.warn('[nuvem] não foi possível carregar o Supabase (offline?) — modo local'); finish(false); };
+      document.head.appendChild(s);
+      setTimeout(()=>finish(false), 8000);
+    }catch(err){ console.warn('[nuvem] loader',err); finish(false); }
+  });
+})();
+
+// Grava direto no localStorage nativo (sem re-namespacing e sem re-enviar para a nuvem)
+function _cloudRawSet(k,v){ try{ localStorage.__proto__.setItem.call(localStorage,k,String(v)); }catch(_){} }
+
+// Decide para onde uma chave vai na nuvem: 'own' (dados do próprio usuário) ou 'shared' (empresa)
+function _cloudBucket(fullKey){
+  if(!fullKey || typeof fullKey!=='string') return null;
+  if(CLOUD.uid && fullKey.indexOf('mgv_'+CLOUD.uid+'__')===0) return 'own';
+  if(CLOUD.role==='admin'){
+    if(fullKey==='magiway_vendors') return 'shared';
+    if(fullKey.indexOf('gs_')===0 &&
+       (VENDOR_SHARED_KEYS.includes(fullKey) || VENDOR_SHARED_PREFIXES.some(p=>fullKey.indexOf(p)===0))) return 'shared';
+  }
+  return null;
+}
+// Enfileira uma alteração para enviar à nuvem (com debounce)
+function cloudQueue(fullKey, value){
+  if(!CLOUD.enabled || !CLOUD.session) return;
+  const bucket=_cloudBucket(fullKey);
+  if(!bucket) return;
+  CLOUD._pending[fullKey]={value, bucket};
+  if(CLOUD._timer) clearTimeout(CLOUD._timer);
+  CLOUD._timer=setTimeout(cloudFlush, 800);
+}
+async function cloudFlush(){
+  const pend=CLOUD._pending; CLOUD._pending={}; CLOUD._timer=null;
+  if(!CLOUD.enabled || !CLOUD.session) return;
+  const ownUp=[], ownDel=[], shUp=[], shDel=[];
+  for(const k in pend){
+    const {value, bucket}=pend[k];
+    if(bucket==='own'){ if(value==null) ownDel.push(k); else ownUp.push({user_id:CLOUD.uid, k, v:value, updated_at:new Date().toISOString()}); }
+    else if(bucket==='shared'){ if(value==null) shDel.push(k); else shUp.push({k, v:value, updated_at:new Date().toISOString()}); }
+  }
+  try{
+    if(ownUp.length) await CLOUD.client.from('app_state').upsert(ownUp,{onConflict:'user_id,k'});
+    for(const k of ownDel) await CLOUD.client.from('app_state').delete().eq('user_id',CLOUD.uid).eq('k',k);
+    if(shUp.length) await CLOUD.client.from('shared_state').upsert(shUp,{onConflict:'k'});
+    for(const k of shDel) await CLOUD.client.from('shared_state').delete().eq('k',k);
+  }catch(err){ console.warn('[nuvem] erro ao salvar',err); }
+}
+
+// Baixa a config compartilhada da empresa (preços, comissão, etc.)
+async function _cloudPullShared(){
+  try{ const {data}=await CLOUD.client.from('shared_state').select('k,v'); (data||[]).forEach(r=>{ if(r.v!=null)_cloudRawSet(r.k, typeof r.v==='string'?r.v:JSON.stringify(r.v)); }); }
+  catch(err){ console.warn('[nuvem] shared',err); }
+}
+// VENDEDOR: baixa config da empresa + os próprios dados; trava a sessão nele mesmo
+async function cloudHydrateSeller(uid, prof){
+  await _cloudPullShared();
+  try{
+    const {data}=await CLOUD.client.from('app_state').select('k,v').eq('user_id',uid);
+    (data||[]).forEach(r=>{ if(r.v!=null)_cloudRawSet(r.k, typeof r.v==='string'?r.v:JSON.stringify(r.v)); });
+  }catch(err){ console.warn('[nuvem] dados do vendedor',err); }
+  const nome=(prof&&prof.nome)||CLOUD.email||'Vendedor';
+  const roster=[{id:uid, nome, initials:(nome[0]||'V').toUpperCase(), email:CLOUD.email||'', pass:'', cargo:'Vendedor(a)', color:'#1FA9A6'}];
+  _cloudRawSet('magiway_vendors', JSON.stringify(roster)); // vê só a si mesmo
+  _cloudRawSet('magiway_active_v', uid);
+}
+// ADMIN: baixa config da empresa + TODOS os vendedores e seus dados; monta a lista
+async function cloudHydrateAdmin(){
+  await _cloudPullShared();
+  try{
+    const {data}=await CLOUD.client.from('app_state').select('k,v');
+    (data||[]).forEach(r=>{ if(r.v!=null)_cloudRawSet(r.k, typeof r.v==='string'?r.v:JSON.stringify(r.v)); });
+  }catch(err){ console.warn('[nuvem] dados de todos',err); }
+  try{
+    const {data:profs}=await CLOUD.client.from('profiles').select('id,email,nome,role');
+    const sellers=(profs||[]).filter(p=>p.role!=='admin');
+    const roster=sellers.map(p=>{ const nome=p.nome||p.email||'Vendedor'; return {id:p.id, nome, initials:(nome[0]||'V').toUpperCase(), email:p.email||'', pass:'', cargo:'Vendedor(a)', color:'#1FA9A6'}; });
+    if(roster.length){ _cloudRawSet('magiway_vendors', JSON.stringify(roster)); _cloudRawSet('magiway_active_v', roster[0].id); }
+  }catch(err){ console.warn('[nuvem] lista de vendedores',err); }
+}
+
 function doLogout(){
   window.IS_MASTER=false;
   window.CURRENT_VENDOR_ID=null;
+  try{ if(window.CLOUD && CLOUD.enabled && CLOUD.client){ CLOUD.client.auth.signOut(); } }catch(_){}
+  if(window.CLOUD){ CLOUD.session=null; CLOUD.uid=null; CLOUD.role=null; CLOUD.email=null; }
   const pass=document.getElementById('l-pass'); if(pass) pass.value='';
   document.getElementById('app').style.display='none';
   document.getElementById('login-page').style.display='flex';
@@ -7570,8 +7694,8 @@ function getActiveVendor(){
   }
   const NS = () => 'mgv_' + getActiveVendorId() + '__';
   localStorage.getItem = function(k){ return shouldNS(k) ? _g(NS()+k) : _g(k); };
-  localStorage.setItem = function(k,v){ return shouldNS(k) ? _s(NS()+k, v) : _s(k, v); };
-  localStorage.removeItem = function(k){ return shouldNS(k) ? _r(NS()+k) : _r(k); };
+  localStorage.setItem = function(k,v){ const full=shouldNS(k)?NS()+k:k; const r=_s(full, v); try{ if(typeof cloudQueue==='function') cloudQueue(full, v); }catch(_){} return r; };
+  localStorage.removeItem = function(k){ const full=shouldNS(k)?NS()+k:k; const r=_r(full); try{ if(typeof cloudQueue==='function') cloudQueue(full, null); }catch(_){} return r; };
 })();
 
 // === Authenticate + activate vendor ===
