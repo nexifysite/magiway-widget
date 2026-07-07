@@ -697,10 +697,6 @@ select.ffi option{background:#000020;color:#FF0000}
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
         Controle de Vendas<span style="margin-left:auto;font-size:.52rem;opacity:.35;font-family:'DM Mono',monospace">V</span>
       </div>
-      <div class="sb-item" onclick="nav('nova',this)">
-        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-        Nova Venda<span style="margin-left:auto;font-size:.52rem;opacity:.35;font-family:'DM Mono',monospace">N</span>
-      </div>
       <div class="sb-item" onclick="nav('emitir',this)">
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
         Emitir Documentos<span class="sb-bdg" style="background:linear-gradient(135deg,#FFD11A,#FF9500);font-weight:900;color:#04101e">✍</span>
@@ -1296,6 +1292,7 @@ select.ffi option{background:#000020;color:#FF0000}
   </div>
   <div class="ff" style="margin-top:10px"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Observações (aparecem grandes no voucher)</label><textarea class="ffi" id="em-obs" rows="3" style="resize:vertical;font-family:'DM Sans',sans-serif" placeholder="Ex.: voos, instruções de retirada, condições especiais... (deixe em branco para preencher à mão)"></textarea></div>
   <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+    <button class="form-btn" style="background:linear-gradient(135deg,#FF0000,#b30000)" onclick="emitirCadastrarVenda()">✅ Cadastrar Venda</button>
     <button class="form-btn" style="background:linear-gradient(135deg,#FFD11A,#FF9500);color:#04101e" onclick="gerarVoucherDoc()">🎟️ Gerar Voucher (PDF)</button>
     <button class="form-btn" style="background:linear-gradient(135deg,#1FA9A6,#0d7a77)" onclick="emitirDoc('contrato')">📝 Contrato (DocuSign)</button>
   </div>
@@ -7225,6 +7222,53 @@ function emitirLoadFromCot(id){
   set('em-valor', valBR>0?('R$ '+valBR.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})):'');
 }
 function _emVal(id){return (document.getElementById(id)?.value||'').trim();}
+
+// Cadastra a venda a partir dos dados do cliente preenchidos na tela Emitir.
+// O valor é digitado em R$ e convertido para US$ (padrão do restante do app).
+function emitirCadastrarVenda(){
+  const nome=_emVal('em-nome');
+  const valBRL=(typeof _dsParseBRL==='function')?_dsParseBRL(_emVal('em-valor')):(parseFloat(_emVal('em-valor'))||0);
+  if(!nome){ if(typeof toast==='function')toast('Preencha o nome do cliente','orange'); return; }
+  if(!(valBRL>0)){ if(typeof toast==='function')toast('Preencha o valor total (R$)','orange'); return; }
+  const cam=(typeof _cambioCfg==='function'?_cambioCfg():((typeof _CFG!=='undefined'&&_CFG.cambio)||5.2))||5.2;
+  const vUSD=+(valBRL/cam).toFixed(2);
+  const dinRaw=_emVal('em-din'), doutRaw=_emVal('em-dout');
+  let dias=parseInt(_emVal('em-dias'),10)||0;
+  if(!dias && dinRaw && doutRaw){ const d1=new Date(dinRaw), d2=new Date(doutRaw); dias=Math.max(0,Math.round((d2-d1)/(1000*60*60*24))); }
+  SALES_DATA.push({
+    n:SALES_DATA.length+1,
+    d:new Date().toLocaleDateString('pt-BR'),
+    c:nome.toUpperCase(),
+    r:_emVal('em-res')||'PENDENTE',
+    v:vUSD,
+    com:parseFloat((vUSD*comissaoPctAtual()/100).toFixed(2)),
+    cambio:cam,
+    s:'Validado',
+    vou:'', vouLink:'',
+    cat:_emVal('em-cat'),
+    cidade:'Outros',
+    locRet:_emVal('em-locret')||'Base Magiway',
+    locDev:_emVal('em-locdev')||'Base Magiway',
+    disc:0, dias, dinRaw, doutRaw,
+    pagamento:'PIX', modalidade:'Integral', juros:0,
+    obs:_emVal('em-obs'),
+    prioridade:'normal', followupHrs:0,
+    // dados fixos do cliente e logística — guardados junto da venda
+    email:_emVal('em-email'), cpf:_emVal('em-cpf'), tel:_emVal('em-tel'),
+    vooChegada:_emVal('em-vooc'), horaChegada:_emVal('em-hc'),
+    vooDevolucao:_emVal('em-vood'), horaDevolucao:_emVal('em-hd'),
+    cadeirinha:_emVal('em-cad'), valorBRL:valBRL
+  });
+  if(typeof enrichSalesData==='function') enrichSalesData();
+  if(typeof dbSave==='function') dbSave();
+  const st=document.getElementById('em-status');
+  if(st) st.innerHTML='<span style="color:var(--green)">✓ Venda de '+nome+' cadastrada no Controle de Vendas (US$ '+vUSD.toLocaleString('en-US',{minimumFractionDigits:2})+'). Você já pode gerar o voucher/contrato abaixo.</span>';
+  if(typeof toast==='function') toast('✅ Venda cadastrada no Controle de Vendas!');
+  try{ analiticoInited=false; }catch(_){}
+  try{ if(typeof renderDashboardExtra==='function' && typeof getFilteredData==='function') renderDashboardExtra(getFilteredData('dv')); }catch(_){}
+  try{ if(typeof calcSim2==='function') calcSim2(); }catch(_){}
+  try{ if(typeof renderVendas==='function') renderVendas(); }catch(_){}
+}
 // ── Helpers p/ casar o formato dos campos dos templates DocuSign (mesmo do script do Sheets) ──
 function _dsCidade(loc){
   const s=(loc||'').toString().toLowerCase();
