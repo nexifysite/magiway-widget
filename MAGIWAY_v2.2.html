@@ -701,6 +701,10 @@ select.ffi option{background:#000020;color:#FF0000}
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
         Nova Venda<span style="margin-left:auto;font-size:.52rem;opacity:.35;font-family:'DM Mono',monospace">N</span>
       </div>
+      <div class="sb-item" onclick="nav('emitir',this)">
+        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        Emitir Documentos<span class="sb-bdg" style="background:linear-gradient(135deg,#FFD11A,#FF9500);font-weight:900;color:#04101e">✍</span>
+      </div>
 
       <div class="sb-sec">Performance</div>
       <div class="sb-item" onclick="nav('metas',this)">
@@ -1255,6 +1259,43 @@ select.ffi option{background:#000020;color:#FF0000}
   <div style="overflow-x:auto">
     <table><thead><tr><th>#</th><th>Cliente</th><th>Reserva</th><th>Valor ($)</th><th>Arquivo</th><th>Status</th></tr></thead>
     <tbody id="vouch-tbody"></tbody></table>
+  </div>
+</div></div>
+      <div class="panel" id="panel-emitir">
+<div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">EMITIR DOCUMENTOS · DOCUSIGN</span><div class="sec-line"></div></div>
+<div class="card" style="margin-bottom:16px">
+  <div class="card-title">✍️ Voucher &amp; Contrato para assinatura</div>
+  <div class="card-sub">Preencha os dados do cliente (ou carregue de uma cotação) e emita o documento — o DocuSign abre já pré-preenchido para o cliente assinar.</div>
+  <div class="ff" style="margin-top:14px;max-width:420px">
+    <label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Carregar de uma cotação (opcional)</label>
+    <select class="ffi" id="em-cot" onchange="emitirLoadFromCot(this.value)"><option value="">— preencher manualmente —</option></select>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Nome do cliente *</label><input class="ffi" id="em-nome" type="text" placeholder="Nome completo"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">E-mail do cliente *</label><input class="ffi" id="em-email" type="email" placeholder="cliente@email.com"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Telefone</label><input class="ffi" id="em-tel" type="text" placeholder="(11) 99999-9999"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Nº da reserva</label><input class="ffi" id="em-res" type="text" placeholder="Opcional"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Categoria</label><input class="ffi" id="em-cat" type="text"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Diárias</label><input class="ffi" id="em-dias" type="number" min="0"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Retirada (data)</label><input class="ffi" id="em-din" type="date" style="color-scheme:dark"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Local de retirada</label><input class="ffi" id="em-locret" type="text"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Devolução (data)</label><input class="ffi" id="em-dout" type="date" style="color-scheme:dark"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Local de devolução</label><input class="ffi" id="em-locdev" type="text"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Valor total (R$)</label><input class="ffi" id="em-valor" type="text" placeholder="R$ 0,00"></div>
+  </div>
+  <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+    <button class="form-btn" onclick="emitirDoc('voucher')">📄 Emitir Voucher</button>
+    <button class="form-btn" style="background:linear-gradient(135deg,#1FA9A6,#0d7a77)" onclick="emitirDoc('contrato')">📝 Emitir Contrato</button>
+  </div>
+  <div id="em-status" style="margin-top:12px;font-size:.72rem;font-family:'DM Mono',monospace;color:var(--chalk3);line-height:1.6"></div>
+</div>
+<div class="card">
+  <div class="card-title">⚙️ Como configurar (uma vez)</div>
+  <div class="card-sub" style="line-height:1.8">
+    1. No DocuSign, crie <strong>2 templates</strong> (Voucher e Contrato) com um signatário de papel <strong>"Cliente"</strong>.<br>
+    2. Nos campos do documento, defina os <strong>Data Labels</strong>: <code>ClienteNome, Telefone, Reserva, Categoria, Retirada, LocalRetirada, Devolucao, LocalDevolucao, Diarias, ValorTotal</code> (o app envia exatamente esses nomes).<br>
+    3. Gere um <strong>PowerForm</strong> de cada template e copie a URL.<br>
+    4. Cole as duas URLs em <strong>Configurações → DocuSign</strong>. Pronto — os botões acima passam a abrir o DocuSign já preenchido.
   </div>
 </div></div>
       <div class="panel" id="panel-metas">
@@ -1851,6 +1892,19 @@ select.ffi option{background:#000020;color:#FF0000}
           <span id="cfg-emp-ok" style="display:none;color:var(--green);font-size:.75rem;font-family:'DM Mono',monospace;margin-left:10px">✓ Salvo</span>
         </div>
 
+        <!-- DOCUSIGN -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-title">✍️ DocuSign — Emissão de documentos</div>
+          <div class="card-sub">Cole as URLs dos PowerForms (voucher e contrato). Usadas na aba "Emitir Documentos" para abrir o DocuSign já pré-preenchido. Nada de credenciais aqui — só o link público do PowerForm.</div>
+          <div style="display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px">
+            <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">URL PowerForm — Voucher</label><input class="ffi" id="cfg-ds-voucher" type="text" placeholder="https://…/PowerFormSigning.aspx?PowerFormId=…"></div>
+            <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">URL PowerForm — Contrato</label><input class="ffi" id="cfg-ds-contrato" type="text" placeholder="https://…/PowerFormSigning.aspx?PowerFormId=…"></div>
+            <div class="ff" style="max-width:240px"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Papel do signatário</label><input class="ffi" id="cfg-ds-role" type="text" placeholder="Cliente"></div>
+          </div>
+          <button class="form-btn" style="margin-top:14px" onclick="cfgSaveDocusign()">SALVAR DOCUSIGN</button>
+          <span id="cfg-ds-ok" style="display:none;color:var(--green);font-size:.75rem;font-family:'DM Mono',monospace;margin-left:10px">✓ Salvo</span>
+        </div>
+
         <!-- LOGO -->
         <div class="card" style="margin-bottom:16px">
           <div class="card-title">🖼️ Logo da empresa</div>
@@ -1998,6 +2052,7 @@ const NAV={
   cotacao:['COTAÇÃO','Gerar cotação personalizada'],
   vendas:['CONTROLE DE VENDAS','Todas as reservas do mês'],
   nova:['NOVA VENDA','Registrar nova reserva'],
+  emitir:['EMITIR DOCUMENTOS','Voucher e contrato via DocuSign'],
   vouchers:['VOUCHERS','Arquivos de reservas'],
   metas:['METAS','Comissão e conquistas'],
   diario:['RESUMO DIÁRIO','Performance dia a dia'],
@@ -7023,6 +7078,82 @@ function chatSugestao(texto){
   if(inp){inp.value=texto;sendChat();}
 }
 
+// ═══ EMITIR DOCUMENTOS · DOCUSIGN (PowerForm pré-preenchido) ═══
+function renderEmitir(){
+  const sel=document.getElementById('em-cot');
+  if(!sel)return;
+  const cur=sel.value;
+  const cots=(typeof HIST_COT!=='undefined'?HIST_COT:[]).slice().sort((a,b)=>(b._ts||0)-(a._ts||0));
+  sel.innerHTML='<option value="">— preencher manualmente —</option>'+cots.map(c=>`<option value="${c.id}">#${c.id} · ${c.cliente||'—'} · ${c.cat||''}${c.din?' · '+c.din:''}</option>`).join('');
+  if(cur)sel.value=cur;
+}
+function emitirLoadFromCot(id){
+  if(!id)return;
+  const c=(typeof HIST_COT!=='undefined'?HIST_COT:[]).find(x=>String(x.id)===String(id));
+  if(!c)return;
+  const set=(k,v)=>{const el=document.getElementById(k);if(el)el.value=(v==null?'':v);};
+  set('em-nome',c.cliente&&c.cliente!=='Sem nome'?c.cliente:'');
+  set('em-tel',c.tel&&c.tel!=='—'?c.tel:'');
+  set('em-cat',c.cat);
+  set('em-dias',c.dias);
+  set('em-din',c.din);
+  set('em-dout',c.dout);
+  set('em-locret',c.locRet);
+  set('em-locdev',c.locDev);
+  // valor total em R$ (converte o total em US$ pelo câmbio da cotação)
+  const cam=c.cambio||((typeof CS!=='undefined'&&CS.cambio)||5.2)||5.2;
+  const valBR=(c.total||0)*cam;
+  set('em-valor', valBR>0?('R$ '+valBR.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})):'');
+}
+function _emVal(id){return (document.getElementById(id)?.value||'').trim();}
+function emitirDoc(tipo){
+  const ds=(typeof _CFG!=='undefined'&&_CFG.docusign)?_CFG.docusign:{};
+  const base=tipo==='contrato'?ds.contratoUrl:ds.voucherUrl;
+  const st=document.getElementById('em-status');
+  const setSt=h=>{if(st)st.innerHTML=h;};
+  const nome=_emVal('em-nome'), email=_emVal('em-email');
+  if(!base){
+    setSt(`<span style="color:var(--fire)">⚠️ URL do PowerForm de ${tipo} não configurada. Vá em <strong>Configurações → DocuSign</strong> e cole a URL.</span>`);
+    if(typeof toast==='function')toast('Configure a URL do PowerForm em Configurações → DocuSign','orange');
+    return;
+  }
+  if(!nome||!email){
+    setSt(`<span style="color:var(--fire)">⚠️ Nome e e-mail do cliente são obrigatórios para o DocuSign.</span>`);
+    return;
+  }
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
+    setSt(`<span style="color:var(--fire)">⚠️ E-mail inválido.</span>`);
+    return;
+  }
+  const role=(ds.role||'Cliente').trim()||'Cliente';
+  const parts=[];
+  const add=(k,v)=>{ if(v!=null&&String(v).trim()!=='') parts.push(encodeURIComponent(k)+'='+encodeURIComponent(String(v).trim())); };
+  // signatário (recipient) — prefill confiável do PowerForm
+  add(role+'_UserName',nome);
+  add(role+'_Email',email);
+  // campos do documento (precisam ter esses Data Labels no template)
+  add('ClienteNome',nome);
+  add('Telefone',_emVal('em-tel'));
+  add('Reserva',_emVal('em-res'));
+  add('Categoria',_emVal('em-cat'));
+  add('Retirada',_emVal('em-din'));
+  add('LocalRetirada',_emVal('em-locret'));
+  add('Devolucao',_emVal('em-dout'));
+  add('LocalDevolucao',_emVal('em-locdev'));
+  add('Diarias',_emVal('em-dias'));
+  add('ValorTotal',_emVal('em-valor'));
+  const sep=base.indexOf('?')>=0?'&':'?';
+  const url=base+sep+parts.join('&');
+  const w=window.open(url,'_blank');
+  const rotulo=tipo==='contrato'?'Contrato':'Voucher';
+  if(w){
+    setSt(`<span style="color:var(--ice)">✓ Abrindo DocuSign — <strong>${rotulo}</strong> para <strong>${nome}</strong> &lt;${email}&gt;.</span>`);
+    if(typeof toast==='function')toast('Abrindo DocuSign — '+rotulo);
+  }else{
+    setSt(`<span style="color:var(--fire)">⚠️ O navegador bloqueou o pop-up. <a href="${url}" target="_blank" style="color:var(--ice)">Clique aqui para abrir o ${rotulo}</a>.</span>`);
+  }
+}
+
 
 // ═══ CONFIG ENGINE ═══
 const CFG_KEY='gs_cfg_v1';
@@ -7074,7 +7205,9 @@ let _CFG={
   // Temporada alta (Natal/Réveillon) — mês/dia configuráveis
   temporada:{altaIniMes:12,altaIniDia:15,altaFimMes:1,altaFimDia:15},
   // Dados da empresa (rodapé das cotações)
-  empresa:{nome:'MAGIWAY',telefone:'+1 (407) 499-1010',instagram:'@magiwayrental'}
+  empresa:{nome:'MAGIWAY',telefone:'+1 (407) 499-1010',instagram:'@magiwayrental'},
+  // DocuSign PowerForm: URLs públicas dos formulários (voucher/contrato) + papel do signatário. Sem credenciais.
+  docusign:{voucherUrl:'',contratoUrl:'',role:'Cliente'}
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -7585,6 +7718,11 @@ function cfgPopulate(){
   if(el('cfg-emp-nome'))el('cfg-emp-nome').value=_emp.nome||'MAGIWAY';
   if(el('cfg-emp-tel'))el('cfg-emp-tel').value=_emp.telefone||'';
   if(el('cfg-emp-insta'))el('cfg-emp-insta').value=_emp.instagram||'';
+  // DocuSign
+  const _ds=_CFG.docusign||{};
+  if(el('cfg-ds-voucher'))el('cfg-ds-voucher').value=_ds.voucherUrl||'';
+  if(el('cfg-ds-contrato'))el('cfg-ds-contrato').value=_ds.contratoUrl||'';
+  if(el('cfg-ds-role'))el('cfg-ds-role').value=_ds.role||'Cliente';
   // Juros do parcelamento (12 campos)
   const _jl=el('cfg-juros-list');
   if(_jl){
@@ -7820,6 +7958,17 @@ function cfgSaveEmpresa(){
   cfgSave();
   const ok=document.getElementById('cfg-emp-ok');if(ok){ok.style.display='inline';setTimeout(()=>ok.style.display='none',2500);}
   toast('✓ Dados da empresa salvos');
+}
+
+function cfgSaveDocusign(){
+  _CFG.docusign={
+    voucherUrl:(document.getElementById('cfg-ds-voucher')?.value||'').trim(),
+    contratoUrl:(document.getElementById('cfg-ds-contrato')?.value||'').trim(),
+    role:(document.getElementById('cfg-ds-role')?.value||'Cliente').trim()||'Cliente'
+  };
+  cfgSave();
+  const ok=document.getElementById('cfg-ds-ok');if(ok){ok.style.display='inline';setTimeout(()=>ok.style.display='none',2500);}
+  toast('✓ DocuSign salvo');
 }
 
 function cfgSaveAIKey(provider,inputId){
@@ -8435,6 +8584,7 @@ function onNavChange(id){
   if(id==='config'){cfgPopulate();cfgPopulateAIKeys();}
   if(id==='frota'){frotaRender();}
   if(id==='nova'){const nvd=document.getElementById('nv-data');if(nvd&&!nvd.value)nvd.value=new Date().toISOString().split('T')[0];}
+  if(id==='emitir')renderEmitir();
   if(id==='vendas')renderVendas();
   if(id==='vouchers')renderVouchers();
   if(id==='geral')renderGeral();
