@@ -1282,12 +1282,16 @@ select.ffi option{background:#000020;color:#FF0000}
     <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Local de retirada</label><input class="ffi" id="em-locret" type="text"></div>
     <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Devolução (data)</label><input class="ffi" id="em-dout" type="date" style="color-scheme:dark"></div>
     <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Local de devolução</label><input class="ffi" id="em-locdev" type="text"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Voo de chegada (cia/nº)</label><input class="ffi" id="em-vooc" type="text" placeholder="Ex.: AA 930"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Horário de chegada</label><input class="ffi" id="em-hc" type="text" placeholder="Ex.: 21:40"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Voo de devolução (cia/nº)</label><input class="ffi" id="em-vood" type="text" placeholder="Ex.: AA 931"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Horário de devolução</label><input class="ffi" id="em-hd" type="text" placeholder="Ex.: 23:10"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Cadeirinha</label><input class="ffi" id="em-cad" type="text" placeholder="Ex.: 1 cadeirinha / Não"></div>
     <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Valor total (R$)</label><input class="ffi" id="em-valor" type="text" placeholder="R$ 0,00"></div>
   </div>
   <div class="ff" style="margin-top:10px"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Observações (aparecem grandes no voucher)</label><textarea class="ffi" id="em-obs" rows="3" style="resize:vertical;font-family:'DM Sans',sans-serif" placeholder="Ex.: voos, instruções de retirada, condições especiais... (deixe em branco para preencher à mão)"></textarea></div>
   <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
     <button class="form-btn" style="background:linear-gradient(135deg,#FFD11A,#FF9500);color:#04101e" onclick="gerarVoucherDoc()">🎟️ Gerar Voucher (PDF)</button>
-    <button class="form-btn" onclick="emitirDoc('voucher')">✍️ Termo de Aceite (DocuSign)</button>
     <button class="form-btn" style="background:linear-gradient(135deg,#1FA9A6,#0d7a77)" onclick="emitirDoc('contrato')">📝 Contrato (DocuSign)</button>
   </div>
   <div id="em-status" style="margin-top:12px;font-size:.72rem;font-family:'DM Mono',monospace;color:var(--chalk3);line-height:1.6"></div>
@@ -1295,10 +1299,9 @@ select.ffi option{background:#000020;color:#FF0000}
 <div class="card">
   <div class="card-title">⚙️ O que cada botão faz</div>
   <div class="card-sub" style="line-height:1.8">
-    • <strong>🎟️ Gerar Voucher (PDF)</strong> → cria o voucher da Magiway em página A4, fonte grande: só dados do cliente, dados logísticos, valor, um campo grande de observações e o QR Code do Guia do Cliente. Abre pronto para <strong>Imprimir / Salvar PDF</strong>.<br>
-    • <strong>✍️ Termo de Aceite (DocuSign)</strong> → abre o PowerForm do termo do voucher (nome, e-mail, CPF, nº do voucher).<br>
+    • <strong>🎟️ Gerar Voucher (PDF)</strong> → cria o voucher da Magiway em página A4, fonte grande: dados do cliente, dados logísticos (voos/horários e cadeirinha), valor, um campo grande de observações e o QR Code do Guia do Cliente. Abre pronto para <strong>Imprimir / Salvar PDF</strong>.<br>
     • <strong>📝 Contrato (DocuSign)</strong> → abre o PowerForm do contrato com todos os campos (locais "Orlando (MCO)", datas e valor por extenso, etc.).<br>
-    Os PowerForms oficiais já vêm pré-configurados. Se trocar de PowerForm, atualize as URLs em <strong>Configurações → DocuSign</strong>.
+    O PowerForm do contrato já vem pré-configurado. Se trocar de PowerForm, atualize a URL em <strong>Configurações → DocuSign</strong>.
   </div>
 </div></div>
       <div class="panel" id="panel-metas">
@@ -7239,6 +7242,11 @@ function gerarVoucherDoc(){
   const locret=_emVal('em-locret'), locdev=_emVal('em-locdev');
   const retLinha=_esc(locret||'—')+(din?' · '+_esc(din):'');
   const devLinha=_esc(locdev||'—')+(dout?' · '+_esc(dout):'');
+  // Voos (companhia/nº + horário) e cadeirinha
+  const vooc=_emVal('em-vooc'), hc=_emVal('em-hc'), vood=_emVal('em-vood'), hd=_emVal('em-hd');
+  const vooChegada=(vooc||hc)?(_esc(vooc||'—')+(hc?' às '+_esc(hc):'')):'—';
+  const vooDevol=(vood||hd)?(_esc(vood||'—')+(hd?' às '+_esc(hd):'')):'—';
+  const cad=g('em-cad');
   const obs=_esc(_emVal('em-obs'));
   const qr='https://api.qrserver.com/v1/create-qr-code/?size=170x170&margin=0&data='+encodeURIComponent(LINK_GUIA_CLIENTE_VOUCHER);
   const html=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Voucher — ${_esc(nome)}</title><style>
@@ -7278,8 +7286,11 @@ body{font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;width:210mm;min-height
 <div class="row">
   <div class="f"><div class="l">Retirada</div><div class="v">${retLinha}</div></div>
   <div class="f"><div class="l">Devolução</div><div class="v">${devLinha}</div></div>
+  <div class="f"><div class="l">Voo de chegada</div><div class="v">${vooChegada}</div></div>
+  <div class="f"><div class="l">Voo de devolução</div><div class="v">${vooDevol}</div></div>
   <div class="f"><div class="l">Categoria</div><div class="v">${g('em-cat')}</div></div>
   <div class="f"><div class="l">Diárias</div><div class="v">${g('em-dias')}</div></div>
+  <div class="f"><div class="l">Cadeirinha</div><div class="v">${cad}</div></div>
 </div>
 <div class="valor"><div class="l">VALOR TOTAL</div><div class="v">${g('em-valor')}</div></div>
 <div class="sec">Observações</div>
