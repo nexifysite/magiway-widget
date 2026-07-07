@@ -1284,19 +1284,21 @@ select.ffi option{background:#000020;color:#FF0000}
     <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Local de devolução</label><input class="ffi" id="em-locdev" type="text"></div>
     <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Valor total (R$)</label><input class="ffi" id="em-valor" type="text" placeholder="R$ 0,00"></div>
   </div>
+  <div class="ff" style="margin-top:10px"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Observações (aparecem grandes no voucher)</label><textarea class="ffi" id="em-obs" rows="3" style="resize:vertical;font-family:'DM Sans',sans-serif" placeholder="Ex.: voos, instruções de retirada, condições especiais... (deixe em branco para preencher à mão)"></textarea></div>
   <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
-    <button class="form-btn" onclick="emitirDoc('voucher')">📄 Emitir Voucher</button>
-    <button class="form-btn" style="background:linear-gradient(135deg,#1FA9A6,#0d7a77)" onclick="emitirDoc('contrato')">📝 Emitir Contrato</button>
+    <button class="form-btn" style="background:linear-gradient(135deg,#FFD11A,#FF9500);color:#04101e" onclick="gerarVoucherDoc()">🎟️ Gerar Voucher (PDF)</button>
+    <button class="form-btn" onclick="emitirDoc('voucher')">✍️ Termo de Aceite (DocuSign)</button>
+    <button class="form-btn" style="background:linear-gradient(135deg,#1FA9A6,#0d7a77)" onclick="emitirDoc('contrato')">📝 Contrato (DocuSign)</button>
   </div>
   <div id="em-status" style="margin-top:12px;font-size:.72rem;font-family:'DM Mono',monospace;color:var(--chalk3);line-height:1.6"></div>
 </div>
 <div class="card">
-  <div class="card-title">⚙️ Já vem configurado</div>
+  <div class="card-title">⚙️ O que cada botão faz</div>
   <div class="card-sub" style="line-height:1.8">
-    Os PowerForms oficiais da Magiway já vêm pré-configurados — não precisa criar nada.<br>
-    • <strong>Emitir Contrato</strong> → abre o PowerForm do contrato com nome, e-mail, CPF, categoria, diárias, locais (formato "Orlando (MCO)"), datas por extenso, valor e valor por extenso.<br>
-    • <strong>Emitir Voucher</strong> → abre o termo de aceite do voucher com nome, e-mail, CPF e nº do voucher.<br>
-    Os nomes dos campos batem com os <code>Data Labels</code> dos seus templates DocuSign. Se um dia trocar de PowerForm, é só atualizar as URLs em <strong>Configurações → DocuSign</strong>.
+    • <strong>🎟️ Gerar Voucher (PDF)</strong> → cria o voucher da Magiway em página A4, fonte grande: só dados do cliente, dados logísticos, valor, um campo grande de observações e o QR Code do Guia do Cliente. Abre pronto para <strong>Imprimir / Salvar PDF</strong>.<br>
+    • <strong>✍️ Termo de Aceite (DocuSign)</strong> → abre o PowerForm do termo do voucher (nome, e-mail, CPF, nº do voucher).<br>
+    • <strong>📝 Contrato (DocuSign)</strong> → abre o PowerForm do contrato com todos os campos (locais "Orlando (MCO)", datas e valor por extenso, etc.).<br>
+    Os PowerForms oficiais já vêm pré-configurados. Se trocar de PowerForm, atualize as URLs em <strong>Configurações → DocuSign</strong>.
   </div>
 </div></div>
       <div class="panel" id="panel-metas">
@@ -7220,6 +7222,78 @@ function emitirDoc(tipo){
   }else{
     setSt(`<span style="color:var(--fire)">⚠️ O navegador bloqueou o pop-up. <a href="${url}" target="_blank" style="color:var(--ice)">Clique aqui para abrir o ${rotulo}</a>.</span>`);
   }
+}
+
+// ── Voucher próprio da Magiway (A4, fonte grande): só cliente + logística + valor + observações + QR ──
+var LINK_GUIA_CLIENTE_VOUCHER='https://magenta-phoenix-34bff6.netlify.app/';
+function _esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function gerarVoucherDoc(){
+  const st=document.getElementById('em-status');
+  const setSt=h=>{if(st)st.innerHTML=h;};
+  const nome=_emVal('em-nome');
+  if(!nome){setSt('<span style="color:var(--fire)">⚠️ Informe ao menos o nome do cliente para gerar o voucher.</span>');return;}
+  const g=id=>{const v=_emVal(id);return v?_esc(v):'—';};
+  const numV=_emVal('em-res');
+  const din=_dsDataExtenso(_emVal('em-din'));
+  const dout=_dsDataExtenso(_emVal('em-dout'));
+  const locret=_emVal('em-locret'), locdev=_emVal('em-locdev');
+  const retLinha=_esc(locret||'—')+(din?' · '+_esc(din):'');
+  const devLinha=_esc(locdev||'—')+(dout?' · '+_esc(dout):'');
+  const obs=_esc(_emVal('em-obs'));
+  const qr='https://api.qrserver.com/v1/create-qr-code/?size=170x170&margin=0&data='+encodeURIComponent(LINK_GUIA_CLIENTE_VOUCHER);
+  const html=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Voucher — ${_esc(nome)}</title><style>
+@page{size:A4;margin:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+body{font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;width:210mm;min-height:297mm;padding:14mm;margin:0 auto}
+.hd{background:#C0392B !important;color:#fff !important;padding:22px 28px;display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.hd .b{font-size:44px;font-weight:900;letter-spacing:1px}
+.hd .n{font-size:20px;font-weight:700;text-align:right;line-height:1.3}
+.sec{font-size:19px;font-weight:800;color:#C0392B !important;text-transform:uppercase;letter-spacing:.5px;border-bottom:3px solid #C0392B;padding-bottom:5px;margin:26px 0 14px}
+.row{display:flex;flex-wrap:wrap;gap:0 30px}
+.f{flex:1 1 44%;min-width:230px;margin-bottom:16px}
+.f .l{font-size:13px;color:#888 !important;text-transform:uppercase;font-weight:700;letter-spacing:.6px;margin-bottom:3px}
+.f .v{font-size:25px;font-weight:600;color:#1a1a1a}
+.valor{background:#FDEDEC !important;border:2px solid #C0392B;padding:18px 26px;display:flex;justify-content:space-between;align-items:center;margin:16px 0}
+.valor .l{font-size:22px;font-weight:800;color:#C0392B !important}
+.valor .v{font-size:44px;font-weight:900;color:#C0392B !important}
+.obs{border:2px solid #333;min-height:250px;padding:16px 18px;font-size:22px;line-height:1.5;white-space:pre-wrap}
+.ft{display:flex;align-items:center;gap:22px;margin-top:26px;border-top:2px solid #eee;padding-top:18px}
+.ft .qr img{width:150px;height:150px;border:1px solid #ccc;padding:5px;background:#fff !important}
+.ft .qr .c{font-size:13px;font-weight:800;margin-top:6px;color:#333;text-align:center;letter-spacing:.5px}
+.ft .txt{font-size:19px;color:#444;line-height:1.55}
+.noprint{position:fixed;top:12px;right:12px}
+.noprint button{background:#C0392B;color:#fff;border:none;padding:12px 20px;font-size:15px;font-weight:700;border-radius:6px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+@media print{.noprint{display:none}}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()">🖨️ Imprimir / Salvar PDF</button></div>
+<div class="hd"><div class="b">MAGIWAY</div><div class="n">VOUCHER DE RESERVA${numV?'<br>#'+_esc(numV):''}</div></div>
+<div class="sec">Dados do Cliente</div>
+<div class="row">
+  <div class="f"><div class="l">Nome</div><div class="v">${_esc(nome)}</div></div>
+  <div class="f"><div class="l">CPF</div><div class="v">${g('em-cpf')}</div></div>
+  <div class="f"><div class="l">Telefone</div><div class="v">${g('em-tel')}</div></div>
+  <div class="f"><div class="l">E-mail</div><div class="v">${g('em-email')}</div></div>
+</div>
+<div class="sec">Dados Logísticos</div>
+<div class="row">
+  <div class="f"><div class="l">Retirada</div><div class="v">${retLinha}</div></div>
+  <div class="f"><div class="l">Devolução</div><div class="v">${devLinha}</div></div>
+  <div class="f"><div class="l">Categoria</div><div class="v">${g('em-cat')}</div></div>
+  <div class="f"><div class="l">Diárias</div><div class="v">${g('em-dias')}</div></div>
+</div>
+<div class="valor"><div class="l">VALOR TOTAL</div><div class="v">${g('em-valor')}</div></div>
+<div class="sec">Observações</div>
+<div class="obs">${obs}</div>
+<div class="ft">
+  <div class="qr"><img src="${qr}" alt="QR Code Guia do Cliente"><div class="c">GUIA DO CLIENTE</div></div>
+  <div class="txt"><b style="color:#C0392B">Aponte a câmera do celular</b> para o QR Code e acesse o guia interativo com as principais dicas e regras da sua viagem.<br><br><b>Magiway Rental Car</b> · Suporte 24h · 100% em português</div>
+</div>
+</body></html>`;
+  const w=window.open('','_blank');
+  if(!w){setSt('<span style="color:var(--fire)">⚠️ O navegador bloqueou o pop-up. Libere pop-ups para gerar o voucher.</span>');return;}
+  w.document.open();w.document.write(html);w.document.close();
+  setSt(`<span style="color:var(--ice)">✓ Voucher de <strong>${_esc(nome)}</strong> aberto em nova aba. Use o botão "Imprimir / Salvar PDF".</span>`);
+  if(typeof toast==='function')toast('Voucher gerado');
 }
 
 
