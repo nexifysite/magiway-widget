@@ -468,13 +468,6 @@ select.ffi option{background:#000020;color:#FF0000}
 .edit-modal.on{display:flex}
 .edit-box{background:var(--ink2);border:1px solid var(--edgeO);border-radius:16px;padding:24px;width:100%;max-width:640px;max-height:88vh;overflow-y:auto;box-shadow:0 0 60px rgba(255,0,0,.12)}
 .edit-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.1em;color:var(--fire);margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
-/* COMPARATIVO */
-.comp-mes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px}
-.comp-mes-card{background:var(--glass);border:1px solid var(--edge);border-radius:var(--r);padding:16px;transition:border-color .2s}
-.comp-mes-card:hover{border-color:var(--edgeO)}
-.comp-mes-header{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.1em;color:var(--ice);margin-bottom:10px}
-.comp-mes-val{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em;color:var(--fire);line-height:1}
-.comp-mes-delta{font-size:.65rem;font-family:'DM Mono',monospace;margin-top:3px}
 /* MODO APRESENTAÇÃO */
 .apresent-mode .val-c,.apresent-mode .comm-c,.apresent-mode .kpi-val,
 .apresent-mode .receber-val,.apresent-mode .meta-prog-label,
@@ -727,10 +720,6 @@ select.ffi option{background:#000020;color:#FF0000}
       <div class="sb-item" onclick="nav('dashcot',this)">
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
         Dashboard Cotações
-      </div>
-      <div class="sb-item" onclick="nav('comparativo',this)">
-        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-        Comparativo Mensal
       </div>
       <div class="sb-sec">Equipe</div>
       <div class="sb-item" onclick="nav('geral',this)">
@@ -2015,7 +2004,6 @@ const NAV={
   analitico:['ANÁLISE AVANÇADA','Métricas calculadas'],
   historico:['HISTÓRICO DE COTAÇÕES','Todas as cotações registradas automaticamente'],
   dashcot:['DASHBOARD COTAÇÕES','KPIs e análise completa das cotações geradas'],
-  comparativo:['COMPARATIVO MENSAL','Análise mês a mês'],
   vendedores:['CONTROLE DE VENDEDORES','Alterne entre os perfis · cada vendedor tem dados isolados'],
   geral:['GERAL — EMPRESA','Resultado unificado de todos os vendedores · comissão por vendedor + total'],
   config:['CONFIGURAÇÕES','Parâmetros do sistema · Login · Comandos'],
@@ -4018,7 +4006,6 @@ function saveVenda(){
   toast('✅ Venda registrada! Redirecionando para Controle de Vendas...');
   analiticoInited=false;
   renderDashboardExtra(getFilteredData('dv'));
-  renderComparativo();
   calcSim2();
   // Redirect to vendas after a moment so user sees the new entry
   setTimeout(()=>{
@@ -6424,107 +6411,6 @@ function renderGbusca(){
     </div>`).join('');
 }
 
-// ═══ COMPARATIVO MENSAL ═══
-function renderComparativo(){
-  const meses=typeof dbListMeses==='function'?dbListMeses():[];
-  const CAL_MES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  const content=document.getElementById('comp-content');
-  if(!content)return;
-
-  // Gather data per month
-  const mesData=[];
-  const currentYM=typeof dbCurrentYM==='function'?dbCurrentYM():'';
-  const allMeses=[...new Set([...meses,currentYM])].sort();
-
-  allMeses.forEach(ym=>{
-    let sales=[];
-    if(ym===DB_MES_ATIVO){sales=[...SALES_DATA];}
-    else{sales=[];}
-    if(!sales.length)return;
-    const total=sales.reduce((a,s)=>a+s.v,0);
-    const com=sales.reduce((a,s)=>a+s.com,0);
-    const ticket=sales.length?total/sales.length:0;
-    const[y,m]=ym.split('_');
-    mesData.push({ym,label:CAL_MES[parseInt(m)-1]+'/'+y.slice(2),total,com,count:sales.length,ticket});
-  });
-
-  if(mesData.length<1){content.innerHTML='<div style="color:var(--chalk3);text-align:center;padding:30px">Dados de apenas 1 mês disponíveis. Volte no próximo mês para ver o comparativo.</div>';return}
-
-  // Cards
-  const cards=mesData.map((md,i)=>{
-    const prev=mesData[i-1];
-    const delta=prev&&prev.total>0?((md.total-prev.total)/prev.total*100):null;
-    const arrow=delta===null?'':delta>=0?'▲':'▼';
-    const col=delta===null?'var(--chalk3)':delta>=0?'var(--green)':'var(--red)';
-    const isCur=md.ym===currentYM;
-    return`<div class="comp-mes-card" style="${isCur?'border-color:rgba(255,0,0,.35)':''}">
-      <div class="comp-mes-header">${md.label}${isCur?' ◉ ATUAL':''}</div>
-      <div class="comp-mes-val">$${md.total.toLocaleString('pt-BR',{minimumFractionDigits:0})}</div>
-      ${delta!==null?`<div class="comp-mes-delta" style="color:${col}">${arrow} ${Math.abs(delta).toFixed(1)}% vs mês anterior</div>`:'<div class="comp-mes-delta" style="color:var(--chalk3)">Primeiro mês</div>'}
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;font-size:.67rem;font-family:'DM Mono',monospace">
-        <div><div style="color:var(--chalk3)">Vendas</div><div style="color:var(--chalk)">${md.count}</div></div>
-        <div><div style="color:var(--chalk3)">Ticket</div><div style="color:var(--chalk)">$${md.ticket.toFixed(0)}</div></div>
-        <div><div style="color:var(--chalk3)">Comissão</div><div style="color:var(--fire)">$${md.com.toFixed(0)}</div></div>
-      </div>
-    </div>`;
-  }).join('');
-  content.innerHTML=`<div class="comp-mes-grid">${cards}</div>`;
-
-  // Chart
-  const chartWrap=document.createElement('div');
-  chartWrap.className='card';chartWrap.style.marginBottom='14px';
-  chartWrap.innerHTML=`<div class="card-title">FATURAMENTO MÊS A MÊS</div><div class="card-sub">evolução histórica</div><div style="height:220px;position:relative"><canvas id="comp-chart"></canvas></div>`;
-  content.appendChild(chartWrap);
-  const CT={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(4,8,15,.95)',borderColor:'rgba(255,0,0,.25)',borderWidth:1,titleColor:'#F5FBFF',bodyColor:'#9AB4CC',padding:9,cornerRadius:7}},scales:{x:{grid:{color:'rgba(255,255,255,.03)'},ticks:{color:'#7B93B5',font:{size:10,family:'DM Mono'}}},y:{grid:{color:'rgba(255,255,255,.03)'},ticks:{color:'#7B93B5',font:{size:10,family:'DM Mono'},callback:v=>'$'+v.toLocaleString()}}}};
-  const cc=document.getElementById('comp-chart');
-  if(cc)new Chart(cc,{type:'bar',data:{labels:mesData.map(m=>m.label),datasets:[{data:mesData.map(m=>m.total),backgroundColor:mesData.map((m,i)=>m.ym===currentYM?'rgba(255,0,0,.85)':'rgba(31,169,166,.5)'),borderRadius:8}]},options:CT});
-
-  // Ranking de categorias
-  const rankContent=document.getElementById('ranking-content');
-  if(rankContent){
-    const allSales=typeof getAllSalesData==='function'?getAllSalesData():SALES_DATA;
-    const catMap={};
-    allSales.forEach(s=>{
-      const k=s.cat||'Não inf.';
-      if(!catMap[k])catMap[k]={vendas:0,total:0,dias:0,comissao:0};
-      catMap[k].vendas++;catMap[k].total+=s.v;catMap[k].comissao+=s.com;
-      if(s.dias>0)catMap[k].dias+=s.dias;
-    });
-    const ranking=Object.entries(catMap).map(([k,v])=>({
-      cat:k,...v,
-      ticketMedio:v.vendas?v.total/v.vendas:0,
-      comPorDia:v.dias>0?v.comissao/v.dias:0
-    })).sort((a,b)=>b.comPorDia-a.comPorDia);
-
-    const maxCPD=ranking[0]?.comPorDia||1;
-    rankContent.innerHTML=`<div class="tbl-wrap"><div style="overflow-x:auto"><table>
-      <thead><tr><th>#</th><th>Categoria</th><th>Vendas</th><th>Faturamento</th><th>Ticket Médio</th><th>Com. Total</th><th>Com/Dia</th><th>Rentabilidade</th></tr></thead>
-      <tbody>${ranking.map((r,i)=>`<tr>
-        <td class="mono">${i+1}</td>
-        <td style="color:var(--chalk);font-weight:500">${r.cat}</td>
-        <td class="mono">${r.vendas}</td>
-        <td class="val-c">$${r.total.toFixed(0)}</td>
-        <td>$${r.ticketMedio.toFixed(0)}</td>
-        <td class="comm-c">$${r.comissao.toFixed(0)}</td>
-        <td style="color:var(--ice);font-family:'DM Mono',monospace;font-size:.73rem">$${r.comPorDia.toFixed(2)}/d</td>
-        <td>
-          <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;width:100px">
-            <div style="height:100%;width:${(r.comPorDia/maxCPD*100).toFixed(0)}%;background:linear-gradient(90deg,var(--fire),var(--ice));border-radius:4px"></div>
-          </div>
-        </td>
-      </tr>`).join('')}</tbody>
-    </table></div></div>`;
-
-    // Backup info
-    const bkInfo=document.getElementById('backup-info');
-    if(bkInfo){
-      const info=typeof dbInfo==='function'?dbInfo():{meses:0,vendas:0,cotacoes:0,tamanho:'—'};
-      bkInfo.innerHTML=`Meses salvos: ${info.meses} · Total de vendas: ${info.vendas} · Cotações: ${info.cotacoes} · Tamanho: ${info.tamanho}<br>
-      <span style="color:var(--chalk3);font-size:.62rem">O backup exporta todos os dados de todos os meses num único arquivo JSON. Para restaurar, importe o arquivo.</span>`;
-    }
-  }
-}
-
 // ═══ BACKUP & RESTORE ═══
 function dbExportBackup(){
   const backup={version:3,exportedAt:new Date().toISOString(),meses:{}};
@@ -6593,7 +6479,6 @@ function dbImportBackup(input){
       });
       if(typeof buildMesSidebar==='function')buildMesSidebar();
       toast('Backup importado com sucesso!');
-      renderComparativo();
     }catch(err){toast('Erro ao importar: '+err.message,'red');}
   };
   reader.readAsText(file);
@@ -7128,21 +7013,6 @@ async function aiHistoricoAnalise(){
   const topPerdidas=Object.entries(perdCatMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>`${k}(${v}x)`).join(', ');
   try{
     const r=await aiCall([{role:'user',content:`Análise de pipeline: ${ganhas.length} ganhas, ${perdidas.length} perdidas, ${pendentes.length} pendentes. Taxa de conversão: ${HIST_COT.length?((ganhas.length/HIST_COT.length)*100).toFixed(1):0}%. Categorias mais perdidas: ${topPerdidas||'N/D'}. Usando SPIN Selling e o método de objeções do Especialista Magiway: 1) Qual padrão nas perdas e como corrigir 2) Script de follow-up para recuperar as ${pendentes.length} pendentes 3) Qual segmento focar para aumentar conversão. Seja direto e prático.`}],buildCoachContext(),600);
-    el.innerHTML=r.replace(/\n/g,'<br>');
-  }catch(e){el.innerHTML=`<span style="color:var(--red)">⚠️ ${e.message}</span>`;}
-}
-
-// ═══ IA — COMPARATIVO: NARRATIVA ═══
-async function aiComparativoNarrativa(){
-  const el=document.getElementById('comparativo-ai-content');
-  if(!el)return;
-  el.innerHTML=`<span style="color:var(--chalk3);font-family:'DM Mono',monospace;font-size:.7rem">🤖 Gerando narrativa estratégica...</span>`;
-  const D=SALES_DATA;
-  const total=D.reduce((a,s)=>a+s.v,0);
-  const com=D.reduce((a,s)=>a+s.com,0);
-  const ticket=D.length?total/D.length:0;
-  try{
-    const r=await aiCall([{role:'user',content:`Narrativa estratégica dos dados de vendas Magiway. Performance atual: ${D.length} reservas, $${total.toFixed(0)} faturado, $${com.toFixed(0)} comissão, ticket médio $${ticket.toFixed(0)}, taxa de conversão ${HIST_COT.length?((HIST_COT.filter(h=>h.status==='ganha').length/HIST_COT.length)*100).toFixed(1):0}%. Escreva uma narrativa executiva de 3 parágrafos: 1) O que os números dizem sobre este período 2) Onde está o maior potencial não explorado 3) Os 3 próximos passos mais impactantes. Use o vocabulário do Especialista Magiway.`}],buildCoachContext(),600);
     el.innerHTML=r.replace(/\n/g,'<br>');
   }catch(e){el.innerHTML=`<span style="color:var(--red)">⚠️ ${e.message}</span>`;}
 }
@@ -8558,7 +8428,6 @@ function onNavChange(id){
   buildMesSidebar();
   if(id==='metas'){metasChartsInited=false;initMetasCharts();}
   if(id==='analitico'){analiticoInited=false;initAnalitico();}
-  if(id==='comparativo')renderComparativo();
   if(id==='historico')renderHistorico();
   if(id==='diario')renderDiario();
   if(id==='dashcot'){renderDashCot();}
