@@ -1273,8 +1273,9 @@ select.ffi option{background:#000020;color:#FF0000}
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
     <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Nome do cliente *</label><input class="ffi" id="em-nome" type="text" placeholder="Nome completo"></div>
     <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">E-mail do cliente *</label><input class="ffi" id="em-email" type="email" placeholder="cliente@email.com"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">CPF do cliente</label><input class="ffi" id="em-cpf" type="text" placeholder="000.000.000-00"></div>
     <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Telefone</label><input class="ffi" id="em-tel" type="text" placeholder="(11) 99999-9999"></div>
-    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Nº da reserva</label><input class="ffi" id="em-res" type="text" placeholder="Opcional"></div>
+    <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Nº do voucher</label><input class="ffi" id="em-res" type="text" placeholder="Opcional"></div>
     <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Categoria</label><input class="ffi" id="em-cat" type="text"></div>
     <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Diárias</label><input class="ffi" id="em-dias" type="number" min="0"></div>
     <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Retirada (data)</label><input class="ffi" id="em-din" type="date" style="color-scheme:dark"></div>
@@ -1290,12 +1291,12 @@ select.ffi option{background:#000020;color:#FF0000}
   <div id="em-status" style="margin-top:12px;font-size:.72rem;font-family:'DM Mono',monospace;color:var(--chalk3);line-height:1.6"></div>
 </div>
 <div class="card">
-  <div class="card-title">⚙️ Como configurar (uma vez)</div>
+  <div class="card-title">⚙️ Já vem configurado</div>
   <div class="card-sub" style="line-height:1.8">
-    1. No DocuSign, crie <strong>2 templates</strong> (Voucher e Contrato) com um signatário de papel <strong>"Cliente"</strong>.<br>
-    2. Nos campos do documento, defina os <strong>Data Labels</strong>: <code>ClienteNome, Telefone, Reserva, Categoria, Retirada, LocalRetirada, Devolucao, LocalDevolucao, Diarias, ValorTotal</code> (o app envia exatamente esses nomes).<br>
-    3. Gere um <strong>PowerForm</strong> de cada template e copie a URL.<br>
-    4. Cole as duas URLs em <strong>Configurações → DocuSign</strong>. Pronto — os botões acima passam a abrir o DocuSign já preenchido.
+    Os PowerForms oficiais da Magiway já vêm pré-configurados — não precisa criar nada.<br>
+    • <strong>Emitir Contrato</strong> → abre o PowerForm do contrato com nome, e-mail, CPF, categoria, diárias, locais (formato "Orlando (MCO)"), datas por extenso, valor e valor por extenso.<br>
+    • <strong>Emitir Voucher</strong> → abre o termo de aceite do voucher com nome, e-mail, CPF e nº do voucher.<br>
+    Os nomes dos campos batem com os <code>Data Labels</code> dos seus templates DocuSign. Se um dia trocar de PowerForm, é só atualizar as URLs em <strong>Configurações → DocuSign</strong>.
   </div>
 </div></div>
       <div class="panel" id="panel-metas">
@@ -7106,6 +7107,60 @@ function emitirLoadFromCot(id){
   set('em-valor', valBR>0?('R$ '+valBR.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})):'');
 }
 function _emVal(id){return (document.getElementById(id)?.value||'').trim();}
+// ── Helpers p/ casar o formato dos campos dos templates DocuSign (mesmo do script do Sheets) ──
+function _dsCidade(loc){
+  const s=(loc||'').toString().toLowerCase();
+  if(/miami|mia/.test(s))return'Miami (MIA)';
+  if(/fort\s*lauderdale|fll/.test(s))return'Fort Lauderdale (FLL)';
+  if(/tampa|tpa/.test(s))return'Tampa (TPA)';
+  if(/sanford|sfb/.test(s))return'Sanford (SFB)';
+  if(/canaveral|pcv/.test(s))return'Porto Canaveral (PCV)';
+  if(/orlando|mco|base/.test(s))return'Orlando (MCO)';
+  return loc||'';
+}
+function _dsDataExtenso(str){
+  if(!str)return'';
+  const s=(''+str).trim(); let d,m,y,mt;
+  if((mt=s.match(/^(\d{4})-(\d{2})-(\d{2})$/))){y=mt[1];m=+mt[2];d=mt[3];}
+  else if((mt=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/))){d=mt[1];m=+mt[2];y=mt[3];}
+  else return s;
+  const meses=['','janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  return parseInt(d,10)+' de '+(meses[m]||'')+' de '+y;
+}
+function _dsParseBRL(str){
+  if(str==null)return 0;
+  let s=(''+str).replace(/[^\d.,-]/g,'');
+  if(s.indexOf(',')>-1&&(s.indexOf('.')===-1||s.lastIndexOf(',')>s.lastIndexOf('.')))s=s.replace(/\./g,'').replace(',','.');
+  else s=s.replace(/,/g,'');
+  return parseFloat(s)||0;
+}
+function _dsExtenso(v){
+  if(!v||v===0)return'zero reais';
+  const str=v.toFixed(2).split('.');
+  const reais=parseInt(str[0],10), centavos=parseInt(str[1],10);
+  const unid=['','um','dois','três','quatro','cinco','seis','sete','oito','nove','dez','onze','doze','treze','quatorze','quinze','dezesseis','dezessete','dezoito','dezenove'];
+  const dez=['','','vinte','trinta','quarenta','cinquenta','sessenta','setenta','oitenta','noventa'];
+  const cent=['','cento','duzentos','trezentos','quatrocentos','quinhentos','seiscentos','setecentos','oitocentos','novecentos'];
+  const n2t=n=>{
+    if(n===0)return'';
+    if(n===100)return'cem';
+    let res=''; const c=Math.floor(n/100); n=n%100; const d=Math.floor(n/10), u=n%10;
+    if(c>0)res+=cent[c];
+    if(n>0&&n<20){if(res!=='')res+=' e ';res+=unid[n];}
+    else{if(d>0){if(res!=='')res+=' e ';res+=dez[d];}if(u>0){if(res!=='')res+=' e ';res+=unid[u];}}
+    return res;
+  };
+  const mil=n=>{
+    const m=Math.floor(n/1000), r=n%1000; let res='';
+    if(m===1)res='um mil';else if(m>1)res=n2t(m)+' mil';
+    if(r>0){if(res!=='')res+=(r%100===0||r<100)?(' e '+n2t(r)):(' '+n2t(r));else res=n2t(r);}
+    return res;
+  };
+  let rReais=''; if(reais===1)rReais='um real';else if(reais>1)rReais=mil(reais)+' reais';
+  let rCent=''; if(centavos===1)rCent='um centavo';else if(centavos>1)rCent=n2t(centavos)+' centavos';
+  if(rReais&&rCent)return rReais+' e '+rCent;
+  return rReais||rCent;
+}
 function emitirDoc(tipo){
   const ds=(typeof _CFG!=='undefined'&&_CFG.docusign)?_CFG.docusign:{};
   const base=tipo==='contrato'?ds.contratoUrl:ds.voucherUrl;
@@ -7131,17 +7186,30 @@ function emitirDoc(tipo){
   // signatário (recipient) — prefill confiável do PowerForm
   add(role+'_UserName',nome);
   add(role+'_Email',email);
-  // campos do documento (precisam ter esses Data Labels no template)
-  add('ClienteNome',nome);
-  add('Telefone',_emVal('em-tel'));
-  add('Reserva',_emVal('em-res'));
-  add('Categoria',_emVal('em-cat'));
-  add('Retirada',_emVal('em-din'));
-  add('LocalRetirada',_emVal('em-locret'));
-  add('Devolucao',_emVal('em-dout'));
-  add('LocalDevolucao',_emVal('em-locdev'));
-  add('Diarias',_emVal('em-dias'));
-  add('ValorTotal',_emVal('em-valor'));
+  // campos do documento — nomes idênticos aos Data Labels dos templates DocuSign da Magiway
+  const cpf=_emVal('em-cpf');
+  const hoje=_dsDataExtenso(new Date().toISOString().split('T')[0]);
+  if(tipo==='contrato'){
+    add('Cliente_NomeCliente',nome);
+    add('Cliente_CpfCliente',cpf);
+    add('Cpf_Cliente',cpf);
+    add('Cliente_CategoriaVeiculo',_emVal('em-cat'));
+    add('Cliente_NumDiarias',_emVal('em-dias'));
+    add('Cliente_LocalRetirada',_dsCidade(_emVal('em-locret')));
+    add('Cliente_DataRetirada',_dsDataExtenso(_emVal('em-din')));
+    add('Cliente_LocalDevolucao',_dsCidade(_emVal('em-locdev')));
+    add('Cliente_DataDevolucao',_dsDataExtenso(_emVal('em-dout')));
+    const valStr=_emVal('em-valor');
+    add('Cliente_ValorTotal',valStr);
+    add('Cliente_ValorExtenso',_dsExtenso(_dsParseBRL(valStr)));
+    add('Cliente_DataEnvio',hoje);
+    add('Data_Fechamento',hoje);
+  }else{
+    // voucher / termo de aceite
+    add('NomeCliente',nome);
+    add('CpfCliente',cpf);
+    add('NumVoucher',_emVal('em-res'));
+  }
   const sep=base.indexOf('?')>=0?'&':'?';
   const url=base+sep+parts.join('&');
   const w=window.open(url,'_blank');
@@ -7207,7 +7275,11 @@ let _CFG={
   // Dados da empresa (rodapé das cotações)
   empresa:{nome:'MAGIWAY',telefone:'+1 (407) 499-1010',instagram:'@magiwayrental'},
   // DocuSign PowerForm: URLs públicas dos formulários (voucher/contrato) + papel do signatário. Sem credenciais.
-  docusign:{voucherUrl:'',contratoUrl:'',role:'Cliente'}
+  docusign:{
+    voucherUrl:'https://na4.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=2c25a66c-02d7-4328-90c5-dfa9f978f828&env=na4&acct=db09479d-3111-493a-ad4c-3b2588ef4580&v=2',
+    contratoUrl:'https://na4.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=aafe6992-7973-44d3-8812-879a07aa8abc&env=na4&acct=db09479d-3111-493a-ad4c-3b2588ef4580&v=2',
+    role:'Cliente'
+  }
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -7669,6 +7741,18 @@ function cfgLoad(){
       const fll={id:'fll',nome:'Fort Lauderdale (FLL)',taxa:100,tipo:'airport'};
       if(idxMia>=0)_CFG.locs.splice(idxMia+1,0,fll); else _CFG.locs.push(fll);
     }
+  }catch(e){}
+  // ── Migração: garante as URLs padrão dos PowerForms DocuSign da Magiway se estiverem vazias ──
+  try{
+    const DS_DEF={
+      voucherUrl:'https://na4.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=2c25a66c-02d7-4328-90c5-dfa9f978f828&env=na4&acct=db09479d-3111-493a-ad4c-3b2588ef4580&v=2',
+      contratoUrl:'https://na4.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=aafe6992-7973-44d3-8812-879a07aa8abc&env=na4&acct=db09479d-3111-493a-ad4c-3b2588ef4580&v=2',
+      role:'Cliente'
+    };
+    if(!_CFG.docusign)_CFG.docusign={...DS_DEF};
+    if(!_CFG.docusign.voucherUrl)_CFG.docusign.voucherUrl=DS_DEF.voucherUrl;
+    if(!_CFG.docusign.contratoUrl)_CFG.docusign.contratoUrl=DS_DEF.contratoUrl;
+    if(!_CFG.docusign.role)_CFG.docusign.role=DS_DEF.role;
   }catch(e){}
 }
 function cfgSave(){
