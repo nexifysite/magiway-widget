@@ -2103,12 +2103,48 @@ select.ffi option{background:#000020;color:#FF0000}
 .mgag-tel{font-family:'DM Mono',monospace;color:var(--ice);font-size:.66rem;font-weight:700}
 .mgag-meta{font-size:.61rem;color:var(--chalk3);margin-top:3px}
 .mgag-daylabel{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--gold);letter-spacing:.04em}
+/* extras: hint, drag/drop, filtros, disponibilidade, inconsistências */
+.mgw-hint{font-size:.64rem;color:var(--chalk3);margin-bottom:10px;font-family:'DM Sans',sans-serif;line-height:1.5}
+.mgw-hint b{color:var(--chalk2)}
+.mgcal-bar[draggable="true"]{cursor:grab}
+.mgcal-bar[draggable="true"]:active{cursor:grabbing}
+.mgcal-bar.dim{opacity:.13;filter:grayscale(.6)}
+.mgcal-bar.pinned::after{content:'⚲';position:absolute;right:3px;top:0;font-size:.6rem;opacity:.85}
+.mgcal-track.drop-ok{outline:2px dashed var(--ice);outline-offset:-2px;background-color:rgba(31,169,166,.10)}
+.mgcal-track.drop-no{outline:2px dashed #FF4757;outline-offset:-2px;background-color:rgba(255,71,87,.08)}
+.mgcal-dragging{opacity:.45}
+.mgav-wrap{border:1px solid var(--edge);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.mgav-head{padding:9px 14px;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--chalk3);background:rgba(255,255,255,.02);border-bottom:1px solid var(--edge)}
+.mgav-grid{display:flex;flex-wrap:wrap;gap:0}
+.mgav-cell{flex:1 1 120px;min-width:120px;padding:10px 14px;border-right:1px solid var(--edge);border-bottom:1px solid var(--edge)}
+.mgav-cat{font-size:.62rem;color:var(--chalk2);font-family:'DM Mono',monospace;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mgav-nums{display:flex;align-items:baseline;gap:6px}
+.mgav-free{font-size:1.3rem;font-weight:800;font-family:'DM Sans',sans-serif;line-height:1}
+.mgav-free.zero{color:#FF6B78}.mgav-free.some{color:#1AFF9D}
+.mgav-of{font-size:.58rem;color:var(--chalk3);font-family:'DM Mono',monospace}
+.mgav-ob{font-size:.55rem;color:#FF6B78;font-family:'DM Mono',monospace;margin-top:3px}
+.mgrsv-issues{margin-bottom:12px}
+.mgiss-toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer;padding:8px 13px;border-radius:9px;border:1px solid var(--edgeO);background:rgba(255,209,26,.06);color:var(--gold);font-family:'DM Mono',monospace;font-size:.66rem;letter-spacing:.04em;user-select:none}
+.mgiss-toggle.clean{background:rgba(26,255,157,.06);border-color:rgba(26,255,157,.3);color:#1AFF9D}
+.mgiss-list{margin-top:8px;border:1px solid var(--edge);border-radius:10px;overflow:hidden}
+.mgiss-row{display:flex;gap:10px;align-items:center;padding:8px 13px;border-bottom:1px solid var(--edge);font-size:.7rem}
+.mgiss-tag{font-family:'DM Mono',monospace;font-size:.5rem;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(255,209,26,.16);color:var(--gold);white-space:nowrap}
 </style>
 
 <!-- ═══════════ CALENDÁRIO DA FROTA ═══════════ -->
 <div class="panel" id="panel-calendario">
   <div class="mgcal-toolbar">
-    <button class="mgw-btn" onclick="MGW_RESV.refresh()">↻ Atualizar da planilha</button>
+    <button class="mgw-btn" onclick="MGW_RESV.refresh()">↻ Atualizar</button>
+    <button class="mgw-btn" onclick="MGW_RESV.goToday()">📍 Ir para hoje</button>
+    <select id="mgcal-filt-city" class="mgw-input" onchange="MGW_RESV.applyFilters()" title="Filtrar por cidade de início">
+      <option value="">Todas as cidades</option>
+      <option value="orl">Orlando (MCO)</option>
+      <option value="mia">Miami (MIA)</option>
+      <option value="fll">FLL</option>
+      <option value="tpa">Tampa</option>
+    </select>
+    <select id="mgcal-filt-cat" class="mgw-input" onchange="MGW_RESV.applyFilters()" title="Filtrar por categoria"><option value="">Todas as categorias</option></select>
+    <button class="mgw-btn" id="mgcal-clearov" onclick="MGW_RESV.clearOverrides()" title="Desfazer todos os remanejamentos manuais" style="display:none">↺ Limpar remanejamentos</button>
     <div class="mgcal-legend">
       <span><i style="background:#3B9EFF"></i>Orlando (MCO)</span>
       <span><i style="background:#FF4757"></i>Miami (MIA)</span>
@@ -2117,6 +2153,7 @@ select.ffi option{background:#000020;color:#FF0000}
       <span><i style="background:repeating-linear-gradient(45deg,#FF0000 0 4px,#8a0000 4px 8px)"></i>Overbooking</span>
     </div>
   </div>
+  <div class="mgw-hint">💡 Arraste uma reserva para outro <b>Carro da mesma categoria</b> para remanejar. Os remanejamentos ficam salvos e sobrevivem às atualizações da planilha.</div>
   <div id="mgcal-status" class="mgw-status"></div>
   <div class="mgcal-scroll"><div id="mgcal-grid" class="mgcal-grid"></div></div>
   <div id="mgcal-detail" class="mgcal-detail"></div>
@@ -2131,6 +2168,7 @@ select.ffi option{background:#000020;color:#FF0000}
   </div>
   <div id="mgrsv-status" class="mgw-status"></div>
   <div id="mgrsv-count" class="mgw-status" style="color:var(--chalk2)"></div>
+  <div id="mgrsv-issues"></div>
   <div class="mgrsv-tablewrap">
     <table class="mgrsv-table">
       <thead><tr><th>Status</th><th>Tel</th><th>Cliente</th><th>Categoria</th><th>Entrega</th><th>Devolução</th><th>Valor</th><th>Vendedor</th></tr></thead>
@@ -2147,9 +2185,11 @@ select.ffi option{background:#000020;color:#FF0000}
     <button class="mgw-btn" onclick="MGW_RESV.agDay(1)">Próximo ▶</button>
     <button class="mgw-btn" onclick="MGW_RESV.agToday()">● Hoje</button>
     <span id="mgag-daylabel" class="mgag-daylabel"></span>
-    <button class="mgw-btn" style="margin-left:auto" onclick="MGW_RESV.refresh()">↻ Atualizar</button>
+    <button class="mgw-btn" style="margin-left:auto" onclick="MGW_RESV.exportAgendaPDF()">🖨️ Exportar PDF</button>
+    <button class="mgw-btn" onclick="MGW_RESV.refresh()">↻ Atualizar</button>
   </div>
   <div id="mgag-status" class="mgw-status"></div>
+  <div id="mgag-avail"></div>
   <div class="mgag-grid">
     <div class="mgag-col">
       <div class="mgag-colhead mgag-out">🚗 ENTREGAS / SAÍDAS <span id="mgag-out-count">0</span></div>
@@ -9654,7 +9694,12 @@ var CAL_END=new Date(2027,3,30); /* 30/Abr/2027 */
 var MS24=24*3600*1000;
 
 var DATA=[], LOADED=false, LOADING=false;
-var calWinStart=null, calWinDays=0, fallbackRows={}, catFilterDone=false;
+var calWinStart=null, calWinDays=0, fallbackRows={}, catFilterDone=false, catFilterCalDone=false;
+var OVERRIDES={}, autoRefreshOn=false, _mgDrag=null;
+var OVR_KEY='magiway_resv_caroverrides_v1';
+function loadOverrides(){ try{ OVERRIDES=JSON.parse(localStorage.getItem(OVR_KEY)||'{}')||{}; }catch(e){ OVERRIDES={}; } }
+function saveOverrides(){ try{ localStorage.setItem(OVR_KEY, JSON.stringify(OVERRIDES)); }catch(e){} updateClearBtn(); }
+function updateClearBtn(){ var b=document.getElementById('mgcal-clearov'); if(b) b.style.display=Object.keys(OVERRIDES).length?'':'none'; }
 
 var DOW=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 var MON=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -9746,7 +9791,7 @@ function rowsFromResp(resp){
     var modelo=cellF(g(4)).trim(), obs=cellF(g(21)).trim();
     out.push({
       dataFech:parseDate(g(0)), vendedor:cellF(g(1)).trim(), cliente:nome,
-      whats:cellF(g(3)).trim(), tel:tel4(g(3)),
+      whats:cellF(g(3)).trim(), tel:tel4(g(3)), cadeirinha:cellF(g(5)).trim(),
       modelo:modelo, cat:categoryOf(modelo,obs),
       entrega:entrega, devolucao:parseDate(g(7)),
       hEnt:parseTime(g(8)), hDev:parseTime(g(9)),
@@ -9802,7 +9847,7 @@ function refresh(){ LOADING=false; loadAll(true); }
 /* ---------------- cache ---------------- */
 function serialize(rows){
   return rows.map(function(r){ return {
-    dataFech:r.dataFech?r.dataFech.getTime():null, vendedor:r.vendedor, cliente:r.cliente, whats:r.whats, tel:r.tel,
+    dataFech:r.dataFech?r.dataFech.getTime():null, vendedor:r.vendedor, cliente:r.cliente, whats:r.whats, tel:r.tel, cadeirinha:r.cadeirinha,
     modelo:r.modelo, cat:r.cat, entrega:r.entrega?r.entrega.getTime():null, devolucao:r.devolucao?r.devolucao.getTime():null,
     hEnt:r.hEnt, hDev:r.hDev, localEnt:r.localEnt, localDev:r.localDev, valor:r.valor, qualidade:r.qualidade, obs:r.obs
   }; });
@@ -9818,9 +9863,18 @@ function loadCache(){
 }
 
 /* ---------------- alocação de carros + regra 24h + overbooking ---------------- */
+function ivFits(r, intervals){ /* regra 24h: precisa de 24h de folga dos dois lados */
+  for(var i=0;i<intervals.length;i++){ var iv=intervals[i]; if((r.startDT-iv.e)<MS24 && (iv.s-r.endDT)<MS24) return false; }
+  return true;
+}
+function ivFree(r, intervals){ /* só evita sobreposição visual (linhas de overflow / fora da frota) */
+  for(var i=0;i<intervals.length;i++){ var iv=intervals[i]; if(r.startDT<iv.e && iv.s<r.endDT) return false; }
+  return true;
+}
+function ovKey(r){ return dedupeKey(r); }
 function assignCars(){
   DATA.forEach(function(r){
-    r.car=null; r.over=false;
+    r.car=null; r.over=false; r._pinned=false;
     r.startDT=combine(r.entrega,r.hEnt,10);
     r.endDT=combine(r.devolucao||r.entrega,r.hDev,10);
     if(r.endDT && r.startDT && r.endDT<r.startDT) r.endDT=r.startDT;
@@ -9830,16 +9884,24 @@ function assignCars(){
 
   CATS.forEach(function(cfg){
     var list=(byCat[cfg.key]||[]).slice().sort(function(a,b){ return a.startDT-b.startDT; });
-    var carEnd=new Array(cfg.cars).fill(null); var overRows=[];
-    list.forEach(function(r){
+    var cars=[]; for(var k=0;k<cfg.cars;k++) cars.push([]);
+    var overRows=[];
+    /* 1) fixa os remanejados manualmente (pins) que couberem no carro escolhido */
+    var pinned=list.filter(function(r){ var o=OVERRIDES[ovKey(r)]; return o && o.cat===cfg.key && o.car>=0 && o.car<cfg.cars; });
+    var rest=list.filter(function(r){ return pinned.indexOf(r)<0; });
+    var failed=[];
+    pinned.forEach(function(r){ var car=OVERRIDES[ovKey(r)].car; if(ivFits(r,cars[car])){ cars[car].push({s:r.startDT,e:r.endDT}); r.car=car; r._pinned=true; } else failed.push(r); });
+    rest=rest.concat(failed).sort(function(a,b){ return a.startDT-b.startDT; });
+    /* 2) alocação automática (first-fit) para os demais */
+    rest.forEach(function(r){
       var placed=-1, i;
-      for(i=0;i<cfg.cars;i++){ if(carEnd[i]===null || (r.startDT-carEnd[i])>=MS24){ placed=i; break; } }
-      if(placed>=0){ r.car=placed; r.over=false; carEnd[placed]=r.endDT; }
+      for(i=0;i<cfg.cars;i++){ if(ivFits(r,cars[i])){ placed=i; break; } }
+      if(placed>=0){ cars[placed].push({s:r.startDT,e:r.endDT}); r.car=placed; r.over=false; }
       else{
-        r.over=true; /* sem carro com 24h de folga → overbooking (vermelho) */
+        r.over=true;
         var orow=-1;
-        for(i=0;i<overRows.length;i++){ if((r.startDT-overRows[i])>=0){ orow=i; break; } }
-        if(orow<0){ overRows.push(r.endDT); orow=overRows.length-1; } else overRows[orow]=r.endDT;
+        for(i=0;i<overRows.length;i++){ if(ivFree(r,overRows[i])){ orow=i; break; } }
+        if(orow<0){ overRows.push([{s:r.startDT,e:r.endDT}]); orow=overRows.length-1; } else overRows[orow].push({s:r.startDT,e:r.endDT});
         r.car=cfg.cars+orow;
       }
     });
@@ -9851,13 +9913,32 @@ function assignCars(){
     var rows=[];
     list.forEach(function(r){
       var placed=-1, i;
-      for(i=0;i<rows.length;i++){ if((r.startDT-rows[i])>=MS24){ placed=i; break; } }
-      if(placed<0){ rows.push(r.endDT); placed=rows.length-1; } else rows[placed]=r.endDT;
+      for(i=0;i<rows.length;i++){ if(ivFree(r,rows[i])){ placed=i; break; } }
+      if(placed<0){ rows.push([{s:r.startDT,e:r.endDT}]); placed=rows.length-1; } else rows[placed].push({s:r.startDT,e:r.endDT});
       r.car=placed; r.over=false;
     });
     fallbackRows[key]=Math.max(1,rows.length);
   });
 }
+function moveReservation(idx, targetCat, targetRow){
+  var r=DATA[idx]; if(!r) return;
+  if(r.cat!==targetCat){ if(typeof toast==='function') toast('Só dá para mover dentro da mesma categoria','red'); return; }
+  var key=ovKey(r), prev=OVERRIDES[key];
+  if(prev && prev.car===targetRow) return;
+  OVERRIDES[key]={cat:targetCat,car:targetRow};
+  assignCars();
+  if(r.car===targetRow && !r.over){
+    saveOverrides(); var sc=grabScroll(); renderCalendar(); restoreScroll(sc); renderReservas(); renderAgenda();
+    if(typeof toast==='function') toast('✓ '+r.tel+' → Carro '+(targetRow+1));
+  }else{
+    if(prev) OVERRIDES[key]=prev; else delete OVERRIDES[key];
+    assignCars(); var sc2=grabScroll(); renderCalendar(); restoreScroll(sc2);
+    if(typeof toast==='function') toast('Carro '+(targetRow+1)+' ocupado nesse período (regra de 24h)','red');
+  }
+}
+function clearOverrides(){ OVERRIDES={}; saveOverrides(); assignCars(); var sc=grabScroll(); renderCalendar(); restoreScroll(sc); renderReservas(); renderAgenda(); if(typeof toast==='function') toast('Remanejamentos desfeitos'); }
+function grabScroll(){ var s=document.querySelector('.mgcal-scroll'); return s?{l:s.scrollLeft,t:s.scrollTop}:null; }
+function restoreScroll(sc){ if(!sc) return; var s=document.querySelector('.mgcal-scroll'); if(s){ s.scrollLeft=sc.l; s.scrollTop=sc.t; } }
 
 /* ---------------- calendário ---------------- */
 function computeWindow(){
@@ -9909,9 +9990,10 @@ function renderCalendar(){
     var cs=Math.max(0,si), ce=Math.min(days-1,ei);
     var left=cs*DW+1, width=Math.max(DW-2,(ce-cs+1)*DW-2);
     var city=cityOf(r.localEnt), over=r.over;
-    var cls='mgcal-bar'+(over?' over':'')+(si<0?' clipL':'')+(ei>days-1?' clipR':'');
-    var tip=r.cliente+' · Tel '+r.tel+' · '+r.modelo+'\n'+fmtBR(r.entrega)+' '+timeStr(r.hEnt)+' ('+r.localEnt+') → '+fmtBR(r.devolucao)+' '+timeStr(r.hDev)+' ('+r.localDev+')'+(over?'\n⚠ OVERBOOKING — sem carro disponível (regra de 24h)':'');
-    var bar='<div class="'+cls+'" data-i="'+idx+'" title="'+esc(tip)+'" style="left:'+left+'px;width:'+width+'px;background:'+(over?'#FF0000':city.color)+';color:'+(over?'#fff':textColorFor(city.k))+'">'+(over?'⚠ ':'')+esc(r.tel)+'</div>';
+    var official=CATS.some(function(c){ return c.key===r.cat; });
+    var cls='mgcal-bar'+(over?' over':'')+(si<0?' clipL':'')+(ei>days-1?' clipR':'')+(r._pinned?' pinned':'');
+    var tip=r.cliente+' · Tel '+r.tel+' · '+r.modelo+'\n'+fmtBR(r.entrega)+' '+timeStr(r.hEnt)+' ('+r.localEnt+') → '+fmtBR(r.devolucao)+' '+timeStr(r.hDev)+' ('+r.localDev+')'+(over?'\n⚠ OVERBOOKING — sem carro disponível (regra de 24h)':'')+(official?'\n↕ arraste para outro carro da categoria':'');
+    var bar='<div class="'+cls+'" data-i="'+idx+'" data-city="'+city.k+'" data-cat="'+esc(r.cat)+'"'+(official?' draggable="true"':'')+' title="'+esc(tip)+'" style="left:'+left+'px;width:'+width+'px;background:'+(over?'#FF0000':city.color)+';color:'+(over?'#fff':textColorFor(city.k))+'">'+(over?'⚠ ':'')+esc(r.tel)+'</div>';
     var key=r.cat+'|'+r.car; (cellBars[key]=cellBars[key]||[]).push(bar);
   });
 
@@ -9927,7 +10009,8 @@ function renderCalendar(){
       var isOver=rw>=cat.cars;
       html+='<div class="mgcal-row'+(isOver?' overrow':'')+'" style="height:'+ROWH+'px">';
       html+='<div class="mgcal-rowlabel" style="width:'+LEFT+'px;height:'+ROWH+'px">'+(isOver?'<span class="mgcal-overtag">⚠ OVERBOOKING</span>':('Carro '+(rw+1)))+'</div>';
-      html+='<div class="mgcal-track" style="width:'+(days*DW)+'px;height:'+ROWH+'px;background-image:'+bg+'">';
+      var canDrop=(!cat.fallback && !isOver);
+      html+='<div class="mgcal-track" data-cat="'+esc(cat.key)+'" data-row="'+rw+'"'+(canDrop?' data-real="1"':'')+' style="width:'+(days*DW)+'px;height:'+ROWH+'px;background-image:'+bg+'">';
       var bars=cellBars[cat.key+'|'+rw]; if(bars) html+=bars.join('');
       html+='</div></div>';
     }
@@ -9941,8 +10024,24 @@ function renderCalendar(){
   wrap.style.width=fullW+'px';
   wrap.innerHTML=html;
   var bars=wrap.querySelectorAll('.mgcal-bar');
-  for(var b=0;b<bars.length;b++){ bars[b].addEventListener('click', function(){ showDetail(+this.getAttribute('data-i')); }); }
+  for(var b=0;b<bars.length;b++){
+    bars[b].addEventListener('click', function(){ showDetail(+this.getAttribute('data-i')); });
+    bars[b].addEventListener('dragstart', function(ev){ _mgDrag={idx:+this.getAttribute('data-i'), cat:this.getAttribute('data-cat')}; this.classList.add('mgcal-dragging'); try{ ev.dataTransfer.setData('text/plain', this.getAttribute('data-i')); ev.dataTransfer.effectAllowed='move'; }catch(e){} });
+    bars[b].addEventListener('dragend', function(){ this.classList.remove('mgcal-dragging'); _mgDrag=null; clearDropHints(); });
+  }
+  var tracks=wrap.querySelectorAll('.mgcal-track[data-real="1"]');
+  for(var t=0;t<tracks.length;t++){
+    tracks[t].addEventListener('dragover', function(ev){ if(!_mgDrag) return; if(this.getAttribute('data-cat')===_mgDrag.cat){ ev.preventDefault(); this.classList.add('drop-ok'); } else { this.classList.add('drop-no'); } });
+    tracks[t].addEventListener('dragleave', function(){ this.classList.remove('drop-ok','drop-no'); });
+    tracks[t].addEventListener('drop', function(ev){ ev.preventDefault(); this.classList.remove('drop-ok','drop-no'); if(!_mgDrag) return; if(this.getAttribute('data-cat')!==_mgDrag.cat){ _mgDrag=null; return; } moveReservation(_mgDrag.idx, this.getAttribute('data-cat'), +this.getAttribute('data-row')); _mgDrag=null; });
+  }
+  applyFilters(); updateClearBtn();
+  if(!wrap._scrolledOnce){ wrap._scrolledOnce=true; setTimeout(goTodayInternal, 30); }
 }
+function clearDropHints(){ var t=document.querySelectorAll('.mgcal-track.drop-ok,.mgcal-track.drop-no'); for(var i=0;i<t.length;i++) t[i].classList.remove('drop-ok','drop-no'); }
+function goTodayInternal(){ var s=document.querySelector('.mgcal-scroll'); if(!s||!calWinStart) return; var t=dayIdx(new Date(),calWinStart); if(t<0||t>=calWinDays){ return; } var target=LEFT+t*DW-(s.clientWidth-LEFT)/2; s.scrollLeft=Math.max(0,target); }
+function goToday(){ goTodayInternal(); }
+function applyFilters(){ var fc=(document.getElementById('mgcal-filt-city')||{}).value||''; var fk=(document.getElementById('mgcal-filt-cat')||{}).value||''; var bars=document.querySelectorAll('#mgcal-grid .mgcal-bar'); for(var i=0;i<bars.length;i++){ var b=bars[i]; var ok=(!fc||b.getAttribute('data-city')===fc)&&(!fk||b.getAttribute('data-cat')===fk); b.classList.toggle('dim',!ok); } }
 function showDetail(i){
   var r=DATA[i], box=document.getElementById('mgcal-detail'); if(!r||!box) return;
   var city=cityOf(r.localEnt);
@@ -9958,11 +10057,11 @@ function showDetail(i){
 
 /* ---------------- tabela de reservas ---------------- */
 function populateCatFilter(){
-  var sel=document.getElementById('mgrsv-filtcat'); if(!sel||catFilterDone) return;
-  CATS.map(function(c){return c.key;}).concat(FALLBACK_CATS).forEach(function(k){
-    var o=document.createElement('option'); o.value=k; o.textContent=k; sel.appendChild(o);
-  });
-  catFilterDone=true;
+  var keys=CATS.map(function(c){return c.key;}).concat(FALLBACK_CATS);
+  var sel=document.getElementById('mgrsv-filtcat');
+  if(sel&&!catFilterDone){ keys.forEach(function(k){ var o=document.createElement('option'); o.value=k; o.textContent=k; sel.appendChild(o); }); catFilterDone=true; }
+  var selc=document.getElementById('mgcal-filt-cat');
+  if(selc&&!catFilterCalDone){ keys.forEach(function(k){ var o=document.createElement('option'); o.value=k; o.textContent=k; selc.appendChild(o); }); catFilterCalDone=true; }
 }
 function renderReservas(){
   var tb=document.getElementById('mgrsv-tbody'); if(!tb) return;
@@ -9995,14 +10094,16 @@ function ensureAgDate(){
 }
 function agSortEnt(a,b){ return tmin(a.hEnt)-tmin(b.hEnt) || String(a.cliente).localeCompare(b.cliente); }
 function agSortDev(a,b){ return tmin(a.hDev)-tmin(b.hDev) || String(a.cliente).localeCompare(b.cliente); }
+function needsSeat(c){ var s=norm(c); return !!s && !/^(nao|n|sem|-|0|nao informado)$/.test(s); }
 function agCard(r,mode){
   var isEnt=(mode==='ent');
   var city=cityOf(isEnt?r.localEnt:r.localDev);
   var t=timeStr(isEnt?r.hEnt:r.hDev)||'--:--';
   var local=isEnt?r.localEnt:r.localDev;
+  var seat=needsSeat(r.cadeirinha)?' <span class="mgrsv-badge" style="background:rgba(255,209,26,.16);color:var(--gold)">🧒 '+esc(r.cadeirinha)+'</span>':'';
   return '<div class="mgag-card'+(r.over?' over':'')+'" style="border-left-color:'+(r.over?'#FF0000':city.color)+'">'
     +'<div class="mgag-time">'+t+'</div>'
-    +'<div style="flex:1"><div class="mgag-cli">'+esc(r.cliente)+' <span class="mgag-tel">#'+esc(r.tel)+'</span>'+(r.over?' <span class="mgrsv-badge over">OVERBOOK</span>':'')+'</div>'
+    +'<div style="flex:1"><div class="mgag-cli">'+esc(r.cliente)+' <span class="mgag-tel">#'+esc(r.tel)+'</span>'+(r.over?' <span class="mgrsv-badge over">OVERBOOK</span>':'')+seat+'</div>'
     +'<div class="mgag-meta">'+esc(r.cat)+' · '+esc(r.modelo)+'</div>'
     +'<div class="mgag-meta"><span class="mgrsv-dot" style="background:'+city.color+'"></span>'+esc(local||'—')+' · '+esc(city.city)+' · '+(isEnt?('devolve '+fmtBR(r.devolucao)):('saiu '+fmtBR(r.entrega)))+'</div></div></div>';
 }
@@ -10019,7 +10120,21 @@ function renderAgenda(){
   var ol=document.getElementById('mgag-out-list'), il=document.getElementById('mgag-in-list');
   if(ol) ol.innerHTML=outs.length?outs.map(function(r){return agCard(r,'ent');}).join(''):'<div class="mgag-empty">Nenhuma entrega neste dia.</div>';
   if(il) il.innerHTML=ins.length?ins.map(function(r){return agCard(r,'dev');}).join(''):'<div class="mgag-empty">Nenhuma devolução neste dia.</div>';
+  renderAvailability(sel);
   var lbl=document.getElementById('mgag-daylabel'); if(lbl) lbl.textContent=DOW[sel.getDay()]+', '+fmtBR(sel);
+}
+function dayCovers(r,sel){ if(!r.entrega) return false; var s=dOnly(r.entrega), e=dOnly(r.devolucao||r.entrega); return sel>=s && sel<=e; }
+function renderAvailability(sel){
+  var box=document.getElementById('mgag-avail'); if(!box) return;
+  if(!LOADED){ box.innerHTML=''; return; }
+  var html='<div class="mgav-wrap"><div class="mgav-head">Disponibilidade da frota em '+fmtBR(sel)+'</div><div class="mgav-grid">';
+  CATS.forEach(function(cfg){
+    var occ=0, ob=0;
+    DATA.forEach(function(r){ if(r.cat!==cfg.key||!dayCovers(r,sel)) return; if(r.over) ob++; else occ++; });
+    var free=Math.max(0,cfg.cars-occ);
+    html+='<div class="mgav-cell"><div class="mgav-cat">'+esc(cfg.label)+'</div><div class="mgav-nums"><span class="mgav-free '+(free>0?'some':'zero')+'">'+free+'</span><span class="mgav-of">livre(s) de '+cfg.cars+'</span></div>'+(ob?'<div class="mgav-ob">⚠ '+ob+' overbooking</div>':'')+'</div>';
+  });
+  html+='</div></div>'; box.innerHTML=html;
 }
 function agDay(delta){
   var inp=document.getElementById('mgag-date'); ensureAgDate();
@@ -10028,21 +10143,88 @@ function agDay(delta){
 }
 function agToday(){ var inp=document.getElementById('mgag-date'); var t=new Date(); if(inp){ inp.value=t.getFullYear()+'-'+('0'+(t.getMonth()+1)).slice(-2)+'-'+('0'+t.getDate()).slice(-2); } renderAgenda(); }
 
+/* ---------------- inconsistências ---------------- */
+function issueList(){
+  var out=[];
+  DATA.forEach(function(r){
+    var probs=[];
+    if(!r.devolucao) probs.push('sem devolução');
+    else if(dOnly(r.devolucao)<dOnly(r.entrega)) probs.push('devolução antes da entrega');
+    if(r.tel==='----'||r.tel.length<4) probs.push('telefone inválido');
+    if(r.cat==='Outros') probs.push('modelo não reconhecido');
+    if(cityOf(r.localEnt).k==='oth') probs.push('local não reconhecido');
+    if(probs.length) out.push({r:r,probs:probs});
+  });
+  return out;
+}
+function renderIssues(){
+  var box=document.getElementById('mgrsv-issues'); if(!box) return;
+  if(!LOADED){ box.innerHTML=''; return; }
+  var list=issueList();
+  if(!list.length){ box.innerHTML='<div class="mgiss-toggle clean">✓ Nenhuma inconsistência nos dados</div>'; return; }
+  var body='<div class="mgiss-list">'+list.map(function(x){ return '<div class="mgiss-row"><span class="mgrsv-tel">'+esc(x.r.tel)+'</span> <span style="flex:1">'+esc(x.r.cliente)+' <span style="color:var(--chalk3)">· '+esc(x.r.modelo)+' · '+fmtBR(x.r.entrega)+'</span></span>'+x.probs.map(function(p){return '<span class="mgiss-tag">'+esc(p)+'</span>';}).join(' ')+'</div>'; }).join('')+'</div>';
+  box.innerHTML='<div class="mgiss-toggle" onclick="MGW_RESV.toggleIssues()">⚠ '+list.length+' reserva(s) com dados a revisar <span style="opacity:.7">— clique para ver</span></div><div id="mgiss-body" style="display:none">'+body+'</div>';
+}
+function toggleIssues(){ var b=document.getElementById('mgiss-body'); if(b) b.style.display=(b.style.display==='none'?'block':'none'); }
+
+/* ---------------- exportar agenda em PDF ---------------- */
+function exportAgendaPDF(){
+  if(!window.jspdf||!window.jspdf.jsPDF){ if(typeof toast==='function') toast('Biblioteca de PDF não carregada — verifique a internet','red'); return; }
+  var inp=document.getElementById('mgag-date'); if(!inp||!inp.value){ ensureAgDate(); }
+  var p=(inp.value||'').split('-'); if(p.length<3) return;
+  var sel=new Date(+p[0],+p[1]-1,+p[2]);
+  function same(a,b){ return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
+  var outs=DATA.filter(function(r){ return r.entrega&&same(dOnly(r.entrega),sel); }).sort(agSortEnt);
+  var ins=DATA.filter(function(r){ return r.devolucao&&same(dOnly(r.devolucao),sel); }).sort(agSortDev);
+  var jsPDF=window.jspdf.jsPDF; var doc=new jsPDF({unit:'pt',format:'a4'});
+  var W=doc.internal.pageSize.getWidth(), M=40, y=54;
+  doc.setFontSize(16); doc.setTextColor(20,20,20); doc.text('MAGIWAY — Agenda do Dia', M, y);
+  doc.setFontSize(11); doc.setTextColor(90,90,90); y+=20; doc.text(DOW[sel.getDay()]+', '+fmtBR(sel)+'   ·   '+outs.length+' entregas / '+ins.length+' devolucoes', M, y);
+  function section(title, arr, mode){
+    y+=30; if(y>780){ doc.addPage(); y=54; }
+    doc.setFontSize(12); doc.setTextColor(10,10,10); doc.text(title+' ('+arr.length+')', M, y); y+=8;
+    doc.setDrawColor(200); doc.line(M,y,W-M,y); y+=16;
+    doc.setFontSize(9);
+    if(!arr.length){ doc.setTextColor(140,140,140); doc.text('Nenhuma neste dia.', M, y); y+=16; return; }
+    arr.forEach(function(r){
+      if(y>800){ doc.addPage(); y=54; }
+      var isEnt=(mode==='ent'); var t=timeStr(isEnt?r.hEnt:r.hDev)||'--:--'; var local=isEnt?r.localEnt:r.localDev; var city=cityOf(isEnt?r.localEnt:r.localDev);
+      doc.setTextColor(20,20,20); doc.text(t+'  #'+r.tel, M, y);
+      doc.text(String(r.cliente).slice(0,32), M+96, y);
+      doc.setTextColor(110,110,110); doc.text(String(r.cat).slice(0,20), M+300, y);
+      doc.text((String(local||'-')+' / '+city.city).slice(0,22), M+410, y);
+      var extra=(isEnt?('devolve '+fmtBR(r.devolucao)):('saida '+fmtBR(r.entrega)))+(needsSeat(r.cadeirinha)?('  CADEIRINHA: '+r.cadeirinha):'')+(r.over?'   *** OVERBOOKING ***':'');
+      y+=12; doc.setTextColor(150,150,150); doc.setFontSize(8); doc.text(extra, M+96, y); doc.setFontSize(9); y+=15;
+    });
+  }
+  section('ENTREGAS / SAIDAS', outs, 'ent');
+  section('DEVOLUCOES / RETORNOS', ins, 'dev');
+  doc.save('agenda_'+inp.value+'.pdf');
+  if(typeof toast==='function') toast('✓ Agenda exportada em PDF');
+}
+
+/* ---------------- auto-refresh ---------------- */
+function anyResvActive(){ return ['calendario','reservas','agenda'].some(function(id){ var p=document.getElementById('panel-'+id); return p&&p.classList.contains('active'); }); }
+function startAutoRefresh(){ if(autoRefreshOn) return; autoRefreshOn=true; setInterval(function(){ if(LOADED && !LOADING && anyResvActive()) loadAll(true); }, 300000); }
+
 /* ---------------- comum ---------------- */
 function setStatuses(msg,isErr){
   ['mgcal-status','mgrsv-status','mgag-status'].forEach(function(id){ var e=document.getElementById(id); if(e){ e.textContent=msg; e.classList.toggle('err',!!isErr); } });
 }
-function renderAll(){ populateCatFilter(); renderCalendar(); renderReservas(); renderAgenda(); }
+function renderAll(){ populateCatFilter(); var sc=grabScroll(); renderCalendar(); if(sc) restoreScroll(sc); renderReservas(); renderIssues(); renderAgenda(); }
 
 function onNav(id){
   if(id!=='calendario' && id!=='reservas' && id!=='agenda') return;
-  populateCatFilter();
+  loadOverrides(); populateCatFilter(); startAutoRefresh();
   if(id==='agenda') ensureAgDate();
   if(LOADED){ renderAll(); return; }
   if(!LOADING){ if(loadCache()){ assignCars(); renderAll(); } loadAll(false); }
 }
 
-window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, renderAgenda:renderAgenda, agDay:agDay, agToday:agToday, showDetail:showDetail };
+window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, renderAgenda:renderAgenda, agDay:agDay, agToday:agToday, showDetail:showDetail,
+  goToday:goToday, applyFilters:applyFilters, clearOverrides:clearOverrides, toggleIssues:toggleIssues, exportAgendaPDF:exportAgendaPDF };
+
+loadOverrides();
 
 /* encadeia no roteador existente sem quebrar os handlers atuais */
 (function(){
