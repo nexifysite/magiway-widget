@@ -7817,9 +7817,9 @@ async function gerarContratoPDF(){
     var doc=await PDFLib.PDFDocument.load(bytes);
     var font=await doc.embedFont(PDFLib.StandardFonts.Helvetica), fontB=await doc.embedFont(PDFLib.StandardFonts.HelveticaBold);
     var P=doc.getPages(), H=842, BK=PDFLib.rgb(0.06,0.06,0.08), WH=PDFLib.rgb(1,1,1);
-    function put(pi,x,yb,text,o){ o=o||{}; var w=o.white!=null?o.white:150; var pg=P[pi]; var by=H-yb+11;
+    function put(pi,x,yb,text,o){ o=o||{}; var w=o.white!=null?o.white:150; var pg=P[pi]; var by=H-yb+11; var f=o.bold?fontB:font;
       pg.drawRectangle({x:x-2,y:by-4,width:w,height:o.wh||16,color:WH});
-      if(text!=null&&text!==''){ pg.drawText(_emSan(text),{x:x,y:by,size:o.size||9,font:o.bold?fontB:font,color:BK}); } }
+      if(text!=null&&text!==''){ var t=_emSan(text), size=o.size||9, avail=w-4; while(size>5 && f.widthOfTextAtSize(t,size)>avail){ size-=0.5; } pg.drawText(t,{x:x,y:by,size:size,font:f,color:BK}); } }
     function wrap(pi,x,yb,text,maxW,size,lineH){ var pg=P[pi]; var words=_emSan(text).split(' '),line='',yy=yb,ln;
       for(var i=0;i<words.length;i++){ ln=line?line+' '+words[i]:words[i]; if(font.widthOfTextAtSize(ln,size)>maxW&&line){ pg.drawText(line,{x:x,y:H-yy+11,size:size,font:font,color:BK}); line=words[i]; yy+=lineH; } else line=ln; }
       if(line) pg.drawText(line,{x:x,y:H-yy+11,size:size,font:font,color:BK}); }
