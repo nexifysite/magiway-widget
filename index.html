@@ -1867,7 +1867,7 @@ select.ffi option{background:#000020;color:#FF0000}
               <input class="ffi" id="cfg-comissao" type="number" step="0.1" min="0" placeholder="5" title="Percentual de comissão aplicado sobre o faturamento">
             </div>
             <div style="padding:12px 14px;background:rgba(31,169,166,.06);border:1px solid var(--edgeT);border-radius:10px;font-size:.72rem;color:var(--chalk2);line-height:1.6">
-              <strong style="color:var(--ice)">A comissão é automática por meta atingida</strong> (sobre o faturamento em R$): começa em <strong>1%</strong> e é recalculada a cada meta — 🥉 Bronze <strong>2%</strong> · 🥈 Prata <strong>3%</strong> · 🥇 Ouro <strong>4%</strong> · 💎 Diamante <strong>5%</strong>. As metas são as definidas em <strong>Metas</strong>. <em>(O campo de % acima é legado e não é mais usado no cálculo.)</em>
+              <strong style="color:var(--ice)">A comissão é automática por meta atingida</strong> (sobre o faturamento em R$): começa em <strong>2%</strong> e sobe a cada meta — 🥉 <strong>3%</strong> aos R$ 75 mil · 🥈 <strong>4%</strong> aos R$ 100 mil · 🥇 <strong>5%</strong> aos R$ 125 mil. Ainda há <strong>bônus fixos</strong>: <strong>+R$ 1.000</strong> ao atingir R$ 150 mil e <strong>+R$ 1.000</strong> ao atingir R$ 200 mil. <em>(O campo de % acima é legado e não é mais usado no cálculo.)</em>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:14px;margin-top:14px">
@@ -2106,6 +2106,12 @@ select.ffi option{background:#000020;color:#FF0000}
 .mgag-log.primary{color:var(--chalk)}
 .mgag-log b{color:var(--chalk);font-family:'DM Mono',monospace}
 .mgag-ll{display:inline-block;min-width:88px;font-family:'DM Mono',monospace;font-size:.55rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.03em;margin-right:6px}
+.mgag-actions{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+.mgag-flagbtn{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.03em;padding:5px 10px;border-radius:8px;border:1px solid var(--edgeO);background:rgba(255,255,255,.03);color:var(--chalk2);cursor:pointer;transition:.15s}
+.mgag-flagbtn:hover{border-color:var(--chalk3);color:var(--chalk)}
+.mgag-flagbtn.on-ret{background:rgba(26,255,157,.16);border-color:#1AFF9D;color:#1AFF9D}
+.mgag-flagbtn.on-gas{background:rgba(255,71,87,.18);border-color:#FF6B78;color:#FF6B78}
+.mgag-card.returned{opacity:.72}
 .mgag-daylabel{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--gold);letter-spacing:.04em}
 /* extras: hint, drag/drop, filtros, disponibilidade, inconsistências */
 .mgw-hint{font-size:.64rem;color:var(--chalk3);margin-bottom:10px;font-family:'DM Sans',sans-serif;line-height:1.5}
@@ -2322,7 +2328,7 @@ select.ffi option{background:#000020;color:#FF0000}
 // FONTE ÚNICA DE VERDADE — valores padrão de negócio (Magiway)
 // Altere AQUI e vale em todo o app (defaults, migração, fallbacks e configurações).
 // ═══════════════════════════════════════════════════════════════════
-const MGW_META_DEFAULTS = [40000, 60000, 80000, 100000]; // 🥉 Bronze · 🥈 Prata · 🥇 Ouro · 💎 Diamante (R$/mês)
+const MGW_META_DEFAULTS = [75000, 100000, 125000, 150000]; // 🥉 Bronze 75k(3%) · 🥈 Prata 100k(4%) · 🥇 Ouro 125k(5%) · 💎 Diamante 150k(5% + bônus R$1.000; +R$1.000 aos 200k)
 const MGW_COMISSAO_DEFAULT = 5;                            // % de comissionamento padrão
 
 // ═══ NAVIGATION & UI ═══
@@ -3726,7 +3732,10 @@ function _camFechamentoAtivo(ym){
 }
 // Comissão em faixas por META atingida (em R$): começa em 1% e é recalculada a cada meta.
 // Percentuais liberados — base(<Bronze) · Bronze · Prata · Ouro · Diamante:
-const MGW_COMISSAO_FAIXAS=[1,2,3,4,5];
+const MGW_COMISSAO_FAIXAS=[2,3,4,5,5]; // base 2% · 75k→3% · 100k→4% · 125k→5% · (Diamante 150k mantém 5%)
+// Bônus fixos em R$ por faturamento mensal (R$): +1.000 ao atingir 150k e +1.000 ao atingir 200k
+function comissaoBonusBRL(totalBRL){ var b=0; if(totalBRL>=150000)b+=1000; if(totalBRL>=200000)b+=1000; return b; }
+function comissaoBonusAtual(){ try{ return comissaoBonusBRL(totalVendidoBRL()); }catch(e){ return 0; } }
 function comissaoTierPct(totalBRL){
   try{ if(typeof cfgLoad==='function') cfgLoad(); }catch(_){}
   // Metas do vendedor [Bronze, Prata, Ouro, Diamante] em R$ (ou padrão 40/60/80/100k)
@@ -4676,7 +4685,9 @@ function renderMetas(){
   const isCurrentMes=(maAno===now.getFullYear()&&maMes===now.getMonth()+1);
   let diasTrab=isCurrentMes?now.getDate():diasMesRef;
   const ajudaPropBRL=AJUDA_TOTAL*(diasTrab/diasMesRef);
-  const totalReceberBRL=comissaoBRL+ajudaPropBRL;
+  const faturaBRL=(typeof totalVendidoBRL==='function')?totalVendidoBRL():(comissaoBRL/((pctFaixa/100)||1));
+  const bonusBRL=(typeof comissaoBonusBRL==='function')?comissaoBonusBRL(faturaBRL):0;
+  const totalReceberBRL=comissaoBRL+ajudaPropBRL+bonusBRL;
   const recEl=document.getElementById('rec-total');
   if(recEl)recEl.textContent='R$ '+totalReceberBRL.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   const recCom=document.getElementById('rec-com');
@@ -4688,7 +4699,7 @@ function renderMetas(){
   const recAj=document.getElementById('rec-ajuda');
   if(recAj)recAj.textContent='R$ '+ajudaPropBRL.toLocaleString('pt-BR',{minimumFractionDigits:2});
   const recAjSub=document.getElementById('rec-ajuda-sub');
-  if(recAjSub)recAjSub.innerHTML=`Comissão ${pctFaixa}% sobre o total<br>${diasTrab} dias de ${diasMesRef} · R$${AJUDA_TOTAL.toLocaleString('pt-BR')}/mês`;
+  if(recAjSub)recAjSub.innerHTML=`Comissão ${pctFaixa}% sobre o total${bonusBRL?` · <strong style="color:var(--gold)">+ Bônus R$ ${bonusBRL.toLocaleString('pt-BR')}</strong>`:''}<br>${diasTrab} dias de ${diasMesRef} · R$${AJUDA_TOTAL.toLocaleString('pt-BR')}/mês`;
 
   // ── BARRAS DE PROGRESSO MENSAIS ──
   const barrasEl=document.getElementById('metas-barras-mensais');
@@ -9704,6 +9715,12 @@ var OVR_KEY='magiway_resv_caroverrides_v1';
 function loadOverrides(){ try{ OVERRIDES=JSON.parse(localStorage.getItem(OVR_KEY)||'{}')||{}; }catch(e){ OVERRIDES={}; } }
 function saveOverrides(){ try{ localStorage.setItem(OVR_KEY, JSON.stringify(OVERRIDES)); }catch(e){} updateClearBtn(); }
 function updateClearBtn(){ var b=document.getElementById('mgcal-clearov'); if(b) b.style.display=Object.keys(OVERRIDES).length?'':'none'; }
+/* marcações operacionais por reserva (devolvido / falta de gasolina) — persistem por chave */
+var FLAGS={}, FLAGS_KEY='magiway_resv_flags_v1';
+function loadFlags(){ try{ FLAGS=JSON.parse(localStorage.getItem(FLAGS_KEY)||'{}')||{}; }catch(e){ FLAGS={}; } }
+function saveFlags(){ try{ localStorage.setItem(FLAGS_KEY, JSON.stringify(FLAGS)); }catch(e){} }
+function getFlags(r){ return FLAGS[dedupeKey(r)]||{}; }
+function toggleFlag(idx,which){ var r=DATA[idx]; if(!r) return; var k=dedupeKey(r); var f=FLAGS[k]||{}; f[which]=!f[which]; FLAGS[k]=f; saveFlags(); renderAgenda(); }
 
 var DOW=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 var MON=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -9823,11 +9840,15 @@ function dedupeKey(r){ return r.tel+'|'+(r.entrega?r.entrega.getTime():0)+'|'+(r
 function loadAll(force){
   if(LOADING) return;
   LOADING=true; setStatuses('⏳ Lendo a planilha de fechamento…',false);
-  var merged=[], seen={}, ok=0, warns=[], done=0;
+  /* INCREMENTAL: parte do que já conhecemos e só AGREGA reservas novas.
+     Reservas já existentes são preservadas (com seus remanejamentos e marcações). */
+  var merged=[], seen={}, ok=0, warns=[], done=0, added=0;
+  if(DATA && DATA.length){ DATA.forEach(function(r){ var k=dedupeKey(r); if(!seen[k]){ seen[k]=1; merged.push(r); } }); }
+  else if(loadCache()){ DATA.forEach(function(r){ var k=dedupeKey(r); if(!seen[k]){ seen[k]=1; merged.push(r); } }); }
   function finish(){
     LOADING=false;
     if(ok===0){
-      if(loadCache()){ assignCars(); renderAll(); setStatuses('⚠ Sem conexão com a planilha — mostrando cache local. Verifique se a planilha está compartilhada como "Qualquer pessoa com o link → Leitor". ('+warns.join('; ')+')',true); }
+      if(merged.length){ DATA=merged; LOADED=true; assignCars(); renderAll(); setStatuses('⚠ Sem conexão com a planilha — mostrando '+DATA.length+' reservas já carregadas. Verifique se a planilha está compartilhada como "Qualquer pessoa com o link → Leitor". ('+warns.join('; ')+')',true); }
       else setStatuses('✗ Não foi possível ler a planilha. Compartilhe a planilha FECHAMENTO como "Qualquer pessoa com o link → Leitor" e clique em Atualizar. ('+warns.join('; ')+')',true);
       return;
     }
@@ -9837,12 +9858,12 @@ function loadAll(force){
     renderAll();
     var when=new Date().toLocaleTimeString('pt-BR');
     var overN=DATA.filter(function(r){return r.over;}).length;
-    setStatuses('✓ '+DATA.length+' reservas · atualizado '+when+(overN?(' · ⚠ '+overN+' em overbooking'):'')+(warns.length?(' · ⚠ '+warns.join('; ')):''),false);
+    setStatuses('✓ '+DATA.length+' reservas'+(added?(' · +'+added+' nova(s)'):' · nenhuma nova')+' · atualizado '+when+(overN?(' · ⚠ '+overN+' em overbooking'):'')+(warns.length?(' · ⚠ '+warns.join('; ')):''),false);
   }
   SOURCE_TABS.forEach(function(t){
     loadTab(t.cands).then(function(res){
       ok++;
-      res.rows.forEach(function(r){ var k=dedupeKey(r); if(!seen[k]){ seen[k]=1; merged.push(r); } });
+      res.rows.forEach(function(r){ var k=dedupeKey(r); if(!seen[k]){ seen[k]=1; merged.push(r); added++; } });
     }, function(e){ warns.push(t.name+': '+e.message); }).then(function(){ done++; if(done===SOURCE_TABS.length) finish(); });
   });
 }
@@ -10105,21 +10126,27 @@ function agSortEnt(a,b){ return tmin(a.hEnt)-tmin(b.hEnt) || String(a.cliente).l
 function agSortDev(a,b){ return tmin(a.hDev)-tmin(b.hDev) || String(a.cliente).localeCompare(b.cliente); }
 function needsSeat(c){ var s=norm(c); return !!s && !/^(nao|n|sem|-|0|nao informado)$/.test(s); }
 function hasInfo(v){ var s=norm(v); return !!s && s!=='nao informado' && s!=='-' && s!=='sem' && s!=='n/a'; }
-function agCard(r,mode){
+function agCard(r,mode,idx){
   var isEnt=(mode==='ent');
   var cityE=cityOf(r.localEnt), cityD=cityOf(r.localDev);
   var bigT=timeStr(isEnt?r.hEnt:r.hDev)||'--:--';
-  var accent=r.over?'#FF0000':(isEnt?cityE.color:cityD.color);
+  var fl=getFlags(r);
+  var accent=r.over?'#FF0000':(fl.returned?'#1AFF9D':(isEnt?cityE.color:cityD.color));
   var seat=needsSeat(r.cadeirinha)?' <span class="mgrsv-badge" style="background:rgba(255,209,26,.16);color:var(--gold)">🧒 '+esc(r.cadeirinha)+'</span>':'';
+  var statusBadges=(fl.returned?' <span class="mgrsv-badge" style="background:rgba(26,255,157,.16);color:#1AFF9D">✅ DEVOLVIDO</span>':'')+(fl.nogas?' <span class="mgrsv-badge" style="background:rgba(255,71,87,.18);color:#FF6B78">⛽ SEM GASOLINA</span>':'');
   var log=''
     +'<div class="mgag-log'+(isEnt?' primary':'')+'"><span class="mgag-ll">🛫 Entrega</span>'+fmtBR(r.entrega)+' · <b>'+(timeStr(r.hEnt)||'--:--')+'</b> · <span class="mgrsv-dot" style="background:'+cityE.color+'"></span>'+esc(r.localEnt||'—')+' ('+esc(cityE.city)+')</div>'
     +'<div class="mgag-log'+(isEnt?'':' primary')+'"><span class="mgag-ll">🛬 Devolução</span>'+fmtBR(r.devolucao)+' · <b>'+(timeStr(r.hDev)||'--:--')+'</b> · <span class="mgrsv-dot" style="background:'+cityD.color+'"></span>'+esc(r.localDev||'—')+' ('+esc(cityD.city)+')</div>'
     +(hasInfo(r.aerea)?'<div class="mgag-log"><span class="mgag-ll">✈ Cia aérea</span>'+esc(r.aerea)+'</div>':'')
     +(hasInfo(r.whats)?'<div class="mgag-log"><span class="mgag-ll">📞 Contato</span>'+esc(r.whats)+'</div>':'');
-  return '<div class="mgag-card'+(r.over?' over':'')+'" style="border-left-color:'+accent+'">'
+  var actions=(idx!=null)?('<div class="mgag-actions">'
+    +'<button class="mgag-flagbtn'+(fl.returned?' on-ret':'')+'" onclick="MGW_RESV.toggleFlag('+idx+',\'returned\')">'+(fl.returned?'✅ Devolvido':'☐ Marcar devolvido')+'</button>'
+    +'<button class="mgag-flagbtn'+(fl.nogas?' on-gas':'')+'" onclick="MGW_RESV.toggleFlag('+idx+',\'nogas\')">'+(fl.nogas?'⛽ Sem gasolina':'⛽ Falta gasolina?')+'</button>'
+    +'</div>'):'';
+  return '<div class="mgag-card'+(r.over?' over':'')+(fl.returned?' returned':'')+'" style="border-left-color:'+accent+'">'
     +'<div class="mgag-time">'+bigT+'</div>'
-    +'<div style="flex:1;min-width:0"><div class="mgag-cli">'+esc(r.cliente)+' <span class="mgag-tel">#'+esc(r.tel)+'</span>'+(r.over?' <span class="mgrsv-badge over">OVERBOOK</span>':'')+seat+'</div>'
-    +'<div class="mgag-meta">'+esc(r.cat)+' · '+esc(r.modelo)+'</div>'+log+'</div></div>';
+    +'<div style="flex:1;min-width:0"><div class="mgag-cli">'+esc(r.cliente)+' <span class="mgag-tel">#'+esc(r.tel)+'</span>'+(r.over?' <span class="mgrsv-badge over">OVERBOOK</span>':'')+seat+statusBadges+'</div>'
+    +'<div class="mgag-meta">'+esc(r.cat)+' · '+esc(r.modelo)+'</div>'+log+actions+'</div></div>';
 }
 function renderAgenda(){
   ensureAgDate();
@@ -10132,8 +10159,8 @@ function renderAgenda(){
   var oc=document.getElementById('mgag-out-count'), ic=document.getElementById('mgag-in-count');
   if(oc) oc.textContent=outs.length; if(ic) ic.textContent=ins.length;
   var ol=document.getElementById('mgag-out-list'), il=document.getElementById('mgag-in-list');
-  if(ol) ol.innerHTML=outs.length?outs.map(function(r){return agCard(r,'ent');}).join(''):'<div class="mgag-empty">Nenhuma entrega neste dia.</div>';
-  if(il) il.innerHTML=ins.length?ins.map(function(r){return agCard(r,'dev');}).join(''):'<div class="mgag-empty">Nenhuma devolução neste dia.</div>';
+  if(ol) ol.innerHTML=outs.length?outs.map(function(r){return agCard(r,'ent',DATA.indexOf(r));}).join(''):'<div class="mgag-empty">Nenhuma entrega neste dia.</div>';
+  if(il) il.innerHTML=ins.length?ins.map(function(r){return agCard(r,'dev',DATA.indexOf(r));}).join(''):'<div class="mgag-empty">Nenhuma devolução neste dia.</div>';
   renderAvailability(sel);
   var lbl=document.getElementById('mgag-daylabel'); if(lbl) lbl.textContent=DOW[sel.getDay()]+', '+fmtBR(sel);
 }
@@ -10237,16 +10264,16 @@ function renderAll(){ populateCatFilter(); var sc=grabScroll(); renderCalendar()
 
 function onNav(id){
   if(id!=='calendario' && id!=='reservas' && id!=='agenda') return;
-  loadOverrides(); populateCatFilter(); startAutoRefresh();
+  loadOverrides(); loadFlags(); populateCatFilter(); startAutoRefresh();
   if(id==='agenda') ensureAgDate();
   if(LOADED){ renderAll(); return; }
   if(!LOADING){ if(loadCache()){ assignCars(); renderAll(); } loadAll(false); }
 }
 
 window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, renderAgenda:renderAgenda, agDay:agDay, agToday:agToday, showDetail:showDetail,
-  goToday:goToday, applyFilters:applyFilters, clearOverrides:clearOverrides, toggleIssues:toggleIssues, exportAgendaPDF:exportAgendaPDF };
+  goToday:goToday, applyFilters:applyFilters, clearOverrides:clearOverrides, toggleIssues:toggleIssues, exportAgendaPDF:exportAgendaPDF, toggleFlag:toggleFlag };
 
-loadOverrides();
+loadOverrides(); loadFlags();
 
 /* encadeia no roteador existente sem quebrar os handlers atuais */
 (function(){
