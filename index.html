@@ -1248,6 +1248,18 @@ select.ffi option{background:#000020;color:#FF0000}
     <div class="ff"><span class="ffl">Dias de Locação</span><input class="ffi" id="nv-dias-auto" type="text" placeholder="Auto" readonly="" style="background:rgba(0,0,0,.2);color:var(--ice);font-family:'DM Mono',monospace">
     </div>
   </div>
+  <div style="font-size:.57rem;font-family:'DM Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--fire);margin:4px 0 10px">▸ DADOS LOGÍSTICOS (VOUCHER / CONTRATO)</div>
+  <div class="fgrid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
+    <div class="ff"><span class="ffl">E-mail</span><input class="ffi" id="nv-email" type="email" placeholder="cliente@email.com"></div>
+    <div class="ff"><span class="ffl">CPF</span><input class="ffi" id="nv-cpf" placeholder="000.000.000-00"></div>
+    <div class="ff"><span class="ffl">Vendedor</span><select class="ffi" id="nv-vendedor"><option value="">—</option><option>DICKSON</option><option>LIVIA</option><option>LUCIANO</option><option>OUTROS</option></select></div>
+    <div class="ff"><span class="ffl">Horário Retirada</span><input class="ffi" id="nv-hc" type="time" style="color-scheme:dark"></div>
+    <div class="ff"><span class="ffl">Horário Devolução</span><input class="ffi" id="nv-hd" type="time" style="color-scheme:dark"></div>
+    <div class="ff"><span class="ffl">Companhia Aérea</span><select class="ffi" id="nv-aerea"><option value="">—</option><option>LATAM</option><option>GOL</option><option>AZUL</option><option>COPA</option><option>AMERICAN</option><option>DELTA</option><option>UNITED</option><option>TAP</option><option>AVIANCA</option><option>OUTRA</option></select></div>
+    <div class="ff"><span class="ffl">Voo de Chegada</span><input class="ffi" id="nv-vooc" placeholder="Ex.: LA8181"></div>
+    <div class="ff"><span class="ffl">Voo de Partida</span><input class="ffi" id="nv-vood" placeholder="Ex.: LA8080"></div>
+    <div class="ff"><span class="ffl">Cadeirinha</span><input class="ffi" id="nv-cad" placeholder="Ex.: 1 ano / Não"></div>
+  </div>
   <input type="hidden" id="nv-pagamento" value="PIX">
   <input type="hidden" id="nv-modalidade" value="Integral">
 
@@ -4635,6 +4647,16 @@ function saveVenda(){
     locDev:document.getElementById('nv-locdev')?.value||'Base Magiway',
     disc,dias,
     dinRaw,doutRaw,
+    tel:document.getElementById('nv-tel')?.value||'',
+    email:document.getElementById('nv-email')?.value||'',
+    cpf:document.getElementById('nv-cpf')?.value||'',
+    vendedor:document.getElementById('nv-vendedor')?.value||'',
+    hc:document.getElementById('nv-hc')?.value||'',
+    hd:document.getElementById('nv-hd')?.value||'',
+    aerea:document.getElementById('nv-aerea')?.value||'',
+    vooc:document.getElementById('nv-vooc')?.value||'',
+    vood:document.getElementById('nv-vood')?.value||'',
+    cadeirinha:document.getElementById('nv-cad')?.value||'',
     pagamento:document.getElementById('nv-pagamento')?.value||'PIX',
     modalidade:document.getElementById('nv-modalidade')?.value||'Integral',
     juros:parseFloat(document.getElementById('nv-juros')?.value)||0,
@@ -4651,7 +4673,7 @@ function saveVenda(){
     setTimeout(()=>showFollowup(nome,obs,fuHrs),fuMs);
     scheduleFollowup(nome,obs,fuHrs,Date.now()+fuMs);
   }
-  ['nv-nome','nv-tel','nv-val','nv-res','nv-disc','nv-vou-link','nv-vou-nome','nv-juros','nv-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=id==='nv-juros'?'0':''});
+  ['nv-nome','nv-tel','nv-val','nv-res','nv-disc','nv-vou-link','nv-vou-nome','nv-juros','nv-obs','nv-email','nv-cpf','nv-vendedor','nv-hc','nv-hd','nv-aerea','nv-vooc','nv-vood','nv-cad'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=id==='nv-juros'?'0':''});
   const nvDataEl=document.getElementById('nv-data');if(nvDataEl)nvDataEl.value=new Date().toISOString().split('T')[0];
   const fuSel=document.getElementById('nv-followup');if(fuSel)fuSel.value='';
   const priSel=document.getElementById('nv-prioridade');if(priSel)priSel.value='normal';
