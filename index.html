@@ -9920,11 +9920,16 @@ function assignCars(){
     fallbackRows[key]=Math.max(1,rows.length);
   });
 }
+function carHasConflict(cat,row,r){
+  for(var i=0;i<DATA.length;i++){ var o=DATA[i]; if(o===r||o.over||o.cat!==cat||o.car!==row) continue; if(!ivFits(r,[{s:o.startDT,e:o.endDT}])) return true; }
+  return false;
+}
 function moveReservation(idx, targetCat, targetRow){
   var r=DATA[idx]; if(!r) return;
   if(r.cat!==targetCat){ if(typeof toast==='function') toast('Só dá para mover dentro da mesma categoria','red'); return; }
+  if(r.car===targetRow) return; /* já está nesse carro */
+  if(carHasConflict(targetCat,targetRow,r)){ if(typeof toast==='function') toast('Carro '+(targetRow+1)+' ocupado nesse período (regra de 24h)','red'); return; }
   var key=ovKey(r), prev=OVERRIDES[key];
-  if(prev && prev.car===targetRow) return;
   OVERRIDES[key]={cat:targetCat,car:targetRow};
   assignCars();
   if(r.car===targetRow && !r.over){
@@ -9933,7 +9938,7 @@ function moveReservation(idx, targetCat, targetRow){
   }else{
     if(prev) OVERRIDES[key]=prev; else delete OVERRIDES[key];
     assignCars(); var sc2=grabScroll(); renderCalendar(); restoreScroll(sc2);
-    if(typeof toast==='function') toast('Carro '+(targetRow+1)+' ocupado nesse período (regra de 24h)','red');
+    if(typeof toast==='function') toast('Não foi possível mover (conflito de 24h)','red');
   }
 }
 function clearOverrides(){ OVERRIDES={}; saveOverrides(); assignCars(); var sc=grabScroll(); renderCalendar(); restoreScroll(sc); renderReservas(); renderAgenda(); if(typeof toast==='function') toast('Remanejamentos desfeitos'); }
