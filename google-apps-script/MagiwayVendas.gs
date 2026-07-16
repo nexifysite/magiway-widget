@@ -304,7 +304,8 @@ function construirVENDAS(ss) {
   ['AG','AN','AU','BB','BI'].forEach(function (c) { sh.setColumnWidth(letra2num(c), 130); });
   ['AI','AP','AW','BD','BK'].forEach(function (c) { sh.setColumnWidth(letra2num(c), 190); });
   sh.setFrozenRows(3);
-  sh.setFrozenColumns(1);
+  // Obs.: não congelamos colunas — o título e as faixas de grupo são mesclados por toda a
+  // largura, e o Google Sheets não permite mesclar cruzando a fronteira de colunas congeladas.
   sh.getRange(FIRST_ROW, 1, NUM_LINHAS, totalCols).setVerticalAlignment('middle');
 }
 
