@@ -1,57 +1,68 @@
 /************************************************************************************************
- *  MAGIWAY — CONTROLE DE VENDAS  (Google Apps Script)  —  v2
+ *  MAGIWAY — CONTROLE DE VENDAS  (Google Apps Script)  —  v3
  *  ---------------------------------------------------------------------------------------------
- *  COMO INSTALAR:
- *    1) Importe o .xlsx para o Google Sheets (ou use uma planilha em branco).
+ *  COLE EM UMA PLANILHA VAZIA:
+ *    1) Crie uma Planilha Google em branco.
  *    2) Extensões ▸ Apps Script ▸ apague o exemplo ▸ cole TODO este código ▸ salve (💾).
  *    3) Volte à planilha, recarregue a página (F5).
  *    4) Menu "🚗 MAGIWAY" ▸ "🔧 Construir / Atualizar tudo". Autorize na 1ª vez.
+ *  O script monta a planilha inteira do zero (COMO USAR, VENDAS, PAINEL, CONFIG).
  *
- *  IMPORTANTE (v2): as abas antigas são APAGADAS e RECRIADAS DO ZERO. Isso elimina os
- *  congelamentos, mesclas e formatos que vêm da importação do Excel (a planilha original
- *  tem colunas congeladas em A–G, o que fazia a versão anterior parar com o erro
- *  "Não é possível mesclar colunas congeladas com colunas não congeladas").
- *
- *  O QUE ESTE SCRIPT FAZ (todos os pedidos):
- *   1) Ao lado do VALOR do PAGAMENTO INTEGRAL: % COMISSÃO (menu suspenso 2/3/4/5%) e
- *      COMISSÃO calculada automaticamente.
- *   2) PAGAMENTO FRACIONADO com o mesmo % COMISSÃO (2/3/4/5%) e comissão automática.
- *   3) BARRA DE PROGRESSO em cada parcela do fracionado, subindo com o valor pago até 100%.
- *   4) VENDEDORES em lista suspensa: DICKSON, KEVIN e OUTROS.
+ *  PEDIDOS ATENDIDOS:
+ *   1) % COMISSÃO (menu 2/3/4/5%) ao lado do valor do PAGAMENTO INTEGRAL + comissão automática.
+ *   2) % COMISSÃO (2/3/4/5%) também no PAGAMENTO FRACIONADO + comissão automática.
+ *   3) BARRA DE PROGRESSO em cada parcela do fracionado (sobe com o valor pago até 100%).
+ *   +  BARRA DE PROGRESSO GERAL da reserva fracionada (bloco RESUMO).
+ *   4) VENDEDORES em menu suspenso: DICKSON, KEVIN, OUTROS.
  *   5) Empresa MAGIWAY em todos os títulos.
  *   6) CATEGORIAS: SEDAN, SUV, MINIVAN 7L, MINIVAN 7L LIMITED, MINIVAN 8L, SUV FULL, MUSTANG.
- *   7) Removidos MODELO do veículo e PLACA.
- *   8) "ALIMENTADO NO SISTEMA?" virou "ADICIONADO À PLANILHA DE FECHAMENTO DO VENDEDOR?".
- *   9) PAINEL (dashboard) SÓ com barras percentuais — máximo de indicadores possível.
- *  10) Fracionado sempre mostra a DATA DO PRÓXIMO PAGAMENTO. Cor automática da linha:
- *          VERMELHA   = pagamento atrasado
- *          VERDE      = reserva quitada (integral ou fracionada)
- *          AZUL CLARO = reserva fracionada em dia
- *  11) Excluídas as colunas de CONTROLE & ALERTAS.
- *  12) Retirado o bloco antigo VALORES & COMISSÃO (substituído pela comissão por pagamento).
- *  13) Retirado o bloco antigo MODALIDADE & PROGRESSO (substituído por barras + cores).
+ *   7) Sem MODELO do veículo e sem PLACA.
+ *   8) "ALIMENTADO NO SISTEMA?" -> "ADICIONADO À PLANILHA DE FECHAMENTO DO VENDEDOR?".
+ *   9) PAINEL só com barras percentuais (máximo de indicadores).
+ *  10) Fracionado sempre com DATA DO PRÓXIMO PAGAMENTO. Cor automática da linha:
+ *        VERMELHA = atrasado · VERDE = quitada (integral/fracionada) · AZUL CLARO = fracionada em dia.
+ *  11) Sem colunas de CONTROLE & ALERTAS.
+ *  12) Sem bloco antigo VALORES & COMISSÃO (comissão agora é por pagamento).
+ *  13) Sem bloco antigo MODALIDADE & PROGRESSO (agora barras + cores).
+ *   +  Todos os campos de escolha são MENUS SUSPENSOS (seta), com cor diferente por tipo.
+ *   +  Paleta MAGIWAY: #000020 / #171a4a / #2f2c79 / #bd0003 / #ff0000.
+ *   +  Extras p/ financeiro: RESUMO na CONFIG, comissão total, % da meta, etc.
  ************************************************************************************************/
 
-/* ======================== CONFIGURAÇÕES GERAIS ======================== */
-var FIRST_ROW  = 4;                        // primeira linha de dados
-var NUM_LINHAS = 100;                      // quantidade de linhas de venda
+/* ======================== PARÂMETROS ======================== */
+var FIRST_ROW  = 4;
+var NUM_LINHAS = 100;
 var LAST_ROW   = FIRST_ROW + NUM_LINHAS - 1;
-var TOTAL_COLS = 64;                       // A..BL (definido pelos grupos abaixo)
+var ABAS = ['COMO USAR','VENDAS','PAINEL','CONFIG'];
 
+/* Paleta escolhida */
+var PAL = {
+  base:  '#000020',   // azul quase preto
+  navy:  '#171a4a',   // azul marinho
+  indigo:'#2f2c79',   // índigo
+  dred:  '#bd0003',   // vermelho escuro
+  red:   '#ff0000'    // vermelho
+};
+
+/* Cores de estado da linha (semânticas, pedidas) e apoio */
 var COR = {
-  titulo:      '#0B3D2E',   // verde escuro Magiway
-  ident:       '#1B5E20',
-  logistica:   '#00695C',
-  integral:    '#1565C0',
-  fracResumo:  '#6A1B9A',
-  entrada:     '#283593',
-  parcela:     '#37474F',
-  auto:        '#ECEFF1',   // fundo cinza (campos automáticos)
-  input:       '#FFFDE7',   // fundo amarelo claro (campos de escolha do % de comissão)
-  verde:       '#C6EFCE',   // linha quitada
-  vermelho:    '#F4CCCC',   // linha atrasada
-  azul:        '#CFE2F3',   // linha fracionada em dia
-  barra:       '#16A34A'    // barra de progresso
+  verde:    '#C6EFCE',   // reserva quitada
+  vermelho: '#F7CBCB',   // reserva atrasada (tom claro do vermelho da paleta)
+  azul:     '#CFE2F3',   // fracionada em dia
+  auto:     '#EEF0F4',   // campos automáticos (cinza claro)
+  barra:    '#2f2c79'    // barra de progresso (índigo da paleta)
+};
+
+/* Tons pastel — uma cor por TIPO de menu suspenso */
+var TINT = {
+  vendedor: '#E7E6F5',   // índigo claro
+  categoria:'#E2EEFB',   // azul claro
+  moeda:    '#FFF2CC',   // dourado claro
+  local:    '#E6F4EA',   // verde claro
+  forma:    '#F1E5F7',   // roxo claro
+  pct:      '#FFF7D6',   // amarelo (destaque comissão)
+  pago:     '#E9FBEF',   // verde bem claro
+  add:      '#FBEBE9'    // rosa/vermelho bem claro
 };
 
 var CATEGORIAS = ['SEDAN','SUV','MINIVAN 7L','MINIVAN 7L LIMITED','MINIVAN 8L','SUV FULL','MUSTANG'];
@@ -61,82 +72,121 @@ var FORMAS     = ['NOMAD (USD)','WISE (USD)','ZELLE (USD)','TRANSFERÊNCIA (USD)
                   'C6 (USD)','LINK DE PAGAMENTO (USD)','PIX (BRL)','BOLETO (BRL)','CRÉDITO (BRL)'];
 var COMISSOES  = [2,3,4,5];
 var MOEDAS     = ['USD','BRL'];
+var SIMNAO     = ['SIM','NÃO'];
+
+/* ======================== MAPA DE COLUNAS (definido em runtime) ======================== */
+// Cada coluna tem uma CHAVE (role). As fórmulas usam a chave, nunca a letra fixa —
+// assim, se a ordem mudar, nada quebra.
+var GRUPOS = [
+  { t:'IDENTIFICAÇÃO DA VENDA', cor:PAL.base, cols:[
+      ['Nº DA VENDA','NUM'], ['DATA DA VENDA','DATA'], ['VENDEDOR','VENDEDOR'],
+      ['NOME DO CLIENTE','CLIENTE'], ['Nº DO CLIENTE (WhatsApp)','WHATS'],
+      ['CATEGORIA VENDIDA','CATEGORIA'], ['MOEDA','MOEDA'] ] },
+  { t:'PERÍODO & LOGÍSTICA', cor:PAL.navy, cols:[
+      ['DATA RETIRADA','DT_RET'], ['HORA RETIRADA','HR_RET'], ['LOCAL RETIRADA','LOC_RET'],
+      ['DATA DEVOLUÇÃO','DT_DEV'], ['HORA DEVOLUÇÃO','HR_DEV'], ['LOCAL DEVOLUÇÃO','LOC_DEV'],
+      ['QTD. DE DIÁRIAS','DIARIAS'], ['OBSERVAÇÃO P/ LOGÍSTICA','OBS'] ] },
+  { t:'PAGAMENTO INTEGRAL', cor:PAL.indigo, cols:[
+      ['VALOR DO PAGAMENTO','I_VALOR'], ['% COMISSÃO','I_PCT'], ['COMISSÃO','I_COM'],
+      ['DATA DO PGTO','I_DATA'], ['FORMA DE PAGAMENTO','I_FORMA'], ['Nº PARCELAS (crédito)','I_PARC'],
+      ['PAGO?','I_PAGO'], ['ADICIONADO À PLANILHA DE FECHAMENTO DO VENDEDOR?','I_ADD'], ['RECIBO','I_REC'] ] },
+  { t:'PAGAMENTO FRACIONADO — RESUMO', cor:'#4a2b6e', cols:[
+      ['VALOR TOTAL (FRACIONADO)','F_TOTAL'], ['% COMISSÃO','F_PCT'], ['COMISSÃO','F_COM'],
+      ['PRÓXIMO PAGAMENTO','F_PROX'], ['% PAGO (FRACIONADO)','F_PAGOPCT'], ['PROGRESSO DA RESERVA','F_PROG'] ] },
+  { t:'ENTRADA (FRACIONADA)', cor:PAL.navy, cols:parcela('E') },
+  { t:'PARCELA 1 (DO REMANESCENTE)', cor:PAL.indigo, cols:parcela('P1') },
+  { t:'PARCELA 2 (DO REMANESCENTE)', cor:PAL.navy,   cols:parcela('P2') },
+  { t:'PARCELA 3 (DO REMANESCENTE)', cor:PAL.indigo, cols:parcela('P3') },
+  { t:'PARCELA 4 (DO REMANESCENTE)', cor:PAL.navy,   cols:parcela('P4') }
+];
+function parcela(p) {
+  var vl = (p === 'E') ? 'VALOR DA ENTRADA' : 'VALOR DO PGTO';
+  var dt = (p === 'E') ? 'DATA DA ENTRADA'  : 'DATA DO PGTO';
+  return [
+    [vl, p + '_VALOR'], [dt, p + '_DATA'], ['FORMA DE PAGAMENTO', p + '_FORMA'],
+    ['PROGRESSO', p + '_PROG'], ['PAGO?', p + '_PAGO'],
+    ['ADICIONADO À PLANILHA DE FECHAMENTO DO VENDEDOR?', p + '_ADD'], ['RECIBO', p + '_REC'] ];
+}
+
+var COL = {};          // { chave: 'A', ... }  — preenchido por definirColunas()
+var TOTAL_COLS = 0;
+
+function definirColunas() {
+  COL = {}; var header = [], idx = 1;
+  GRUPOS.forEach(function (g) {
+    g.cols.forEach(function (c) { COL[c[1]] = L(idx); header.push(c[0]); idx++; });
+  });
+  TOTAL_COLS = header.length;
+  return header;
+}
 
 /* ======================== MENU ======================== */
 function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu('🚗 MAGIWAY')
+  SpreadsheetApp.getUi().createMenu('🚗 MAGIWAY')
     .addItem('🔧 Construir / Atualizar tudo', 'construirTudo')
     .addSeparator()
     .addItem('🧹 Limpar dados (mantém fórmulas)', 'limparDados')
     .addItem('ℹ️ Sobre este script', 'sobre')
     .addToUi();
 }
-
 function sobre() {
   SpreadsheetApp.getUi().alert(
-    'MAGIWAY — Controle de Vendas (v2)\n\n' +
-    'Use "Construir / Atualizar tudo" para recriar do zero as abas VENDAS, PAINEL, CONFIG e COMO USAR.\n\n' +
-    'Comissão por pagamento (2/3/4/5%), barras de progresso nas parcelas, cores automáticas ' +
-    'na linha (verde=quitado, vermelho=atrasado, azul=fracionado em dia) e painel só com barras.');
+    'MAGIWAY — Controle de Vendas (v3)\n\n' +
+    'Monta a planilha inteira do zero: COMO USAR, VENDAS, PAINEL e CONFIG.\n' +
+    'Comissão por pagamento (2/3/4/5%), barras de progresso, menus suspensos coloridos, ' +
+    'cores automáticas por status e painel só com barras percentuais.');
 }
 
 /* ======================== ORQUESTRADOR ======================== */
 function construirTudo() {
   var ui = SpreadsheetApp.getUi();
   var resp = ui.alert('MAGIWAY — Construir / Atualizar',
-    'As abas VENDAS, PAINEL, CONFIG e COMO USAR serão APAGADAS e RECRIADAS DO ZERO ' +
-    '(isso remove tudo que veio da importação do Excel, inclusive dados digitados).\n\n' +
-    'Faça uma cópia antes se precisar guardar algo.\n\nDeseja continuar?',
+    'As abas COMO USAR, VENDAS, PAINEL e CONFIG serão criadas/recriadas do zero.\n' +
+    'Qualquer dado dessas abas será substituído. Continuar?',
     ui.ButtonSet.YES_NO);
   if (resp !== ui.Button.YES) return;
 
+  definirColunas();
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
-  // 1) Recria as 4 abas VAZIAS primeiro (nenhuma fórmula é escrita antes de
-  //    todas existirem — assim nenhuma referência entre abas quebra em #REF!).
-  var vendas  = recriarAba(ss, 'VENDAS');
-  var painel  = recriarAba(ss, 'PAINEL');
-  var config  = recriarAba(ss, 'CONFIG');
-  var comousar= recriarAba(ss, 'COMO USAR');
+  // 1) recria as 4 abas VAZIAS primeiro (evita #REF! em referências cruzadas)
+  var sh = {};
+  ABAS.forEach(function (n) { sh[n] = recriarAba(ss, n); });
   removerTemporaria(ss);
 
-  // 2) Preenche (CONFIG primeiro: as listas alimentam as validações de VENDAS).
-  construirCONFIG(config);
-  construirVENDAS(ss, vendas);
-  construirPAINEL(painel);
-  construirCOMOUSAR(comousar);
+  // 2) preenche (CONFIG primeiro: alimenta as validações da VENDAS)
+  construirCONFIG(sh['CONFIG']);
+  construirVENDAS(sh['VENDAS']);
+  construirPAINEL(sh['PAINEL']);
+  construirCOMOUSAR(sh['COMO USAR']);
 
-  // 3) Ordena e pinta as guias.
-  ordenar(ss, ['COMO USAR','VENDAS','PAINEL','CONFIG']);
-  comousar.setTabColor('#E8710A');
-  vendas.setTabColor('#0B8043');
-  painel.setTabColor('#1A73E8');
-  config.setTabColor('#5F6368');
+  // 3) remove abas em branco que sobraram (ex.: "Página1" de uma planilha nova)
+  ss.getSheets().forEach(function (s) {
+    if (ABAS.indexOf(s.getName()) === -1 && s.getName() !== 'TMP_MAGIWAY' && s.getDataRange().isBlank())
+      ss.deleteSheet(s);
+  });
 
-  ss.setActiveSheet(vendas);
-  ui.alert('✅ Planilha MAGIWAY construída com sucesso!\n\nComece a lançar as vendas na linha 4 da aba VENDAS.');
+  // 4) ordena e pinta as guias
+  ordenar(ss, ABAS);
+  sh['COMO USAR'].setTabColor(PAL.dred);
+  sh['VENDAS'].setTabColor(PAL.indigo);
+  sh['PAINEL'].setTabColor(PAL.navy);
+  sh['CONFIG'].setTabColor('#5F6368');
+
+  ss.setActiveSheet(sh['VENDAS']);
+  ui.alert('✅ Planilha MAGIWAY criada!\n\nComece a lançar as vendas na linha 4 da aba VENDAS.');
 }
 
 /* ======================== RECRIAÇÃO DE ABAS ======================== */
-// Apaga a aba (se existir) e cria uma nova em branco — sem congelamentos,
-// mesclas, validações ou formatos herdados da importação do Excel.
 function recriarAba(ss, nome) {
   var velha = ss.getSheetByName(nome);
   if (velha) {
-    // nunca deixar a planilha sem abas: cria uma temporária se for a única
-    if (ss.getSheets().length === 1 && !ss.getSheetByName('TMP_MAGIWAY')) {
-      ss.insertSheet('TMP_MAGIWAY');
-    }
+    if (ss.getSheets().length === 1 && !ss.getSheetByName('TMP_MAGIWAY')) ss.insertSheet('TMP_MAGIWAY');
     ss.deleteSheet(velha);
   }
   return ss.insertSheet(nome);
 }
-function removerTemporaria(ss) {
-  var tmp = ss.getSheetByName('TMP_MAGIWAY');
-  if (tmp) ss.deleteSheet(tmp);
-}
-// Garante que a aba tenha exatamente n colunas (abas novas nascem com 26).
+function removerTemporaria(ss) { var t = ss.getSheetByName('TMP_MAGIWAY'); if (t) ss.deleteSheet(t); }
 function garantirColunas(sh, n) {
   var max = sh.getMaxColumns();
   if (max < n) sh.insertColumnsAfter(max, n - max);
@@ -150,60 +200,44 @@ function ordenar(ss, ordem) {
     if (sh) { ss.setActiveSheet(sh); ss.moveActiveSheet(i + 1); }
   }
 }
-// número da coluna -> letra (1->A, 27->AA ...)
-function L(n) {
-  var s = '';
-  while (n > 0) { var m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = (n - m - 1) / 26; }
-  return s;
-}
-// letra da coluna -> número (A->1, AA->27 ...)
-function letra2num(col) {
-  var n = 0; for (var i = 0; i < col.length; i++) n = n * 26 + (col.charCodeAt(i) - 64); return n;
-}
-// intervalo absoluto de uma coluna de VENDAS (ex.: VENDAS!$P$4:$P$103)
-function RNG(col) { return 'VENDAS!$' + col + '$' + FIRST_ROW + ':$' + col + '$' + LAST_ROW; }
-// barra sparkline (0..1)
+function L(n) { var s = ''; while (n > 0) { var m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = (n - m - 1) / 26; } return s; }
+function num(col) { var n = 0; for (var i = 0; i < col.length; i++) n = n * 26 + (col.charCodeAt(i) - 64); return n; }
+// célula da coluna-chave k na linha r (ex.: c('I_VALOR',4) -> 'P4')
+function cel(k, r) { return COL[k] + r; }
+// intervalo absoluto da coluna-chave k em VENDAS
+function RG(k) { return 'VENDAS!$' + COL[k] + '$' + FIRST_ROW + ':$' + COL[k] + '$' + LAST_ROW; }
 function spark(valExpr, color) {
   return 'SPARKLINE(' + valExpr + ',{"charttype","bar";"max",1;"color1","' + color + '";"empty","zero"})';
 }
-// barra de um indicador do PAINEL: lê o % da coluna C da própria linha
-function barFormula(rr, cor) {
-  return '=IF($C' + rr + '="","",' + spark('$C' + rr, cor) + ')';
-}
+function barFormula(rr, cor) { return '=IF($C' + rr + '="","",' + spark('$C' + rr, cor) + ')'; }
 
 /* ================================================================================
- *  ABA  CONFIG
+ *  ABA CONFIG
  * ================================================================================ */
 function construirCONFIG(sh) {
-  // Título
   sh.getRange('A1:J1').merge().setValue('CONFIGURAÇÕES & RESUMO — MAGIWAY')
-    .setBackground(COR.titulo).setFontColor('#FFFFFF').setFontWeight('bold').setFontSize(13)
+    .setBackground(PAL.base).setFontColor('#FFFFFF').setFontWeight('bold').setFontSize(13)
     .setHorizontalAlignment('center');
 
-  // Meta mensal (célula amarela editável)
   sh.getRange('A3').setValue('META MENSAL DE FATURAMENTO:').setFontWeight('bold');
-  sh.getRange('B3').setValue(50000).setBackground(COR.input).setNumberFormat('#,##0.00')
-    .setFontWeight('bold');
+  sh.getRange('B3').setValue(50000).setBackground(TINT.pct).setNumberFormat('#,##0.00').setFontWeight('bold');
   sh.getRange('C3').setValue('◀ usada na coluna "% DA META" do PAINEL (edite aqui)');
 
-  // Resumo geral (automático)
-  sh.getRange('A5').setValue('RESUMO GERAL (atualiza sozinho)').setFontWeight('bold')
-    .setBackground('#E8F5E9');
+  sh.getRange('A5').setValue('RESUMO GERAL (atualiza sozinho)').setFontWeight('bold').setBackground('#E8EAF6');
   var resumo = [
-    ['Total de Vendas:',      '=SUMPRODUCT(--(((' + RNG('P') + '>0)+(' + RNG('Y') + '>0))>0))'],
-    ['Faturamento Total:',    '=SUM(' + RNG('P') + ')+SUM(' + RNG('Y') + ')'],
-    ['Total Já Recebido:',    recebidoFormula()],
-    ['Total em Aberto:',      '=B7-B8'],
-    ['Comissão Total:',       '=SUM(' + RNG('R') + ')+SUM(' + RNG('AA') + ')'],
-    ['Vendas QUITADAS:',      quitadasFormula()],
-    ['Vendas PARCIAIS:',      parciaisFormula()],
-    ['Vendas EM ABERTO:',     '=B6-B11-B12']
+    ['Total de Vendas:',   '=SUMPRODUCT(--(((' + RG('I_VALOR') + '>0)+(' + RG('F_TOTAL') + '>0))>0))'],
+    ['Faturamento Total:', '=SUM(' + RG('I_VALOR') + ')+SUM(' + RG('F_TOTAL') + ')'],
+    ['Total Já Recebido:', recebidoFormula()],
+    ['Total em Aberto:',   '=B7-B8'],
+    ['Comissão Total:',    '=SUM(' + RG('I_COM') + ')+SUM(' + RG('F_COM') + ')'],
+    ['Vendas QUITADAS:',   quitadasFormula()],
+    ['Vendas PARCIAIS:',   parciaisFormula()],
+    ['Vendas EM ABERTO:',  '=B6-B11-B12']
   ];
   sh.getRange(6, 1, resumo.length, 2).setValues(resumo);
   sh.getRange('A6:A13').setFontWeight('bold');
   sh.getRange('B7:B10').setNumberFormat('#,##0.00');
 
-  // Listas (usadas nas validações da aba VENDAS)
   escreverLista(sh, 'E', 'CATEGORIAS', CATEGORIAS);
   escreverLista(sh, 'F', 'VENDEDORES', VENDEDORES);
   escreverLista(sh, 'G', 'LOCAIS RET./DEV.', LOCAIS);
@@ -211,340 +245,274 @@ function construirCONFIG(sh) {
   escreverLista(sh, 'I', '% COMISSÃO', COMISSOES);
   escreverLista(sh, 'J', 'MOEDAS', MOEDAS);
 
-  sh.setColumnWidth(1, 230);
-  sh.setColumnWidth(2, 130);
+  sh.setColumnWidth(1, 230); sh.setColumnWidth(2, 130);
   for (var c = 5; c <= 10; c++) sh.setColumnWidth(c, 170);
   sh.setFrozenRows(1);
 }
-
 function escreverLista(sh, col, titulo, itens) {
   sh.getRange(col + '4').setValue(titulo).setFontWeight('bold')
-    .setBackground('#263238').setFontColor('#FFFFFF').setHorizontalAlignment('center');
-  var arr = itens.map(function (x) { return [x]; });
-  sh.getRange(col + '5:' + col + (4 + itens.length)).setValues(arr);
+    .setBackground(PAL.navy).setFontColor('#FFFFFF').setHorizontalAlignment('center');
+  sh.getRange(col + '5:' + col + (4 + itens.length)).setValues(itens.map(function (x) { return [x]; }));
 }
 
 /* ================================================================================
- *  ABA  VENDAS
- *  Colunas (64 = A..BL):
- *   A..G   IDENTIFICAÇÃO: nº, data, vendedor, cliente, whatsapp, categoria, moeda
- *   H..O   PERÍODO & LOGÍSTICA
- *   P..X   PAGAMENTO INTEGRAL: valor, %com, comissão, data, forma, parcelas, pago?, adicionado?, recibo
- *   Y..AC  FRACIONADO — RESUMO: total, %com, comissão, próximo pgto, % pago
- *   AD..AJ ENTRADA:  valor, data, forma, progresso, pago?, adicionado?, recibo
- *   AK..AQ PARCELA 1 | AR..AX PARCELA 2 | AY..BE PARCELA 3 | BF..BL PARCELA 4 (mesmo padrão)
+ *  ABA VENDAS
  * ================================================================================ */
-function construirVENDAS(ss, sh) {
-  garantirColunas(sh, TOTAL_COLS);   // abas novas nascem com 26 colunas; precisamos de 64
+function construirVENDAS(sh) {
+  var ss = sh.getParent();
+  garantirColunas(sh, TOTAL_COLS);
+  var header3 = definirColunas();   // garante COL/TOTAL_COLS e devolve os cabeçalhos
 
-  /* ---- Grupos de colunas ---- */
-  var grupos = [
-    { titulo: 'IDENTIFICAÇÃO DA VENDA', cor: COR.ident, cols: [
-        'Nº DA VENDA','DATA DA VENDA','VENDEDOR','NOME DO CLIENTE','Nº DO CLIENTE (WhatsApp)',
-        'CATEGORIA VENDIDA','MOEDA'] },
-    { titulo: 'PERÍODO & LOGÍSTICA', cor: COR.logistica, cols: [
-        'DATA RETIRADA','HORA RETIRADA','LOCAL RETIRADA','DATA DEVOLUÇÃO','HORA DEVOLUÇÃO',
-        'LOCAL DEVOLUÇÃO','QTD. DE DIÁRIAS','OBSERVAÇÃO P/ LOGÍSTICA'] },
-    { titulo: 'PAGAMENTO INTEGRAL', cor: COR.integral, cols: [
-        'VALOR DO PAGAMENTO','% COMISSÃO','COMISSÃO','DATA DO PGTO','FORMA DE PAGAMENTO',
-        'Nº PARCELAS (crédito)','PAGO?','ADICIONADO À PLANILHA DE FECHAMENTO DO VENDEDOR?','RECIBO'] },
-    { titulo: 'PAGAMENTO FRACIONADO — RESUMO', cor: COR.fracResumo, cols: [
-        'VALOR TOTAL (FRACIONADO)','% COMISSÃO','COMISSÃO','PRÓXIMO PAGAMENTO','% PAGO (FRACIONADO)'] },
-    { titulo: 'ENTRADA (FRACIONADA)', cor: COR.entrada, cols: [
-        'VALOR DA ENTRADA','DATA DA ENTRADA','FORMA DE PAGAMENTO','PROGRESSO','PAGO?',
-        'ADICIONADO À PLANILHA DE FECHAMENTO DO VENDEDOR?','RECIBO'] },
-    { titulo: 'PARCELA 1 (DO REMANESCENTE)', cor: COR.parcela, cols: parcelaCols() },
-    { titulo: 'PARCELA 2 (DO REMANESCENTE)', cor: COR.parcela, cols: parcelaCols() },
-    { titulo: 'PARCELA 3 (DO REMANESCENTE)', cor: COR.parcela, cols: parcelaCols() },
-    { titulo: 'PARCELA 4 (DO REMANESCENTE)', cor: COR.parcela, cols: parcelaCols() }
-  ];
-
-  // Faixas de grupo (linha 2) e cabeçalhos (linha 3)
-  var header3 = [];
+  // Faixas de grupo (linha 2) + cabeçalhos (linha 3)
   var start = 1;
-  grupos.forEach(function (g) {
+  GRUPOS.forEach(function (g) {
     var span = g.cols.length;
-    sh.getRange(2, start, 1, span).merge().setValue(g.titulo)
+    sh.getRange(2, start, 1, span).merge().setValue(g.t)
       .setBackground(g.cor).setFontColor('#FFFFFF').setFontWeight('bold')
       .setHorizontalAlignment('center').setVerticalAlignment('middle');
-    header3 = header3.concat(g.cols);
     start += span;
   });
-
-  // Título geral (linha 1)
-  sh.getRange(1, 1, 1, TOTAL_COLS).merge()
-    .setValue('MAGIWAY   •   CONTROLE DE VENDAS')
-    .setBackground(COR.titulo).setFontColor('#FFFFFF').setFontWeight('bold').setFontSize(15)
+  sh.getRange(1, 1, 1, TOTAL_COLS).merge().setValue('MAGIWAY   •   CONTROLE DE VENDAS')
+    .setBackground(PAL.base).setFontColor('#FFFFFF').setFontWeight('bold').setFontSize(15)
     .setHorizontalAlignment('center');
-
-  // Linha 3 (nomes das colunas)
   sh.getRange(3, 1, 1, TOTAL_COLS).setValues([header3])
-    .setFontWeight('bold').setBackground('#455A64').setFontColor('#FFFFFF')
+    .setFontWeight('bold').setBackground(PAL.navy).setFontColor('#FFFFFF')
     .setWrap(true).setVerticalAlignment('middle').setHorizontalAlignment('center');
-  sh.setRowHeight(2, 26); sh.setRowHeight(3, 48);
+  sh.setRowHeight(1, 30); sh.setRowHeight(2, 26); sh.setRowHeight(3, 50);
 
   /* ---- Fórmulas automáticas ---- */
-  escreverFormulaColuna(sh, 'N',  function (r) { return '=IF(AND(H'+r+'<>"",K'+r+'<>""),K'+r+'-H'+r+',"")'; });                    // Diárias
-  escreverFormulaColuna(sh, 'R',  function (r) { return '=IF(AND(P'+r+'<>"",P'+r+'>0,Q'+r+'<>""),P'+r+'*Q'+r+'/100,"")'; });       // Comissão integral
-  escreverFormulaColuna(sh, 'Y',  function (r) { return '=AD'+r+'+AK'+r+'+AR'+r+'+AY'+r+'+BF'+r; });                                 // Total fracionado
-  escreverFormulaColuna(sh, 'AA', function (r) { return '=IF(AND(Y'+r+'>0,Z'+r+'<>""),Y'+r+'*Z'+r+'/100,"")'; });                    // Comissão fracionada
-  escreverFormulaColuna(sh, 'AB', proximoPagamento);                                                                                 // Próximo pagamento
-  escreverFormulaColuna(sh, 'AC', function (r) { return '=IFERROR('+pagoFrac(r)+'/Y'+r+',0)'; });                                    // % pago fracionado
-  escreverFormulaColuna(sh, 'AG', function (r) { return barra(r, '(IF(AH'+r+'="SIM",AD'+r+',0))'); });                               // Progresso entrada
-  escreverFormulaColuna(sh, 'AN', function (r) { return barra(r, '(IF(AH'+r+'="SIM",AD'+r+',0)+IF(AO'+r+'="SIM",AK'+r+',0))'); });   // Progresso parc.1
-  escreverFormulaColuna(sh, 'AU', function (r) { return barra(r, '(IF(AH'+r+'="SIM",AD'+r+',0)+IF(AO'+r+'="SIM",AK'+r+',0)+IF(AV'+r+'="SIM",AR'+r+',0))'); });
-  escreverFormulaColuna(sh, 'BB', function (r) { return barra(r, '(IF(AH'+r+'="SIM",AD'+r+',0)+IF(AO'+r+'="SIM",AK'+r+',0)+IF(AV'+r+'="SIM",AR'+r+',0)+IF(BC'+r+'="SIM",AY'+r+',0))'); });
-  escreverFormulaColuna(sh, 'BI', function (r) { return barra(r, pagoFrac(r)); });                                                   // Progresso parc.4 (=total)
+  colFormula(sh, 'DIARIAS', function (r) { return '=IF(AND(' + cel('DT_RET',r) + '<>"",' + cel('DT_DEV',r) + '<>""),' + cel('DT_DEV',r) + '-' + cel('DT_RET',r) + ',"")'; });
+  colFormula(sh, 'I_COM',  function (r) { return '=IF(AND(' + cel('I_VALOR',r) + '<>"",' + cel('I_VALOR',r) + '>0,' + cel('I_PCT',r) + '<>""),' + cel('I_VALOR',r) + '*' + cel('I_PCT',r) + '/100,"")'; });
+  colFormula(sh, 'F_TOTAL',function (r) { return '=' + cel('E_VALOR',r) + '+' + cel('P1_VALOR',r) + '+' + cel('P2_VALOR',r) + '+' + cel('P3_VALOR',r) + '+' + cel('P4_VALOR',r); });
+  colFormula(sh, 'F_COM',  function (r) { return '=IF(AND(' + cel('F_TOTAL',r) + '>0,' + cel('F_PCT',r) + '<>""),' + cel('F_TOTAL',r) + '*' + cel('F_PCT',r) + '/100,"")'; });
+  colFormula(sh, 'F_PROX', proximoPagamento);
+  colFormula(sh, 'F_PAGOPCT', function (r) { return '=IFERROR(' + pagoFrac(r) + '/' + cel('F_TOTAL',r) + ',0)'; });
+  colFormula(sh, 'F_PROG', function (r) { return '=IF(' + cel('F_TOTAL',r) + '=0,"",' + spark(cel('F_PAGOPCT',r), COR.barra) + ')'; });
+  colFormula(sh, 'E_PROG',  function (r) { return barra(r, somaPagas(r, ['E'])); });
+  colFormula(sh, 'P1_PROG', function (r) { return barra(r, somaPagas(r, ['E','P1'])); });
+  colFormula(sh, 'P2_PROG', function (r) { return barra(r, somaPagas(r, ['E','P1','P2'])); });
+  colFormula(sh, 'P3_PROG', function (r) { return barra(r, somaPagas(r, ['E','P1','P2','P3'])); });
+  colFormula(sh, 'P4_PROG', function (r) { return barra(r, somaPagas(r, ['E','P1','P2','P3','P4'])); });
 
-  /* ---- Validações (listas suspensas) ---- */
-  var ss2 = sh.getParent();
-  aplicarValidacaoRange(ss2, sh, 'C',  'CONFIG!F5:F' + (4 + VENDEDORES.length));      // Vendedor
-  aplicarValidacaoRange(ss2, sh, 'F',  'CONFIG!E5:E' + (4 + CATEGORIAS.length));      // Categoria
-  aplicarValidacaoRange(ss2, sh, 'G',  'CONFIG!J5:J' + (4 + MOEDAS.length));          // Moeda
-  aplicarValidacaoRange(ss2, sh, 'J',  'CONFIG!G5:G' + (4 + LOCAIS.length));          // Local retirada
-  aplicarValidacaoRange(ss2, sh, 'M',  'CONFIG!G5:G' + (4 + LOCAIS.length));          // Local devolução
-  aplicarValidacaoRange(ss2, sh, 'Q',  'CONFIG!I5:I' + (4 + COMISSOES.length));       // % comissão integral
-  aplicarValidacaoRange(ss2, sh, 'Z',  'CONFIG!I5:I' + (4 + COMISSOES.length));       // % comissão fracionada
-  ['T','AF','AM','AT','BA','BH'].forEach(function (c) {                               // Formas de pagamento
-    aplicarValidacaoRange(ss2, sh, c, 'CONFIG!H5:H' + (4 + FORMAS.length));
+  /* ---- Menus suspensos (todos com seta) ---- */
+  vRange(ss, sh, 'VENDEDOR',  'CONFIG!F5:F' + (4 + VENDEDORES.length));
+  vRange(ss, sh, 'CATEGORIA', 'CONFIG!E5:E' + (4 + CATEGORIAS.length));
+  vRange(ss, sh, 'MOEDA',     'CONFIG!J5:J' + (4 + MOEDAS.length));
+  vRange(ss, sh, 'LOC_RET',   'CONFIG!G5:G' + (4 + LOCAIS.length));
+  vRange(ss, sh, 'LOC_DEV',   'CONFIG!G5:G' + (4 + LOCAIS.length));
+  vRange(ss, sh, 'I_PCT',     'CONFIG!I5:I' + (4 + COMISSOES.length));
+  vRange(ss, sh, 'F_PCT',     'CONFIG!I5:I' + (4 + COMISSOES.length));
+  ['I_FORMA','E_FORMA','P1_FORMA','P2_FORMA','P3_FORMA','P4_FORMA'].forEach(function (k) {
+    vRange(ss, sh, k, 'CONFIG!H5:H' + (4 + FORMAS.length));
   });
-  ['V','AH','AO','AV','BC','BJ'].forEach(function (c) { aplicarValidacaoLista(sh, c, ['SIM','NÃO']); }); // PAGO?
-  ['W','AI','AP','AW','BD','BK'].forEach(function (c) { aplicarValidacaoLista(sh, c, ['SIM','NÃO']); }); // ADICIONADO?
+  ['I_PAGO','E_PAGO','P1_PAGO','P2_PAGO','P3_PAGO','P4_PAGO'].forEach(function (k) { vLista(sh, k, SIMNAO); });
+  ['I_ADD','E_ADD','P1_ADD','P2_ADD','P3_ADD','P4_ADD'].forEach(function (k) { vLista(sh, k, SIMNAO); });
 
-  /* ---- Formatos numéricos ---- */
-  fmt(sh, ['P','AD','AK','AR','AY','BF'], '#,##0.00');
-  fmt(sh, ['R','Y','AA'], '#,##0.00;;');                         // esconde zero nos automáticos
-  fmt(sh, ['Q','Z'], '0"%"');                                    // 2 -> 2%
-  fmt(sh, ['AC'], '0%;;');                                       // % pago (esconde zero)
-  fmt(sh, ['N'], '0;;');                                         // diárias
-  fmt(sh, ['B','H','K','S','AE','AL','AS','AZ','BG','AB'], 'dd/mm/yyyy');
+  /* ---- Cor de cada TIPO de menu suspenso ---- */
+  tint(sh, ['VENDEDOR'], TINT.vendedor);
+  tint(sh, ['CATEGORIA'], TINT.categoria);
+  tint(sh, ['MOEDA'], TINT.moeda);
+  tint(sh, ['LOC_RET','LOC_DEV'], TINT.local);
+  tint(sh, ['I_FORMA','E_FORMA','P1_FORMA','P2_FORMA','P3_FORMA','P4_FORMA'], TINT.forma);
+  tint(sh, ['I_PCT','F_PCT'], TINT.pct);
+  tint(sh, ['I_PAGO','E_PAGO','P1_PAGO','P2_PAGO','P3_PAGO','P4_PAGO'], TINT.pago);
+  tint(sh, ['I_ADD','E_ADD','P1_ADD','P2_ADD','P3_ADD','P4_ADD'], TINT.add);
+  tint(sh, ['DIARIAS','I_COM','F_TOTAL','F_COM','F_PROX','F_PAGOPCT','F_PROG',
+            'E_PROG','P1_PROG','P2_PROG','P3_PROG','P4_PROG'], COR.auto);
 
-  /* ---- Sombreamento: automáticos (cinza) e % comissão (amarelo) ---- */
-  ['N','R','Y','AA','AB','AC','AG','AN','AU','BB','BI'].forEach(function (c) {
-    sh.getRange(FIRST_ROW, letra2num(c), NUM_LINHAS, 1).setBackground(COR.auto);
-  });
-  ['Q','Z'].forEach(function (c) {
-    sh.getRange(FIRST_ROW, letra2num(c), NUM_LINHAS, 1).setBackground(COR.input);
-  });
+  /* ---- Formatos ---- */
+  fmt(sh, ['I_VALOR','E_VALOR','P1_VALOR','P2_VALOR','P3_VALOR','P4_VALOR'], '#,##0.00');
+  fmt(sh, ['I_COM','F_TOTAL','F_COM'], '#,##0.00;;');
+  fmt(sh, ['I_PCT','F_PCT'], '0"%"');
+  fmt(sh, ['F_PAGOPCT'], '0%;;');
+  fmt(sh, ['DIARIAS'], '0;;');
+  fmt(sh, ['DATA','DT_RET','DT_DEV','I_DATA','F_PROX','E_DATA','P1_DATA','P2_DATA','P3_DATA','P4_DATA'], 'dd/mm/yyyy');
 
-  /* ---- Formatação condicional: cor da LINHA inteira ---- */
+  /* ---- Cor automática da LINHA inteira ---- */
   var alvo = [sh.getRange('A' + FIRST_ROW + ':' + L(TOTAL_COLS) + LAST_ROW)];
-  var ativo   = '(OR($A4<>"",$P4>0,$Y4>0))';
-  var quitado = '(OR(AND($P4>0,$V4="SIM"),AND($Y4>0,$AC4>=1)))';
+  var A = '$' + COL.NUM + '4', IV = '$' + COL.I_VALOR + '4', FT = '$' + COL.F_TOTAL + '4',
+      IP = '$' + COL.I_PAGO + '4', AC = '$' + COL.F_PAGOPCT + '4', PX = '$' + COL.F_PROX + '4',
+      ID = '$' + COL.I_DATA + '4';
+  var ativo   = '(OR(' + A + '<>"",' + IV + '>0,' + FT + '>0))';
+  var quitado = '(OR(AND(' + IV + '>0,' + IP + '="SIM"),AND(' + FT + '>0,' + AC + '>=1)))';
   var verde = SpreadsheetApp.newConditionalFormatRule()
-    .whenFormulaSatisfied('=AND(' + ativo + ',' + quitado + ')')
-    .setBackground(COR.verde).setRanges(alvo).build();
+    .whenFormulaSatisfied('=AND(' + ativo + ',' + quitado + ')').setBackground(COR.verde).setRanges(alvo).build();
   var vermelho = SpreadsheetApp.newConditionalFormatRule()
-    .whenFormulaSatisfied('=AND(' + ativo + ',NOT(' + quitado + '),OR(AND($Y4>0,$AB4<>"",$AB4<TODAY()),AND($P4>0,$S4<>"",$S4<TODAY(),$V4<>"SIM")))')
+    .whenFormulaSatisfied('=AND(' + ativo + ',NOT(' + quitado + '),OR(AND(' + FT + '>0,' + PX + '<>"",' + PX + '<TODAY()),AND(' + IV + '>0,' + ID + '<>"",' + ID + '<TODAY(),' + IP + '<>"SIM")))')
     .setBackground(COR.vermelho).setRanges(alvo).build();
   var azul = SpreadsheetApp.newConditionalFormatRule()
-    .whenFormulaSatisfied('=AND(' + ativo + ',$Y4>0,$AC4<1,NOT(AND($AB4<>"",$AB4<TODAY())))')
+    .whenFormulaSatisfied('=AND(' + ativo + ',' + FT + '>0,' + AC + '<1,NOT(AND(' + PX + '<>"",' + PX + '<TODAY())))')
     .setBackground(COR.azul).setRanges(alvo).build();
-  sh.setConditionalFormatRules([verde, vermelho, azul]); // ordem = prioridade
+  sh.setConditionalFormatRules([verde, vermelho, azul]);
 
-  /* ---- Larguras / congelamento ---- */
-  sh.setColumnWidth(letra2num('A'), 80);
-  sh.setColumnWidth(letra2num('D'), 170);
-  sh.setColumnWidth(letra2num('O'), 220);
-  sh.setColumnWidth(letra2num('W'), 190);
-  ['AG','AN','AU','BB','BI'].forEach(function (c) { sh.setColumnWidth(letra2num(c), 130); });
-  ['AI','AP','AW','BD','BK'].forEach(function (c) { sh.setColumnWidth(letra2num(c), 190); });
-  // Só congelamos LINHAS. Não congelar colunas: o título das linhas 1–2 é mesclado por toda
-  // a largura, e o Sheets proíbe mescla cruzando a fronteira de colunas congeladas.
+  /* ---- Larguras, bordas, congelamento ---- */
+  larg(sh, 'NUM', 70); larg(sh, 'CLIENTE', 170); larg(sh, 'OBS', 220);
+  larg(sh, 'I_ADD', 200); larg(sh, 'E_ADD', 200);
+  ['F_PROG','E_PROG','P1_PROG','P2_PROG','P3_PROG','P4_PROG'].forEach(function (k) { larg(sh, k, 130); });
+  ['P1_ADD','P2_ADD','P3_ADD','P4_ADD'].forEach(function (k) { larg(sh, k, 200); });
+
+  sh.getRange(1, 1, 3, TOTAL_COLS).setBorder(true, true, true, true, true, true, '#FFFFFF', SpreadsheetApp.BorderStyle.SOLID);
+  sh.getRange(FIRST_ROW, 1, NUM_LINHAS, TOTAL_COLS)
+    .setBorder(true, true, true, true, true, true, '#D8DAE5', SpreadsheetApp.BorderStyle.SOLID)
+    .setVerticalAlignment('middle');
+  // Só linhas congeladas (título mesclado por toda a largura impede congelar colunas).
   sh.setFrozenRows(3);
-  sh.getRange(FIRST_ROW, 1, NUM_LINHAS, TOTAL_COLS).setVerticalAlignment('middle');
 }
 
 /* ---- helpers de VENDAS ---- */
-function parcelaCols() {
-  return ['VALOR DO PGTO','DATA DO PGTO','FORMA DE PAGAMENTO','PROGRESSO','PAGO?',
-          'ADICIONADO À PLANILHA DE FECHAMENTO DO VENDEDOR?','RECIBO'];
-}
-function escreverFormulaColuna(sh, col, fn) {
+function colFormula(sh, chave, fn) {
   var arr = [];
   for (var r = FIRST_ROW; r <= LAST_ROW; r++) arr.push([fn(r)]);
-  sh.getRange(FIRST_ROW, letra2num(col), NUM_LINHAS, 1).setValues(arr);
+  sh.getRange(FIRST_ROW, num(COL[chave]), NUM_LINHAS, 1).setValues(arr);
 }
-function fmt(sh, cols, format) {
-  cols.forEach(function (c) { sh.getRange(FIRST_ROW, letra2num(c), NUM_LINHAS, 1).setNumberFormat(format); });
-}
-function aplicarValidacaoLista(sh, col, itens) {
+function fmt(sh, chaves, f) { chaves.forEach(function (k) { sh.getRange(FIRST_ROW, num(COL[k]), NUM_LINHAS, 1).setNumberFormat(f); }); }
+function tint(sh, chaves, cor) { chaves.forEach(function (k) { sh.getRange(FIRST_ROW, num(COL[k]), NUM_LINHAS, 1).setBackground(cor); }); }
+function larg(sh, chave, w) { sh.setColumnWidth(num(COL[chave]), w); }
+function vLista(sh, chave, itens) {
   var dv = SpreadsheetApp.newDataValidation().requireValueInList(itens, true).setAllowInvalid(false).build();
-  sh.getRange(FIRST_ROW, letra2num(col), NUM_LINHAS, 1).setDataValidation(dv);
+  sh.getRange(FIRST_ROW, num(COL[chave]), NUM_LINHAS, 1).setDataValidation(dv);
 }
-function aplicarValidacaoRange(ss, sh, col, rangeA1) {
-  var rng = ss.getRange(rangeA1);
-  var dv = SpreadsheetApp.newDataValidation().requireValueInRange(rng, true).setAllowInvalid(false).build();
-  sh.getRange(FIRST_ROW, letra2num(col), NUM_LINHAS, 1).setDataValidation(dv);
+function vRange(ss, sh, chave, rangeA1) {
+  var dv = SpreadsheetApp.newDataValidation().requireValueInRange(ss.getRange(rangeA1), true).setAllowInvalid(false).build();
+  sh.getRange(FIRST_ROW, num(COL[chave]), NUM_LINHAS, 1).setDataValidation(dv);
 }
-// soma paga (fracionado) na linha r
-function pagoFrac(r) {
-  return '(IF(AH'+r+'="SIM",AD'+r+',0)+IF(AO'+r+'="SIM",AK'+r+',0)+IF(AV'+r+'="SIM",AR'+r+',0)+IF(BC'+r+'="SIM",AY'+r+',0)+IF(BJ'+r+'="SIM",BF'+r+',0))';
+// soma paga acumulada até um conjunto de blocos (para a barra de cada parcela)
+function somaPagas(r, blocos) {
+  return '(' + blocos.map(function (b) { return 'IF(' + cel(b + '_PAGO', r) + '="SIM",' + cel(b + '_VALOR', r) + ',0)'; }).join('+') + ')';
 }
-// barra de progresso proporcional ao total fracionado
+function pagoFrac(r) { return somaPagas(r, ['E','P1','P2','P3','P4']); }
 function barra(r, pagoExpr) {
-  return '=IF(Y'+r+'=0,"",' + spark('IFERROR('+pagoExpr+'/Y'+r+',0)', COR.barra) + ')';
+  return '=IF(' + cel('F_TOTAL', r) + '=0,"",' + spark('IFERROR(' + pagoExpr + '/' + cel('F_TOTAL', r) + ',0)', COR.barra) + ')';
 }
-// data do próximo pagamento em aberto (fracionado)
 function proximoPagamento(r) {
-  var m = 'MIN(' +
-    'IF(AND(AH'+r+'<>"SIM",AE'+r+'<>""),AE'+r+',10^9),' +
-    'IF(AND(AO'+r+'<>"SIM",AL'+r+'<>""),AL'+r+',10^9),' +
-    'IF(AND(AV'+r+'<>"SIM",AS'+r+'<>""),AS'+r+',10^9),' +
-    'IF(AND(BC'+r+'<>"SIM",AZ'+r+'<>""),AZ'+r+',10^9),' +
-    'IF(AND(BJ'+r+'<>"SIM",BG'+r+'<>""),BG'+r+',10^9))';
-  return '=IF(Y'+r+'=0,"",IF('+m+'>=10^9,"",'+m+'))';
+  var blocos = ['E','P1','P2','P3','P4'];
+  var parts = blocos.map(function (b) {
+    return 'IF(AND(' + cel(b + '_PAGO', r) + '<>"SIM",' + cel(b + '_DATA', r) + '<>""),' + cel(b + '_DATA', r) + ',10^9)';
+  });
+  var m = 'MIN(' + parts.join(',') + ')';
+  return '=IF(' + cel('F_TOTAL', r) + '=0,"",IF(' + m + '>=10^9,"",' + m + '))';
 }
 
-/* ---- fórmulas reaproveitadas (recebido / quitadas / parciais) ---- */
+/* ---- fórmulas de resumo (usadas em CONFIG e PAINEL) ---- */
 function recebidoFormula() {
-  var recInt  = 'SUMIF(' + RNG('V') + ',"SIM",' + RNG('P') + ')';
-  var recFrac = 'SUMIF(' + RNG('AH') + ',"SIM",' + RNG('AD') + ')' +
-                '+SUMIF(' + RNG('AO') + ',"SIM",' + RNG('AK') + ')' +
-                '+SUMIF(' + RNG('AV') + ',"SIM",' + RNG('AR') + ')' +
-                '+SUMIF(' + RNG('BC') + ',"SIM",' + RNG('AY') + ')' +
-                '+SUMIF(' + RNG('BJ') + ',"SIM",' + RNG('BF') + ')';
-  return '=' + recInt + '+' + recFrac;
+  var rec = ['SUMIF(' + RG('I_PAGO') + ',"SIM",' + RG('I_VALOR') + ')'];
+  ['E','P1','P2','P3','P4'].forEach(function (b) {
+    rec.push('SUMIF(' + RG(b + '_PAGO') + ',"SIM",' + RG(b + '_VALOR') + ')');
+  });
+  return '=' + rec.join('+');
 }
 function quitadasFormula() {
-  return '=SUMPRODUCT(--(((' + RNG('P') + '>0)*(' + RNG('V') + '="SIM"))+((' + RNG('Y') + '>0)*(' + RNG('AC') + '>=1))>0))';
+  return '=SUMPRODUCT(--(((' + RG('I_VALOR') + '>0)*(' + RG('I_PAGO') + '="SIM"))+((' + RG('F_TOTAL') + '>0)*(' + RG('F_PAGOPCT') + '>=1))>0))';
 }
 function parciaisFormula() {
-  return '=SUMPRODUCT(--((' + RNG('Y') + '>0)*(' + RNG('AC') + '>0)*(' + RNG('AC') + '<1)))';
+  return '=SUMPRODUCT(--((' + RG('F_TOTAL') + '>0)*(' + RG('F_PAGOPCT') + '>0)*(' + RG('F_PAGOPCT') + '<1)))';
+}
+function formaRecebido(f) {
+  var s = ['SUMIFS(' + RG('I_VALOR') + ',' + RG('I_FORMA') + ',"' + f + '",' + RG('I_PAGO') + ',"SIM")'];
+  ['E','P1','P2','P3','P4'].forEach(function (b) {
+    s.push('SUMIFS(' + RG(b + '_VALOR') + ',' + RG(b + '_FORMA') + ',"' + f + '",' + RG(b + '_PAGO') + ',"SIM")');
+  });
+  return '=' + s.join('+');
 }
 
 /* ================================================================================
- *  ABA  PAINEL  (somente barras percentuais)
+ *  ABA PAINEL (somente barras percentuais)
  * ================================================================================ */
 function construirPAINEL(sh) {
-  // Métricas-base ocultas na coluna J (referenciadas pelas barras)
+  var mes1 = 'DATE(YEAR(TODAY()),MONTH(TODAY()),1)';
   var base = [
-    ['=SUM(' + RNG('P') + ')+SUM(' + RNG('Y') + ')'],                                   // J1 faturamento
-    [recebidoFormula()],                                                                // J2 recebido
-    ['=$J$1-$J$2'],                                                                      // J3 em aberto ($)
-    ['=SUM(' + RNG('R') + ')+SUM(' + RNG('AA') + ')'],                                   // J4 comissão total
-    ['=SUMPRODUCT(--(((' + RNG('P') + '>0)+(' + RNG('Y') + '>0))>0))'],                  // J5 nº vendas
-    [quitadasFormula()],                                                                // J6 quitadas
-    [parciaisFormula()],                                                                // J7 parciais
-    ['=$J$5-$J$6-$J$7'],                                                                 // J8 em aberto (qtd)
-    ['=SUMPRODUCT(--((' + RNG('Y') + '>0)*(' + RNG('AC') + '<1)))'],                     // J9 fracionadas ativas
-    ['=SUMPRODUCT(--((' + RNG('Y') + '>0)*(' + RNG('AC') + '<1)*(' + RNG('AB') + '<>"")*(' + RNG('AB') + '<TODAY())))'], // J10 atrasadas
-    ['=$J$9-$J$10'],                                                                     // J11 em dia
-    ['=CONFIG!$B$3'],                                                                    // J12 meta
-    ['=SUMIFS(' + RNG('P') + ',' + RNG('B') + ',">="&DATE(YEAR(TODAY()),MONTH(TODAY()),1),' + RNG('B') + ',"<="&EOMONTH(TODAY(),0))+SUMIFS(' + RNG('Y') + ',' + RNG('B') + ',">="&DATE(YEAR(TODAY()),MONTH(TODAY()),1),' + RNG('B') + ',"<="&EOMONTH(TODAY(),0))'] // J13 fat. mês atual
+    ['=SUM(' + RG('I_VALOR') + ')+SUM(' + RG('F_TOTAL') + ')'],                                    // J1 faturamento
+    [recebidoFormula()],                                                                           // J2 recebido
+    ['=$J$1-$J$2'],                                                                                 // J3 em aberto
+    ['=SUM(' + RG('I_COM') + ')+SUM(' + RG('F_COM') + ')'],                                         // J4 comissão total
+    ['=SUMPRODUCT(--(((' + RG('I_VALOR') + '>0)+(' + RG('F_TOTAL') + '>0))>0))'],                   // J5 nº vendas
+    [quitadasFormula()],                                                                           // J6 quitadas
+    [parciaisFormula()],                                                                           // J7 parciais
+    ['=$J$5-$J$6-$J$7'],                                                                            // J8 em aberto (qtd)
+    ['=SUMPRODUCT(--((' + RG('F_TOTAL') + '>0)*(' + RG('F_PAGOPCT') + '<1)))'],                     // J9 fracionadas ativas
+    ['=SUMPRODUCT(--((' + RG('F_TOTAL') + '>0)*(' + RG('F_PAGOPCT') + '<1)*(' + RG('F_PROX') + '<>"")*(' + RG('F_PROX') + '<TODAY())))'], // J10 atrasadas
+    ['=$J$9-$J$10'],                                                                                // J11 em dia
+    ['=CONFIG!$B$3'],                                                                               // J12 meta
+    ['=SUMIFS(' + RG('I_VALOR') + ',' + RG('DATA') + ',">="&' + mes1 + ',' + RG('DATA') + ',"<="&EOMONTH(TODAY(),0))+SUMIFS(' + RG('F_TOTAL') + ',' + RG('DATA') + ',">="&' + mes1 + ',' + RG('DATA') + ',"<="&EOMONTH(TODAY(),0))'] // J13 fat mês
   ];
   sh.getRange(1, 10, base.length, 1).setValues(base);
 
-  // Estrutura de linhas
-  var rows = [];        // [A,B,C,D]
-  var headerRows = [];  // linhas de título de seção
-  var barRows = [];     // linhas com barra
+  var rows = [], headerRows = [];
   function addRow(a, b, c, d) { rows.push([a || '', b || '', c || '', d || '']); return rows.length; }
-  function secao(titulo) { var r = addRow(titulo, '', '', ''); headerRows.push(r); }
-  function ind(label, valFormula, pctExprFn, cor) {
+  function secao(t) { headerRows.push(addRow(t, '', '', '')); }
+  function ind(label, valFormula, pctFn, cor) {
     var rr = rows.length + 1;
-    addRow(label, barFormula(rr, cor), pctExprFn(rr), valFormula);
-    barRows.push(rr);
+    addRow(label, barFormula(rr, cor), pctFn(rr), valFormula);
   }
 
-  addRow('PAINEL DE VENDAS — MAGIWAY', '', '', '');                  // linha 1
-  addRow('Todos os indicadores em barras percentuais.', '', '', ''); // linha 2
-  addRow('', '', '', '');                                            // linha 3 (rótulos depois)
-
-  var C1 = '#1A73E8', C2 = '#0B8043', C3 = '#8E24AA', C4 = '#E8710A', C5 = '#00838F', C6c = '#5F6368';
+  addRow('PAINEL DE VENDAS — MAGIWAY', '', '', '');
+  addRow('Todos os indicadores em barras percentuais.', '', '', '');
+  addRow('', '', '', '');
 
   secao('INDICADORES GERAIS');
-  ind('% Recebido',                '=$J$2',  function () { return '=IFERROR($J$2/$J$1,0)'; }, C1);
-  ind('% Em Aberto',               '=$J$3',  function () { return '=IFERROR($J$3/$J$1,0)'; }, C1);
-  ind('% Comissão s/ Faturamento', '=$J$4',  function () { return '=IFERROR($J$4/$J$1,0)'; }, C1);
-  ind('Taxa de Quitação',          '=$J$6',  function () { return '=IFERROR($J$6/$J$5,0)'; }, C1);
-  ind('% Vendas Parciais',         '=$J$7',  function () { return '=IFERROR($J$7/$J$5,0)'; }, C1);
-  ind('% Vendas Em Aberto',        '=$J$8',  function () { return '=IFERROR($J$8/$J$5,0)'; }, C1);
-  ind('% da Meta (mês atual)',     '=$J$13', function () { return '=IFERROR($J$13/$J$12,0)'; }, C1);
+  ind('% Recebido',                '=$J$2',  function () { return '=IFERROR($J$2/$J$1,0)'; }, PAL.indigo);
+  ind('% Em Aberto',               '=$J$3',  function () { return '=IFERROR($J$3/$J$1,0)'; }, PAL.indigo);
+  ind('% Comissão s/ Faturamento', '=$J$4',  function () { return '=IFERROR($J$4/$J$1,0)'; }, PAL.indigo);
+  ind('Taxa de Quitação',          '=$J$6',  function () { return '=IFERROR($J$6/$J$5,0)'; }, PAL.indigo);
+  ind('% Vendas Parciais',         '=$J$7',  function () { return '=IFERROR($J$7/$J$5,0)'; }, PAL.indigo);
+  ind('% Vendas Em Aberto',        '=$J$8',  function () { return '=IFERROR($J$8/$J$5,0)'; }, PAL.indigo);
+  ind('% da Meta (mês atual)',     '=$J$13', function () { return '=IFERROR($J$13/$J$12,0)'; }, PAL.indigo);
 
   secao('SITUAÇÃO DAS RESERVAS FRACIONADAS');
-  ind('% Fracionadas Em Dia',    '=$J$11', function () { return '=IFERROR($J$11/$J$9,0)'; }, C2);
-  ind('% Fracionadas Atrasadas', '=$J$10', function () { return '=IFERROR($J$10/$J$9,0)'; }, C2);
+  ind('% Fracionadas Em Dia',    '=$J$11', function () { return '=IFERROR($J$11/$J$9,0)'; }, PAL.navy);
+  ind('% Fracionadas Atrasadas', '=$J$10', function () { return '=IFERROR($J$10/$J$9,0)'; }, PAL.dred);
 
   secao('FATURAMENTO POR VENDEDOR (% do total)');
   VENDEDORES.forEach(function (v) {
-    ind(v, '=SUMIF(' + RNG('C') + ',"' + v + '",' + RNG('P') + ')+SUMIF(' + RNG('C') + ',"' + v + '",' + RNG('Y') + ')',
-        function (rr) { return '=IFERROR($D' + rr + '/$J$1,0)'; }, C3);
+    ind(v, '=SUMIF(' + RG('VENDEDOR') + ',"' + v + '",' + RG('I_VALOR') + ')+SUMIF(' + RG('VENDEDOR') + ',"' + v + '",' + RG('F_TOTAL') + ')',
+        function (rr) { return '=IFERROR($D' + rr + '/$J$1,0)'; }, PAL.navy);
   });
 
   secao('FATURAMENTO POR CATEGORIA (% do total)');
   CATEGORIAS.forEach(function (cat) {
-    ind(cat, '=SUMIF(' + RNG('F') + ',"' + cat + '",' + RNG('P') + ')+SUMIF(' + RNG('F') + ',"' + cat + '",' + RNG('Y') + ')',
-        function (rr) { return '=IFERROR($D' + rr + '/$J$1,0)'; }, C4);
+    ind(cat, '=SUMIF(' + RG('CATEGORIA') + ',"' + cat + '",' + RG('I_VALOR') + ')+SUMIF(' + RG('CATEGORIA') + ',"' + cat + '",' + RG('F_TOTAL') + ')',
+        function (rr) { return '=IFERROR($D' + rr + '/$J$1,0)'; }, PAL.indigo);
   });
 
   secao('RECEBIDO POR FORMA DE PAGAMENTO (% do recebido)');
   FORMAS.forEach(function (f) {
-    ind(f, formaRecebido(f), function (rr) { return '=IFERROR($D' + rr + '/$J$2,0)'; }, C5);
+    ind(f, formaRecebido(f), function (rr) { return '=IFERROR($D' + rr + '/$J$2,0)'; }, '#4a2b6e');
   });
 
   secao('FATURAMENTO POR MOEDA (% do total)');
   MOEDAS.forEach(function (m) {
-    ind(m, '=SUMIF(' + RNG('G') + ',"' + m + '",' + RNG('P') + ')+SUMIF(' + RNG('G') + ',"' + m + '",' + RNG('Y') + ')',
-        function (rr) { return '=IFERROR($D' + rr + '/$J$1,0)'; }, C6c);
+    ind(m, '=SUMIF(' + RG('MOEDA') + ',"' + m + '",' + RG('I_VALOR') + ')+SUMIF(' + RG('MOEDA') + ',"' + m + '",' + RG('F_TOTAL') + ')',
+        function (rr) { return '=IFERROR($D' + rr + '/$J$1,0)'; }, PAL.navy);
   });
 
   secao('MODALIDADE (% das vendas)');
-  var rInt = rows.length + 1, rFrac = rInt + 1;   // duas linhas consecutivas
-  addRow('Integral', barFormula(rInt, C1),
-         '=IFERROR($D' + rInt + '/($D' + rInt + '+$D' + rFrac + '),0)',
-         '=SUMPRODUCT(--(' + RNG('P') + '>0))');
-  barRows.push(rInt);
-  addRow('Fracionada', barFormula(rFrac, C1),
-         '=IFERROR($D' + rFrac + '/($D' + rInt + '+$D' + rFrac + '),0)',
-         '=SUMPRODUCT(--(' + RNG('Y') + '>0))');
-  barRows.push(rFrac);
+  var rInt = rows.length + 1, rFrac = rInt + 1;
+  addRow('Integral', barFormula(rInt, PAL.indigo),
+    '=IFERROR($D' + rInt + '/($D' + rInt + '+$D' + rFrac + '),0)', '=SUMPRODUCT(--(' + RG('I_VALOR') + '>0))');
+  addRow('Fracionada', barFormula(rFrac, PAL.indigo),
+    '=IFERROR($D' + rFrac + '/($D' + rInt + '+$D' + rFrac + '),0)', '=SUMPRODUCT(--(' + RG('F_TOTAL') + '>0))');
 
-  // Escreve tudo de uma vez
   sh.getRange(1, 1, rows.length, 4).setValues(rows);
 
-  // Título / subtítulo
   sh.getRange(1, 1, 1, 6).merge().setValue('PAINEL DE VENDAS — MAGIWAY')
-    .setBackground(COR.titulo).setFontColor('#FFFFFF').setFontWeight('bold').setFontSize(15)
-    .setHorizontalAlignment('center');
-  sh.getRange(2, 1, 1, 6).merge().setFontColor('#555555').setFontStyle('italic')
-    .setHorizontalAlignment('center');
-
-  // Seções
+    .setBackground(PAL.base).setFontColor('#FFFFFF').setFontWeight('bold').setFontSize(15).setHorizontalAlignment('center');
+  sh.getRange(2, 1, 1, 6).merge().setFontColor('#555555').setFontStyle('italic').setHorizontalAlignment('center');
   headerRows.forEach(function (r) {
-    sh.getRange(r, 1, 1, 4).merge().setBackground('#263238').setFontColor('#FFFFFF')
-      .setFontWeight('bold').setHorizontalAlignment('left');
+    sh.getRange(r, 1, 1, 4).merge().setBackground(PAL.navy).setFontColor('#FFFFFF').setFontWeight('bold').setHorizontalAlignment('left');
   });
-
-  // Formatos do corpo
   sh.getRange('C4:C' + rows.length).setNumberFormat('0.0%');
   sh.getRange('D4:D' + rows.length).setNumberFormat('#,##0.00;;');
-
-  // Rótulos das colunas (linha 3)
   sh.getRange(3, 1).setValue('INDICADOR').setFontWeight('bold');
   sh.getRange(3, 2).setValue('BARRA %').setFontWeight('bold');
   sh.getRange(3, 3).setValue('%').setFontWeight('bold');
   sh.getRange(3, 4).setValue('VALOR').setFontWeight('bold');
-
-  sh.setColumnWidth(1, 260);
-  sh.setColumnWidth(2, 360);
-  sh.setColumnWidth(3, 70);
-  sh.setColumnWidth(4, 140);
-  sh.hideColumns(10); // oculta métricas-base (coluna J)
+  sh.setColumnWidth(1, 260); sh.setColumnWidth(2, 380); sh.setColumnWidth(3, 70); sh.setColumnWidth(4, 140);
+  sh.hideColumns(10);
   sh.setFrozenRows(3);
 }
 
-function formaRecebido(f) {
-  return '=SUMIFS(' + RNG('P') + ',' + RNG('T') + ',"' + f + '",' + RNG('V') + ',"SIM")' +
-         '+SUMIFS(' + RNG('AD') + ',' + RNG('AF') + ',"' + f + '",' + RNG('AH') + ',"SIM")' +
-         '+SUMIFS(' + RNG('AK') + ',' + RNG('AM') + ',"' + f + '",' + RNG('AO') + ',"SIM")' +
-         '+SUMIFS(' + RNG('AR') + ',' + RNG('AT') + ',"' + f + '",' + RNG('AV') + ',"SIM")' +
-         '+SUMIFS(' + RNG('AY') + ',' + RNG('BA') + ',"' + f + '",' + RNG('BC') + ',"SIM")' +
-         '+SUMIFS(' + RNG('BF') + ',' + RNG('BH') + ',"' + f + '",' + RNG('BJ') + ',"SIM")';
-}
-
 /* ================================================================================
- *  ABA  COMO USAR
+ *  ABA COMO USAR
  * ================================================================================ */
 function construirCOMOUSAR(sh) {
   var linhas = [
@@ -552,49 +520,39 @@ function construirCOMOUSAR(sh) {
     [''],
     ['Tudo é preenchido na aba VENDAS. Cada LINHA = uma reserva/venda. Comece na linha 4.'],
     ['As colunas com fundo CINZA são automáticas — não digite nelas.'],
+    ['Todos os campos de escolha são MENUS SUSPENSOS (clique na seta). Cada tipo tem uma cor.'],
     [''],
     ['IDENTIFICAÇÃO DA VENDA'],
-    ['Nº da venda, data, VENDEDOR (Dickson, Kevin ou Outros), cliente, WhatsApp, CATEGORIA e MOEDA (listas suspensas).'],
+    ['Nº da venda, data, VENDEDOR (Dickson, Kevin ou Outros), cliente, WhatsApp, CATEGORIA e MOEDA.'],
     ['Categorias: SEDAN, SUV, MINIVAN 7L, MINIVAN 7L LIMITED, MINIVAN 8L, SUV FULL e MUSTANG.'],
     [''],
     ['PERÍODO & LOGÍSTICA'],
-    ['Datas/horas/locais de retirada e devolução. A QTD. DE DIÁRIAS é calculada sozinha. Use a OBSERVAÇÃO para recados.'],
+    ['Datas/horas/locais de retirada e devolução. A QTD. DE DIÁRIAS é calculada sozinha.'],
     [''],
-    ['SE FOR PAGAMENTO INTEGRAL (pago de uma vez)'],
-    ['Preencha o bloco PAGAMENTO INTEGRAL: VALOR DO PAGAMENTO e, ao lado, o % COMISSÃO (2, 3, 4 ou 5%).'],
-    ['A COMISSÃO é calculada automaticamente. Informe data, forma, marque PAGO? e ADICIONADO À PLANILHA DE FECHAMENTO DO VENDEDOR?, e anexe o RECIBO.'],
+    ['PAGAMENTO INTEGRAL (pago de uma vez)'],
+    ['VALOR DO PAGAMENTO + % COMISSÃO (2/3/4/5%) ao lado; a COMISSÃO é automática. Marque PAGO? e ADICIONADO À PLANILHA DE FECHAMENTO DO VENDEDOR?.'],
     [''],
-    ['SE FOR PAGAMENTO FRACIONADO (entrada + parcelas)'],
-    ['No bloco FRACIONADO — RESUMO escolha o % COMISSÃO (2/3/4/5%). O VALOR TOTAL, a COMISSÃO, o % PAGO e o PRÓXIMO PAGAMENTO são automáticos.'],
-    ['Lance a ENTRADA e até 4 PARCELAS (valor, data e forma de cada uma). Marque PAGO? = SIM conforme recebe.'],
-    ['Cada parcela tem uma BARRA DE PROGRESSO que enche de 0% a 100% conforme o valor pago até a quitação.'],
+    ['PAGAMENTO FRACIONADO (entrada + parcelas)'],
+    ['No RESUMO escolha o % COMISSÃO. VALOR TOTAL, COMISSÃO, % PAGO, PRÓXIMO PAGAMENTO e a BARRA DE PROGRESSO DA RESERVA são automáticos.'],
+    ['Lance a ENTRADA e até 4 PARCELAS. Cada parcela tem sua BARRA DE PROGRESSO, que sobe conforme o valor pago até 100%.'],
     [''],
     ['CORES AUTOMÁTICAS DA LINHA'],
-    ['🟩 VERDE  = reserva QUITADA (integral ou fracionada).'],
-    ['🟥 VERMELHA = pagamento ATRASADO (passou a data do próximo pagamento sem marcar PAGO?).'],
-    ['🟦 AZUL CLARO = reserva FRACIONADA em dia (ainda não quitada, sem atraso).'],
-    [''],
-    ['SINALIZADORES EM CADA PAGAMENTO'],
-    ['• PAGO? = SIM/NÃO  → move as barras de progresso e as cores.'],
-    ['• ADICIONADO À PLANILHA DE FECHAMENTO DO VENDEDOR? = SIM/NÃO  → controle do repasse ao fechamento do vendedor.'],
-    ['• RECIBO  → nome/link do comprovante.'],
+    ['🟩 VERDE = QUITADA (integral ou fracionada).'],
+    ['🟥 VERMELHA = ATRASADA (passou a data do próximo pagamento sem marcar PAGO?).'],
+    ['🟦 AZUL CLARO = FRACIONADA em dia (ainda não quitada, sem atraso).'],
     [''],
     ['ABA PAINEL'],
-    ['Dashboard só com BARRAS PERCENTUAIS: recebido, em aberto, comissão, quitação, por vendedor, por categoria, por forma de pagamento, por moeda, modalidade e % da meta.'],
+    ['Dashboard só com BARRAS PERCENTUAIS: recebido, em aberto, comissão, quitação, por vendedor, categoria, forma de pagamento, moeda, modalidade e % da meta.'],
     [''],
     ['ABA CONFIG'],
-    ['Edite a META MENSAL (célula amarela) e as listas de CATEGORIAS, VENDEDORES, LOCAIS, FORMAS e % COMISSÃO. O RESUMO GERAL soma tudo sozinho.'],
+    ['Edite a META MENSAL e as listas (CATEGORIAS, VENDEDORES, LOCAIS, FORMAS, % COMISSÃO). O RESUMO GERAL soma tudo sozinho.'],
     [''],
-    ['DICA: rode o menu 🚗 MAGIWAY ▸ "Construir / Atualizar tudo" sempre que quiser recriar as abas do zero.']
+    ['DICA: rode 🚗 MAGIWAY ▸ "Construir / Atualizar tudo" para recriar as abas quando quiser.']
   ];
   sh.getRange(2, 2, linhas.length, 1).setValues(linhas);
-  sh.getRange('B2').setFontWeight('bold').setFontSize(14).setFontColor(COR.titulo);
-  // realça os subtítulos (linhas onde começam as seções)
-  [7, 11, 14, 18, 23, 28, 33, 36].forEach(function (r) {
-    sh.getRange(r, 2).setFontWeight('bold').setFontColor(COR.titulo);
-  });
-  sh.setColumnWidth(1, 30);
-  sh.setColumnWidth(2, 900);
+  sh.getRange('B2').setFontWeight('bold').setFontSize(14).setFontColor(PAL.base);
+  [7, 11, 14, 17, 21, 26, 29].forEach(function (r) { sh.getRange(r, 2).setFontWeight('bold').setFontColor(PAL.indigo); });
+  sh.setColumnWidth(1, 30); sh.setColumnWidth(2, 920);
 }
 
 /* ================================================================================
@@ -602,18 +560,14 @@ function construirCOMOUSAR(sh) {
  * ================================================================================ */
 function limparDados() {
   var ui = SpreadsheetApp.getUi();
-  var resp = ui.alert('Limpar dados',
-    'Isto apaga TODOS os dados digitados na aba VENDAS (as fórmulas e formatações permanecem). Continuar?',
-    ui.ButtonSet.YES_NO);
-  if (resp !== ui.Button.YES) return;
+  if (ui.alert('Limpar dados', 'Apaga TODOS os dados digitados na aba VENDAS (fórmulas e formatos permanecem). Continuar?', ui.ButtonSet.YES_NO) !== ui.Button.YES) return;
   var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('VENDAS');
-  if (!sh) { ui.alert('A aba VENDAS não existe. Rode antes "Construir / Atualizar tudo".'); return; }
-  // Colunas automáticas (com fórmula) — todas as outras são de digitação
-  var auto = ['N','R','Y','AA','AB','AC','AG','AN','AU','BB','BI'];
+  if (!sh) { ui.alert('A aba VENDAS não existe. Rode "Construir / Atualizar tudo" primeiro.'); return; }
+  definirColunas();
+  var auto = ['DIARIAS','I_COM','F_TOTAL','F_COM','F_PROX','F_PAGOPCT','F_PROG','E_PROG','P1_PROG','P2_PROG','P3_PROG','P4_PROG'];
+  var autoLetras = auto.map(function (k) { return COL[k]; });
   for (var c = 1; c <= TOTAL_COLS; c++) {
-    if (auto.indexOf(L(c)) === -1) {
-      sh.getRange(FIRST_ROW, c, NUM_LINHAS, 1).clearContent();
-    }
+    if (autoLetras.indexOf(L(c)) === -1) sh.getRange(FIRST_ROW, c, NUM_LINHAS, 1).clearContent();
   }
   ui.alert('✅ Dados apagados. As fórmulas continuam ativas.');
 }
