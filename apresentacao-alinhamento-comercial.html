@@ -172,7 +172,9 @@ body{
    radial-gradient(120% 90% at 0% 0%,#1a2c48,#101f34 60%,#0a1526);color:#eef1f6;margin:-52px -62px -40px}
 .cover .cv-left{padding:64px 58px;display:flex;flex-direction:column;justify-content:space-between;position:relative;z-index:2}
 .cover .cv-right{position:relative;overflow:hidden;
-  background:linear-gradient(150deg,rgba(125,26,36,.0),rgba(125,26,36,.25))}
+  background:linear-gradient(155deg,#17293f 0%,#0c1a2c 100%)}
+.cover .cv-right::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(180deg,transparent 0 22px,rgba(255,255,255,.018) 22px 23px)}
 .cv-top{display:flex;align-items:center;gap:13px}
 .cv-badge{font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--slate-300);
   font-weight:700;padding:7px 14px;border:1px solid rgba(255,255,255,.18);border-radius:100px}
@@ -276,9 +278,66 @@ body{
 .stage-tag{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);
   font-weight:700;min-width:120px}
 
+/* ===== ambient motion (dark grounds) ===== */
+.ambient{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.ambient .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.44;mix-blend-mode:screen;will-change:transform}
+.blob.b1{width:340px;height:340px;background:#e51e28;top:-70px;right:-30px;animation:drift1 19s ease-in-out infinite}
+.blob.b2{width:300px;height:300px;background:#7d1a24;bottom:-80px;right:40px;animation:drift2 23s ease-in-out infinite}
+.blob.b3{width:260px;height:260px;background:#54647f;top:42%;right:-40px;animation:drift3 27s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-42px,32px) scale(1.12)}}
+@keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(32px,-28px) scale(1.08)}}
+@keyframes drift3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-26px,-32px) scale(1.15)}}
+
+/* ===== soft mesh (light divider grounds) ===== */
+.mesh{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.mesh .blob{position:absolute;border-radius:50%;filter:blur(72px);opacity:.15;will-change:transform}
+.mesh .m1{width:380px;height:380px;background:#e51e28;top:-90px;right:5%;animation:drift1 21s ease-in-out infinite}
+.mesh .m2{width:330px;height:330px;background:#13223b;bottom:-100px;right:16%;animation:drift2 25s ease-in-out infinite}
+.mesh .m3{width:300px;height:300px;background:#54647f;top:28%;right:-50px;animation:drift3 29s ease-in-out infinite}
+
+/* ===== animated line-art car ===== */
+.car-art{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);width:80%;max-width:430px;z-index:2;overflow:visible}
+.car-art .draw{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:1500;stroke-dashoffset:1500;animation:draw 2.6s ease forwards .3s}
+.car-art .wheel{fill:none;stroke-width:2.2;stroke-dasharray:120;stroke-dashoffset:120;animation:draw 1.1s ease forwards 1.7s}
+.car-art .road{fill:none;stroke-linecap:round;animation:roadmove 1.1s linear infinite}
+.car-art .glow{transform-origin:center;animation:floaty 5.5s ease-in-out infinite 2.7s}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes roadmove{to{stroke-dashoffset:-44}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+
+/* ===== motion streaks ===== */
+.streaks{position:absolute;left:0;right:0;bottom:26%;z-index:1;pointer-events:none;height:60px}
+.streaks i{position:absolute;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);opacity:0}
+.streaks i:nth-child(1){width:120px;top:0;animation:streak 3.4s linear infinite}
+.streaks i:nth-child(2){width:80px;top:18px;animation:streak 2.7s linear infinite .7s}
+.streaks i:nth-child(3){width:150px;top:38px;animation:streak 3.9s linear infinite 1.2s}
+@keyframes streak{0%{left:-20%;opacity:0}22%{opacity:.7}78%{opacity:.7}100%{left:112%;opacity:0}}
+
+/* ===== reveal on slide activation ===== */
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* ===== hover micro-interactions ===== */
+.card,.metric,.panel{transition:transform .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s,border-color .3s}
+.card::after{content:"";position:absolute;left:0;top:0;height:3px;width:0;
+  background:linear-gradient(90deg,var(--red),var(--burgundy));transition:width .38s ease}
+.card:hover{transform:translateY(-5px);box-shadow:0 18px 46px rgba(13,22,40,.17);border-color:rgba(229,30,40,.32)}
+.card:hover::after{width:100%}
+.metric:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(13,22,40,.16)}
+.panel:hover{transform:translateY(-3px);box-shadow:0 18px 44px rgba(13,22,40,.14)}
+.agenda-mini span{transition:transform .26s,box-shadow .26s}
+.agenda-mini span:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(13,22,40,.16)}
+.nf .shot{transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s}
+.nf .shot:hover{transform:translateY(-4px)}
+.tl-step .node{transition:transform .3s}
+.tl-step:hover .node{transform:scale(1.08)}
+
 @media (prefers-reduced-motion:reduce){
   .slide{transition:opacity .001s}
   .progress .bar{transition:none}
+  .ambient .blob,.mesh .blob,.car-art .draw,.car-art .wheel,.car-art .road,.car-art .glow,.streaks i{animation:none!important}
+  .car-art .draw,.car-art .wheel{stroke-dashoffset:0!important}
 }
 @media (max-width:1100px){
   :root{--rail-w:240px}
@@ -338,12 +397,7 @@ body{
             </div>
             <div class="cv-foot"><span>Documento interno · Confidencial</span><span class="ln"></span><span>v.2026.07</span></div>
           </div>
-          <div class="cv-right">
-            <div class="pilhas"><i style="background:#7d1a24"></i><i style="background:#13223b"></i><i style="background:#e51e28"></i><i style="background:#54647f"></i></div>
-            <div class="cv-orbs">
-              <i style="background:#7d1a24"></i><i style="background:#13223b"></i><i style="background:#e51e28"></i><i style="background:#54647f"></i>
-            </div>
-          </div>
+          <div class="cv-right"><div class="ambient"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div><div class="streaks"><i></i><i></i><i></i></div><svg class="car-art" viewBox="0 0 260 120" aria-hidden="true"><defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5b62"/><stop offset="1" stop-color="#e51e28"/></linearGradient></defs><path class="road" d="M6,105 L254,105" stroke="rgba(255,255,255,.28)" stroke-width="1.6" stroke-dasharray="10 12"/><g class="glow" stroke="url(#cg)"><path class="draw" d="M12,88 C12,80 20,75 33,73 C40,58 53,50 76,49 L120,47 C151,46 178,53 199,69 L233,73 C246,75 250,80 250,88 M96,50 L108,66 L150,66 L159,49"/><circle class="wheel" cx="74" cy="90" r="14"/><circle class="wheel" cx="196" cy="90" r="14"/></g></svg></div>
         </div>
       </section>
 
@@ -381,7 +435,7 @@ body{
       <!-- ============ CARLOS ============ -->
       <section class="slide" data-nav="Abertura da frente" data-group="Carlos" data-tag="Frente Carlos">
         <div class="divider">
-          <div class="palette-circles"><i style="background:#7d1a24"></i><i style="background:#13223b"></i><i style="background:#e51e28"></i><i style="background:#54647f"></i></div>
+          <div class="mesh"><span class="blob m1"></span><span class="blob m2"></span><span class="blob m3"></span></div>
           <div class="big-num">01</div>
           <div class="eyebrow"><span class="bar"></span>Frente Carlos</div>
           <h2>Comercial, <em>Experiência</em> &amp; Crescimento</h2>
@@ -519,7 +573,7 @@ body{
       <!-- ============ LUCIANO ============ -->
       <section class="slide" data-nav="Abertura da frente" data-group="Luciano" data-tag="Frente Luciano">
         <div class="divider">
-          <div class="palette-circles"><i style="background:#7d1a24"></i><i style="background:#13223b"></i><i style="background:#e51e28"></i><i style="background:#54647f"></i></div>
+          <div class="mesh"><span class="blob m1"></span><span class="blob m2"></span><span class="blob m3"></span></div>
           <div class="big-num">02</div>
           <div class="eyebrow"><span class="bar"></span>Frente Luciano</div>
           <h2>Financeiro, <em>Documentos</em> &amp; Logística</h2>
@@ -579,7 +633,7 @@ body{
       <!-- ============ GESTÃO & POLÍTICAS ============ -->
       <section class="slide" data-nav="Abertura da frente" data-group="Gestão &amp; Políticas" data-tag="Gestão &amp; Políticas">
         <div class="divider">
-          <div class="palette-circles"><i style="background:#7d1a24"></i><i style="background:#13223b"></i><i style="background:#e51e28"></i><i style="background:#54647f"></i></div>
+          <div class="mesh"><span class="blob m1"></span><span class="blob m2"></span><span class="blob m3"></span></div>
           <div class="big-num">03</div>
           <div class="eyebrow"><span class="bar"></span>Gestão &amp; Políticas</div>
           <h2>Regras, <em>Descontos</em> &amp; Estratégia</h2>
@@ -759,7 +813,7 @@ body{
       <!-- ============ NOTA FISCAL ============ -->
       <section class="slide" data-nav="Abertura do módulo" data-group="Nota Fiscal" data-tag="Nota Fiscal · NFS-e">
         <div class="divider">
-          <div class="palette-circles"><i style="background:#7d1a24"></i><i style="background:#13223b"></i><i style="background:#e51e28"></i><i style="background:#54647f"></i></div>
+          <div class="mesh"><span class="blob m1"></span><span class="blob m2"></span><span class="blob m3"></span></div>
           <div class="big-num">04</div>
           <div class="eyebrow"><span class="bar"></span>Passo a Passo Oficial</div>
           <h2>Como emitir sua <em>Nota Fiscal</em> (NFS-e)</h2>
@@ -785,8 +839,7 @@ body{
             </ul>
             <div class="cv-foot"><span>MAGIWAY · Documento interno</span><span class="ln"></span><span>Confidencial</span></div>
           </div>
-          <div class="cv-right"><div class="pilhas"><i style="background:#7d1a24"></i><i style="background:#13223b"></i><i style="background:#e51e28"></i><i style="background:#54647f"></i></div>
-            <div class="cv-orbs"><i style="background:#e51e28"></i><i style="background:#54647f"></i><i style="background:#7d1a24"></i></div></div>
+          <div class="cv-right"><div class="ambient"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div><div class="streaks"><i></i><i></i><i></i></div><svg class="car-art" viewBox="0 0 260 120" aria-hidden="true"><defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5b62"/><stop offset="1" stop-color="#e51e28"/></linearGradient></defs><path class="road" d="M6,105 L254,105" stroke="rgba(255,255,255,.28)" stroke-width="1.6" stroke-dasharray="10 12"/><g class="glow" stroke="url(#cg)"><path class="draw" d="M12,88 C12,80 20,75 33,73 C40,58 53,50 76,49 L120,47 C151,46 178,53 199,69 L233,73 C246,75 250,80 250,88 M96,50 L108,66 L150,66 L159,49"/><circle class="wheel" cx="74" cy="90" r="14"/><circle class="wheel" cx="196" cy="90" r="14"/></g></svg></div>
         </div>
       </section>
 
@@ -857,6 +910,26 @@ body{
   });
   var navBtns = Array.prototype.slice.call(rail.querySelectorAll('.nav-btn'));
 
+  // precompute reveal blocks per slide
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  slides.forEach(function(sl){
+    var b=[]; var h=sl.querySelector('.s-head'); if(h) b.push(h);
+    sl.querySelectorAll('.grid > *, .split > *, .metrics > *, .timeline, .callout, .note-line, .two-list, .divider > *:not(.mesh):not(.ambient), .cover .cv-left > *, .nf-copy, .nf .shot')
+      .forEach(function(n){ if(b.indexOf(n)<0) b.push(n); });
+    sl._blocks=b;
+  });
+
+  function reveal(el){
+    if(reduce || !el._blocks) return;
+    el._blocks.forEach(function(n,idx){
+      if(n.getAnimations) n.getAnimations().forEach(function(a){ a.cancel(); });
+      n.animate(
+        [{opacity:0,transform:'translateY(20px)'},{opacity:1,transform:'none'}],
+        {duration:540,delay:70+idx*60,easing:'cubic-bezier(.22,.68,.2,1)',fill:'both'}
+      );
+    });
+  }
+
   function go(i){
     i = Math.max(0, Math.min(slides.length-1, i));
     if(i===current) return;
@@ -867,6 +940,7 @@ body{
     }
     var el = slides[i];
     el.classList.add('active'); el.scrollTop = 0;
+    reveal(el);
     current = i;
     navBtns.forEach(function(b){ b.classList.toggle('active', +b.getAttribute('data-i')===i); });
     var activeBtn = navBtns[i];
