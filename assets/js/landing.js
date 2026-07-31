@@ -24,12 +24,63 @@
     formEndpoint: ''
   };
 
+  /* --------------------------------------------------------------- FOTOS
+
+     PROVISÓRIO: fotos do Wikimedia Commons (licença livre, exige crédito —
+     veja o README). Servem só para tirar a página do abstrato enquanto as
+     fotos da frota da Magiway não chegam.
+
+     Para usar as fotos reais, troque cada URL por um arquivo local, por
+     exemplo 'assets/img/frota/pacifica.jpg'. Se uma URL falhar ou ficar
+     vazia, a página volta sozinha para o render 3D do veículo.               */
+
+  function commons(file, width) {
+    return 'https://commons.wikimedia.org/wiki/Special:FilePath/' +
+      encodeURIComponent(file) + '?width=' + (width || 1400);
+  }
+
+  var PHOTOS = {
+    hero: commons('2021 Chrysler Pacifica Touring-L, front 7.11.21.jpg', 1600),
+    fleet: {
+      sedan: commons('2020 Nissan Altima 2.5 S in White, front right.jpg'),
+      suv: commons('2020 Ford Explorer ST, front 8.24.19.jpg'),
+      minivan: commons('2021 Chrysler Pacifica S Hybrid 3of4.jpg'),
+      fullsuv: commons('2019 Ford Expedition XLT, front 1.21.20.jpg')
+    }
+  };
+
   SITE.whatsappUrl = 'https://wa.me/' + SITE.whatsapp;
   SITE.emailUrl = 'mailto:' + SITE.email;
 
   var $ = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------------------------------------------------- camada de foto */
+
+  // Coloca a foto sobre o palco do render. Só revela no onload; no onerror
+  // some e deixa o 3D aparecendo. Chama onShown para o render poder parar.
+  function mountPhoto(stage, url, alt, onShown) {
+    if (!stage || !url) return;
+    var img = new Image();
+    img.className = 'photo-layer';
+    img.alt = alt || '';
+    img.decoding = 'async';
+    // sem lazy: os slides 2 a 4 do carrossel ficam fora da viewport na
+    // horizontal e o lazy nunca dispararia neles
+    img.onload = function () {
+      stage.classList.add('has-photo');
+      if (onShown) onShown();
+    };
+    img.onerror = function () { img.remove(); };
+    img.src = url;
+    stage.appendChild(img);
+
+    var tag = document.createElement('span');
+    tag.className = 'photo-tag';
+    tag.textContent = 'Foto ilustrativa';
+    stage.appendChild(tag);
+  }
 
   /* -------------------------------------------------- dados da empresa */
 
@@ -172,6 +223,7 @@
   var track = $('#fleetTrack');
   var dotsBox = $('#fleetDots');
   var viewers = [];
+  var photoShown = [];
 
   FLEET.forEach(function (car, i) {
     var slide = document.createElement('div');
@@ -194,7 +246,14 @@
       '</div>';
     track.appendChild(slide);
 
-    viewers.push(Car3D.create($('canvas', slide), car.spec, { color: car.color, yaw: 3.9 }));
+    var viewer = Car3D.create($('canvas', slide), car.spec, { color: car.color, yaw: 3.9 });
+    viewers.push(viewer);
+    photoShown.push(false);
+
+    mountPhoto($('.fleet__stage', slide), PHOTOS.fleet[car.key], car.name, function () {
+      photoShown[i] = true;
+      viewer.stop();
+    });
 
     var dot = document.createElement('button');
     dot.className = 'fleet__dot' + (i === 0 ? ' is-active' : '');
@@ -209,15 +268,18 @@
     current = (i + FLEET.length) % FLEET.length;
     track.style.transform = 'translateX(' + (-current * 100) + '%)';
     $$('.fleet__dot', dotsBox).forEach(function (d, k) { d.classList.toggle('is-active', k === current); });
-    // Só o carro visível anima: quatro renders simultâneos não valem a bateria.
-    viewers.forEach(function (v, k) { if (k === current) v.start(); else v.stop(); });
+    // Só o carro visível anima, e só se ainda não houver foto no lugar dele:
+    // quatro renders simultâneos não valem a bateria.
+    viewers.forEach(function (v, k) {
+      if (k === current && !photoShown[k]) v.start(); else v.stop();
+    });
   }
   $('#fleetPrev').addEventListener('click', function () { goTo(current - 1); });
   $('#fleetNext').addEventListener('click', function () { goTo(current + 1); });
 
   var ioFleet = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
-      if (e.isIntersecting) viewers[current].start();
+      if (e.isIntersecting && !photoShown[current]) viewers[current].start();
       else viewers.forEach(function (v) { v.stop(); });
     });
   }, { threshold: 0.2 });
@@ -226,8 +288,15 @@
   /* --------------------------------------------------------- hero 3D */
 
   var hero = Car3D.create($('#heroCar'), 'minivan', { color: '#16224e', yaw: 4.1, spin: 0.0013 });
+  var heroPhoto = false;
+  mountPhoto($('.hero__stage'), PHOTOS.hero, 'Chrysler Pacifica', function () {
+    heroPhoto = true;
+    hero.stop();
+  });
   var ioHero = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) { if (e.isIntersecting) hero.start(); else hero.stop(); });
+    entries.forEach(function (e) {
+      if (e.isIntersecting && !heroPhoto) hero.start(); else hero.stop();
+    });
   }, { threshold: 0.1 });
   ioHero.observe($('#heroCar'));
 

@@ -37,6 +37,53 @@ O formulário já captura `utm_source`, `utm_medium`, `utm_campaign`,
 ocultos — eles seguem junto no envio, então dá para atribuir o lead à
 campanha que trouxe o clique.
 
+## Fotos (provisórias)
+
+O hero e os quatro cartões da frota exibem **fotos do Wikimedia Commons**,
+apontadas no objeto `PHOTOS`, no topo de `assets/js/landing.js`. Elas estão
+ali só para tirar a página do abstrato — cada uma leva o selo *"foto
+ilustrativa"*, porque são veículos de outras cores, e não os carros da frota
+da Magiway.
+
+O carregamento é tolerante a falha: a foto só aparece depois de carregar e,
+se a URL falhar, o `<img>` se remove sozinho e o render 3D do veículo
+continua no lugar. A página nunca fica com um buraco.
+
+**Para publicar de verdade**, troque cada URL por um arquivo local:
+
+```js
+var PHOTOS = {
+  hero: 'assets/img/frota/pacifica-hero.jpg',
+  fleet: {
+    sedan:   'assets/img/frota/sedan.jpg',
+    suv:     'assets/img/frota/suv.jpg',
+    minivan: 'assets/img/frota/pacifica.jpg',
+    fullsuv: 'assets/img/frota/expedition.jpg'
+  }
+};
+```
+
+Use fotos em proporção deitada (16:9 ou 16:10) — o recorte é `object-fit:
+cover`. Com as fotos reais da frota, remova também o selo "foto ilustrativa"
+na função `mountPhoto`.
+
+### Crédito das fotos provisórias
+
+As imagens do Wikimedia Commons são Creative Commons e **exigem atribuição**
+enquanto estiverem no ar:
+
+| Slot | Arquivo no Commons |
+| --- | --- |
+| Hero | `2021 Chrysler Pacifica Touring-L, front 7.11.21.jpg` |
+| Sedan | `2020 Nissan Altima 2.5 S in White, front right.jpg` |
+| SUV | `2020 Ford Explorer ST, front 8.24.19.jpg` |
+| Minivan | `2021 Chrysler Pacifica S Hybrid 3of4.jpg` |
+| SUV grande | `2019 Ford Expedition XLT, front 1.21.20.jpg` |
+
+Cada arquivo, com autor e licença, está em
+`commons.wikimedia.org/wiki/File:<nome do arquivo>`. Trocar pelas fotos
+próprias da Magiway resolve a atribuição e a questão das cores de uma vez.
+
 ## Frota e experiência 360º
 
 Os veículos não são fotos: são renders 3D gerados em tempo real por
@@ -46,9 +93,10 @@ largura para virar volume. Para mudar a cor de um carro da frota, altere o
 campo `color` no array `FLEET`, em `landing.js`; para as cores da experiência
 360º, o array `COLORS`.
 
-Trocar por fotos reais é possível sem reescrever nada: basta substituir o
-`<canvas>` por um `<img>` (ou por um visualizador de 360 com sequência de
-frames) nos mesmos contêineres.
+A experiência 360º continua em 3D mesmo com as fotos ligadas: girar o carro
+exige uma sequência de dezenas de frames do mesmo veículo, que uma foto solta
+não substitui. Quando houver a sequência fotográfica, ela entra no lugar do
+`<canvas>` do `#exp360`.
 
 ## Interior da Pacifica
 
