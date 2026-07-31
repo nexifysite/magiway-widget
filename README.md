@@ -79,6 +79,15 @@ enquanto estiverem no ar:
 | SUV | `2020 Ford Explorer ST, front 8.24.19.jpg` |
 | Minivan | `2021 Chrysler Pacifica S Hybrid 3of4.jpg` |
 | SUV grande | `2019 Ford Expedition XLT, front 1.21.20.jpg` |
+| Famílias (principal) | `A mother and her children on a pier (Unsplash).jpg` |
+| Famílias (inset) | `Road trip (Unsplash).jpg` |
+
+As duas fotos da seção de famílias são do Unsplash espelhado no Commons, em
+CC0 — a licença permite uso comercial sem atribuição. **Mas são pessoas
+reais.** Colocar o rosto de alguém numa página que diz "nossos clientes"
+sugere uma relação que não existe, e a licença da foto não cobre o direito de
+imagem. Trate como rascunho visual e troque por fotos de clientes reais da
+Magiway, com autorização, ou por banco de imagens com model release.
 
 Cada arquivo, com autor e licença, está em
 `commons.wikimedia.org/wiki/File:<nome do arquivo>`. Trocar pelas fotos

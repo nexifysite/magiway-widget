@@ -46,7 +46,13 @@
       suv: commons('2020 Ford Explorer ST, front 8.24.19.jpg'),
       minivan: commons('2021 Chrysler Pacifica S Hybrid 3of4.jpg'),
       fullsuv: commons('2019 Ford Expedition XLT, front 1.21.20.jpg')
-    }
+    },
+    // Fotos CC0 (Unsplash espelhado no Commons): licença livre inclusive para
+    // uso comercial. Ainda assim são pessoas reais — ver a ressalva no README.
+    familias: [
+      commons('A mother and her children on a pier (Unsplash).jpg', 1200),
+      commons('Road trip (Unsplash).jpg', 800)
+    ]
   };
 
   SITE.whatsappUrl = 'https://wa.me/' + SITE.whatsapp;
@@ -76,6 +82,32 @@
     img.src = url;
     stage.appendChild(img);
 
+    var tag = document.createElement('span');
+    tag.className = 'photo-tag';
+    tag.textContent = 'Foto ilustrativa';
+    stage.appendChild(tag);
+  }
+
+  // Colagem de famílias. Só a foto principal derruba a ilustração; assim, se
+  // ela falhar, o inset não aparece sozinho num quadro vazio.
+  function mountFamilyPhotos(stage, urls) {
+    if (!stage || !urls || !urls.length) return;
+    var box = document.createElement('div');
+    box.className = 'families__photos';
+
+    urls.forEach(function (url, i) {
+      if (!url) return;
+      var img = new Image();
+      img.className = i === 0 ? 'is-main' : 'is-inset';
+      img.alt = '';
+      img.decoding = 'async';
+      if (i === 0) img.onload = function () { stage.classList.add('has-photo'); };
+      img.onerror = function () { img.remove(); };
+      img.src = url;
+      box.appendChild(img);
+    });
+
+    stage.appendChild(box);
     var tag = document.createElement('span');
     tag.className = 'photo-tag';
     tag.textContent = 'Foto ilustrativa';
@@ -286,6 +318,8 @@
   ioFleet.observe($('.fleet__viewport'));
 
   /* --------------------------------------------------------- hero 3D */
+
+  mountFamilyPhotos($('.families__art'), PHOTOS.familias);
 
   var hero = Car3D.create($('#heroCar'), 'minivan', { color: '#16224e', yaw: 4.1, spin: 0.0013 });
   var heroPhoto = false;
