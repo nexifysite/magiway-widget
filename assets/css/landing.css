@@ -68,9 +68,18 @@ button { font: inherit; color: inherit; }
 
 /* ------------------------------------------------------------- estruturas */
 
-.shell { width: 100%; max-width: var(--shell); margin: 0 auto; padding: 0 24px; }
+.shell { width: 100%; max-width: var(--shell); margin: 0 auto; padding: 0 24px; min-width: 0; }
+
+/* Canvas tem largura intrínseca (o atributo width, em pixels de device), e ela
+   entra no tamanho mínimo automático de itens de grid/flex. Sem min-width:0 a
+   coluna cresce a cada resize e a página estoura na horizontal. */
+.hero__inner > *, .manifesto > *, .families > *, .contact > *,
+.fleet__slide > *, .exp__pane, .exp__stage, .hero__stage, .fleet__stage,
+.interior__viewport, .lightbox__body > * { min-width: 0; }
 
 .section { position: relative; padding: clamp(72px, 10vw, 132px) 0; }
+/* o cabeçalho é fixo: âncoras precisam parar abaixo dele */
+section[id] { scroll-margin-top: 92px; }
 .section--dark { background: var(--ink); }
 .section--navy {
   background:
@@ -313,7 +322,7 @@ h3 {
 .hero__trust li { list-style: none; display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: var(--txt-dim); }
 .hero__trust svg { width: 15px; height: 15px; color: var(--red-400); flex: none; }
 
-.hero__stage { position: relative; aspect-ratio: 1 / 0.82; min-height: 320px; }
+.hero__stage { position: relative; width: 100%; aspect-ratio: 1 / 0.82; min-height: 320px; }
 .hero__stage::after {
   content: "";
   position: absolute;
@@ -558,6 +567,10 @@ h3 {
 .swatch:focus-visible { outline: 2px solid var(--red-400); outline-offset: 3px; }
 .exp__colorname { font-size: 13.5px; color: var(--txt-hi); min-width: 128px; }
 .exp__enter { margin-left: auto; }
+/* dentro do carro a cor não tem efeito visível: o controle sai de cena */
+.exp__toolbar.is-inside .swatches,
+.exp__toolbar.is-inside .exp__colorname,
+.exp__toolbar.is-inside > .exp__label { opacity: 0.3; pointer-events: none; }
 
 /* interior */
 .interior { position: relative; overflow: hidden; background: #060a16; }
@@ -788,16 +801,16 @@ h3 {
 /* ------------------------------------------------------------ responsivo */
 
 @media (max-width: 1040px) {
-  .hero__inner { grid-template-columns: 1fr; gap: 26px; }
-  .hero__stage { order: -1; aspect-ratio: 16 / 10; min-height: 240px; }
+  .hero__inner { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .hero__stage { order: -1; width: 100%; aspect-ratio: 16 / 10; min-height: 0; }
   .hero { min-height: auto; padding-top: 104px; }
-  .manifesto, .families, .contact { grid-template-columns: 1fr; }
+  .manifesto, .families, .contact { grid-template-columns: minmax(0, 1fr); }
   .benefits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px 24px; }
   .steps::before, .steps__fill { display: none; }
-  .fleet__slide { grid-template-columns: 1fr; }
-  .quotes__track { grid-template-columns: 1fr; }
-  .lightbox__body { grid-template-columns: 1fr; }
+  .fleet__slide { grid-template-columns: minmax(0, 1fr); }
+  .quotes__track { grid-template-columns: minmax(0, 1fr); }
+  .lightbox__body { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 720px) {
@@ -815,14 +828,16 @@ h3 {
   .nav__links a { padding: 13px 0; border-bottom: 1px solid var(--line-2); font-size: 16px; }
   .nav__burger { display: flex; margin-left: auto; }
   .nav__cta { display: none; }
-  .benefits { grid-template-columns: 1fr; }
+  .benefits { grid-template-columns: minmax(0, 1fr); }
   .pillar { grid-template-columns: 40px minmax(0, 1fr); }
   .pillar p { grid-column: 2; }
-  .fleet__specs { grid-template-columns: 1fr; }
-  .field-grid { grid-template-columns: 1fr; }
-  .stats { grid-template-columns: 1fr; gap: 18px; }
+  .fleet__specs { grid-template-columns: minmax(0, 1fr); }
+  .field-grid { grid-template-columns: minmax(0, 1fr); }
+  .stats { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .exp__stage { min-height: 0; }
   .exp__toolbar { gap: 12px; }
   .exp__enter { margin-left: 0; width: 100%; }
+  .exp__hint { bottom: 10px; font-size: 11.5px; padding: 7px 13px; }
   .lightbox__body { padding: 22px; }
   .interior__rail { flex-wrap: wrap; }
 }

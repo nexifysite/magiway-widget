@@ -284,6 +284,7 @@
     enterBtn.innerHTML = inside
       ? '<svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M14 17l-5-5 5-5M9 12h12"/></svg> Voltar para fora'
       : '<svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg> Entrar no carro';
+    $('#expToolbar').classList.toggle('is-inside', inside);
     if (inside) { exp.stop(); } else { exp.start(); exp.resize(); }
   });
 
