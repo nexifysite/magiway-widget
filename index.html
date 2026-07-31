@@ -6293,9 +6293,19 @@ function renderReunioes(){
 function renderQuadros(){
   var box=document.getElementById('tf-quadros'); if(!box) return;
   var arr=filtradas();
-  var pessoas=RESPONSAVEIS.filter(function(p){
-    var f=(document.getElementById('tf-f-resp')||{}).value||'';
-    return !f || f===p;
+  /* A lista de quadros sai dos RESPONSAVEIS fixos MAIS qualquer responsável que
+     apareça nas tarefas. Sem isso, uma tarefa gravada com outro nome (dado
+     antigo, alguém que saiu da equipe) sumia da tela sem aviso — ficava salva,
+     contava nos KPIs, mas não tinha quadro para aparecer. */
+  var extras=[];
+  arr.forEach(function(t){
+    var r=(t.resp||'').trim();
+    if(r && RESPONSAVEIS.indexOf(r)<0 && extras.indexOf(r)<0) extras.push(r);
+  });
+  var f=(document.getElementById('tf-f-resp')||{}).value||'';
+  var pessoas=RESPONSAVEIS.concat(extras.sort()).filter(function(p){
+    if(f) return f===p;
+    return RESPONSAVEIS.indexOf(p)>=0 || arr.some(function(t){ return t.resp===p; });
   });
   box.innerHTML='<div class="tf-quadros">'+pessoas.map(function(p){
     var minhas=arr.filter(function(t){ return t.resp===p; }).sort(function(a,b){
@@ -7584,6 +7594,11 @@ tr.mgrsv-dup td{background:rgba(255,209,26,.05)}
 .mgiss-delbtn:hover{background:rgba(255,0,0,.12)}
 .mgrsv-edit:hover{background:rgba(59,158,255,.12)}
 .mgrsv-del{background:none;border:1px solid rgba(255,0,0,.28);color:#FF6B78;border-radius:6px;padding:2px 7px;cursor:pointer;font-size:.72rem;line-height:1.4}
+/* entregue / devolvido direto na tabela */
+.mgrsv-flag{background:none;border:1px solid var(--edgeO);border-radius:6px;padding:2px 6px;cursor:pointer;font-size:.72rem;line-height:1.4;margin-right:4px;filter:grayscale(1);opacity:.45;transition:.15s}
+.mgrsv-flag:hover{opacity:.85;filter:grayscale(.4)}
+.mgrsv-flag.on-ent{filter:none;opacity:1;border-color:#3B9EFF;background:rgba(59,158,255,.16)}
+.mgrsv-flag.on-ret{filter:none;opacity:1;border-color:#1AFF9D;background:rgba(26,255,157,.16)}
 .mgrsv-del:hover{background:rgba(255,0,0,.12)}
 .mgw-btn-csv{border-color:rgba(26,255,157,.45)!important;color:#1AFF9D!important}
 .mgw-btn-csv:hover{background:rgba(26,255,157,.1)!important}
@@ -16086,7 +16101,7 @@ function redesenhar(chaves){
     }
     /* entregue / devolvido / sem gasolina */
     if(chaves.indexOf('gs_resv_flags_v1')>=0){
-      try{ if(window.MGW_RESV){ MGW_RESV.carregarFlags(); MGW_RESV.renderAgenda(); } }catch(e){}
+      try{ if(window.MGW_RESV){ MGW_RESV.carregarFlags(); MGW_RESV.renderAgenda(); MGW_RESV.filterTable(); } }catch(e){}
     }
     if(chaves.indexOf('gs_relatorios_v1')>=0){
       try{ if(typeof window.rlReload==='function') window.rlReload(); }catch(e){}
@@ -16931,8 +16946,13 @@ function toggleFlag(idx,which){
   var k=dedupeKey(r), f=FLAGS[k]||{};
   f[which]=!f[which];
   if(f[which]){ f[which+'Por']=quemMarcou(); f[which+'Em']=carimbo(); }
-  else { delete f[which+'Por']; delete f[which+'Em']; }
-  FLAGS[k]=f; saveFlags(); renderAgenda();
+  else { delete f[which]; delete f[which+'Por']; delete f[which+'Em']; }
+  /* Sem nada marcado, some com o registro: este objeto inteiro sobe para o
+     Supabase a cada mudança e não faz sentido carregar marcação desligada. */
+  if(Object.keys(f).length) FLAGS[k]=f; else delete FLAGS[k];
+  saveFlags();
+  /* a marcação aparece na Agenda E na tabela de Reservas — redesenha as duas */
+  renderAgenda(); renderReservas();
 }
 
 var DOW=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -16945,8 +16965,19 @@ function cellF(c){ if(!c) return ''; return c.f!=null?String(c.f):(c.v!=null?Str
 function cellV(c){ if(!c) return null; return c.v!=null?c.v:(c.f!=null?c.f:null); }
 function dOnly(d){ return new Date(d.getFullYear(),d.getMonth(),d.getDate()); }
 function fmtBR(d){ return d?(('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear()):'—'; }
-function timeStr(t){ return t?(('0'+t.h).slice(-2)+':'+('0'+t.mm).slice(-2)):''; }
-function tmin(t){ return t?(t.h*60+t.mm):9999; }
+/* O horário circula como objeto {h,mm}. Se por algum caminho chegar já como
+   texto ("10:00" vindo do cache, de uma reserva do app ou de uma edição), o
+   código antigo devolvia "ed:ed" — o final de "0undefined" — em vez do horário.
+   Aceita as duas formas e devolve vazio no que não der para ler. */
+function timeObj(t){
+  if(!t) return null;
+  if(typeof t==='object' && isFinite(t.h)) return {h:+t.h, mm:+(t.mm||0)};
+  var m=String(t).match(/(\d{1,2})\s*:\s*(\d{2})/);
+  if(m && +m[1]<24 && +m[2]<60) return {h:+m[1], mm:+m[2]};
+  return null;
+}
+function timeStr(t){ var o=timeObj(t); return o?(('0'+o.h).slice(-2)+':'+('0'+o.mm).slice(-2)):''; }
+function tmin(t){ var o=timeObj(t); return o?(o.h*60+o.mm):9999; }
 
 function parseDate(c){
   if(!c) return null;
@@ -17008,7 +17039,13 @@ function categoryOf(modelo,obs){
 }
 /* Exposto para o módulo de Reservas classificar as reservas locais na mesma régua */
 window.MGW_CAT_OF=categoryOf;
-function combine(date,time,defH){ if(!date) return null; return new Date(date.getFullYear(),date.getMonth(),date.getDate(), time?time.h:defH, (time&&time.mm!=null)?time.mm:0, 0); }
+/* Mesma armadilha do timeStr: com o horário em texto, time.h saía undefined e a
+   data virava Invalid Date — o que estraga o cálculo de overbooking em silêncio. */
+function combine(date,time,defH){
+  if(!date) return null;
+  var o=timeObj(time);
+  return new Date(date.getFullYear(),date.getMonth(),date.getDate(), o?o.h:defH, o?o.mm:0, 0);
+}
 function dayIdx(d,start){ return Math.floor((dOnly(d)-dOnly(start))/86400000); }
 
 /* ---------------- gviz JSONP ---------------- */
@@ -17730,6 +17767,7 @@ function renderReservas(){
   rows.forEach(function(r){
     var city=cityOf(r.localEnt);
     var doMes=noCiclo(r); if(doMes) nCiclo++;
+    var fl=getFlags(r);
     var dupOculta=r._possivelDup && _conf[dedupeKey(r)];   /* você já disse que está certa */
     if(r._possivelDup && !dupOculta) dupN++;
     var tds=RSV_COLS.map(function(c){
@@ -17745,9 +17783,16 @@ function renderReservas(){
         +(r._copias>1?' <span class="mgrsv-badge" style="background:rgba(168,85,247,.2);color:#c084fc" title="'+r._copias+' linhas idênticas na planilha viraram esta reserva.&#10;&#10;Normalmente é copiar/colar ou a migração de FECHAMENTOS para HISTÓRICO.&#10;Se o cliente alugou '+r._copias+' carros iguais de verdade, corrija na planilha dando nomes/vouchers distintos.">'+r._copias+' idênticas</span>':'')
         +(r._possivelDup && !dupOculta?' <span class="mgrsv-badge dup" title="Igual a: '+esc(r._dupComQuem||'')+'&#10;&#10;'+esc(r._dupMotivo||'')+'&#10;&#10;Confira antes: se forem reservas separadas de verdade (dois carros), ignore.">⚠ POSSÍVEL DUPLICATA</span>':'')
         +(r._editada?' <span class="mgrsv-badge" style="background:rgba(168,85,247,.18);color:#c084fc" title="Editada manualmente">✎</span>':'')
-        +(r._local?' <span class="mgrsv-badge loc" title="Reserva criada aqui no app">APP</span>':'')+'</td>'
+        +(r._local?' <span class="mgrsv-badge loc" title="Reserva criada aqui no app">APP</span>':'')
+        /* entregue / devolvido também aqui: a tabela é onde a lista inteira
+           vive, e é a mesma marcação da Agenda — compartilhada com a equipe */
+        +(fl.delivered?' <span class="mgrsv-badge" style="background:rgba(59,158,255,.2);color:#3B9EFF" title="Entregue'+(fl.deliveredPor?' por '+esc(fl.deliveredPor):'')+(fl.deliveredEm?' em '+esc(fl.deliveredEm):'')+'">🚗 ENTREGUE</span>':'')
+        +(fl.returned?' <span class="mgrsv-badge" style="background:rgba(26,255,157,.18);color:#1AFF9D" title="Devolvido'+(fl.returnedPor?' por '+esc(fl.returnedPor):'')+(fl.returnedEm?' em '+esc(fl.returnedEm):'')+'">✅ DEVOLVIDO</span>':'')
+        +'</td>'
       +tds
       +'<td style="text-align:center;white-space:nowrap">'
+        +'<button class="mgrsv-flag'+(fl.delivered?' on-ent':'')+'" title="'+(fl.delivered?'Desmarcar entrega':'Marcar que o carro foi entregue ao cliente')+'" onclick="MGW_RESV.toggleFlag('+idx+',\'delivered\')">🚗</button>'
+        +'<button class="mgrsv-flag'+(fl.returned?' on-ret':'')+'" title="'+(fl.returned?'Desmarcar devolução':'Marcar que o carro foi devolvido')+'" onclick="MGW_RESV.toggleFlag('+idx+',\'returned\')">✅</button>'
         +(r._possivelDup?'<button class="mgrsv-juntar" title="Juntar com a duplicata: soma os valores e mantém o custo uma vez" onclick="MGW_RESV.juntarDuplicata('+idx+')">🔗 Juntar</button>':'')
         +'<button class="mgrsv-edit" title="Editar esta reserva" onclick="MGW_RESV.abrirEdicao('+idx+')">✏️</button>'
         +'<button class="mgrsv-del" title="Excluir esta reserva" onclick="MGW_RESV.excluir('+idx+')">🗑</button>'
