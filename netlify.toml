@@ -1,0 +1,18 @@
+# Magiway Sales OS — configuração do Netlify
+[build]
+  publish = "."
+
+# Não deixa o navegador guardar uma versão velha do app
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-store, must-revalidate"
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# A raiz serve o app
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
