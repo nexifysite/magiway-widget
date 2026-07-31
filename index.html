@@ -6044,7 +6044,8 @@ Data de retirada = din"></textarea>
     if(raw.getItem.call(localStorage,'gs_chaves_empresa_migradas')==='1') return;
     [['mgw_tarefas_v1','gs_tarefas_v1'],
      ['mgw_fluxo_v1','gs_fluxo_v1'],
-     ['magiway_resv_flags_v1','gs_resv_flags_v1']].forEach(function(par){
+     ['magiway_resv_flags_v1','gs_resv_flags_v1'],
+     ['magiway_resv_caroverrides_v1','gs_resv_caroverrides_v1']].forEach(function(par){
       var antigo=raw.getItem.call(localStorage,par[0]);
       var novo=raw.getItem.call(localStorage,par[1]);
       if(antigo && !novo) raw.setItem.call(localStorage,par[1],antigo);
@@ -8012,7 +8013,7 @@ function _cloudRawSet(k,v){ try{ localStorage.__proto__.setItem.call(localStorag
    qualquer usuário pode gravar. */
 /* Pendências, marcações de entrega/devolução e relatórios emitidos são operação
    do dia a dia: quem executa precisa poder confirmar sem depender do gerente. */
-const SHARED_WRITABLE_BY_ALL = ['gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1'];
+const SHARED_WRITABLE_BY_ALL = ['gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1'];
 function _cloudBucket(fullKey){
   if(!fullKey || typeof fullKey!=='string') return null;
   if(CLOUD.uid && fullKey.indexOf('mgv_'+CLOUD.uid+'__')===0) return 'own';
@@ -14371,7 +14372,7 @@ function ehVendedor(v){ return !!v && (v.role||'admin')==='admin'; }
    são da EMPRESA: a pendência que o Luciano lança na reunião tem de aparecer
    para o Dickson, e o carro que a Mariana marcou como entregue tem de aparecer
    entregue para todo mundo. */
-const VENDOR_SHARED_KEYS = ['gs_cfg_v1','gs_ai_keys','gs_frota_v2','gs_shortcuts','gs_cambio_modal','gs_focus_mode','gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1'];
+const VENDOR_SHARED_KEYS = ['gs_cfg_v1','gs_ai_keys','gs_frota_v2','gs_shortcuts','gs_cambio_modal','gs_focus_mode','gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1'];
 const VENDOR_SHARED_PREFIXES = ['gs_seedver_'];
 
 /* MIGRAÇÃO ÚNICA — gs_reservas_v1 deixou de ser por usuário e passou a ser da
@@ -16052,7 +16053,7 @@ function exportarAppAtualizado(){
 (function(){
 'use strict';
 
-var CHAVES=['gs_reservas_v1','gs_cfg_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1'];   // o que é da empresa
+var CHAVES=['gs_reservas_v1','gs_cfg_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1'];   // o que é da empresa
 var ultimoValor={};                          // último valor conhecido por chave
 var canal=null, timerPoll=null, ligado=false, aplicando=false;
 
@@ -16102,6 +16103,10 @@ function redesenhar(chaves){
     /* entregue / devolvido / sem gasolina */
     if(chaves.indexOf('gs_resv_flags_v1')>=0){
       try{ if(window.MGW_RESV){ MGW_RESV.carregarFlags(); MGW_RESV.renderAgenda(); MGW_RESV.filterTable(); } }catch(e){}
+    }
+    /* remanejamento de carro no calendário feito por outra pessoa */
+    if(chaves.indexOf('gs_resv_caroverrides_v1')>=0){
+      try{ if(window.MGW_RESV){ MGW_RESV.carregarRemanejamentos(); MGW_RESV.refresh(); } }catch(e){}
     }
     if(chaves.indexOf('gs_relatorios_v1')>=0){
       try{ if(typeof window.rlReload==='function') window.rlReload(); }catch(e){}
@@ -16905,7 +16910,10 @@ var MS24=24*3600*1000;
 var DATA=[], LOADED=false, LOADING=false;
 var calWinStart=null, calWinDays=0, fallbackRows={}, catFilterDone=false, catFilterCalDone=false;
 var OVERRIDES={}, autoRefreshOn=false, _mgDrag=null;
-var OVR_KEY='magiway_resv_caroverrides_v1';
+/* Remanejamento manual de carro no calendário (arrastar a reserva para outro
+   carro da categoria). É decisão de operação da empresa, igual à manutenção
+   logo abaixo — precisa valer para todo mundo, não só para quem arrastou. */
+var OVR_KEY='gs_resv_caroverrides_v1';
 function loadOverrides(){ try{ OVERRIDES=JSON.parse(localStorage.getItem(OVR_KEY)||'{}')||{}; }catch(e){ OVERRIDES={}; } }
 function saveOverrides(){ try{ localStorage.setItem(OVR_KEY, JSON.stringify(OVERRIDES)); }catch(e){} updateClearBtn(); }
 function updateClearBtn(){ var b=document.getElementById('mgcal-clearov'); if(b) b.style.display=Object.keys(OVERRIDES).length?'':'none'; }
@@ -18246,6 +18254,7 @@ window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, rend
   irParaDia:irParaDia,
   abrirEdicao:abrirEdicao, salvarEdicao:salvarEdicao, excluir:excluir, juntarDuplicata:juntarDuplicata,
   toggleManut:toggleManut, carregarManutencao:loadManut, carregarFlags:loadFlags,
+  carregarRemanejamentos:loadOverrides,
   conferir:conferirResv, reabrirConferidas:reabrirConferidas };
 
 loadOverrides(); loadFlags(); loadManut();
