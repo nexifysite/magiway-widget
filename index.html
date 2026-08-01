@@ -96,6 +96,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .lg-btn:hover::after{left:100%}
 .lg-btn:hover{box-shadow:0 0 28px rgba(255,0,0,.35);transform:translateY(-1px)}
 .lg-err{color:var(--red);font-size:.73rem;text-align:center;margin-top:12px;display:none}
+.lg-rec{font-size:.74rem;text-align:center;margin-top:12px;line-height:1.55;color:var(--chalk3);min-height:16px}
+.lg-rec b{color:var(--chalk2)}
+.lg-rec.ok{color:#1AFF9D}
+.lg-rec.erro{color:var(--red)}
 .lg-status{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:16px;font-size:.65rem;color:var(--chalk3)}
 .ls-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 2.5s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
@@ -682,12 +686,27 @@ select.ffi option{background:#000020;color:#FF0000}
 
     <div class="lg-opts">
       <label><input type="checkbox" checked=""> Lembrar sessão</label>
-      <a href="#">Recuperar acesso</a>
+      <a href="#" onclick="event.preventDefault();mgwRecuperarSenha()">Recuperar acesso</a>
     </div>
     <button class="lg-btn" onclick="doLogin()">ENTRAR NO SISTEMA</button>
+    <div class="lg-rec" id="l-rec"></div>
     <script>(function(){var p=document.getElementById('l-pass');if(p){p.value='';setTimeout(function(){try{p.focus();}catch(e){}},250);}})();</script>
     <div class="lg-err" id="l-err" style="display: none;">Credenciais inválidas. Tente novamente.</div>
     <div class="lg-status"><div class="ls-dot"></div>Sistema Magiway · Florida, USA · acesso pela nuvem</div>
+  </div>
+
+  <!-- Definir senha nova — é aqui que a pessoa cai ao clicar no link do e-mail -->
+  <div class="lg-card" id="nova-senha-card" style="display:none">
+    <div class="lg-logo">
+      <div class="lg-brandimg" role="img" aria-label="Magiway Rental Car" style="background-image: var(--brand-white);"></div>
+      <div class="lg-sub">Defina a sua senha de acesso</div>
+    </div>
+    <div class="lg-sep"></div>
+    <div class="lg-rec" style="margin-bottom:12px" id="ns-quem"></div>
+    <div class="lf"><label>Nova senha</label><input id="ns-1" type="password" placeholder="mínimo 8 caracteres" autocomplete="new-password"></div>
+    <div class="lf"><label>Repita a nova senha</label><input id="ns-2" type="password" placeholder="••••••••" autocomplete="new-password" onkeydown="if(event.key==='Enter')mgwSalvarNovaSenha()"></div>
+    <button class="lg-btn" id="ns-btn" onclick="mgwSalvarNovaSenha()">SALVAR SENHA E ENTRAR</button>
+    <div class="lg-rec" id="ns-msg"></div>
   </div>
 </div>
 
@@ -7972,6 +7991,98 @@ window.CURRENT_USER=null;   // preenchido no login
 // tabela 'profiles' da nuvem não esteja marcada como 'admin'. Adicione aqui os e-mails de admin.
 window.ADMIN_EMAILS=['luciano_lira19@hotmail.com'];
 
+/* ═══════════════════════════════════════════════════════════════════
+   RECUPERAÇÃO DE SENHA
+   ───────────────────────────────────────────────────────────────────
+   As senhas vivem no Supabase Auth, guardadas em hash. Ninguém — nem o
+   gerente, nem este código — consegue lê-las de volta. O único caminho
+   para definir uma senha é a própria pessoa escolher a dela.
+
+   Fluxo: pede o link → Supabase manda o e-mail → a pessoa clica → volta
+   para cá com um token de recuperação → escolhe a senha → entra.
+   Assim ninguém precisa abrir o painel do Supabase para isso.
+   ═══════════════════════════════════════════════════════════════════ */
+function _recMsg(txt, classe){
+  const e=document.getElementById('l-rec'); if(!e) return;
+  e.className='lg-rec'+(classe?(' '+classe):''); e.innerHTML=txt||'';
+}
+
+async function mgwRecuperarSenha(email){
+  const campo=document.getElementById('l-email');
+  let e=(email||(campo&&campo.value)||'').trim();
+  if(!e){
+    e=(prompt('Qual o e-mail da conta?')||'').trim();
+    if(!e) return;
+  }
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){ _recMsg('E-mail inválido.','erro'); return; }
+  _recMsg('⏳ Enviando…');
+  try{
+    const pronto=(window.CLOUD && CLOUD.ready)?await CLOUD.ready:false;
+    if(!pronto || !CLOUD.enabled) throw new Error('sem conexão com a nuvem');
+    const {error}=await CLOUD.client.auth.resetPasswordForEmail(e,{redirectTo:location.origin+location.pathname});
+    if(error) throw error;
+    /* Resposta igual exista ou não a conta: dizer "esse e-mail não existe"
+       entregaria de graça quais endereços têm acesso ao sistema. */
+    _recMsg('✅ Se houver conta para <b>'+e.replace(/[<>&]/g,'')+'</b>, o link de acesso chegou no e-mail.<br>'
+           +'Ele vale por 1 hora. Confira o spam.','ok');
+  }catch(err){
+    _recMsg('⚠️ Não deu para enviar: '+String(err&&err.message||err).replace(/[<>&]/g,'')+'','erro');
+  }
+}
+
+/* Mostra a tela de "escolher senha" quando a pessoa chega pelo link do e-mail */
+function _mostrarNovaSenha(emailDaSessao){
+  const login=document.querySelector('#login-page .lg-card');
+  const card=document.getElementById('nova-senha-card');
+  if(login) login.style.display='none';
+  if(card) card.style.display='';
+  const q=document.getElementById('ns-quem');
+  if(q) q.innerHTML=emailDaSessao
+    ? 'Conta: <b>'+String(emailDaSessao).replace(/[<>&]/g,'')+'</b>'
+    : 'Escolha a senha que você vai usar para entrar.';
+}
+
+async function mgwSalvarNovaSenha(){
+  const a=document.getElementById('ns-1'), b=document.getElementById('ns-2');
+  const msg=document.getElementById('ns-msg'), btn=document.getElementById('ns-btn');
+  const set=(t,c)=>{ if(msg){ msg.className='lg-rec'+(c?(' '+c):''); msg.textContent=t; } };
+  const p1=(a&&a.value)||'', p2=(b&&b.value)||'';
+  if(p1.length<8){ set('A senha precisa ter pelo menos 8 caracteres.','erro'); return; }
+  if(p1!==p2){ set('As duas senhas não são iguais.','erro'); return; }
+  if(btn){ btn.disabled=true; btn.textContent='SALVANDO…'; }
+  try{
+    const {error}=await CLOUD.client.auth.updateUser({password:p1});
+    if(error) throw error;
+    set('✅ Senha salva. Entrando…','ok');
+    /* limpa o token de recuperação da barra de endereços */
+    try{ history.replaceState(null,'',location.pathname+location.search); }catch(_){}
+    setTimeout(()=>location.reload(), 900);
+  }catch(err){
+    set('Não deu para salvar: '+String(err&&err.message||err),'erro');
+    if(btn){ btn.disabled=false; btn.textContent='SALVAR SENHA E ENTRAR'; }
+  }
+}
+
+/* O supabase-js lê o token do endereço sozinho e dispara PASSWORD_RECOVERY. */
+(function ligarRecuperacao(){
+  const tentar=async()=>{
+    try{
+      const pronto=(window.CLOUD && CLOUD.ready)?await CLOUD.ready:false;
+      if(!pronto || !CLOUD.enabled) return;
+      CLOUD.client.auth.onAuthStateChange((evento,sessao)=>{
+        if(evento==='PASSWORD_RECOVERY') _mostrarNovaSenha(sessao&&sessao.user&&sessao.user.email);
+      });
+      /* rede de segurança: se o evento não vier, o próprio endereço denuncia */
+      if(/type=recovery/.test(location.hash||'')){
+        const {data}=await CLOUD.client.auth.getSession();
+        _mostrarNovaSenha(data&&data.session&&data.session.user&&data.session.user.email);
+      }
+    }catch(e){ console.warn('[recuperação]',e); }
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',tentar);
+  else tentar();
+})();
+
 async function doLogin(){
   const e=document.getElementById('l-email').value.trim();
   const p=document.getElementById('l-pass').value;
@@ -14870,6 +14981,28 @@ function switchVendorQuick(val){
   if(typeof toast==='function') toast('🔄 Sessão ativa: '+v.nome,'green');
 }
 
+/* Manda o link de definição de senha para a pessoa, sem sair do app.
+   A senha continua sendo escolhida por ela — o gerente não vê nem define. */
+async function mgwEnviarLinkSenha(id){
+  const v=vendorsLoad().find(x=>x.id===id);
+  const box=document.getElementById('v-err-'+id);
+  const diz=(t,cor)=>{ if(box){ box.style.color=cor||'var(--chalk3)'; box.textContent=t; } };
+  if(!v||!v.email){ diz('Sem e-mail cadastrado para essa pessoa.','var(--red)'); return; }
+  if(!confirm('Enviar para '+v.email+' um link para '+v.nome+' definir a própria senha?\n\n'
+             +'O link vale por 1 hora. Você não precisa saber a senha dela.')) return;
+  diz('⏳ Enviando…');
+  try{
+    const pronto=(window.CLOUD && CLOUD.ready)?await CLOUD.ready:false;
+    if(!pronto || !CLOUD.enabled) throw new Error('sem conexão com a nuvem');
+    const {error}=await CLOUD.client.auth.resetPasswordForEmail(v.email,{redirectTo:location.origin+location.pathname});
+    if(error) throw error;
+    diz('✅ Link enviado para '+v.email,'#1AFF9D');
+    if(typeof toast==='function') toast('✉️ Link de senha enviado para '+v.nome);
+  }catch(err){
+    diz('⚠️ '+String(err&&err.message||err),'var(--red)');
+  }
+}
+
 function vendorDoLogin(id){
   const pin = document.getElementById('v-pass-'+id);
   const pass = pin ? pin.value : '';
@@ -15112,6 +15245,9 @@ function renderControle(){
           <input type="email" value="${v.email}" readonly style="opacity:.55;cursor:default" tabindex="-1">
           <input type="password" id="v-pass-${v.id}" placeholder="Senha do ${v.nome}" autocomplete="off" onkeydown="if(event.key==='Enter')vendorDoLogin('${v.id}')">
           <button class="vendor-btn" onclick="vendorDoLogin('${v.id}')">🔑 ENTRAR COMO ${v.nome.toUpperCase()}</button>
+          <button class="vendor-btn" style="background:linear-gradient(135deg,var(--ink3),var(--ink2));box-shadow:0 0 0 1px var(--edge);margin-top:6px"
+                  onclick="mgwEnviarLinkSenha('${v.id}')"
+                  title="Manda um e-mail para ${v.email} com um link para a pessoa escolher a própria senha. Você não precisa saber a senha dela.">✉️ ENVIAR LINK DE SENHA</button>
           <div id="v-err-${v.id}" class="vendor-err"></div>
         </div>
       `}
