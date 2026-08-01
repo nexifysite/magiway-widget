@@ -12256,9 +12256,22 @@ function dbGetYM(dateStr){
   return dateStr.slice(0,7).replace('-','_').replace('-','_');
 }
 
+/* O mês do Magiway não é o mês do calendário: o ciclo vai do dia 13 ao dia 12
+   e leva o nome do mês em que COMEÇA. Julho = 13/07 a 12/08.
+   Ou seja, nos dias 1 a 12 ainda estamos no mês anterior — em 1º de agosto o
+   mês em vigência é JULHO, porque o ciclo de julho só fecha em 12/08.
+   Antes esta função devolvia o mês do calendário e a barra lateral marcava
+   "Ago" enquanto o período mostrado era 13/07 a 12/08. */
 function dbCurrentYM(){
+  try{
+    if(window.MGW_CICLO && MGW_CICLO.cicloAtual) return MGW_CICLO.cicloAtual().ym;
+  }catch(e){}
+  /* mesma regra, para o caso de o módulo do ciclo ainda não ter carregado */
   const n=new Date();
-  return n.getFullYear()+'_'+String(n.getMonth()+1).padStart(2,'0');
+  let ano=n.getFullYear(), mes=n.getMonth();
+  const virada=(window.MGW_CICLO&&MGW_CICLO.DIA_VIRADA)||12;
+  if(n.getDate()<=virada){ mes-=1; if(mes<0){ mes=11; ano-=1; } }
+  return ano+'_'+String(mes+1).padStart(2,'0');
 }
 
 function dbListMeses(){
@@ -17838,12 +17851,16 @@ function _marcarPossiveisDuplicatasResv_DESATIVADA(rows){
    Nada é bloqueado nem apagado: só fica visível, com o motivo.
    ═══════════════════════════════════════════════════════════════════ */
 var REGRA_KEY='gs_regra_origem_v1';
-var REGRA={corte:'', ativo:true};
+/* Nasce DESLIGADA. Ligada por padrão, com o corte caindo em "hoje", ela
+   marcava como erro toda reserva da planilha com entrega futura — que são as
+   reservas normais da operação. Virou alarme falso em cima de dado correto.
+   A conferência continua disponível, mas só quando alguém pedir. */
+var REGRA={corte:'', ativo:false};
 
 function loadRegra(){
   try{
     var s=JSON.parse(localStorage.getItem(REGRA_KEY)||'null');
-    if(s && typeof s==='object'){ REGRA={corte:s.corte||'', ativo:s.ativo!==false}; }
+    if(s && typeof s==='object'){ REGRA={corte:s.corte||'', ativo:s.ativo===true}; }
   }catch(e){}
   /* Sem corte definido, adota HOJE: a regra passa a valer daqui para a frente
      e o que já existe continua sendo histórico. */
@@ -18327,10 +18344,18 @@ function renderRegra(){
   var nApp=fora.filter(function(r){ return r._foraDaRegra==='app-historico'; }).length;
 
   var corteBR=REGRA.corte?fmtBR(new Date(REGRA.corte+'T00:00:00')):'—';
-  var diag;
+
+  /* Desligada: some do caminho. Uma linha discreta, sem card e sem alarme. */
   if(!REGRA.ativo){
-    diag='<div class="mgreg-div">Conferência desligada. Ligue para o app apontar o que está do lado errado.</div>';
-  } else if(!fora.length){
+    box.innerHTML='<div class="mgw-hint" style="margin:8px 0;opacity:.75">'
+      +'📐 Conferência da divisão planilha × app <b>desligada</b> — nenhuma reserva é marcada. '
+      +'<a href="#" onclick="event.preventDefault();MGW_RESV.regraAtiva(true)" style="color:var(--ice)">ligar conferência</a>'
+      +'</div>';
+    return;
+  }
+
+  var diag;
+  if(!fora.length){
     diag='<div class="mgreg-div ok">✓ Tudo no lugar certo. Nenhuma reserva do lado errado da divisão.</div>';
   } else {
     diag='<div class="mgreg-div ruim">⚠ '+fora.length+' reserva(s) do lado errado: '
