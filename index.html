@@ -6041,16 +6041,21 @@ Data de retirada = din"></textarea>
 (function migrarChavesParaEmpresa(){
   try{
     var raw=localStorage.__proto__;
-    if(raw.getItem.call(localStorage,'gs_chaves_empresa_migradas')==='1') return;
+    /* A marca é POR PAR, não uma flag única.
+       Com uma flag só, quem já tinha aberto uma versão anterior ficava marcado
+       como "migrado" e qualquer par acrescentado depois nunca rodava — foi o que
+       aconteceu com o remanejamento de carros, que entrou na lista depois. */
     [['mgw_tarefas_v1','gs_tarefas_v1'],
      ['mgw_fluxo_v1','gs_fluxo_v1'],
      ['magiway_resv_flags_v1','gs_resv_flags_v1'],
      ['magiway_resv_caroverrides_v1','gs_resv_caroverrides_v1']].forEach(function(par){
+      var marca='gs_migrado__'+par[1];
+      if(raw.getItem.call(localStorage,marca)==='1') return;
       var antigo=raw.getItem.call(localStorage,par[0]);
       var novo=raw.getItem.call(localStorage,par[1]);
       if(antigo && !novo) raw.setItem.call(localStorage,par[1],antigo);
+      raw.setItem.call(localStorage,marca,'1');
     });
-    raw.setItem.call(localStorage,'gs_chaves_empresa_migradas','1');
   }catch(e){ console.warn('[migração] chaves da empresa',e); }
 })();
 </script>
@@ -6097,6 +6102,9 @@ function quemSouEu(){
   try{ if(typeof getActiveVendor==='function'){ var v=getActiveVendor(); if(v&&v.nome) return String(v.nome).split(' ')[0].toUpperCase(); } }catch(e){}
   return '';
 }
+/* JANES → Janes. O nome pode vir de dado salvo, não só da lista fixa, então
+   quem imprime na tela tem de passar por esc() depois. */
+function bonito(n){ n=String(n||''); return n.charAt(0)+n.slice(1).toLowerCase(); }
 /* próxima ocorrência (hoje inclusive) do dia da semana de uma reunião */
 function proximaReuniao(reu){
   var dow=AGENDA[reu]; if(typeof dow!=='number') dow=AGENDA_PADRAO[reu];
@@ -6225,14 +6233,19 @@ window.tfMes=function(d){ calRef=new Date(calRef.getFullYear(),calRef.getMonth()
 
 /* Leva o painel para fora do #app durante a impressão, senão ele herda a
    rolagem e o posicionamento do layout e sai cortado. */
+var _tfImprimindo=false;
 window.tfImprimir=function(){
   var pan=document.getElementById('panel-tarefas');
   if(!pan){ try{ window.print(); }catch(e){} return; }
+  if(_tfImprimindo) return;   /* dois cliques seguidos deixariam o painel preso no <body> */
+  _tfImprimindo=true;
   var pai=pan.parentNode, marca=document.createComment('panel-tarefas');
   pai.insertBefore(marca,pan);
   document.body.appendChild(pan);
   document.body.classList.add('tf-imprimindo');
   var restaurar=function(){
+    if(!_tfImprimindo) return;
+    _tfImprimindo=false;
     document.body.classList.remove('tf-imprimindo');
     try{ pai.insertBefore(pan,marca); marca.remove(); }catch(e){}
     window.removeEventListener('afterprint',restaurar);
@@ -6343,7 +6356,7 @@ function renderQuadros(){
           +'<button class="tf-del" onclick="tfDel(\''+t.id+'\')" title="Remover">✕</button>'
         +'</div>'
       +'</div>';
-    }).join('') : '<div class="tf-q-nada">Sem pendências para '+p.charAt(0)+p.slice(1).toLowerCase()+'.<br>As tarefas saem das reuniões semanais.</div>';
+    }).join('') : '<div class="tf-q-nada">Sem pendências para '+esc(bonito(p))+'.<br>As tarefas saem das reuniões semanais.</div>';
     return '<div class="tf-quadro'+(nAtr?' tem-atraso':'')+'">'
       +'<div class="tf-q-head">'
         +'<div class="tf-q-av">'+esc(p.slice(0,2))+'</div>'
@@ -6693,9 +6706,30 @@ window.fxSair=function(){ try{ sessionStorage.removeItem(FX_SESS); }catch(e){}
   document.getElementById('fx-app').style.display='none';
   document.getElementById('fx-lock').style.display='flex'; };
 function liberado(){ try{ return sessionStorage.getItem(FX_SESS)==='1'; }catch(e){ return false; } }
+/* O fluxo de caixa só sincroniza na conta do gerente. Quem não é gerente pode
+   abrir com a senha, mas o que lançar fica só neste navegador — melhor dizer
+   isso na cara do que deixar a pessoa lançar e o dado sumir depois. */
+function ehGerente(){
+  try{ if(window.CLOUD && CLOUD.role) return CLOUD.role==='admin'; }catch(e){}
+  return !!window.IS_MASTER;
+}
+function avisoSincronia(){
+  var app=document.getElementById('fx-app'); if(!app) return;
+  var id='fx-aviso-sync', velho=document.getElementById(id);
+  if(ehGerente()){ if(velho) velho.remove(); return; }
+  if(velho) return;
+  var d=document.createElement('div');
+  d.id=id; d.className='fx-card';
+  d.style.cssText='border-color:rgba(255,209,26,.45);background:rgba(255,209,26,.07);margin-bottom:12px';
+  d.innerHTML='<div style="font-size:.8rem;color:var(--gold);line-height:1.55">'
+    +'⚠️ <b>Somente leitura na prática.</b> O fluxo de caixa sincroniza apenas na conta do gerente. '
+    +'O que você lançar aqui fica <b>só neste navegador</b> e não chega para o restante da equipe.</div>';
+  app.insertBefore(d, app.firstChild);
+}
 function fxAbrir(){
   document.getElementById('fx-lock').style.display='none';
   document.getElementById('fx-app').style.display='';
+  avisoSincronia();
   load(); montarMeses(); fxCatsSel();
   var d=document.getElementById('fx-data'); if(d&&!d.value)d.value=hojeISO();
   document.getElementById('fx-margem').value=ST.cfg.margem;
@@ -7260,17 +7294,25 @@ window.rlDesfazer=function(){
    A folha é levada para fora do painel e colada direto no <body> só durante a
    impressão. Sem isso ela herda o posicionamento e a rolagem do painel e sai
    cortada ou deslocada na página. Volta para o lugar assim que termina. */
+var _rlImprimindo=false;
 window.rlImprimir=function(){
   if(!v('rl-titulo')){ setSt('<span style="color:var(--fire)">⚠️ Informe ao menos o título antes de imprimir.</span>'); return; }
+  /* Sem esta trava, clicar duas vezes seguidas fazia a 2ª chamada guardar o
+     <body> como "lugar de origem" da folha (a 1ª já a tinha movido para lá).
+     A folha então era devolvida para o body e a pré-visualização sumia da aba. */
+  if(_rlImprimindo) return;
   rlRender();
   var folha=document.getElementById('rl-folha');
   var pai=folha&&folha.parentNode;
   if(!folha||!pai){ window.print(); return; }
+  _rlImprimindo=true;
   var marca=document.createComment('rl-folha');
   pai.insertBefore(marca,folha);
   document.body.appendChild(folha);
   document.body.classList.add('rl-imprimindo');
   var restaurar=function(){
+    if(!_rlImprimindo) return;
+    _rlImprimindo=false;
     document.body.classList.remove('rl-imprimindo');
     try{ pai.insertBefore(folha,marca); marca.remove(); }catch(e){}
     window.removeEventListener('afterprint',restaurar);
@@ -8013,7 +8055,7 @@ function _cloudRawSet(k,v){ try{ localStorage.__proto__.setItem.call(localStorag
    qualquer usuário pode gravar. */
 /* Pendências, marcações de entrega/devolução e relatórios emitidos são operação
    do dia a dia: quem executa precisa poder confirmar sem depender do gerente. */
-const SHARED_WRITABLE_BY_ALL = ['gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1'];
+const SHARED_WRITABLE_BY_ALL = ['gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_resv_caroverrides_v1'];
 function _cloudBucket(fullKey){
   if(!fullKey || typeof fullKey!=='string') return null;
   if(CLOUD.uid && fullKey.indexOf('mgv_'+CLOUD.uid+'__')===0) return 'own';
@@ -8056,8 +8098,21 @@ async function cloudFlush(){
 }
 
 // Baixa a config compartilhada da empresa (preços, comissão, etc.)
+/* Chaves compartilhadas que NÃO devem descer para o navegador de quem não é
+   gerente. O fluxo de caixa é o caso: a senha da aba é conferida no navegador e
+   está no código publicado, então ela não segura ninguém que abra o DevTools —
+   quem protege de verdade é não mandar o dado para essa máquina. */
+const SOMENTE_GERENTE = ['gs_fluxo_v1'];
 async function _cloudPullShared(){
-  try{ const {data}=await CLOUD.client.from('shared_state').select('k,v'); (data||[]).forEach(r=>{ if(r.v!=null)_cloudRawSet(r.k, typeof r.v==='string'?r.v:JSON.stringify(r.v)); }); }
+  try{
+    const {data}=await CLOUD.client.from('shared_state').select('k,v');
+    const ehGerente = (CLOUD.role==='admin');
+    (data||[]).forEach(r=>{
+      if(r.v==null) return;
+      if(!ehGerente && SOMENTE_GERENTE.includes(r.k)) return;
+      _cloudRawSet(r.k, typeof r.v==='string'?r.v:JSON.stringify(r.v));
+    });
+  }
   catch(err){ console.warn('[nuvem] shared',err); }
 }
 // VENDEDOR: baixa config da empresa + os próprios dados; trava a sessão nele mesmo
