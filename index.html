@@ -3,8 +3,18 @@
 body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
 </style>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <title>MAGIWAY Rental Car — Sistema</title>
+<!-- App instalável no celular: quem entrega o carro no aeroporto abre a Agenda
+     do Dia pelo ícone da tela inicial, e ela abre mesmo sem sinal. -->
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#000020">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Magiway">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1365,6 +1375,13 @@ select.ffi option{background:#000020;color:#FF0000}
 .emia-campo{display:flex;gap:7px;align-items:baseline;font-size:.76rem}
 .emia-campo .cl{font-size:.58rem;font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--chalk3);flex:0 0 auto}
 .emia-campo .cv{color:var(--chalk);font-weight:600;word-break:break-word}
+/* ── aviso de disponibilidade da frota ── */
+.emdisp{border-radius:10px;padding:10px 13px;font-size:.79rem;line-height:1.5;border:1px solid;display:flex;gap:9px;align-items:flex-start}
+.emdisp .ic{font-size:1.05rem;line-height:1.2}
+.emdisp.livre{background:rgba(26,255,157,.08);border-color:rgba(26,255,157,.38);color:#1AFF9D}
+.emdisp.aperta{background:rgba(255,209,26,.08);border-color:rgba(255,209,26,.42);color:#FFD11A}
+.emdisp.lotado{background:rgba(255,71,87,.10);border-color:rgba(255,71,87,.5);color:#FF6B78}
+.emdisp b{color:inherit}
 </style>
 <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">EMITIR DOCUMENTOS · CONTRATO + VOUCHER</span><div class="sec-line"></div></div>
 <div class="card" style="margin-bottom:16px">
@@ -1411,6 +1428,7 @@ select.ffi option{background:#000020;color:#FF0000}
 
   <div class="emsec">🚗 Reserva &amp; Logística</div>
   <div class="emgrid">
+    <div class="ff" id="em-disp-wrap" style="grid-column:1/-1;display:none"><div id="em-disp"></div></div>
     <div class="ff"><label class="eml">Categoria *</label><select class="ffi" id="em-cat" onchange="emCalc()"></select></div>
     <div class="ff"><label class="eml">Retirada (data) *</label><input class="ffi" id="em-din" type="date" style="color-scheme:dark" onchange="emCalc()"></div>
     <div class="ff"><label class="eml">Devolução (data) *</label><input class="ffi" id="em-dout" type="date" style="color-scheme:dark" onchange="emCalc()"></div>
@@ -6602,6 +6620,17 @@ load();
           <div class="fx-f"><label>Margem desejada (%)</label><input id="fx-margem" type="number" min="0" max="200" step="1" value="25" onchange="fxSalvarCfg();fxRender()"></div>
           <div class="fx-f"><label>Despesa base (R$)</label><input id="fx-despbase" type="text" placeholder="deixe vazio = usa o mês" onchange="fxSalvarCfg();fxRender()"></div>
           <div class="fx-f"><div style="font-size:.68rem;color:var(--chalk3);line-height:1.5">Vazio = usa as saídas do mês selecionado. Preencha para simular outro cenário.</div></div>
+          <div class="fx-f" style="grid-column:1/-1">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:.78rem;color:var(--chalk2)">
+              <input type="checkbox" id="fx-autocusto" onchange="fxSalvarCfg();fxRender()" style="width:16px;height:16px;accent-color:var(--fire);cursor:pointer">
+              Lançar automaticamente o <b>custo real das reservas</b> como saída
+            </label>
+            <div style="font-size:.68rem;color:var(--chalk3);line-height:1.5;margin-top:5px">
+              As entradas já vêm sozinhas das vendas. Ligando isto, o que a Magiway paga por cada carro
+              (campo <b>Custo real</b> da reserva) entra como saída em <b>Fornecedor (frota)</b> — a margem passa a bater com a operação.
+              <b>Desligue</b> se você já lança esses custos à mão, senão conta duas vezes.
+            </div>
+          </div>
         </div>
         <div class="fx-proj" id="fx-projs"></div>
       </div>
@@ -6663,6 +6692,7 @@ var aba='dash', mesSel='', charts={};
 
 function load(){ try{ var s=JSON.parse(localStorage.getItem(FX_KEY)||'{}');
   ST.lanc=s.lanc||[]; ST.cats=s.cats||{E:CATS_PAD.E.slice(),S:CATS_PAD.S.slice()}; ST.cfg=s.cfg||{margem:25,despbase:''};
+  if(ST.cfg.autoCusto===undefined) ST.cfg.autoCusto=true;   /* nasce ligado: a margem correta é o padrão */
   }catch(e){ ST={lanc:[],cats:{E:CATS_PAD.E.slice(),S:CATS_PAD.S.slice()},cfg:{margem:25,despbase:''}}; } }
 function save(){ try{ localStorage.setItem(FX_KEY,JSON.stringify(ST)); }catch(e){} }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
@@ -6690,7 +6720,31 @@ function vendasComoEntradas(){
   }catch(e){}
   return out;
 }
-function todos(){ return ST.lanc.concat(vendasComoEntradas()); }
+/* ── Custo real das reservas como saída automática ──
+   As entradas já vinham sozinhas das vendas, mas o custo não: a margem do fluxo
+   ficava otimista porque só entrava receita. Cada reserva já tem quanto a
+   Magiway paga pelo carro (custoReal); aqui isso vira saída, na mesma data de
+   fechamento usada pela entrada, para os dois lados baterem.
+   Desligável, para não contar duas vezes quem já lança à mão. */
+function custosComoSaidas(){
+  var out=[];
+  if(ST.cfg.autoCusto===false) return out;
+  try{
+    if(!window.MGW_RESV || !MGW_RESV.dados) return out;
+    MGW_RESV.dados().forEach(function(r,i){
+      var v=Number(r.custoReal)||0;
+      if(!(v>0)) return;
+      var d=r.dataFech||r.entrega; if(!d) return;
+      var dt=(d instanceof Date)?d:new Date(d);
+      if(isNaN(dt)) return;
+      var iso=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
+      out.push({id:'autoc'+i, tipo:'S', data:iso, cat:'Fornecedor (frota)',
+                desc:'Custo · '+(r.cliente||'reserva')+(r.modelo?(' · '+r.modelo):''), val:v, auto:true});
+    });
+  }catch(e){}
+  return out;
+}
+function todos(){ return ST.lanc.concat(vendasComoEntradas()).concat(custosComoSaidas()); }
 function doMes(k){ return todos().filter(function(l){ return ym(l.data)===k; }); }
 function somaT(arr,t){ return arr.filter(function(l){return l.tipo===t;}).reduce(function(a,b){return a+(Number(b.val)||0);},0); }
 
@@ -6733,6 +6787,7 @@ function fxAbrir(){
   load(); montarMeses(); fxCatsSel();
   var d=document.getElementById('fx-data'); if(d&&!d.value)d.value=hojeISO();
   document.getElementById('fx-margem').value=ST.cfg.margem;
+  var _ac=document.getElementById('fx-autocusto'); if(_ac) _ac.checked=(ST.cfg.autoCusto!==false);
   document.getElementById('fx-despbase').value=ST.cfg.despbase||'';
   fxRender();
 }
@@ -6793,6 +6848,8 @@ window.fxDel=function(id){ if(!confirm('Remover este lançamento?'))return;
 window.fxSalvarCfg=function(){
   ST.cfg.margem=Number(document.getElementById('fx-margem').value)||0;
   ST.cfg.despbase=document.getElementById('fx-despbase').value||'';
+  var ac=document.getElementById('fx-autocusto');
+  if(ac) ST.cfg.autoCusto=!!ac.checked;
   save();
 };
 
@@ -8067,6 +8124,94 @@ function _cloudBucket(fullKey){
   }
   return null;
 }
+// ═══════════════════════════════════════════════════════════════════
+// FUSÃO DE 3 VIAS — duas pessoas salvando ao mesmo tempo
+// ───────────────────────────────────────────────────────────────────
+// Cada aba guarda a coleção inteira numa chave só (gs_tarefas_v1 = a lista
+// toda). Gravar era "sobrescreve o bloco": se a Mariana marcasse a tarefa dela
+// e o Dickson marcasse a dele um segundo depois, o save do Dickson subia a
+// lista que ELE tinha em memória — com a tarefa da Mariana ainda por fazer. O
+// trabalho dela sumia, sem erro e sem aviso. Com o Realtime desligado no
+// projeto, a releitura é de 60s e a janela vira um minuto inteiro.
+//
+// Agora, antes de gravar, o app compara três versões da coleção:
+//   base   = como estava na nuvem da última vez que este navegador viu
+//   meu    = como está aqui agora
+//   deles  = como está na nuvem NESTE instante
+// e resolve item a item: quem não foi tocado por mim mantém a versão da nuvem;
+// o que eu mexi prevalece. Some o "um apaga o outro" sem travar ninguém.
+// ═══════════════════════════════════════════════════════════════════
+CLOUD._base = {};                      // última versão conhecida da nuvem, por chave
+function _mesclaIgual(a,b){ try{ return JSON.stringify(a)===JSON.stringify(b); }catch(e){ return a===b; } }
+
+/* Resolve UM item. `podeRecursar` liga a descida em sub-objetos, usada para
+   formatos como {tarefas:[...], agenda:{...}}, em que mexer numa tarefa não
+   pode arrastar a agenda junto. */
+function _mesclaItem(base, meu, deles, podeRecursar){
+  if(_mesclaIgual(meu,deles)) return meu;
+  var euMexi=!_mesclaIgual(meu,base), elesMexeram=!_mesclaIgual(deles,base);
+  if(euMexi && elesMexeram && podeRecursar &&
+     ((meu&&typeof meu==='object')||(deles&&typeof deles==='object'))){
+    return _mesclar3(base, meu, deles);
+  }
+  if(!euMexi) return deles;      // só eles mexeram (undefined = apagaram)
+  if(!elesMexeram) return meu;   // só eu mexi (undefined = apaguei)
+  return meu;                    // os dois mexeram: vale o clique deste navegador
+}
+
+function _mesclar3(base, meu, deles){
+  if(deles===undefined) return meu;
+  if(meu===undefined) return deles;
+  var listaComId=function(v){ return Array.isArray(v) && v.length>0 &&
+    v.every(function(x){ return x && typeof x==='object' && x.id!=null; }); };
+
+  /* coleções de itens com id: tarefas, relatórios, reservas, lançamentos */
+  if(listaComId(meu) && listaComId(deles)){
+    var b={}, m={}, t={};
+    (Array.isArray(base)?base:[]).forEach(function(x){ if(x&&x.id!=null) b[x.id]=x; });
+    meu.forEach(function(x){ m[x.id]=x; });
+    deles.forEach(function(x){ t[x.id]=x; });
+    var saida=[], visto={};
+    var por=function(id){
+      if(visto[id]) return; visto[id]=1;
+      var r=_mesclaItem(b[id], m[id], t[id], false);
+      if(r!==undefined) saida.push(r);
+    };
+    deles.forEach(function(x){ por(x.id); });   // mantém a ordem da nuvem
+    meu.forEach(function(x){ por(x.id); });     // e acrescenta o que só existe aqui
+    return saida;
+  }
+
+  /* mapas: marcações por reserva, remanejamentos, exclusões, conferidas */
+  var ehObj=function(v){ return v && typeof v==='object' && !Array.isArray(v); };
+  if(ehObj(meu) && ehObj(deles)){
+    var saidaO={}, bo=ehObj(base)?base:{}, chaves={};
+    Object.keys(meu).forEach(function(k){ chaves[k]=1; });
+    Object.keys(deles).forEach(function(k){ chaves[k]=1; });
+    Object.keys(chaves).forEach(function(k){
+      var r=_mesclaItem(bo[k], meu[k], deles[k], true);
+      if(r!==undefined) saidaO[k]=r;
+    });
+    return saidaO;
+  }
+  return meu;   /* formato que não dá para fundir: vale o desta máquina */
+}
+
+/* Junta o que está aqui com o que está na nuvem AGORA. Devolve o texto final a
+   gravar, ou null quando não há nada a mudar em relação ao que eu ia enviar. */
+function _mesclarComNuvem(k, meuTexto, textoDeles){
+  if(textoDeles==null) return null;
+  try{
+    var meu=JSON.parse(meuTexto);
+    var deles=(typeof textoDeles==='string')?JSON.parse(textoDeles):textoDeles;
+    if(_mesclaIgual(meu,deles)) return null;
+    var baseTxt=CLOUD._base[k];
+    var base=(baseTxt==null)?undefined:JSON.parse(baseTxt);
+    var final=JSON.stringify(_mesclar3(base, meu, deles));
+    return (final===meuTexto)?null:final;
+  }catch(e){ return null; }   /* não é JSON — segue o valor cru */
+}
+
 // Enfileira uma alteração para enviar à nuvem (com debounce)
 function cloudQueue(fullKey, value){
   if(!CLOUD.enabled || !CLOUD.session) return;
@@ -8079,21 +8224,52 @@ function cloudQueue(fullKey, value){
 async function cloudFlush(){
   const pend=CLOUD._pending; CLOUD._pending={}; CLOUD._timer=null;
   if(!CLOUD.enabled || !CLOUD.session) return;
-  const ownUp=[], ownDel=[], shUp=[], shDel=[];
+  const ownUp=[], ownDel=[], shUp=[], shDel=[], shPend=[];
   for(const k in pend){
     const {value, bucket}=pend[k];
     if(bucket==='own'){ if(value==null) ownDel.push(k); else ownUp.push({user_id:CLOUD.uid, k, v:value, updated_at:new Date().toISOString()}); }
     else if(bucket==='shared'){
       if(value==null) shDel.push(k);
-      else { shUp.push({k, v:value, updated_at:new Date().toISOString()});
-             try{ if(window.MGW_LIVE) MGW_LIVE.marcarEnvio(k, value); }catch(_){} }
+      else shPend.push({k, value});
     }
   }
+
+  /* Antes de gravar o compartilhado, relê o que está na nuvem NESTE instante e
+     funde item a item. Sem isso, quem salva por último apaga o trabalho de quem
+     salvou segundos antes. */
+  if(shPend.length){
+    let atuais={};
+    try{
+      const {data}=await CLOUD.client.from('shared_state').select('k,v').in('k', shPend.map(x=>x.k));
+      (data||[]).forEach(r=>{ atuais[r.k]=(typeof r.v==='string')?r.v:JSON.stringify(r.v); });
+    }catch(err){ console.warn('[nuvem] não deu para reler antes de fundir',err); }
+
+    const mudouLocal=[];
+    for(const {k, value} of shPend){
+      let final=value;
+      const fundido=_mesclarComNuvem(k, value, atuais[k]);
+      if(fundido!=null){
+        final=fundido;
+        _cloudRawSet(k, final);      // o que vai para a nuvem é o que fica aqui
+        mudouLocal.push(k);
+      }
+      shUp.push({k, v:final, updated_at:new Date().toISOString()});
+      CLOUD._base[k]=final;
+      try{ if(window.MGW_LIVE) MGW_LIVE.marcarEnvio(k, final); }catch(_){}
+    }
+    /* a fusão trouxe alteração de outra pessoa: redesenha para a tela não ficar
+       mostrando uma versão que já não é a gravada */
+    if(mudouLocal.length){
+      try{ if(window.MGW_LIVE) MGW_LIVE.redesenhar(mudouLocal); }catch(_){}
+      console.log('[nuvem] fusão aplicada em: '+mudouLocal.join(', '));
+    }
+  }
+
   try{
     if(ownUp.length) await CLOUD.client.from('app_state').upsert(ownUp,{onConflict:'user_id,k'});
     for(const k of ownDel) await CLOUD.client.from('app_state').delete().eq('user_id',CLOUD.uid).eq('k',k);
     if(shUp.length) await CLOUD.client.from('shared_state').upsert(shUp,{onConflict:'k'});
-    for(const k of shDel) await CLOUD.client.from('shared_state').delete().eq('k',k);
+    for(const k of shDel){ await CLOUD.client.from('shared_state').delete().eq('k',k); delete CLOUD._base[k]; }
   }catch(err){ console.warn('[nuvem] erro ao salvar',err); }
 }
 
@@ -8110,7 +8286,9 @@ async function _cloudPullShared(){
     (data||[]).forEach(r=>{
       if(r.v==null) return;
       if(!ehGerente && SOMENTE_GERENTE.includes(r.k)) return;
-      _cloudRawSet(r.k, typeof r.v==='string'?r.v:JSON.stringify(r.v));
+      const txt=(typeof r.v==='string')?r.v:JSON.stringify(r.v);
+      _cloudRawSet(r.k, txt);
+      CLOUD._base[r.k]=txt;          // ponto de partida da fusão de 3 vias
     });
   }
   catch(err){ console.warn('[nuvem] shared',err); }
@@ -13701,6 +13879,46 @@ function emCalc(){
   S('em-mesref', mm?(MMS[+mm[2]-1]+'/'+mm[1]):'');
   var tipo=_emVal('em-pgtipo'), frag=document.getElementById('em-frag'); if(frag) frag.style.display=(tipo==='fragmentado')?'':'none';
   if(tipo==='fragmentado'){ var ja=emParseBRL(_emVal('em-pgpago')); S('em-pgpagopct', pago>0?((ja/pago*100).toFixed(1)+'%'):'—'); S('em-pgfalta', emFmtBRL(Math.max(0,pago-ja))); }
+  emVerDisponibilidade();
+}
+
+/* ── Disponibilidade da frota no período escolhido ──
+   O app já sabia calcular isto (é o quadro da Agenda), mas na hora de emitir
+   ninguém checava nada: você salvava e só via o conflito depois, quando a linha
+   aparecia vermelha no calendário. Agora avisa antes. */
+function emVerDisponibilidade(){
+  var wrap=document.getElementById('em-disp-wrap'), box=document.getElementById('em-disp');
+  if(!wrap||!box) return;
+  var esconder=function(){ wrap.style.display='none'; box.innerHTML=''; };
+  var cat=_emVal('em-cat'), din=_emVal('em-din'), dout=_emVal('em-dout');
+  if(!cat||!din){ esconder(); return; }
+  var d;
+  try{
+    if(!window.MGW_RESV || !MGW_RESV.disponibilidade){ esconder(); return; }
+    var p=din.split('-'), q=(dout||din).split('-');
+    d=MGW_RESV.disponibilidade(cat, new Date(+p[0],+p[1]-1,+p[2]), new Date(+q[0],+q[1]-1,+q[2]));
+  }catch(e){ esconder(); return; }
+  if(!d){ esconder(); return; }   /* frota ainda não carregou ou categoria fora da frota */
+
+  /* o rótulo da categoria vem das Configurações, então passa por escape */
+  var esc=function(t){ return String(t==null?'':t).replace(/[&<>"]/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+  var dia=('0'+d.dia.getDate()).slice(-2)+'/'+('0'+(d.dia.getMonth()+1)).slice(-2);
+  var cls, ico, txt;
+  if(d.livres<=0){
+    cls='lotado'; ico='⛔';
+    txt='<b>Sem '+esc(d.categoria)+' livre em '+dia+'.</b> '
+       +'Nesse dia os '+d.total+' carros da categoria já estão comprometidos. '
+       +'Salvar assim gera <b>overbooking</b> — remaneje no calendário ou ofereça outra categoria.';
+  } else if(d.livres===1){
+    cls='aperta'; ico='⚠️';
+    txt='<b>Resta 1 '+esc(d.categoria)+'</b> no dia mais apertado ('+dia+'), de '+d.total+'. Dá para fechar, mas é o último.';
+  } else {
+    cls='livre'; ico='✅';
+    txt='<b>'+d.livres+' '+esc(d.categoria)+' livre(s)</b> no dia mais apertado do período ('+dia+'), de '+d.total+'.';
+  }
+  box.innerHTML='<div class="emdisp '+cls+'"><span class="ic">'+ico+'</span><span>'+txt+'</span></div>';
+  wrap.style.display='';
 }
 function numeroPorExtenso(valor){
   valor=Math.round((valor||0)*100)/100; var inteiro=Math.floor(valor), cent=Math.round((valor-inteiro)*100);
@@ -16121,6 +16339,7 @@ function aplicar(k, v){
   if(!k || CHAVES.indexOf(k)<0 || v==null) return false;
   var novo=(typeof v==='string')?v:JSON.stringify(v);
   var atual=lerLocal(k);
+  try{ if(window.CLOUD && CLOUD._base) CLOUD._base[k]=novo; }catch(e){}   // base da fusão de 3 vias
   if(atual===novo){ ultimoValor[k]=novo; return false; }
   if(ultimoValor[k]===novo) return false;      // eco da nossa própria gravação
   ultimoValor[k]=novo;
@@ -16240,7 +16459,8 @@ function desligar(){
   canal=null; ultimoValor={};
 }
 
-window.MGW_LIVE={ ligar:ligar, desligar:desligar, puxar:puxar, marcarEnvio:marcarEnvio, chaves:CHAVES };
+window.MGW_LIVE={ ligar:ligar, desligar:desligar, puxar:puxar, marcarEnvio:marcarEnvio,
+                  redesenhar:redesenhar, chaves:CHAVES };
 })();
 </script>
 <script id="mgw-ciclo-js">
@@ -17273,7 +17493,9 @@ function saveExcluidasResv(o){ try{ localStorage.setItem(EXCL_RESV_KEY, JSON.str
 function aplicarOverridesResv(rows){
   var ovr=loadOverridesResv();
   rows.forEach(function(r){
-    var o=ovr[dedupeKey(r)]; if(!o) return;
+    var chave=dedupeKey(r);
+    var o=ovr[chave]; if(!o) return;
+    r._chaveOrig=chave;   /* usada para reencontrar a reserva depois da edição */
     Object.keys(o).forEach(function(campo){
       var v=o[campo];
       if(campo==='dataFech'||campo==='entrega'||campo==='devolucao'){ r[campo]=v?new Date(v):null; }
@@ -17946,7 +18168,40 @@ function salvarEdicao(){
   }
   var box=document.getElementById('resv-edit-modal'); if(box) box.classList.remove('on');
   refresh();
+
+  /* A reserva é identificada por telefone + data de entrega + nome. Corrigir o
+     nome ou a data muda essa chave — e tudo que está pendurado nela (entregue,
+     devolvido, sem gasolina, remanejamento de carro, "já conferi a duplicata")
+     ficava órfão e sumia da tela sem aviso. Leva as marcações para a chave nova. */
+  try{
+    var alvo=null;
+    if(src==='app' && idLocal) alvo=DATA.filter(function(x){ return x._id===idLocal; })[0];
+    if(!alvo) alvo=DATA.filter(function(x){ return x._chaveOrig===chaveAntiga; })[0];
+    if(!alvo){
+      var nome=norm(campos.cliente), ent=campos.entrega?new Date(campos.entrega).getTime():0;
+      alvo=DATA.filter(function(x){
+        return norm(x.cliente)===nome && (x.entrega?x.entrega.getTime():0)===ent;
+      })[0];
+    }
+    if(alvo){
+      var movidas=migrarMarcacoes(chaveAntiga, dedupeKey(alvo));
+      if(movidas){ refresh(); console.log('[reservas] '+movidas+' marcação(ões) levada(s) para a chave nova'); }
+    }
+  }catch(e){ console.warn('[reservas] não deu para levar as marcações',e); }
+
   if(typeof toast==='function') toast('✓ Reserva atualizada');
+}
+
+/* Move tudo que é indexado pela chave da reserva, da chave antiga para a nova.
+   Nunca sobrescreve algo que já exista na chave nova. */
+function migrarMarcacoes(velha, nova){
+  if(!velha || !nova || velha===nova) return 0;
+  var n=0;
+  if(FLAGS[velha] && !FLAGS[nova]){ FLAGS[nova]=FLAGS[velha]; delete FLAGS[velha]; saveFlags(); n++; }
+  if(OVERRIDES[velha] && !OVERRIDES[nova]){ OVERRIDES[nova]=OVERRIDES[velha]; delete OVERRIDES[velha]; saveOverrides(); n++; }
+  var c=loadConferidas();
+  if(c[velha] && !c[nova]){ c[nova]=c[velha]; delete c[velha]; saveConferidas(c); n++; }
+  return n;
 }
 
 /* Junta duas (ou mais) reservas marcadas como possível duplicata numa só:
@@ -18159,6 +18414,27 @@ function renderAvailability(sel){
   });
   html+='</div></div>'; box.innerHTML=html;
 }
+/* Disponibilidade de UMA categoria ao longo de um período.
+   Mesma conta que a Agenda já faz por dia — exposta para o Emitir poder avisar
+   ANTES de salvar, em vez de o conflito só aparecer vermelho no calendário
+   depois que a reserva já existe. Devolve o pior dia do intervalo. */
+function disponibilidadePeriodo(categoria, dataIni, dataFim){
+  if(!LOADED || !categoria || !dataIni) return null;
+  var cfg=CATS.filter(function(c){ return c.key===categoria || c.label===categoria; })[0];
+  if(!cfg) return null;
+  var ini=dOnly(dataIni), fim=dOnly(dataFim||dataIni);
+  if(fim<ini) return null;
+  var pior=null, dias=0;
+  for(var d=new Date(ini); d<=fim && dias<400; d.setDate(d.getDate()+1), dias++){
+    var ocupados=0;
+    DATA.forEach(function(r){ if(r.cat===cfg.key && !r.over && dayCovers(r,dOnly(d))) ocupados++; });
+    var livres=cfg.cars-ocupados;
+    if(pior===null || livres<pior.livres) pior={dia:new Date(d), livres:livres, ocupados:ocupados, total:cfg.cars};
+  }
+  if(pior) pior.categoria=cfg.label;
+  return pior;
+}
+
 function agDay(delta){
   var inp=document.getElementById('mgag-date'); ensureAgDate();
   var p=(inp.value||'').split('-'); var d=new Date(+p[0],+p[1]-1,+p[2]); d.setDate(d.getDate()+delta);
@@ -18309,7 +18585,7 @@ window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, rend
   irParaDia:irParaDia,
   abrirEdicao:abrirEdicao, salvarEdicao:salvarEdicao, excluir:excluir, juntarDuplicata:juntarDuplicata,
   toggleManut:toggleManut, carregarManutencao:loadManut, carregarFlags:loadFlags,
-  carregarRemanejamentos:loadOverrides,
+  carregarRemanejamentos:loadOverrides, disponibilidade:disponibilidadePeriodo,
   conferir:conferirResv, reabrirConferidas:reabrirConferidas };
 
 loadOverrides(); loadFlags(); loadManut();
@@ -18682,6 +18958,103 @@ window.npsRender=render;
     if(id==='nps'){ try{ ULTIMO=-100; render(true); }catch(e){} }
   };
 })();
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     APP NO CELULAR — instalação, modo offline e atalhos do manifesto
+     ═══════════════════════════════════════════════════════════════════ -->
+<style>
+#mgw-offline{position:fixed;left:50%;transform:translateX(-50%);top:8px;z-index:9998;display:none;
+  background:rgba(255,71,87,.95);color:#fff;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.08em;
+  text-transform:uppercase;padding:6px 14px;border-radius:20px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+body.mgw-sem-rede #mgw-offline{display:block}
+#mgw-instalar{position:fixed;right:14px;bottom:14px;z-index:9997;display:none;align-items:center;gap:8px;
+  background:linear-gradient(135deg,var(--fire),var(--fireDark));color:#fff;border:none;border-radius:24px;
+  padding:11px 17px;font-size:.8rem;font-weight:600;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.5)}
+#mgw-instalar.on{display:flex}
+#mgw-instalar span.x{opacity:.7;font-size:1rem;line-height:1;padding-left:4px}
+@media print{#mgw-offline,#mgw-instalar{display:none !important}}
+</style>
+<div id="mgw-offline">⚠ sem conexão — mostrando os dados já baixados</div>
+<button id="mgw-instalar" title="Instalar o Magiway na tela inicial">
+  📲 Instalar no celular<span class="x" onclick="event.stopPropagation();this.parentNode.classList.remove('on')">✕</span>
+</button>
+
+<script>
+(function(){
+'use strict';
+
+/* ── 1. Service worker ──
+   Só faz sentido em http(s). Aberto como arquivo local (file://) o registro
+   lança exceção, então nem tentamos. */
+if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('/sw.js')
+      .then(function(reg){
+        console.log('[app] modo offline pronto');
+        /* versão nova publicada enquanto o app estava aberto */
+        reg.addEventListener('updatefound', function(){
+          var novo=reg.installing; if(!novo) return;
+          novo.addEventListener('statechange', function(){
+            if(novo.state==='installed' && navigator.serviceWorker.controller){
+              if(typeof toast==='function') toast('🔄 Nova versão disponível — recarregue a página');
+            }
+          });
+        });
+      })
+      .catch(function(e){ console.warn('[app] service worker não registrou', e); });
+  });
+}
+
+/* ── 2. Aviso de "sem rede" ──
+   O app continua usável offline (mostra o que já baixou), mas a pessoa precisa
+   saber que o que ela marcar agora só sobe quando a conexão voltar. */
+function estadoRede(){
+  var fora=(navigator.onLine===false);
+  document.body.classList.toggle('mgw-sem-rede', fora);
+  if(!fora && window.MGW_LIVE){ try{ MGW_LIVE.puxar(true); }catch(e){} }   /* reconectou: relê */
+}
+window.addEventListener('online', function(){
+  estadoRede();
+  if(typeof toast==='function') toast('✅ Conexão de volta — sincronizando');
+});
+window.addEventListener('offline', function(){
+  estadoRede();
+  if(typeof toast==='function') toast('⚠️ Sem conexão — o que você marcar sobe quando voltar','orange');
+});
+estadoRede();
+
+/* ── 3. Botão de instalar ── */
+var _promptInstalar=null;
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault(); _promptInstalar=e;
+  var b=document.getElementById('mgw-instalar'); if(b) b.classList.add('on');
+});
+var btn=document.getElementById('mgw-instalar');
+if(btn) btn.addEventListener('click', async function(){
+  if(!_promptInstalar) { btn.classList.remove('on'); return; }
+  btn.classList.remove('on');
+  try{ _promptInstalar.prompt(); await _promptInstalar.userChoice; }catch(e){}
+  _promptInstalar=null;
+});
+window.addEventListener('appinstalled', function(){
+  var b=document.getElementById('mgw-instalar'); if(b) b.classList.remove('on');
+  if(typeof toast==='function') toast('📲 Magiway instalado');
+});
+
+/* ── 4. Atalhos do manifesto: /?aba=agenda abre direto na Agenda ── */
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    try{
+      var aba=new URLSearchParams(location.search).get('aba');
+      if(!aba || !document.getElementById('panel-'+aba)) return;
+      if(!window.MGW_AUTENTICADO) return;          /* sem login, respeita a tela de entrada */
+      var item=document.querySelector('.sb-item[onclick*="\''+aba+'\'"]');
+      nav(aba, item);
+    }catch(e){}
+  }, 900);
+});
 })();
 </script>
 
