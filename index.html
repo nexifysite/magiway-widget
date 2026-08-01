@@ -163,7 +163,11 @@ body.sidebar-collapsed .main{margin-left:0}
 .sb-logout:hover{color:var(--red)}
 
 /* MAIN */
-.main{margin-left:var(--sb);min-height:100vh;display:flex;flex-direction:column}
+/* min-width:0 — sem isto, um item flex não encolhe abaixo do tamanho do próprio
+   conteúdo: a tabela larga de Reservas esticava a página inteira (2150px numa
+   tela de 1500) em vez de rolar dentro da própria caixa. A barra de busca, os
+   avisos e os cards saíam do lado direito. No celular isso é fatal. */
+.main{margin-left:var(--sb);min-height:100vh;display:flex;flex-direction:column;min-width:0}
 .topbar{
   position:sticky;top:0;z-index:50;
   padding:14px 26px;
@@ -186,8 +190,8 @@ body.sidebar-collapsed .main{margin-left:0}
 .tb-time{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--chalk3)}
 
 /* CONTENT */
-.content{padding:22px 26px;flex:1}
-.panel{display:none;animation:fadeUp .35s ease both}
+.content{padding:22px 26px;flex:1;min-width:0;overflow-x:hidden}
+.panel{display:none;animation:fadeUp .35s ease both;min-width:0}
 .panel.active{display:block}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
@@ -5772,6 +5776,7 @@ Data de retirada = din"></textarea>
   </div>
   <div class="mgw-hint">📋 Colunas idênticas à aba <b>📦 HISTÓRICO</b> da planilha FECHAMENTO MAGIWAY, ordenadas pela <b>data de fechamento</b> (mais antiga primeiro). Atualiza sozinha a partir das abas <b>HISTÓRICO</b> e <b>FECHAMENTOS</b>.<br>
     <span style="color:#8CC8FF">Linhas em azul</span> = fechadas no mês em vigência (dia 13 → dia 12), as que contam no Dashboard e nas Metas. <b>APP</b> = criada aqui. <b>2x</b> = lançamentos de pagamento fragmentado juntados numa reserva só.</div>
+  <div id="mgrsv-regra"></div>
   <div id="mgrsv-status" class="mgw-status"></div>
   <div id="mgrsv-count" class="mgw-status" style="color:var(--chalk2)"></div>
   <div id="mgrsv-issues"></div>
@@ -7694,6 +7699,25 @@ tr.mgrsv-dup td{background:rgba(255,209,26,.05)}
 .mgiss-delbtn:hover{background:rgba(255,0,0,.12)}
 .mgrsv-edit:hover{background:rgba(59,158,255,.12)}
 .mgrsv-del{background:none;border:1px solid rgba(255,0,0,.28);color:#FF6B78;border-radius:6px;padding:2px 7px;cursor:pointer;font-size:.72rem;line-height:1.4}
+/* ── REGRA DE ORIGEM: planilha = histórico · app = operação corrente ── */
+.mgreg{background:var(--glass);border:1px solid var(--edge);border-left:4px solid var(--ice);border-radius:var(--r);padding:13px 15px;margin:10px 0}
+.mgreg.alerta{border-left-color:#FFD11A}
+.mgreg-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mgreg-t{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.1em;color:var(--chalk)}
+.mgreg-corte{display:flex;align-items:center;gap:7px;margin-left:auto;flex-wrap:wrap}
+.mgreg-corte label{font-size:.58rem;font-family:'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--chalk3)}
+.mgreg-corte input{background:var(--ink);border:1px solid var(--edge);border-radius:7px;padding:5px 8px;color:var(--chalk);font-size:.76rem;outline:none;color-scheme:dark}
+.mgreg-regra{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+@media(max-width:700px){.mgreg-regra{grid-template-columns:1fr}}
+.mgreg-lado{background:var(--ink2);border:1px solid var(--edge);border-radius:9px;padding:9px 11px}
+.mgreg-lado .q{font-size:.58rem;font-family:'DM Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--chalk3);margin-bottom:3px}
+.mgreg-lado .r{font-size:.79rem;color:var(--chalk);line-height:1.45}
+.mgreg-lado .r b{color:var(--ice)}
+.mgreg-div{margin-top:10px;font-size:.76rem;line-height:1.5}
+.mgreg-div.ok{color:#1AFF9D}
+.mgreg-div.ruim{color:#FFD11A}
+.mgreg-div button{background:rgba(255,209,26,.14);border:1px solid rgba(255,209,26,.45);color:#FFD11A;border-radius:7px;padding:3px 9px;cursor:pointer;font-size:.7rem;margin-left:6px}
+.mgrsv-badge.foraregra{background:rgba(255,209,26,.2);color:#FFD11A}
 /* entregue / devolvido direto na tabela */
 .mgrsv-flag{background:none;border:1px solid var(--edgeO);border-radius:6px;padding:2px 6px;cursor:pointer;font-size:.72rem;line-height:1.4;margin-right:4px;filter:grayscale(1);opacity:.45;transition:.15s}
 .mgrsv-flag:hover{opacity:.85;filter:grayscale(.4)}
@@ -8112,7 +8136,7 @@ function _cloudRawSet(k,v){ try{ localStorage.__proto__.setItem.call(localStorag
    qualquer usuário pode gravar. */
 /* Pendências, marcações de entrega/devolução e relatórios emitidos são operação
    do dia a dia: quem executa precisa poder confirmar sem depender do gerente. */
-const SHARED_WRITABLE_BY_ALL = ['gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_resv_caroverrides_v1'];
+const SHARED_WRITABLE_BY_ALL = ['gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1'];
 function _cloudBucket(fullKey){
   if(!fullKey || typeof fullKey!=='string') return null;
   if(CLOUD.uid && fullKey.indexOf('mgv_'+CLOUD.uid+'__')===0) return 'own';
@@ -13917,8 +13941,26 @@ function emVerDisponibilidade(){
     cls='livre'; ico='✅';
     txt='<b>'+d.livres+' '+esc(d.categoria)+' livre(s)</b> no dia mais apertado do período ('+dia+'), de '+d.total+'.';
   }
-  box.innerHTML='<div class="emdisp '+cls+'"><span class="ic">'+ico+'</span><span>'+txt+'</span></div>';
+  box.innerHTML='<div class="emdisp '+cls+'"><span class="ic">'+ico+'</span><span>'+txt+'</span></div>'
+               +emAvisoRegra(din);
   wrap.style.display='';
+}
+
+/* Divisão combinada: histórico é da planilha. Se a retirada for anterior à data
+   de corte, avisa aqui — antes de criar mais uma reserva do lado errado. */
+function emAvisoRegra(din){
+  try{
+    if(!din || !window.MGW_RESV || !MGW_RESV.regra) return '';
+    var g=MGW_RESV.regra();
+    if(!g || !g.ativo || !g.corte) return '';
+    if(din >= g.corte) return '';
+    var p=g.corte.split('-');
+    return '<div class="emdisp aperta" style="margin-top:8px"><span class="ic">📐</span><span>'
+      +'<b>Isso é histórico, não operação.</b> A retirada é anterior à data de corte ('
+      +p[2]+'/'+p[1]+'/'+p[0]+'), e pela divisão combinada o que já passou mora na '
+      +'<b>planilha</b>. Dá para salvar assim, mas a reserva vai aparecer marcada como fora da regra na aba Reservas.'
+      +'</span></div>';
+  }catch(e){ return ''; }
 }
 function numeroPorExtenso(valor){
   valor=Math.round((valor||0)*100)/100; var inteiro=Math.floor(valor), cent=Math.round((valor-inteiro)*100);
@@ -14645,7 +14687,7 @@ function ehVendedor(v){ return !!v && (v.role||'admin')==='admin'; }
    são da EMPRESA: a pendência que o Luciano lança na reunião tem de aparecer
    para o Dickson, e o carro que a Mariana marcou como entregue tem de aparecer
    entregue para todo mundo. */
-const VENDOR_SHARED_KEYS = ['gs_cfg_v1','gs_ai_keys','gs_frota_v2','gs_shortcuts','gs_cambio_modal','gs_focus_mode','gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1'];
+const VENDOR_SHARED_KEYS = ['gs_cfg_v1','gs_ai_keys','gs_frota_v2','gs_shortcuts','gs_cambio_modal','gs_focus_mode','gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1'];
 const VENDOR_SHARED_PREFIXES = ['gs_seedver_'];
 
 /* MIGRAÇÃO ÚNICA — gs_reservas_v1 deixou de ser por usuário e passou a ser da
@@ -16326,7 +16368,7 @@ function exportarAppAtualizado(){
 (function(){
 'use strict';
 
-var CHAVES=['gs_reservas_v1','gs_cfg_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1'];   // o que é da empresa
+var CHAVES=['gs_reservas_v1','gs_cfg_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1'];   // o que é da empresa
 var ultimoValor={};                          // último valor conhecido por chave
 var canal=null, timerPoll=null, ligado=false, aplicando=false;
 
@@ -16381,6 +16423,10 @@ function redesenhar(chaves){
     /* remanejamento de carro no calendário feito por outra pessoa */
     if(chaves.indexOf('gs_resv_caroverrides_v1')>=0){
       try{ if(window.MGW_RESV){ MGW_RESV.carregarRemanejamentos(); MGW_RESV.refresh(); } }catch(e){}
+    }
+    /* alguém mudou a data de corte da divisão planilha × app */
+    if(chaves.indexOf('gs_regra_origem_v1')>=0){
+      try{ if(window.MGW_RESV){ MGW_RESV.carregarRegra(); MGW_RESV.filterTable(); } }catch(e){}
     }
     if(chaves.indexOf('gs_relatorios_v1')>=0){
       try{ if(typeof window.rlReload==='function') window.rlReload(); }catch(e){}
@@ -17593,14 +17639,70 @@ function _marcarPossiveisDuplicatasResv_DESATIVADA(rows){
   return rows;
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   REGRA DE ORIGEM — a planilha é o histórico fechado, o app é a operação
+   ───────────────────────────────────────────────────────────────────
+   Duas fontes de verdade parciais convivendo só funciona se a divisão
+   estiver escrita E o sistema cobrar. Senão vira o mesmo problema com
+   outro nome: alguém confere o fechamento pela planilha e não acha as
+   reservas do app.
+
+   A regra: existe uma DATA DE CORTE.
+     • entrega ANTES do corte  → é histórico  → mora na planilha
+     • entrega A PARTIR do corte → é operação → mora no app
+
+   O que este bloco faz é apontar quem está do lado errado:
+     'planilha-corrente' = linha na planilha com entrega futura — alguém
+        continua lançando operação corrente na planilha.
+     'app-historico'     = reserva criada no app com entrega passada —
+        alguém está usando o app como arquivo morto.
+   Nada é bloqueado nem apagado: só fica visível, com o motivo.
+   ═══════════════════════════════════════════════════════════════════ */
+var REGRA_KEY='gs_regra_origem_v1';
+var REGRA={corte:'', ativo:true};
+
+function loadRegra(){
+  try{
+    var s=JSON.parse(localStorage.getItem(REGRA_KEY)||'null');
+    if(s && typeof s==='object'){ REGRA={corte:s.corte||'', ativo:s.ativo!==false}; }
+  }catch(e){}
+  /* Sem corte definido, adota HOJE: a regra passa a valer daqui para a frente
+     e o que já existe continua sendo histórico. */
+  if(!REGRA.corte){
+    var d=new Date();
+    REGRA.corte=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
+  return REGRA;
+}
+function saveRegra(){ try{ localStorage.setItem(REGRA_KEY, JSON.stringify(REGRA)); }catch(e){} }
+
+/* data que define se a reserva é operação ou histórico */
+function dataDeReferencia(r){ return r.entrega || r.dataFech || null; }
+
+function classificarOrigem(rows){
+  var corteTs=REGRA.corte ? new Date(REGRA.corte+'T00:00:00').getTime() : 0;
+  rows.forEach(function(r){
+    r._origem = (r._src==='app') ? 'app' : 'planilha';
+    r._foraDaRegra = '';
+    if(!REGRA.ativo || !corteTs) return;
+    var d=dataDeReferencia(r); if(!d) return;
+    var ts=dOnly(d).getTime();
+    if(r._origem==='planilha' && ts>=corteTs) r._foraDaRegra='planilha-corrente';
+    else if(r._origem==='app' && ts<corteTs)  r._foraDaRegra='app-historico';
+  });
+  return rows;
+}
+
 /* Pipeline único: mescla → aplica edições → remove excluídas → sinaliza
-   duplicatas restantes → ordena. Usar sempre isto, nunca mesclarReservas()
-   sozinho, para edição/exclusão valerem em qualquer ponto de entrada. */
+   duplicatas restantes → classifica pela regra de origem → ordena. Usar sempre
+   isto, nunca mesclarReservas() sozinho, para edição/exclusão valerem em
+   qualquer ponto de entrada. */
 function processarReservas(rows){
   var r=mesclarReservas(rows);
   r=aplicarOverridesResv(r);
   r=aplicarExclusoesResv(r);
   r=marcarPossiveisDuplicatasResv(r);
+  r=classificarOrigem(r);
   return ordenarPorFechamento(r);
 }
 
@@ -17771,6 +17873,10 @@ function loadCache(){
       return r;
     });
     DATA.sort(function(a,b){ return (a.entrega?a.entrega.getTime():0)-(b.entrega?b.entrega.getTime():0); });
+    /* O cache não passa por processarReservas(), então a classificação da regra
+       de origem precisa ser feita aqui — senão, ao abrir o app pelo cache, a
+       aba Reservas mostrava tudo como certo até a planilha responder. */
+    classificarOrigem(DATA);
     LOADED=true; return true;
   }catch(e){ return false; }
 }
@@ -18023,13 +18129,56 @@ function rsvNum(v){ return (typeof v==='number'&&isFinite(v))?v:0; }
 function rsvBRL(v){ v=rsvNum(v); return v?('R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})):''; }
 function rsvUSD(v){ v=rsvNum(v); return v?('$ '+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})):''; }
 
+var _soFora=false;   /* "ver quais" — mostra só as reservas do lado errado */
 function rsvFiltradas(){
   var q=norm((document.getElementById('mgrsv-search')||{}).value||'');
   var fc=(document.getElementById('mgrsv-filtcat')||{}).value||'';
   var rows=DATA.slice();
+  if(_soFora) rows=rows.filter(function(r){ return r._foraDaRegra; });
   if(fc) rows=rows.filter(function(r){ return r.cat===fc; });
   if(q) rows=rows.filter(function(r){ return norm(r.cliente).indexOf(q)>=0||String(r.tel).indexOf(q)>=0||norm(r.whats).indexOf(q)>=0||norm(r.modelo).indexOf(q)>=0||norm(r.localEnt).indexOf(q)>=0||norm(r.vendedor).indexOf(q)>=0||norm(cityOf(r.localEnt).city).indexOf(q)>=0; });
   return rows;
+}
+
+/* O acordo escrito, dentro do app — para não depender de ninguém lembrar. */
+function renderRegra(){
+  var box=document.getElementById('mgrsv-regra'); if(!box) return;
+  var fora=DATA.filter(function(r){ return r._foraDaRegra; });
+  var nPl=fora.filter(function(r){ return r._foraDaRegra==='planilha-corrente'; }).length;
+  var nApp=fora.filter(function(r){ return r._foraDaRegra==='app-historico'; }).length;
+
+  var corteBR=REGRA.corte?fmtBR(new Date(REGRA.corte+'T00:00:00')):'—';
+  var diag;
+  if(!REGRA.ativo){
+    diag='<div class="mgreg-div">Conferência desligada. Ligue para o app apontar o que está do lado errado.</div>';
+  } else if(!fora.length){
+    diag='<div class="mgreg-div ok">✓ Tudo no lugar certo. Nenhuma reserva do lado errado da divisão.</div>';
+  } else {
+    diag='<div class="mgreg-div ruim">⚠ '+fora.length+' reserva(s) do lado errado: '
+      +(nPl?('<b>'+nPl+'</b> na planilha com entrega a partir de '+corteBR+' (deveriam estar no app)'):'')
+      +(nPl&&nApp?' · ':'')
+      +(nApp?('<b>'+nApp+'</b> criada(s) no app com entrega anterior ao corte (são histórico)'):'')
+      +'<button onclick="MGW_RESV.verFora()">ver quais</button></div>';
+  }
+
+  box.innerHTML=
+    '<div class="mgreg'+(fora.length?' alerta':'')+'">'
+     +'<div class="mgreg-top">'
+       +'<div class="mgreg-t">DIVISÃO COMBINADA</div>'
+       +'<label style="display:flex;align-items:center;gap:6px;font-size:.7rem;color:var(--chalk3);cursor:pointer">'
+         +'<input type="checkbox" '+(REGRA.ativo?'checked':'')+' onchange="MGW_RESV.regraAtiva(this.checked)" style="accent-color:var(--ice);cursor:pointer"> conferir</label>'
+       +'<div class="mgreg-corte"><label>Data de corte</label>'
+         +'<input type="date" value="'+esc(REGRA.corte)+'" onchange="MGW_RESV.regraCorte(this.value)" title="A partir desta data, a reserva é operação e mora no app. Antes dela, é histórico e mora na planilha.">'
+       +'</div>'
+     +'</div>'
+     +'<div class="mgreg-regra">'
+       +'<div class="mgreg-lado"><div class="q">Planilha do Google</div>'
+         +'<div class="r"><b>Histórico fechado.</b> Tudo com entrega <b>antes de '+corteBR+'</b>. Só leitura pelo app — ninguém edita por aqui.</div></div>'
+       +'<div class="mgreg-lado"><div class="q">Este app</div>'
+         +'<div class="r"><b>Operação corrente.</b> Tudo com entrega <b>a partir de '+corteBR+'</b>. É aqui que se cria, altera e confere entrega e devolução.</div></div>'
+     +'</div>'
+     +diag
+    +'</div>';
 }
 
 function renderReservas(){
@@ -18069,6 +18218,10 @@ function renderReservas(){
         +(r._possivelDup && !dupOculta?' <span class="mgrsv-badge dup" title="Igual a: '+esc(r._dupComQuem||'')+'&#10;&#10;'+esc(r._dupMotivo||'')+'&#10;&#10;Confira antes: se forem reservas separadas de verdade (dois carros), ignore.">⚠ POSSÍVEL DUPLICATA</span>':'')
         +(r._editada?' <span class="mgrsv-badge" style="background:rgba(168,85,247,.18);color:#c084fc" title="Editada manualmente">✎</span>':'')
         +(r._local?' <span class="mgrsv-badge loc" title="Reserva criada aqui no app">APP</span>':'')
+        +(r._foraDaRegra==='planilha-corrente'
+            ? ' <span class="mgrsv-badge foraregra" title="Está na planilha mas a entrega é a partir da data de corte.&#10;Pela divisão combinada, operação corrente mora no app.&#10;&#10;Traga para o app (Emitir Documentos) e tire da planilha, ou ajuste a data de corte.">⚠ DEVERIA ESTAR NO APP</span>' : '')
+        +(r._foraDaRegra==='app-historico'
+            ? ' <span class="mgrsv-badge foraregra" title="Foi criada no app mas a entrega é anterior à data de corte.&#10;Pela divisão combinada, histórico mora na planilha.&#10;&#10;Exporte para a aba HISTÓRICO e apague daqui, ou ajuste a data de corte.">⚠ É HISTÓRICO</span>' : '')
         /* entregue / devolvido também aqui: a tabela é onde a lista inteira
            vive, e é a mesma marcação da Agenda — compartilhada com a equipe */
         +(fl.delivered?' <span class="mgrsv-badge" style="background:rgba(59,158,255,.2);color:#3B9EFF" title="Entregue'+(fl.deliveredPor?' por '+esc(fl.deliveredPor):'')+(fl.deliveredEm?' em '+esc(fl.deliveredEm):'')+'">🚗 ENTREGUE</span>':'')
@@ -18088,8 +18241,10 @@ function renderReservas(){
   /* Deixa explícito quando a tabela está filtrada — senão o número parece
      "contagem errada" quando na verdade é um recorte da base. */
   var filtrada=(rows.length!==DATA.length);
+  renderRegra();
   if(cnt) cnt.innerHTML=rows.length+' reserva'+(rows.length!==1?'s':'')
-    +(filtrada?(' <span style="color:var(--chalk3)">de '+DATA.length+' na base (filtro ativo)</span>'):'')
+    +(_soFora?' <span style="color:#FFD11A">— só as do lado errado <button onclick="MGW_RESV.verFora(false)" style="background:none;border:1px solid var(--edge);border-radius:6px;color:var(--chalk2);cursor:pointer;padding:1px 7px;font-size:.68rem">mostrar todas</button></span>':'')
+    +(filtrada&&!_soFora?(' <span style="color:var(--chalk3)">de '+DATA.length+' na base (filtro ativo)</span>'):'')
     +(ciclo?(' · <span style="color:#3B9EFF">'+nCiclo+' no mês em vigência ('+ciclo.periodo+')</span>'):'')
     +(locN?(' · <span style="color:#1AFF9D">'+locN+' criada(s) no app</span>'):'')
     +(dupN?(' · <span style="color:#FFD11A">⚠ '+dupN+' possível(is) duplicata(s)</span>'):'')
@@ -18116,7 +18271,13 @@ function abrirEdicao(idx){
     if(r._src==='app'){ aviso.style.display='none'; }
     else {
       aviso.style.display='block';
+      /* Pela divisão combinada, o que está antes do corte é histórico fechado.
+         Corrigir por cima aqui cria a divergência que a regra existe para evitar:
+         a planilha diz uma coisa e o app mostra outra. */
+      var ehHistorico=(!r._foraDaRegra && r._origem==='planilha');
       aviso.innerHTML='Esta reserva veio da planilha ('+(r._src==='hist'?'aba HISTÓRICO':'aba FECHAMENTOS')+'). A edição fica salva aqui por cima — não altera a planilha do Google, mas vale para todo mundo que usa o app.'
+        +(ehHistorico?'<br><b style="color:#FFD11A">📐 É histórico fechado.</b> Pela divisão combinada, o certo é corrigir na planilha: senão ela e o app passam a discordar sobre um período já fechado.':'')
+        +(r._foraDaRegra==='planilha-corrente'?'<br><b style="color:#FFD11A">📐 Esta é operação corrente na planilha.</b> Pela divisão combinada ela deveria ter sido criada aqui no app.':'')
         +(r._possivelDup?'<br><b style="color:#FFD11A">⚠ Marcada como possível duplicata</b> de: '+esc(r._dupComQuem||''):'');
     }
   }
@@ -18571,7 +18732,7 @@ function renderAll(){
 function onNav(id){
   if(id!=='calendario' && id!=='reservas' && id!=='agenda' && id!=='vendasmes') return;
   if(!window.MGW_AUTENTICADO) return;   /* sem login, não lê a planilha */
-  loadOverrides(); loadFlags(); populateCatFilter(); startAutoRefresh();
+  loadOverrides(); loadFlags(); loadRegra(); populateCatFilter(); startAutoRefresh();
   if(id==='agenda') ensureAgDate();
   /* ao abrir o Calendário, sempre volta pro dia de hoje (linha vermelha visível) */
   if(id==='calendario'){ setTimeout(goTodayInternal,60); setTimeout(goTodayInternal,320); }
@@ -18586,9 +18747,15 @@ window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, rend
   abrirEdicao:abrirEdicao, salvarEdicao:salvarEdicao, excluir:excluir, juntarDuplicata:juntarDuplicata,
   toggleManut:toggleManut, carregarManutencao:loadManut, carregarFlags:loadFlags,
   carregarRemanejamentos:loadOverrides, disponibilidade:disponibilidadePeriodo,
+  regraCorte:function(v){ if(!v) return; REGRA.corte=v; saveRegra(); classificarOrigem(DATA); renderReservas();
+    if(typeof toast==='function') toast('📐 Corte em '+fmtBR(new Date(v+'T00:00:00'))+' — vale para a equipe toda'); },
+  regraAtiva:function(b){ REGRA.ativo=!!b; saveRegra(); classificarOrigem(DATA); renderReservas(); },
+  regra:function(){ return {corte:REGRA.corte, ativo:REGRA.ativo}; },
+  carregarRegra:function(){ loadRegra(); classificarOrigem(DATA); },
+  verFora:function(v){ _soFora=(v===undefined)?true:!!v; renderReservas(); },
   conferir:conferirResv, reabrirConferidas:reabrirConferidas };
 
-loadOverrides(); loadFlags(); loadManut();
+loadOverrides(); loadFlags(); loadManut(); loadRegra();
 
 /* Sobe as reservas da planilha: o Dashboard, as Metas e a aba Vendas do Mês
    dependem delas, e nenhuma dessas telas passa pelo onNav acima.
