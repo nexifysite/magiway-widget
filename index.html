@@ -14747,8 +14747,12 @@ async function dsEnviarContratoWhats(){
     // Caminho opcional: Edge Function do Supabase cria o envelope pela API do DocuSign
     setSt('<span style="color:var(--ice)">⏳ Criando o envelope no DocuSign…</span>');
     try{
+      /* Vai o mapeamento junto: a função precisa saber que "nome" preenche a
+         etiqueta "Nome_Cliente" do modelo. Assim o modelo do DocuSign continua
+         exatamente como está — nada para renomear lá. */
       const r=await fetch(d.apiUrl,{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({tipo:'contrato', signer:{name:nome,email:email,phone:tel}, campos:dsCamposContrato()})});
+        body:JSON.stringify({tipo:'contrato', signer:{name:nome,email:email,phone:tel},
+                             campos:dsCamposContrato(), mapa:dsMapaCampos()})});
       const j=await r.json();
       url=j&&(j.url||j.signingUrl||j.link)||'';
       if(!url) throw new Error(j&&j.error||'a função não devolveu o link');
