@@ -1387,7 +1387,12 @@ select.ffi option{background:#000020;color:#FF0000}
 .emia-btn{background:linear-gradient(135deg,#3B9EFF,#1B62B5);border:none;border-radius:8px;padding:9px 14px;color:#fff;font-weight:600;font-size:.78rem;cursor:pointer;white-space:nowrap}
 .emia-btn.ghost{background:linear-gradient(135deg,var(--ink3),var(--ink2));box-shadow:0 0 0 1px var(--edge);color:var(--chalk2)}
 .emia-btn:disabled{opacity:.5;cursor:default}
-.emia-files{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.emia-files{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.emia-dupla{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:820px){.emia-dupla{grid-template-columns:1fr}}
+.emia-lado{background:rgba(255,255,255,.02);border:1px solid var(--edge);border-radius:10px;padding:11px 12px}
+.emia-lado-t{font-family:'DM Mono',monospace;font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--chalk2);margin-bottom:4px}
+.emia-lado-s{font-size:.68rem;color:var(--chalk3);line-height:1.5;margin-bottom:8px}
 .emia-file{display:flex;align-items:center;gap:6px;background:var(--ink2);border:1px solid var(--edge);border-radius:20px;padding:4px 10px;font-size:.7rem;color:var(--chalk2)}
 .emia-file button{background:none;border:none;color:var(--chalk3);cursor:pointer;font-size:.85rem;line-height:1;padding:0}
 .emia-file button:hover{color:var(--fire)}
@@ -1420,16 +1425,30 @@ select.ffi option{background:#000020;color:#FF0000}
     <div class="emia-ttl">🤖 Ler documento com a IA</div>
     <div class="emia-sub">
       Solte aqui (ou escolha) a <b>CNH</b>, o <b>passaporte</b>, o <b>voucher</b>, o <b>e-mail da reserva</b> ou o <b>comprovante de pagamento</b> — foto, print ou PDF.
-      A IA lê e preenche os campos abaixo sozinha. Pode mandar vários de uma vez (frente e verso da CNH, por exemplo).
+      Pode também <b>colar o texto</b> que o cliente mandou. Os dois juntos funcionam: foto da CNH mais a mensagem com as datas, numa leitura só.
       <b>Nada é enviado sem você clicar em ler</b>, e nenhum campo já preenchido é sobrescrito sem aviso.
     </div>
-    <div class="emia-acoes">
-      <input type="file" id="em-ia-input" accept="image/*,application/pdf" multiple style="display:none" onchange="emIAAdd(this.files);this.value=''">
-      <button class="emia-btn ghost" onclick="document.getElementById('em-ia-input').click()">📎 Escolher arquivos</button>
+    <div class="emia-dupla">
+      <div class="emia-lado">
+        <div class="emia-lado-t">📄 Documentos</div>
+        <div class="emia-lado-s">CNH, passaporte, voucher, comprovante — foto, print ou PDF. Pode arrastar para cá.</div>
+        <input type="file" id="em-ia-input" accept="image/*,application/pdf" multiple style="display:none" onchange="emIAAdd(this.files);this.value=''">
+        <button class="emia-btn ghost" onclick="document.getElementById('em-ia-input').click()">📎 Escolher arquivos</button>
+        <div class="emia-files" id="em-ia-files"></div>
+      </div>
+      <div class="emia-lado">
+        <div class="emia-lado-t">💬 Texto do cliente</div>
+        <div class="emia-lado-s">Cole a mensagem do WhatsApp ou o e-mail, do jeito que veio.</div>
+        <textarea class="ffi" id="em-ia-texto" rows="4" oninput="emIAAtualizarBotao()"
+          style="resize:vertical;font-family:'DM Sans',sans-serif"
+          placeholder="Ex.: Oi! Sou a Carla Mendes, CPF 123.456.789-00, chego dia 10/09 às 9h no aeroporto de Orlando pela Avianca e devolvo dia 20 às 16h30. Quero uma minivan e cadeirinha pro bebê de 1 ano."></textarea>
+      </div>
+    </div>
+    <div class="emia-acoes" style="margin-top:11px">
       <button class="emia-btn" id="em-ia-btn" onclick="emLerDocumentos()" disabled>✨ Ler e preencher</button>
       <button class="emia-btn ghost" id="em-ia-desfazer" onclick="emIADesfazer()" style="display:none">↺ Desfazer preenchimento</button>
+      <span class="emia-lado-s" style="margin:0">Um dos dois basta. Preenchendo os dois, a IA cruza as informações numa leitura só.</span>
     </div>
-    <div class="emia-files" id="em-ia-files"></div>
     <div class="emia-st" id="em-ia-st"></div>
     <div class="emia-achados" id="em-ia-achados">
       <h6>O que a IA encontrou</h6>
@@ -13806,14 +13825,28 @@ function emIASt(html,cor){
 function emIAFmtTam(b){ return b<1024?b+' B':(b<1048576?(b/1024).toFixed(0)+' KB':(b/1048576).toFixed(1)+' MB'); }
 
 function emIARenderFiles(){
-  var box=document.getElementById('em-ia-files'), btn=document.getElementById('em-ia-btn');
+  var box=document.getElementById('em-ia-files');
   if(box) box.innerHTML=_emIAArquivos.map(function(f,i){
     return '<span class="emia-file">'+(f.mimeType==='application/pdf'?'📄':'🖼')+' '+
       String(f.nome).replace(/[<>&]/g,'')+' <span style="opacity:.6">'+emIAFmtTam(f.tam)+'</span>'+
       '<button onclick="emIARemover('+i+')" title="Tirar da lista">✕</button></span>';
   }).join('');
-  if(btn) btn.disabled=!_emIAArquivos.length;
+  emIAAtualizarBotao();
 }
+/* Serve arquivo, texto, ou os dois juntos — basta ter alguma coisa.
+   O rótulo do botão diz o que será enviado, para ninguém clicar achando que
+   vai ler o texto quando só anexou arquivo (ou o contrário). */
+window.emIAAtualizarBotao=function(){
+  var btn=document.getElementById('em-ia-btn'); if(!btn) return;
+  var t=((document.getElementById('em-ia-texto')||{}).value||'').trim();
+  var n=_emIAArquivos.length;
+  btn.disabled = !n && !t;
+  if(btn.dataset.ocupado==='1') return;          /* está lendo: não mexe */
+  var alvo=[];
+  if(n) alvo.push(n+' arquivo'+(n>1?'s':''));
+  if(t) alvo.push('texto');
+  btn.textContent = alvo.length ? ('✨ Ler '+alvo.join(' + ')+' e preencher') : '✨ Ler e preencher';
+};
 window.emIARemover=function(i){ _emIAArquivos.splice(i,1); emIARenderFiles(); };
 
 window.emIAAdd=function(files){
@@ -13863,15 +13896,25 @@ function emIAPrompt(){
 }
 
 window.emLerDocumentos=async function(){
-  if(!_emIAArquivos.length){ emIASt('Escolha pelo menos um arquivo.','var(--fire)'); return; }
+  var texto=((document.getElementById('em-ia-texto')||{}).value||'').trim();
+  if(!_emIAArquivos.length && !texto){ emIASt('Cole o texto do cliente ou escolha um arquivo.','var(--fire)'); return; }
   var btn=document.getElementById('em-ia-btn');
   var temChave=(typeof AI_KEYS!=='undefined'&&AI_KEYS.some(function(k){return k.key&&k.key.trim();}));
   if(!temChave){ emIASt('⚠️ Nenhuma chave de IA configurada. Cole a chave do Gemini em <b>Configurações › Chaves API</b> (ou na aba Relatórios) — ela vale para a equipe toda.','var(--fire)'); return; }
-  if(btn){ btn.disabled=true; btn.textContent='⏳ Lendo…'; }
-  emIASt('⏳ Enviando '+_emIAArquivos.length+' arquivo(s) para a IA ler…','var(--ice)');
+  if(btn){ btn.disabled=true; btn.dataset.ocupado='1'; btn.textContent='⏳ Lendo…'; }
+  var oQue=[];
+  if(_emIAArquivos.length) oQue.push(_emIAArquivos.length+' arquivo(s)');
+  if(texto) oQue.push('o texto do cliente');
+  emIASt('⏳ Enviando '+oQue.join(' e ')+' para a IA ler…','var(--ice)');
   try{
     try{ emitirInitSelects(); }catch(e){}
-    var bruto=await aiCallWithFiles(_emIAArquivos, emIAPrompt(), 1600);
+    /* O texto entra no mesmo pedido dos arquivos: assim a IA cruza a foto da
+       CNH com a mensagem que traz as datas, numa leitura só. */
+    var instrucao=emIAPrompt();
+    if(texto) instrucao+='\nMENSAGEM DO CLIENTE (vale tanto quanto os arquivos):\n'+texto+'\n';
+    var bruto = _emIAArquivos.length
+      ? await aiCallWithFiles(_emIAArquivos, instrucao, 1600)
+      : await aiCall([{role:'user',content:instrucao}], 'Você extrai dados de reserva e responde só com JSON.', 1600);
     var limpo=String(bruto||'').replace(/```json|```/g,'').trim();
     var ini=limpo.indexOf('{'), fim=limpo.lastIndexOf('}');
     if(ini<0||fim<ini) throw new Error('a IA não devolveu um JSON reconhecível');
@@ -13880,7 +13923,8 @@ window.emLerDocumentos=async function(){
   }catch(e){
     emIASt('⚠️ '+(e&&e.message||e),'var(--fire)');
   }finally{
-    if(btn){ btn.disabled=!_emIAArquivos.length; btn.textContent='✨ Ler e preencher'; }
+    if(btn) btn.dataset.ocupado='';
+    emIAAtualizarBotao();
   }
 };
 
