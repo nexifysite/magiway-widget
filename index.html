@@ -14633,8 +14633,10 @@ function gerarVoucherDoc(){
   const blocoDesc=desconto>0
     ? `<div style="background-color:#EAF7EE;border:1px solid #27AE60;padding:8px 12px;margin:6px 0;font-size:11px;color:#1E8449;font-weight:bold">DESCONTO APLICADO: De ${_brlFmt(integral)} por apenas ${_brlFmt(confirmado)} (Economia de ${_brlFmt(desconto)})</div>`
     : '';
+  /* "Pedágios livres" virou item do quadro INCLUSO NA SUA RESERVA, ao lado do
+     Tag Sun Pass — é benefício, não observação. Aqui fica só o que a pessoa
+     escreveu de fato; sem nada escrito, a seção inteira some. */
   const obsTxt=(_emVal('em-obs')||'').trim();
-  const obsFinal=obsTxt?(obsTxt+' • Pedágios livres'):'Pedágios livres';
   const qr='https://api.qrserver.com/v1/create-qr-code/?size=170x170&margin=0&data='+encodeURIComponent(LINK_GUIA_CLIENTE_VOUCHER);
   const _logo=mgwDocLogo();
   const _vbrand=_logo
@@ -14686,10 +14688,10 @@ table.zebra tr:nth-child(even) td{background-color:#EFEFEF !important}
 <table class="zebra"><tr class="total-row"><td>TOTAL INTEGRAL</td><td style="text-align:right">${_brlFmt(integral)}</td></tr></table>
 ${blocoDesc}
 <div class="valor-box"><div><div class="lbl-val">✅ VALOR TOTAL CONFIRMADO</div><div class="hint">Reserva garantida. Condições listadas abaixo</div></div><div class="num">${valorFinalTxt}</div></div>
-<div class="sec-title">INCLUSO NA SUA RESERVA</div><div class="benef-grid"><div class="benef-item"><span class="check">✅</span> Suporte 24h em português</div><div class="benef-item"><span class="check">✅</span> Retirada e devolução sem filas</div><div class="benef-item"><span class="check">✅</span> Seguro total + todas as taxas inclusas</div><div class="benef-item"><span class="check">✅</span> Km livre + tanque cheio</div><div class="benef-item"><span class="check">✅</span> Sem caução + carro reserva</div><div class="benef-item"><span class="check">✅</span> Tag Sun Pass grátis</div></div>
-<div class="sec-title">▸ OBSERVAÇÕES</div><div style="background-color:#FDEDEC;border:1px solid #C0392B;padding:8px 12px;margin-bottom:5px;font-size:11px;color:#333">${_esc(obsFinal)}</div>
+<div class="sec-title">INCLUSO NA SUA RESERVA</div><div class="benef-grid"><div class="benef-item"><span class="check">✅</span> Suporte 24h em português</div><div class="benef-item"><span class="check">✅</span> Retirada e devolução sem filas</div><div class="benef-item"><span class="check">✅</span> Seguro total + todas as taxas inclusas</div><div class="benef-item"><span class="check">✅</span> Km livre + tanque cheio</div><div class="benef-item"><span class="check">✅</span> Sem caução + carro reserva</div><div class="benef-item"><span class="check">✅</span> Tag Sun Pass grátis</div><div class="benef-item"><span class="check">✅</span> Pedágios livres</div></div>
+${obsTxt?`<div class="sec-title">▸ OBSERVAÇÕES</div><div style="background-color:#FDEDEC;border:1px solid #C0392B;padding:8px 12px;margin-bottom:5px;font-size:11px;color:#333">${_esc(obsTxt)}</div>`:''}
 <div class="sec-title">TERMO DE ACEITE E GUIA DO CLIENTE</div>
-<table style="width:100%;border:1px solid #CCC;background-color:#FDEDEC;margin-bottom:5px;border-collapse:collapse"><tr><td style="width:130px;text-align:center;padding:15px"><img src="${qr}" alt="QR Code Guia do Cliente" style="width:96px;height:96px;border:1px solid #ccc;padding:4px;background:#fff"><div style="font-size:8px;font-weight:bold;margin-top:5px;color:#333">GUIA DO CLIENTE</div><br>${assinaBtn}</td><td style="padding:15px 15px 15px 0;font-size:11px;text-align:justify;vertical-align:middle">Eu, <b>${_esc(nome)}</b>, portador(a) do CPF <b>${g('em-cpf')}</b>, declaro ter lido, compreendido e estar de acordo com todas as informações e regras apresentadas neste Voucher de Reserva. Reafirmo meu compromisso perante a Magiway Rental Car e atesto estar ciente de que qualquer alteração deverá ser comunicada formalmente com antecedência mínima de 24 (vinte e quatro) horas do horário previsto para a retirada do veículo. <b>É expressamente proibida a utilização dos veículos para serviços de aplicativo de transporte ou entrega (ex: Uber, Lyft, etc).</b><br><br><span style="color:#C0392B"><b>▶ GUIA DO CLIENTE:</b> Aponte a câmera do celular para o QR Code ao lado para acessar o guia interativo com as principais dicas e regras para a sua viagem.</span><br><br><span style="color:#C0392B"><b>▶ ACEITE DIGITAL:</b> Clique no botão "ASSINAR TERMO" para acessar e assinar digitalmente o seu termo oficial de forma segura via DocuSign.</span></td></tr></table>
+<table id="vc-termo" style="width:100%;border:1px solid #CCC;background-color:#FDEDEC;margin-bottom:5px;border-collapse:collapse"><tr><td style="width:130px;text-align:center;padding:15px;vertical-align:middle"><img src="${qr}" alt="QR Code Guia do Cliente" style="width:96px;height:96px;border:1px solid #ccc;padding:4px;background:#fff"><div style="font-size:8px;font-weight:bold;margin-top:5px;color:#333">GUIA DO CLIENTE</div><br>${assinaBtn}</td><td style="padding:15px 15px 15px 0;font-size:11px;text-align:justify;vertical-align:middle">Eu, <b>${_esc(nome)}</b>, portador(a) do CPF <b>${g('em-cpf')}</b>, declaro ter lido, compreendido e estar de acordo com todas as informações e regras apresentadas neste Voucher de Reserva. Reafirmo meu compromisso perante a Magiway Rental Car e atesto estar ciente de que qualquer alteração deverá ser comunicada formalmente com antecedência mínima de 24 (vinte e quatro) horas do horário previsto para a retirada do veículo. <b>É expressamente proibida a utilização dos veículos para serviços de aplicativo de transporte ou entrega (ex: Uber, Lyft, etc).</b><br><br><span style="color:#C0392B"><b>▶ GUIA DO CLIENTE:</b> Aponte a câmera do celular para o QR Code ao lado para acessar o guia interativo com as principais dicas e regras para a sua viagem.</span><br><br><span style="color:#C0392B"><b>▶ ACEITE DIGITAL:</b> Clique no botão "ASSINAR TERMO" para acessar e assinar digitalmente o seu termo oficial de forma segura via DocuSign.</span></td></tr></table>
 <div class="footer"><b>Magiway Rental Car</b> — Aluguel de Carros nos EUA | CNPJ: 37.688.267/0001-23<br>Suporte 24h | 100% em português | 1 (689) 278-954 | magiwayrentalcar@gmail.com</div>
 <script>
 /* CABER EM UMA FOLHA A4, SEMPRE.
@@ -14713,15 +14715,28 @@ ${blocoDesc}
     return (fundo+padBaixo)/PX_MM;
   }
   function ajustar(){
+    var termo=document.getElementById('vc-termo');
     /* zoom, não transform: transform encolhe só a pintura — o elemento continua
        ocupando a altura original e a página quebra do mesmo jeito. zoom reduz o
        leiaute de verdade, que é o que faz caber. */
     document.body.style.zoom='';                     /* mede sem redução anterior */
+    if(termo) termo.style.height='';                 /* e sem esticão anterior */
     var precisa=alturaConteudoMM();
     var cabe=290;                                    /* A4 com uma folga de sobra */
-    if(precisa<=cabe) return;
-    var k=Math.max(0.55, cabe/precisa);              /* nunca ilegível */
-    document.body.style.zoom=k;
+
+    if(precisa>cabe){                                /* passou: encolhe até caber */
+      document.body.style.zoom=Math.max(0.55, cabe/precisa);
+      return;
+    }
+    /* Sobrou folga: em vez de deixar um vão branco no pé da página, o bloco do
+       QR e do termo de aceite cresce e ocupa o espaço até o rodapé. */
+    if(termo){
+      var sobra=cabe-precisa;
+      if(sobra>6){
+        var atual=termo.getBoundingClientRect().height/PX_MM;
+        termo.style.height=(atual+sobra)+'mm';
+      }
+    }
   }
   if(document.readyState==='complete') ajustar();
   else window.addEventListener('load',ajustar);
