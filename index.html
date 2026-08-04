@@ -16356,7 +16356,7 @@ const FROTA_CATS=[
 
 // ── MODELOS base (nome + preço/dia + categoria) ──
 const FROTA_MODELS=[
-  {id:'minivan',    cat:'minivan', nome:'Minivan',      price:79},
+  {id:'minivan',    cat:'minivan', nome:'Minivan 7L',   price:79},
   {id:'suvprem',    cat:'suvprem', nome:'SUV Premium',  price:199},
   {id:'suv',        cat:'suv',     nome:'SUV',          price:69},
   {id:'sedan',      cat:'sedan',   nome:'Sedan',        price:65},
@@ -16411,16 +16411,23 @@ function frotaVeiculosSeed(){
     const modelo=(FROTA_MODELS.find(function(m){return m.id===v.modelId;})||{});
     porPlaca[v.placa]={id:v.id,cat:modelo.nome||v.modelId,marca:'',modelo:v.modelo,placa:v.placa,vin:'',cor:v.cor||'',ano:'',obsManutencao:'',manutencoes:[]};
   });
-  CAL_VEHS.forEach(function(v,i){
-    if(porPlaca[v.placa]){ if(!porPlaca[v.placa].marca) porPlaca[v.placa].marca=v.marca; return; }
-    porPlaca[v.placa]={id:'cv'+i,cat:v.cat,marca:v.marca,modelo:v.modelo,placa:v.placa,vin:'',cor:'',ano:'',obsManutencao:'',manutencoes:[]};
-  });
   return Object.values(porPlaca);
 }
 function frotaVeiculosLoad(){
   try{
     const s=localStorage.getItem(FROTA_VEIC_KEY);
-    if(s){ const p=JSON.parse(s); if(Array.isArray(p)){ FROTA_VEICULOS=p; return; } }
+    if(s){
+      const p=JSON.parse(s);
+      if(Array.isArray(p)){
+        /* Migração: uma versão anterior misturava a frota real com a frota da
+           empresa antiga (Corvette, Ferrari, vans, etc. — ids "cv0", "cv1"...).
+           Some com esses registros automaticamente, sem apagar nenhum veículo
+           cadastrado de verdade pela equipe. */
+        const limpo=p.filter(function(v){ return !/^cv\d+$/.test(v.id||''); });
+        if(limpo.length!==p.length){ FROTA_VEICULOS=limpo; frotaVeiculosSave(); return; }
+        FROTA_VEICULOS=p; return;
+      }
+    }
   }catch(e){}
   FROTA_VEICULOS=frotaVeiculosSeed();
   frotaVeiculosSave();
