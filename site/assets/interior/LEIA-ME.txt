@@ -1,0 +1,7 @@
+Coloque aqui as imagens do site. Os nomes esperados estão no README.md da pasta site/.
+Enquanto um arquivo não existir, a página mostra um bloco listrado no lugar, com o nome
+do arquivo que falta — nada quebra.
+
+Subpastas:
+  interior/  -> fotos do interior da Pacifica Limited
+  spin/      -> pacifica-01.jpg ... pacifica-36.jpg (ângulos do giro 360)

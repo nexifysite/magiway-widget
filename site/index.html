@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Magiway Florida — Locação de veículos para brasileiros na Flórida</title>
+<meta name="description" content="Locação de veículos na Flórida com contrato em português, zero caução, seguro total, SunPass e cadeirinha inclusos. Orlando, Miami, Tampa e Fort Lauderdale.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script>
+  /* precisa existir antes das imagens carregarem */
+  function phFail(img){ const m = img.closest('.media'); if (m) m.classList.add('is-missing'); }
+</script>
+<style>
+/* ============================================================
+   MAGIWAY FLORIDA — página única, autossuficiente
+   CSS e JS embutidos. Imagens em ./assets/ (ver README.md)
+   ============================================================ */
+
+:root{
+  /* Marca */
+  --navy:        #122A45;
+  --navy-900:    #0A1B2E;
+  --navy-800:    #0E2340;
+  --navy-700:    #1B3A5C;
+  --red:         #E1222E;
+  --red-600:     #C41C27;
+  --red-300:     #FF7A72;
+
+  /* Seção Excelência — azul arroxeado */
+  --violet:      #453A8E;
+  --violet-deep: #2A2360;
+
+  /* Neutros */
+  --cream:       #FBF7F2;
+  --cream-2:     #F4EDE4;
+  --surface:     #FFFFFF;
+  --ink:         #14202E;
+  --ink-2:       #5C6B7A;
+  --line:        #E7E1D9;
+
+  /* Tipografia — reta e elegante, sem exageros */
+  --font-display:'Manrope', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans:   'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --shadow-sm: 0 1px 2px rgba(18,42,69,.06), 0 4px 12px rgba(18,42,69,.06);
+  --shadow-md: 0 2px 4px rgba(18,42,69,.06), 0 14px 34px rgba(18,42,69,.10);
+  --shadow-lg: 0 4px 8px rgba(18,42,69,.08), 0 28px 60px rgba(18,42,69,.16);
+
+  --radius:   16px;
+  --radius-lg:22px;
+  --ease:     cubic-bezier(.22,1,.36,1);
+  --maxw:     1200px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;font-family:var(--font-sans);font-size:17px;line-height:1.6;
+  color:var(--ink);background:var(--cream);
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+h1,h2,h3,h4{margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:-.022em;line-height:1.16}
+p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+
+.wrap{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:24px}
+.section{padding:96px 0}
+@media (max-width:768px){ .section{padding:64px 0} body{font-size:16px} }
+
+.eyebrow{display:flex;align-items:center;justify-content:center;gap:14px;font-family:var(--font-sans);
+  font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:20px}
+.eyebrow::before,.eyebrow::after{content:'';height:1px;width:38px;background:currentColor;opacity:.45}
+.h-sec{font-size:clamp(28px,4.2vw,44px);text-align:center;max-width:19ch;margin-inline:auto}
+.h-sec .hl{color:var(--red)}
+.sub-sec{text-align:center;color:var(--ink-2);max-width:62ch;margin:18px auto 0}
+
+/* ---------- Botões ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 28px;border-radius:999px;
+  font-size:16px;font-weight:600;letter-spacing:.005em;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),background-color .25s var(--ease),border-color .25s var(--ease)}
+.btn:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.btn-primary{background:var(--red);color:#fff;box-shadow:0 8px 22px rgba(225,34,46,.32)}
+.btn-primary:hover{background:var(--red-600);transform:translateY(-2px);box-shadow:0 12px 30px rgba(225,34,46,.42)}
+.btn-ghost{border:1.5px solid rgba(255,255,255,.5);color:#fff}
+.btn-ghost:hover{background:rgba(255,255,255,.12);transform:translateY(-2px)}
+.btn-outline{border:1.5px solid var(--line);color:var(--ink);background:var(--surface)}
+.btn-outline:hover{border-color:var(--navy);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.btn-sm{padding:11px 22px;font-size:14px}
+.btn .ic{width:18px;height:18px;flex:none}
+
+/* Botão verde do WhatsApp — um por seção */
+.btn-wa-green{background:#25D366;color:#fff;box-shadow:0 8px 22px rgba(37,211,102,.30)}
+.btn-wa-green:hover{background:#1FBA59;transform:translateY(-2px);box-shadow:0 12px 30px rgba(37,211,102,.42)}
+.btn-wa-green:focus-visible{outline-color:#128C7E}
+.section-cta{display:flex;justify-content:center;margin-top:44px}
+/* No mobile os botões encolhem em vez de ocupar a tela inteira */
+@media (max-width:640px){
+  .btn{padding:12px 20px;font-size:14.5px;gap:8px}
+  .btn .ic{width:16px;height:16px}
+  .section-cta{margin-top:34px}
+  .hero-actions .btn{flex:0 1 auto}
+}
+@media (max-width:480px){
+  .btn-wa-green{padding:11px 17px;font-size:13.5px;line-height:1.3}
+  .btn-wa-green .ic{width:15px;height:15px}
+  .form-actions .btn{padding:13px 18px}
+}
+
+/* ---------- Placeholder de imagem ---------- */
+.media{position:relative;overflow:hidden;background:linear-gradient(135deg,#E9E2D8,#D9D3CB)}
+.media img{width:100%;height:100%;object-fit:cover;object-position:center}
+.media::after{content:attr(data-label);position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+  padding:20px;text-align:center;font-size:12px;font-weight:600;letter-spacing:.05em;color:#8A8175;
+  background:repeating-linear-gradient(45deg,#EDE7DE 0 12px,#E6DFD5 12px 24px)}
+.media.is-missing::after{display:flex}
+.media.is-missing img{visibility:hidden}
+.on-dark .media{background:linear-gradient(135deg,#16304C,#102741)}
+.on-dark .media::after{color:rgba(255,255,255,.5);background:repeating-linear-gradient(45deg,#12293F 0 12px,#0F2438 12px 24px)}
+
+/* ============================================================ HEADER */
+.header{position:fixed;inset:0 0 auto;z-index:60;padding:18px 0;
+  transition:background-color .35s var(--ease),box-shadow .35s var(--ease),padding .35s var(--ease)}
+.header.scrolled{background:rgba(10,27,46,.92);backdrop-filter:blur(14px);box-shadow:0 1px 0 rgba(255,255,255,.08);padding:10px 0}
+.header .wrap{display:flex;align-items:center;gap:32px}
+.logo{display:flex;align-items:baseline;gap:8px;font-family:var(--font-display);font-size:26px;font-weight:800;color:#fff;letter-spacing:-.035em}
+.logo .wordmark{white-space:nowrap}
+.logo .dot{color:var(--red)}
+.logo small{font-size:10px;font-weight:600;letter-spacing:.3em;color:rgba(255,255,255,.6);text-transform:uppercase}
+.nav{display:flex;gap:28px;margin-left:auto}
+.nav a{font-size:15px;font-weight:500;color:rgba(255,255,255,.86);position:relative;padding:6px 0}
+.nav a::after{content:'';position:absolute;left:0;right:100%;bottom:0;height:2px;background:var(--red);transition:right .3s var(--ease)}
+.nav a:hover::after{right:0}
+.nav-cta{margin-left:6px}
+.burger{display:none;margin-left:auto;width:44px;height:44px;align-items:center;justify-content:center}
+.burger span{display:block;width:24px;height:2px;background:#fff;position:relative;transition:background .2s}
+.burger span::before,.burger span::after{content:'';position:absolute;left:0;width:24px;height:2px;background:#fff;transition:transform .3s var(--ease)}
+.burger span::before{top:-7px}.burger span::after{top:7px}
+.burger.open span{background:transparent}
+.burger.open span::before{transform:translateY(7px) rotate(45deg)}
+.burger.open span::after{transform:translateY(-7px) rotate(-45deg)}
+@media (max-width:980px){
+  .nav{position:fixed;inset:0 0 auto;top:0;padding:96px 24px 32px;flex-direction:column;gap:4px;
+    background:var(--navy-900);transform:translateY(-100%);transition:transform .4s var(--ease);margin:0}
+  .nav.open{transform:translateY(0)}
+  .nav a{font-size:20px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+  .nav-cta{display:none}.burger{display:flex}
+}
+
+/* ============================================================ HERO */
+.hero{position:relative;min-height:100svh;display:flex;align-items:center;padding:140px 0 130px;isolation:isolate}
+.hero-bg{position:absolute;inset:0;z-index:-2}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.hero::before{content:'';position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(100deg,rgba(10,27,46,.94) 0%,rgba(10,27,46,.80) 42%,rgba(10,27,46,.34) 72%,rgba(10,27,46,.52) 100%),
+             linear-gradient(to top,rgba(10,27,46,.88) 0%,rgba(10,27,46,0) 45%)}
+.hero-inner{max-width:660px}
+.chips{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px;padding:9px 18px;margin-bottom:26px;
+  border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(255,255,255,.06);backdrop-filter:blur(8px)}
+.chips span{font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.chips .sep{opacity:.4}
+.chips .ic{width:15px;height:15px;color:var(--red)}
+.hero h1{font-size:clamp(34px,5.4vw,56px);color:#fff;letter-spacing:-.032em;line-height:1.1;font-weight:800}
+.hero h1 .hl{color:var(--red)}
+.hero p.lead{margin-top:22px;font-size:clamp(16px,1.7vw,19px);color:rgba(255,255,255,.86);max-width:52ch}
+.hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
+.glassbar{margin-top:52px;padding:16px 10px;border-radius:16px;background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(16px);
+  display:grid;grid-template-columns:repeat(5,1fr);gap:4px;max-width:980px}
+.glassbar li{display:flex;align-items:center;justify-content:center;gap:9px;padding:6px 10px;
+  font-size:13.5px;font-weight:500;color:rgba(255,255,255,.92);text-align:center;transition:color .25s var(--ease)}
+.glassbar li:hover{color:#fff}
+.glassbar .ic{width:17px;height:17px;color:var(--red);flex:none}
+@media (max-width:900px){ .glassbar{grid-template-columns:repeat(2,1fr);max-width:520px} }
+@media (max-width:420px){ .glassbar{grid-template-columns:1fr} }
+
+/* ---------- Barra em movimento ---------- */
+.marquee{position:absolute;left:0;right:0;bottom:0;z-index:2;overflow:hidden;padding:15px 0;
+  background:linear-gradient(90deg,var(--navy-800),var(--navy-700),var(--navy-800));
+  border-top:1px solid rgba(255,255,255,.12);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.marquee-track{display:flex;width:max-content;animation:marquee 42s linear infinite}
+.marquee:hover .marquee-track,.marquee:focus-within .marquee-track{animation-play-state:paused}
+.marquee-group{display:flex;flex:none}
+.marquee-group li{display:flex;align-items:center;gap:26px;padding-inline:26px;white-space:nowrap;
+  font-size:12.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.82)}
+.marquee-group li::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--red);flex:none}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ============================================================ POR QUE A MAGIWAY */
+.why{background:var(--cream)}
+.why-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;margin-top:60px}
+.why-cards{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px 28px;
+  box-shadow:var(--shadow-sm);transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .35s var(--ease)}
+.card:hover{transform:translateY(-5px);box-shadow:var(--shadow-md);border-color:#DBD2C6}
+.card .ic-box{width:44px;height:44px;border-radius:12px;background:var(--cream-2);display:flex;align-items:center;
+  justify-content:center;margin-bottom:20px;transition:background .35s var(--ease),transform .35s var(--ease)}
+.card:hover .ic-box{background:var(--red);transform:scale(1.06)}
+.card:hover .ic-box svg{color:#fff}
+.card .ic-box svg{width:21px;height:21px;color:var(--navy);transition:color .35s var(--ease)}
+.card h3{font-size:19px;margin-bottom:9px}
+.card p{font-size:15px;color:var(--ink-2);line-height:1.55}
+.why-photo{position:relative;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-lg);aspect-ratio:4/3}
+.why-photo .quote{position:absolute;left:16px;right:16px;bottom:16px;padding:20px 22px;border-radius:14px;
+  background:rgba(10,27,46,.62);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.16);color:#fff}
+.why-photo .quote .brand{font-family:var(--font-display);font-size:17px;font-weight:800;letter-spacing:-.03em;margin-bottom:8px}
+.why-photo .quote .brand .dot{color:var(--red)}
+.why-photo .quote p{font-size:17px;font-weight:500;line-height:1.4}
+.why-photo .quote small{display:block;margin-top:9px;font-size:11px;font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;color:rgba(255,255,255,.62)}
+@media (max-width:960px){ .why-grid{grid-template-columns:1fr;gap:36px} .why-photo{order:-1} }
+@media (max-width:560px){ .why-cards{grid-template-columns:1fr} }
+
+/* ============================================================ EXCELÊNCIA */
+.excellence{position:relative;isolation:isolate;color:#fff;padding:120px 0;overflow:hidden}
+.excellence .bgmedia{position:absolute;inset:0;z-index:-2}
+.excellence .bgmedia img{width:100%;height:100%}
+.excellence::before{content:'';position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(160deg,rgba(69,58,142,.90) 0%,rgba(42,35,96,.94) 55%,rgba(30,25,72,.96) 100%),
+             radial-gradient(120% 80% at 78% 18%,rgba(120,104,214,.42),transparent 62%)}
+.excellence .eyebrow{color:#C4B8FF;justify-content:flex-start}
+.excellence .eyebrow::before{display:none}
+.exc-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:64px;align-items:center}
+.exc-grid h2{font-size:clamp(28px,4.2vw,44px);letter-spacing:-.03em;max-width:16ch}
+.exc-grid h2 em{font-style:normal;color:#C4B8FF}
+.exc-lead{margin-top:22px;font-size:18px;color:rgba(255,255,255,.84);max-width:56ch}
+.exc-points{margin-top:34px;display:grid;gap:18px}
+.exc-points li{display:flex;gap:16px;align-items:flex-start}
+.exc-points .ic-box{width:40px;height:40px;border-radius:11px;flex:none;background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center}
+.exc-points .ic-box svg{width:19px;height:19px;color:#C4B8FF}
+.exc-points h3{font-size:17px;margin-bottom:4px}
+.exc-points p{font-size:15px;color:rgba(255,255,255,.72);line-height:1.55}
+.exc-stats{display:grid;gap:14px}
+.stat{padding:28px 30px;border-radius:var(--radius);background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(12px);
+  transition:transform .35s var(--ease),background .35s var(--ease)}
+.stat:hover{transform:translateY(-4px);background:rgba(255,255,255,.14)}
+.stat .num{font-family:var(--font-display);font-size:clamp(32px,4vw,44px);font-weight:800;letter-spacing:-.035em;line-height:1;color:#fff}
+.stat .lbl{margin-top:8px;font-size:14px;color:rgba(255,255,255,.72)}
+@media (max-width:960px){ .exc-grid{grid-template-columns:1fr;gap:44px} .excellence{padding:88px 0} }
+
+/* ============================================================ PASSO A PASSO */
+.process{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+.process::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(100% 60% at 50% 0%,rgba(225,34,46,.14),transparent 65%)}
+.process .h-sec{color:#fff;max-width:21ch}
+.process .sub-sec{color:rgba(255,255,255,.68)}
+.track-bar{position:relative;height:3px;border-radius:2px;background:rgba(255,255,255,.12);margin:52px 0 40px;overflow:hidden}
+.track-bar i{position:absolute;inset:0 100% 0 0;background:linear-gradient(90deg,var(--red),#FF6A5E);transition:right .18s linear}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.step{position:relative;padding:26px 24px 28px;border-radius:var(--radius);background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.10);opacity:0;transform:translateY(26px);
+  transition:opacity .6s var(--ease),transform .6s var(--ease),background .3s var(--ease),border-color .3s var(--ease);
+  transition-delay:var(--d,0ms)}
+.step.in{opacity:1;transform:none}
+.step:hover{background:rgba(255,255,255,.09);border-color:rgba(225,34,46,.5)}
+.step-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.step .ic-box{width:38px;height:38px;border-radius:11px;background:rgba(225,34,46,.14);display:flex;align-items:center;
+  justify-content:center;transition:transform .35s var(--ease),background .35s var(--ease)}
+.step:hover .ic-box{transform:translateY(-3px) rotate(-6deg);background:var(--red)}
+.step .ic-box svg{width:19px;height:19px;color:var(--red);transition:color .35s var(--ease)}
+.step:hover .ic-box svg{color:#fff}
+.step .num{font-family:var(--font-display);font-size:26px;font-weight:800;letter-spacing:-.03em;
+  color:rgba(255,255,255,.22);transition:color .35s var(--ease)}
+.step:hover .num{color:rgba(255,255,255,.5)}
+.step h3{font-size:17px;margin-bottom:9px}
+.step p{font-size:14.5px;color:rgba(255,255,255,.66);line-height:1.55}
+.process-cta{display:flex;justify-content:center;margin-top:48px}
+@media (max-width:1000px){ .steps{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:560px){ .steps{grid-template-columns:1fr} }
+
+/* ============================================================ FROTA */
+.fleet{background:var(--cream);overflow:hidden}
+.fleet .h-sec{max-width:23ch}
+.carousel{margin-top:56px;position:relative}
+.viewport{overflow:hidden;cursor:grab;touch-action:pan-y}
+.viewport.dragging{cursor:grabbing}
+.viewport.dragging .car-card{pointer-events:none}
+.track{display:flex;will-change:transform}
+.slide{flex:0 0 50%;padding-inline:11px}
+@media (max-width:860px){ .slide{flex-basis:100%} }
+.car-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;
+  height:100%;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);
+  transition:transform .4s var(--ease),box-shadow .4s var(--ease)}
+.car-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+.car-photo{position:relative;aspect-ratio:16/10;background:linear-gradient(160deg,#F7F1E8,#EFE7DA);
+  display:flex;align-items:center;justify-content:center;padding:22px}
+.car-photo .media{width:100%;height:100%;background:transparent}
+.car-photo .media img{object-fit:contain;transition:transform .5s var(--ease)}
+.car-card:hover .car-photo .media img{transform:scale(1.045)}
+.badge{position:absolute;top:18px;left:18px;z-index:2;padding:7px 15px;border-radius:999px;background:var(--red);color:#fff;
+  font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 6px 16px rgba(225,34,46,.32)}
+.car-body{padding:28px 28px 26px;display:flex;flex-direction:column;flex:1}
+.car-body h3{font-size:26px;letter-spacing:-.028em}
+.car-color{margin-top:6px;font-size:12.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.car-desc{margin-top:14px;font-size:15px;color:var(--ink-2);line-height:1.55}
+.car-specs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:24px 0;padding-top:22px;border-top:1px solid var(--line)}
+.car-specs li{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;font-size:12.5px;color:var(--ink-2)}
+.car-specs svg{width:19px;height:19px;color:var(--red)}
+.car-body .btn{margin-top:auto;width:100%}
+.car-nav{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:36px}
+.car-nav button{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--surface);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .3s var(--ease),border-color .3s var(--ease),box-shadow .3s var(--ease)}
+.car-nav button:hover{transform:translateY(-2px);border-color:var(--navy);box-shadow:var(--shadow-sm)}
+.car-nav button:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.car-nav svg{width:18px;height:18px;color:var(--navy)}
+.dots{display:flex;gap:9px;margin-inline:6px}
+.dots button{width:8px;height:8px;border-radius:50%;background:#D6CFC4;transition:width .35s var(--ease),background .35s var(--ease)}
+.dots button[aria-current="true"]{width:26px;border-radius:5px;background:var(--red)}
+
+/* ============================================================ 360° + INTERIOR */
+.spin{position:relative;background:var(--navy-900);color:#fff;overflow:hidden}
+.spin::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(80% 55% at 12% 0%,rgba(225,34,46,.16),transparent 60%),
+             radial-gradient(70% 50% at 92% 88%,rgba(69,58,142,.30),transparent 62%)}
+.spin .wrap{position:relative}
+.spin .h-sec{color:#fff;max-width:20ch}
+.spin .sub-sec{color:rgba(255,255,255,.68)}
+.spin-grid{display:grid;grid-template-columns:1.25fr .9fr;gap:38px;align-items:start;margin-top:54px}
+@media (max-width:1000px){ .spin-grid{grid-template-columns:1fr;gap:30px} }
+
+.spin-stage{position:relative;aspect-ratio:16/11;border-radius:var(--radius-lg);
+  background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(8px);
+  overflow:hidden;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.spin-stage:focus-visible{outline:3px solid var(--red);outline-offset:4px}
+.spin-stage.grabbing{cursor:grabbing}
+.spin-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:7%;opacity:0;pointer-events:none}
+.spin-stage img.on{opacity:1}
+.spin-foot{position:absolute;left:0;right:0;bottom:0;padding:18px 22px;display:flex;align-items:center;
+  justify-content:space-between;gap:16px;flex-wrap:wrap;
+  background:linear-gradient(to top,rgba(10,27,46,.85),transparent)}
+.spin-hint{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(255,255,255,.68);transition:opacity .45s var(--ease)}
+.spin-hint svg{width:16px;height:16px;color:var(--red);animation:swipe 2.1s var(--ease) infinite}
+@keyframes swipe{0%,100%{transform:translateX(-4px)}50%{transform:translateX(4px)}}
+.spin-stage.touched .spin-hint{opacity:0}
+.spin-ticks{display:flex;gap:5px}
+.spin-ticks i{width:16px;height:4px;border-radius:2px;background:rgba(255,255,255,.2);transition:background .2s var(--ease)}
+.spin-ticks i.on{background:var(--red)}
+.spin-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:rgba(255,255,255,.6)}
+.spin-stage.ready .spin-loading{display:none}
+.spin-fallback{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;padding:32px;text-align:center}
+.spin-stage.no-frames .spin-fallback{display:flex}
+.spin-stage.no-frames .spin-loading,.spin-stage.no-frames .spin-foot{display:none}
+.spin-stage.no-frames{cursor:default}
+.spin-fallback strong{font-size:16px}
+.spin-fallback span{font-size:14px;color:rgba(255,255,255,.6);max-width:44ch;line-height:1.55}
+.spin-fallback code{font-size:13px;color:var(--red-300)}
+
+.interior-head{display:flex;align-items:center;gap:11px;font-family:var(--font-display);font-size:21px;font-weight:700}
+.interior-head svg{width:20px;height:20px;color:var(--red)}
+.interior-sub{margin-top:8px;font-size:14.5px;color:rgba(255,255,255,.62)}
+.interior-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.thumb{position:relative;aspect-ratio:4/3;border-radius:13px;overflow:hidden;border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.04);cursor:zoom-in;
+  transition:transform .32s var(--ease),border-color .32s var(--ease),box-shadow .32s var(--ease)}
+.thumb:hover{transform:translateY(-4px) scale(1.02);border-color:rgba(225,34,46,.55);box-shadow:0 16px 34px rgba(0,0,0,.4)}
+.thumb:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.thumb .media{position:absolute;inset:0}
+.thumb span{position:absolute;left:0;right:0;bottom:0;padding:22px 12px 10px;font-size:13px;font-weight:500;color:#fff;
+  background:linear-gradient(to top,rgba(10,27,46,.92),transparent)}
+@media (max-width:520px){ .interior-grid{grid-template-columns:1fr 1fr} }
+
+/* Lightbox */
+.lightbox{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;padding:24px;
+  background:rgba(6,15,26,.94);backdrop-filter:blur(6px)}
+.lightbox.open{display:flex}
+.lightbox figure{margin:0;max-width:1000px;width:100%}
+.lightbox .media{aspect-ratio:16/10;border-radius:var(--radius);overflow:hidden;background:rgba(255,255,255,.05)}
+.lightbox .media img{object-fit:contain}
+.lightbox figcaption{margin-top:14px;text-align:center;color:#fff;font-size:16px;font-weight:600}
+.lb-close{position:absolute;top:18px;right:20px;width:44px;height:44px;border-radius:50%;color:#fff;
+  background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;transition:background .25s var(--ease)}
+.lb-close:hover{background:rgba(255,255,255,.24)}
+.lb-close svg{width:20px;height:20px}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;color:#fff;
+  background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;transition:background .25s var(--ease)}
+.lb-nav:hover{background:rgba(255,255,255,.24)}
+.lb-nav svg{width:20px;height:20px}
+.lb-prev{left:20px}.lb-next{right:20px}
+@media (max-width:600px){ .lb-nav{width:40px;height:40px} .lb-prev{left:8px}.lb-next{right:8px} }
+
+/* ============================================================ DEPOIMENTOS */
+.reviews{background:var(--cream)}
+.reviews-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:52px}
+@media (max-width:840px){ .reviews-grid{grid-template-columns:1fr} }
+.review{position:relative;border-radius:var(--radius-lg);overflow:hidden;aspect-ratio:16/11;box-shadow:var(--shadow-md);
+  transition:transform .4s var(--ease),box-shadow .4s var(--ease)}
+.review:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+.review .media{position:absolute;inset:0}
+.review-body{position:absolute;left:14px;right:14px;bottom:14px;padding:20px 22px;border-radius:14px;
+  background:rgba(240,238,235,.72);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.4)}
+.review-stars{display:flex;gap:3px;margin-bottom:11px}
+.review-stars svg{width:15px;height:15px;color:var(--red);fill:var(--red)}
+.review-body p{font-size:15.5px;line-height:1.5;color:var(--ink)}
+.review-body small{display:block;margin-top:11px;font-size:11px;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-2)}
+
+/* ============================================================ FAQ */
+.faq{background:var(--cream)}
+.faq-list{max-width:820px;margin:52px auto 0;display:grid;gap:12px}
+.faq-item{position:relative;background:rgba(110,114,120,.09);border:0;border-radius:0;overflow:hidden;
+  transition:transform .32s var(--ease),background .32s var(--ease),box-shadow .32s var(--ease)}
+.faq-item:hover{transform:scale(1.025);background:rgba(110,114,120,.15);box-shadow:0 14px 34px rgba(20,32,46,.12);z-index:2}
+.faq-item[open]{background:rgba(110,114,120,.14)}
+.faq-item summary{list-style:none;cursor:pointer;padding:22px 26px;display:flex;align-items:center;gap:18px;
+  font-family:var(--font-display);font-size:17px;font-weight:600}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary:focus-visible{outline:3px solid var(--red);outline-offset:-3px}
+.faq-item summary .plus{margin-left:auto;width:22px;height:22px;flex:none;position:relative;transition:transform .3s var(--ease)}
+.faq-item summary .plus::before,.faq-item summary .plus::after{content:'';position:absolute;background:var(--red);border-radius:2px}
+.faq-item summary .plus::before{top:10px;left:2px;width:18px;height:2px}
+.faq-item summary .plus::after{left:10px;top:2px;width:2px;height:18px;transition:opacity .3s var(--ease)}
+.faq-item[open] summary .plus{transform:rotate(180deg)}
+.faq-item[open] summary .plus::after{opacity:0}
+.faq-item .answer{padding:0 26px 24px;font-size:15.5px;color:var(--ink-2);line-height:1.62;max-width:70ch}
+
+/* ============================================================ CONTATO */
+.contact{position:relative;isolation:isolate;color:#fff;padding:110px 0;overflow:hidden}
+.contact .bgmedia{position:absolute;inset:0;z-index:-2}
+.contact .bgmedia img{width:100%;height:100%}
+.contact::before{content:'';position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(100deg,rgba(10,27,46,.95) 0%,rgba(10,27,46,.88) 48%,rgba(10,27,46,.72) 100%)}
+.contact-grid{display:grid;grid-template-columns:1fr .92fr;gap:56px;align-items:center}
+@media (max-width:960px){ .contact-grid{grid-template-columns:1fr;gap:40px} .contact{padding:80px 0} }
+.contact h2{font-size:clamp(28px,4.2vw,44px);letter-spacing:-.03em;max-width:17ch}
+.contact h2 .hl{color:var(--red)}
+.contact .lead{margin-top:20px;font-size:18px;color:rgba(255,255,255,.82);max-width:52ch}
+.contact-info{margin-top:34px;display:grid;gap:12px}
+.info-row{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:12px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  transition:background .3s var(--ease),transform .3s var(--ease)}
+.info-row:hover{background:rgba(255,255,255,.13);transform:translateX(4px)}
+.info-row svg{width:19px;height:19px;color:var(--red);flex:none}
+.info-row .k{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.info-row .v{font-size:15.5px;font-weight:500;color:#fff;word-break:break-word}
+
+.form-card{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(18px);
+  border-radius:var(--radius-lg);padding:34px 32px}
+.form-card h3{font-size:22px;margin-bottom:6px}
+.form-card .fc-sub{font-size:14.5px;color:rgba(255,255,255,.68);margin-bottom:24px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
+  color:rgba(255,255,255,.62);margin-bottom:8px}
+.field input,.field select{width:100%;padding:14px 16px;border-radius:11px;font:inherit;font-size:16px;color:#fff;
+  background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.2);
+  transition:border-color .25s var(--ease),background .25s var(--ease)}
+.field input::placeholder{color:rgba(255,255,255,.42)}
+.field input:focus,.field select:focus{outline:0;border-color:var(--red);background:rgba(255,255,255,.16)}
+.field select{appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;background-size:18px;padding-right:44px}
+.field select option{background:var(--navy-900);color:#fff}
+.form-actions{display:grid;gap:11px;margin-top:24px}
+.form-actions .btn{width:100%}
+.form-note{margin-top:14px;font-size:12.5px;color:rgba(255,255,255,.5);text-align:center}
+
+/* ============================================================ FOOTER */
+.footer{background:var(--navy-900);color:rgba(255,255,255,.7);padding:64px 0 28px}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1.2fr;gap:44px}
+.footer .logo{margin-bottom:16px}
+.footer p{font-size:15px;max-width:38ch;line-height:1.6}
+.footer h4{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#fff;margin-bottom:18px}
+.footer li{margin-bottom:11px;font-size:15px}
+.footer li a{display:inline-flex;align-items:center;gap:9px;transition:color .25s var(--ease)}
+.footer li a:hover{color:#fff}
+.footer li svg{width:16px;height:16px;color:var(--red);flex:none}
+.footer-bottom{margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,.1);
+  display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-size:13.5px;color:rgba(255,255,255,.5)}
+@media (max-width:820px){ .footer-grid{grid-template-columns:1fr;gap:34px} }
+
+/* ---------- Reveal ---------- */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:var(--d,0ms)}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- WhatsApp flutuante ---------- */
+.float-wa{position:fixed;right:22px;bottom:22px;z-index:70;width:58px;height:58px;border-radius:50%;
+  background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 28px rgba(37,211,102,.42);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.float-wa:hover{transform:scale(1.08) translateY(-2px);box-shadow:0 14px 34px rgba(37,211,102,.55)}
+.float-wa svg{width:28px;height:28px}
+@media (max-width:600px){ .float-wa{width:52px;height:52px;right:16px;bottom:16px} }
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .marquee-track{animation:none;transform:none}
+  .reveal,.step{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== ÍCONES ===================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-4-.9L3 21l1.9-4.6A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4Z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2.5 2.5 0 0 0 0-5Z"/><path d="M13 5v14" stroke-dasharray="2 3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v6c0 4.5 3.2 8.2 7.5 9.4 4.3-1.2 7.5-4.9 7.5-9.4V6Z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-plane" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15.5 3 10.2l2-2.1 4.7 1 4-4a2.1 2.1 0 0 1 3 3l-4 4 1 4.7-2.1 2Z"/><path d="M7.5 16.5 5 21"/></symbol>
+  <symbol id="i-seat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h4a3 3 0 0 1 3 3v7H8a3 3 0 0 1-3-3V6a2 2 0 0 1 2-2Z"/><path d="M14 14h3a3 3 0 0 1 3 3v3"/></symbol>
+  <symbol id="i-infinity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 15.5a3.5 3.5 0 1 1 0-7c2.6 0 3.6 2 5.5 3.5s2.9 3.5 5.5 3.5a3.5 3.5 0 1 0 0-7c-2.6 0-3.6 2-5.5 3.5S9.1 15.5 6.5 15.5Z"/></symbol>
+  <symbol id="i-car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M3 17v-4l2-5h14l2 5v4"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="m11 12 8-8 2 2-2 2 2 2-2 2-2-2-2 2"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 5.2a3.2 3.2 0 0 1 0 5.6M17.5 20a6 6 0 0 0-2.2-4.6"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="14" rx="2.5"/><path d="M9 7V4.8A1.8 1.8 0 0 1 10.8 3h2.4A1.8 1.8 0 0 1 15 4.8V7M9 12v4M15 12v4"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18a9 9 0 1 1 16 0"/><path d="m12 14 4-4"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.5 2.7 5.6 6.1.9-4.4 4.3 1 6.2-5.4-2.9-5.4 2.9 1-6.2L3.2 10l6.1-.9Z"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></symbol>
+  <symbol id="i-arrow-l" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></symbol>
+  <symbol id="i-arrow-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></symbol>
+  <symbol id="i-drag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V12m0-1a1.5 1.5 0 0 1 3 0v4.5a5.5 5.5 0 0 1-5.5 5.5h-1a5.5 5.5 0 0 1-5.5-5.5V13a1.5 1.5 0 0 1 3 0"/></symbol>
+  <symbol id="i-gallery" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="2.5"/><path d="M21 7v12a2 2 0 0 1-2 2H7"/><path d="m6 13 3-3 4 4"/><circle cx="12.5" cy="7.5" r="1.2"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3 7 9 6 9-6"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3h3l1.5 4-2 1.5a12 12 0 0 0 5.5 5.5L16 12l4 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 3.5 5.2 2 2 0 0 1 5.5 3Z"/></symbol>
+  <symbol id="i-insta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-google" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8.5 10.5 12 8l3.5 2.5"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 10.5 13.5M21 3l-6.8 18-3.7-7.5L3 9.8Z"/></symbol>
+  <symbol id="i-wa" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.8-.9-2-1s-.5-.1-.7.1-.8 1-1 1.2-.4.2-.7 0a8.2 8.2 0 0 1-2.4-1.5 9 9 0 0 1-1.7-2.1c-.2-.3 0-.5.1-.6l.5-.6.3-.5v-.5l-1-2.3c-.2-.6-.5-.5-.7-.5h-.6a1.1 1.1 0 0 0-.8.4A3.3 3.3 0 0 0 5 8.4a5.7 5.7 0 0 0 1.2 3 13 13 0 0 0 5 4.4 16 16 0 0 0 1.7.6 4 4 0 0 0 1.8.1 3 3 0 0 0 2-1.4 2.4 2.4 0 0 0 .2-1.4c-.1-.1-.3-.2-.5-.3ZM12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/></symbol>
+</defs></svg>
+
+<!-- ===================== HEADER ===================== -->
+<header class="header" id="header">
+  <div class="wrap">
+    <a href="#top" class="logo" aria-label="Magiway Florida — início"><span class="wordmark">Mag<span class="dot">i</span>way</span> <small>Florida</small></a>
+    <nav class="nav" id="nav">
+      <a href="#diferenciais">Diferenciais</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#frota">Frota</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <a href="#" class="btn btn-primary btn-sm nav-cta" data-wa><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> Falar agora</a>
+    <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav"><span></span></button>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="top">
+  <div class="hero-bg media" data-label="assets/hero-familia-aeroporto.jpg">
+    <img src="assets/hero-familia-aeroporto.jpg" alt="Família brasileira recebendo o carro da Magiway no aeroporto de Orlando" onerror="phFail(this)">
+  </div>
+  <div class="wrap">
+    <div class="hero-inner">
+      <div class="chips">
+        <svg class="ic" aria-hidden="true"><use href="#i-pin"/></svg>
+        <span>Orlando</span><span class="sep">·</span><span>Miami</span><span class="sep">·</span><span>Fort Lauderdale</span>
+      </div>
+      <h1>Seu padrão de excelência em <span class="hl">locação de veículos</span> na Flórida.</h1>
+      <p class="lead">Uma boa viagem começa com os detalhes certos resolvidos: contrato em português, sem caução bloqueada no cartão e suporte 24h de gente que fala a sua língua.</p>
+      <div class="hero-actions">
+        <a href="#" class="btn btn-primary" data-wa><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> Falar com um brasileiro agora</a>
+        <a href="#frota" class="btn btn-ghost">Ver a frota</a>
+        <a href="#" class="btn btn-wa-green" data-wa><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg> WhatsApp</a>
+      </div>
+      <ul class="glassbar">
+        <li><svg class="ic" aria-hidden="true"><use href="#i-card"/></svg> Ausência de taxas</li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-ticket"/></svg> Pedágios livres</li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-card"/></svg> Em até 10x s/ juros</li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg> Suporte 24 horas</li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg> Seguro total</li>
+      </ul>
+    </div>
+  </div>
+  <div class="marquee" aria-label="Benefícios inclusos">
+    <div class="marquee-track" id="marqueeTrack">
+      <ul class="marquee-group">
+        <li>SunPass liberado</li><li>Cadeirinha cortesia</li><li>Suporte 24h em português</li>
+        <li>Quilometragem ilimitada</li><li>Entrega no aeroporto</li><li>Mais de 4.000 famílias atendidas</li>
+        <li>Sem caução</li><li>Seguro total incluso</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== POR QUE A MAGIWAY ===================== -->
+<section class="section why" id="diferenciais">
+  <div class="wrap">
+    <p class="eyebrow reveal">Por que a Magiway</p>
+    <h2 class="h-sec reveal" style="--d:60ms">Por que os brasileiros preferem a Magiway</h2>
+    <p class="sub-sec reveal" style="--d:120ms">Transparência total, do primeiro contato à devolução do carro.</p>
+    <div class="why-grid">
+      <ul class="why-cards">
+        <li class="card reveal"><div class="ic-box"><svg aria-hidden="true"><use href="#i-card"/></svg></div>
+          <h3>Zero caução</h3><p>Nenhum valor bloqueado no seu cartão de crédito.</p></li>
+        <li class="card reveal" style="--d:70ms"><div class="ic-box"><svg aria-hidden="true"><use href="#i-chat"/></svg></div>
+          <h3>Português sempre</h3><p>Atendimento especializado durante toda a locação.</p></li>
+        <li class="card reveal" style="--d:140ms"><div class="ic-box"><svg aria-hidden="true"><use href="#i-shield"/></svg></div>
+          <h3>Seguro total</h3><p>Cobertura completa e contra terceiros já inclusa.</p></li>
+        <li class="card reveal" style="--d:210ms"><div class="ic-box"><svg aria-hidden="true"><use href="#i-plane"/></svg></div>
+          <h3>Retirada no aeroporto</h3><p>Rápida e prática, direto do desembarque para o carro.</p></li>
+        <li class="card reveal" style="--d:280ms"><div class="ic-box"><svg aria-hidden="true"><use href="#i-seat"/></svg></div>
+          <h3>Cadeirinha cortesia</h3><p>Cadeirinha infantil disponível sem custo adicional.</p></li>
+        <li class="card reveal" style="--d:350ms"><div class="ic-box"><svg aria-hidden="true"><use href="#i-infinity"/></svg></div>
+          <h3>SunPass incluso</h3><p>Tag de pedágio para rodar pela Flórida sem parar.</p></li>
+      </ul>
+      <figure class="why-photo media reveal" data-label="assets/familia-feliz-no-carro.jpg" style="--d:160ms">
+        <img src="assets/familia-feliz-no-carro.jpg" alt="Família feliz dentro do carro alugado na Magiway" onerror="phFail(this)">
+        <figcaption class="quote">
+          <div class="brand"><span class="wordmark">Mag<span class="dot">i</span>way</span></div>
+          <p>“Sem letra miúda, sem surpresa na chegada.”</p>
+          <small>Mais de 4.000 famílias atendidas</small>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="section-cta reveal">
+      <a href="#" class="btn btn-wa-green" data-wa data-msg="Olá! Quero saber mais sobre os diferenciais da Magiway."><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg> Tirar dúvidas no WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EXCELÊNCIA ===================== -->
+<section class="excellence" id="excelencia">
+  <div class="bgmedia media" data-label="assets/familia-castelo-disney.jpg">
+    <img src="assets/familia-castelo-disney.jpg" alt="Família brasileira posando em frente ao castelo da Disney em Orlando" onerror="phFail(this)">
+  </div>
+  <div class="wrap">
+    <div class="exc-grid">
+      <div>
+        <p class="eyebrow reveal">Nossa excelência</p>
+        <h2 class="reveal" style="--d:60ms">Não é sobre alugar um carro. É sobre <em>como a sua viagem é conduzida.</em></h2>
+        <p class="exc-lead reveal" style="--d:120ms">A Magiway nasceu para resolver o que trava a viagem de quem vem do Brasil: o inglês no balcão, o contrato que ninguém entende, a taxa que aparece na fatura semanas depois. Aqui a operação inteira foi desenhada em português, com padrão próprio de entrega e uma equipe que acompanha cada família do desembarque à devolução.</p>
+        <ul class="exc-points">
+          <li class="reveal" style="--d:180ms"><div class="ic-box"><svg aria-hidden="true"><use href="#i-star"/></svg></div>
+            <div><h3>Padrão de entrega próprio</h3><p>Cada veículo passa por revisão e higienização antes de sair, com tanque cheio, SunPass ativo e cadeirinha já instalada.</p></div></li>
+          <li class="reveal" style="--d:240ms"><div class="ic-box"><svg aria-hidden="true"><use href="#i-users"/></svg></div>
+            <div><h3>Gente que fala a sua língua</h3><p>Do orçamento à devolução, você fala com brasileiros — no seu fuso, no seu idioma, sem intermediário.</p></div></li>
+          <li class="reveal" style="--d:300ms"><div class="ic-box"><svg aria-hidden="true"><use href="#i-sparkle"/></svg></div>
+            <div><h3>Frota curada, não sobra de pátio</h3><p>Modelos recentes escolhidos para o tipo de viagem que a família vai fazer: parques, praia ou estrada.</p></div></li>
+        </ul>
+      </div>
+      <div class="exc-stats">
+        <div class="stat reveal" style="--d:140ms"><div class="num" data-count="4000" data-suffix="+">0</div><div class="lbl">Famílias brasileiras atendidas</div></div>
+        <div class="stat reveal" style="--d:200ms"><div class="num" data-count="24" data-suffix="h">0</div><div class="lbl">Suporte em português, todos os dias</div></div>
+        <div class="stat reveal" style="--d:260ms"><div class="num" data-count="4" data-suffix="">0</div><div class="lbl">Cidades de retirada: Orlando, Miami, Tampa e Fort Lauderdale</div></div>
+        <div class="stat reveal" style="--d:320ms"><div class="num" data-count="0" data-suffix="">0</div><div class="lbl">Reais bloqueados de caução no seu cartão</div></div>
+      </div>
+    </div>
+
+    <div class="section-cta reveal">
+      <a href="#" class="btn btn-wa-green" data-wa data-msg="Olá! Quero conhecer o padrão de atendimento da Magiway."><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg> Falar com a equipe</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PASSO A PASSO ===================== -->
+<section class="section process" id="como-funciona">
+  <div class="wrap">
+    <p class="eyebrow reveal">Passo a passo</p>
+    <h2 class="h-sec reveal" style="--d:60ms">Do primeiro “oi” no WhatsApp até a devolução do carro</h2>
+    <p class="sub-sec reveal" style="--d:120ms">Oito passos, nenhuma fila e zero burocracia. Acompanhe a linha — ela anda com você.</p>
+    <div class="track-bar" id="trackBar" aria-hidden="true"><i></i></div>
+    <ul class="steps" id="steps">
+      <li class="step"><div class="step-top"><div class="ic-box"><svg aria-hidden="true"><use href="#i-chat"/></svg></div><span class="num">01</span></div>
+        <h3>WhatsApp</h3><p>Envie datas, destino e número de passageiros. Em minutos indicamos o carro ideal.</p></li>
+      <li class="step"><div class="step-top"><div class="ic-box"><svg aria-hidden="true"><use href="#i-car"/></svg></div><span class="num">02</span></div>
+        <h3>Atendimento personalizado</h3><p>Sugerimos o veículo certo para o seu grupo, com conforto para todos.</p></li>
+      <li class="step"><div class="step-top"><div class="ic-box"><svg aria-hidden="true"><use href="#i-doc"/></svg></div><span class="num">03</span></div>
+        <h3>Contrato claro</h3><p>Contrato digital em português, cada cláusula transparente, assinatura simples.</p></li>
+      <li class="step"><div class="step-top"><div class="ic-box"><svg aria-hidden="true"><use href="#i-card"/></svg></div><span class="num">04</span></div>
+        <h3>Pagamento e reserva</h3><p>Pagamento conforme combinado e reserva confirmada imediatamente.</p></li>
+      <li class="step"><div class="step-top"><div class="ic-box"><svg aria-hidden="true"><use href="#i-pin"/></svg></div><span class="num">05</span></div>
+        <h3>Chegada no destino</h3><p>30 minutos antes do desembarque, enviamos foto e localização exata do carro.</p></li>
+      <li class="step"><div class="step-top"><div class="ic-box"><svg aria-hidden="true"><use href="#i-key"/></svg></div><span class="num">06</span></div>
+        <h3>Retirada sem fila</h3><p>Nada de balcão ou burocracia: você vai direto do aeroporto para o carro.</p></li>
+      <li class="step"><div class="step-top"><div class="ic-box"><svg aria-hidden="true"><use href="#i-plane"/></svg></div><span class="num">07</span></div>
+        <h3>Devolução prática</h3><p>Na volta, estacione no aeroporto e envie as fotos. Sem surpresas.</p></li>
+      <li class="step"><div class="step-top"><div class="ic-box"><svg aria-hidden="true"><use href="#i-clock"/></svg></div><span class="num">08</span></div>
+        <h3>Suporte em português</h3><p>Equipe disponível por WhatsApp ou ligação, no seu fuso horário.</p></li>
+    </ul>
+    <div class="section-cta">
+      <a href="#" class="btn btn-wa-green" data-wa data-msg="Olá! Quero meu orçamento personalizado."><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg> Quero meu orçamento personalizado</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FROTA ===================== -->
+<section class="section fleet" id="frota">
+  <div class="wrap">
+    <p class="eyebrow reveal">Nossa frota</p>
+    <h2 class="h-sec reveal" style="--d:60ms">Quatro categorias. <span class="hl">Um só padrão de excelência.</span></h2>
+    <p class="sub-sec reveal" style="--d:120ms">Todos os veículos são modelos recentes, revisados antes de cada locação e entregues higienizados, com tanque cheio, SunPass e cadeirinha instalada.</p>
+
+    <div class="carousel reveal" style="--d:180ms">
+      <div class="viewport" id="viewport">
+        <div class="track" id="track">
+
+          <article class="slide"><div class="car-card">
+            <div class="car-photo"><span class="badge">A queridinha das famílias</span>
+              <div class="media" data-label="assets/frota-pacifica-preta.png">
+                <img src="assets/frota-pacifica-preta.png" alt="Chrysler Pacifica preta, última geração" onerror="phFail(this)"></div></div>
+            <div class="car-body">
+              <h3>Pacifica</h3><p class="car-color">Preto</p>
+              <p class="car-desc">Portas elétricas, bancos Stow ’n Go e espaço real para a família inteira viajar com conforto.</p>
+              <ul class="car-specs">
+                <li><svg aria-hidden="true"><use href="#i-users"/></svg>7 lugares</li>
+                <li><svg aria-hidden="true"><use href="#i-bag"/></svg>6 malas grandes</li>
+                <li><svg aria-hidden="true"><use href="#i-gauge"/></svg>Portas elétricas</li></ul>
+              <a href="#" class="btn btn-outline" data-wa data-msg="Olá! Quero reservar a Pacifica."><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> Reservar Pacifica</a>
+            </div></div></article>
+
+          <article class="slide"><div class="car-card">
+            <div class="car-photo"><span class="badge">Econômico e elegante</span>
+              <div class="media" data-label="assets/frota-kia-k4-preto.png">
+                <img src="assets/frota-kia-k4-preto.png" alt="Kia K4 preto, sedan da frota Magiway" onerror="phFail(this)"></div></div>
+            <div class="car-body">
+              <h3>Kia K4</h3><p class="car-color">Preto</p>
+              <p class="car-desc">Perfeito para casais e viagens curtas: consumo baixo, direção leve e visual sóbrio.</p>
+              <ul class="car-specs">
+                <li><svg aria-hidden="true"><use href="#i-users"/></svg>5 lugares</li>
+                <li><svg aria-hidden="true"><use href="#i-bag"/></svg>3 malas grandes</li>
+                <li><svg aria-hidden="true"><use href="#i-gauge"/></svg>Econômico</li></ul>
+              <a href="#" class="btn btn-outline" data-wa data-msg="Olá! Quero reservar o Kia K4."><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> Reservar Kia K4</a>
+            </div></div></article>
+
+          <article class="slide"><div class="car-card">
+            <div class="car-photo"><span class="badge">Versátil</span>
+              <div class="media" data-label="assets/frota-kia-sportage.png">
+                <img src="assets/frota-kia-sportage.png" alt="Kia Sportage, SUV da frota Magiway" onerror="phFail(this)"></div></div>
+            <div class="car-body">
+              <h3>Kia Sportage</h3><p class="car-color">Cinza grafite</p>
+              <p class="car-desc">O equilíbrio ideal entre espaço, conforto e economia para rodar toda a Flórida.</p>
+              <ul class="car-specs">
+                <li><svg aria-hidden="true"><use href="#i-users"/></svg>5 lugares</li>
+                <li><svg aria-hidden="true"><use href="#i-bag"/></svg>4 malas grandes</li>
+                <li><svg aria-hidden="true"><use href="#i-gauge"/></svg>Conforto total</li></ul>
+              <a href="#" class="btn btn-outline" data-wa data-msg="Olá! Quero reservar o Kia Sportage."><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> Reservar Sportage</a>
+            </div></div></article>
+
+          <article class="slide"><div class="car-card">
+            <div class="car-photo"><span class="badge">Topo de linha</span>
+              <div class="media" data-label="assets/frota-ford-expedition-limited.png">
+                <img src="assets/frota-ford-expedition-limited.png" alt="Ford Expedition Limited, SUV premium da frota Magiway" onerror="phFail(this)"></div></div>
+            <div class="car-body">
+              <h3>Ford Expedition Limited</h3><p class="car-color">Preto ônix</p>
+              <p class="car-desc">Presença imponente, tração robusta e acabamento premium para quem quer viajar em outro patamar.</p>
+              <ul class="car-specs">
+                <li><svg aria-hidden="true"><use href="#i-users"/></svg>7 lugares</li>
+                <li><svg aria-hidden="true"><use href="#i-bag"/></svg>5 malas grandes</li>
+                <li><svg aria-hidden="true"><use href="#i-gauge"/></svg>4x4 · V6</li></ul>
+              <a href="#" class="btn btn-outline" data-wa data-msg="Olá! Quero reservar o Ford Expedition Limited."><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> Reservar Expedition</a>
+            </div></div></article>
+
+        </div>
+      </div>
+      <div class="car-nav">
+        <button id="prev" aria-label="Veículo anterior"><svg aria-hidden="true"><use href="#i-arrow-l"/></svg></button>
+        <button id="next" aria-label="Próximo veículo"><svg aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
+      </div>
+    </div>
+
+    <div class="section-cta reveal">
+      <a href="#" class="btn btn-wa-green" data-wa data-msg="Olá! Quero ajuda para escolher o carro ideal para a minha família."><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg> Qual carro é o ideal?</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PACIFICA LIMITED 360° ===================== -->
+<section class="section spin on-dark" id="pacifica-360">
+  <div class="wrap">
+    <p class="eyebrow reveal">Experiência 360°</p>
+    <h2 class="h-sec reveal" style="--d:60ms">Pacifica <span class="hl">Limited</span> — último modelo, por inteiro.</h2>
+    <p class="sub-sec reveal" style="--d:120ms">Arraste o veículo, olhe de todos os ângulos e entre no interior antes mesmo de embarcar.<br>Transparência total: você sabe exatamente o carro que vai encontrar na Flórida.</p>
+
+    <div class="spin-grid">
+      <div class="spin-stage reveal" id="spinStage" style="--d:180ms" tabindex="0" role="img"
+           aria-label="Visualização 360 graus da Chrysler Pacifica Limited. Arraste na horizontal ou use as setas do teclado para mudar o ângulo.">
+        <div class="spin-loading">Carregando os ângulos…</div>
+        <div class="spin-fallback">
+          <strong>Sequência de ângulos ainda não adicionada</strong>
+          <span>Coloque as fotos em <code>assets/spin/pacifica-01.jpg</code> … <code>pacifica-36.jpg</code> e o arraste liga sozinho.</span>
+        </div>
+        <div class="spin-foot">
+          <div class="spin-hint"><svg aria-hidden="true"><use href="#i-drag"/></svg> Arraste para mudar o ângulo</div>
+          <div class="spin-ticks" id="spinTicks" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="reveal" style="--d:240ms">
+        <h3 class="interior-head"><svg aria-hidden="true"><use href="#i-gallery"/></svg> Veja o interior de perto</h3>
+        <p class="interior-sub">Toque em cada item e abra as fotos reais do interior.</p>
+        <div class="interior-grid" id="interiorGrid"></div>
+      </div>
+    </div>
+
+    <div class="section-cta reveal">
+      <a href="#" class="btn btn-wa-green" data-wa data-msg="Olá! Quero reservar a Pacifica Limited."><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg> Reservar a Pacifica Limited</a>
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Foto do interior">
+  <button class="lb-close" id="lbClose" aria-label="Fechar"><svg aria-hidden="true"><use href="#i-x"/></svg></button>
+  <button class="lb-nav lb-prev" id="lbPrev" aria-label="Foto anterior"><svg aria-hidden="true"><use href="#i-arrow-l"/></svg></button>
+  <button class="lb-nav lb-next" id="lbNext" aria-label="Próxima foto"><svg aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
+  <figure>
+    <div class="media" id="lbMedia" data-label=""><img id="lbImg" src="" alt="" onerror="phFail(this)"></div>
+    <figcaption id="lbCaption"></figcaption>
+  </figure>
+</div>
+
+<!-- ===================== DEPOIMENTOS ===================== -->
+<section class="section reviews">
+  <div class="wrap">
+    <p class="eyebrow reveal">Depoimentos</p>
+    <h2 class="h-sec reveal" style="--d:60ms">Famílias que confiam na Magiway</h2>
+    <div class="reviews-grid">
+      <figure class="review reveal" style="--d:120ms">
+        <div class="media" data-label="assets/depoimento-1.jpg">
+          <img src="assets/depoimento-1.jpg" alt="Família brasileira ao lado do carro alugado em Orlando" onerror="phFail(this)"></div>
+        <figcaption class="review-body">
+          <div class="review-stars" aria-label="5 de 5 estrelas">
+            <svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg>
+          </div>
+          <p>“Chegamos no aeroporto e o carro já estava esperando com a cadeirinha instalada. Zero burocracia e tudo em português.”</p>
+          <small>Família Andrade · Orlando · 12 dias</small>
+        </figcaption>
+      </figure>
+      <figure class="review reveal" style="--d:190ms">
+        <div class="media" data-label="assets/depoimento-2.jpg">
+          <img src="assets/depoimento-2.jpg" alt="Família brasileira dentro do carro alugado em Miami" onerror="phFail(this)"></div>
+        <figcaption class="review-body">
+          <div class="review-stars" aria-label="5 de 5 estrelas">
+            <svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg>
+          </div>
+          <p>“Nunca tivemos um bloqueio no cartão. O contrato era claro e o suporte respondia em minutos, mesmo de madrugada.”</p>
+          <small>Família Ribeiro · Miami · 9 dias</small>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="section-cta reveal">
+      <a href="#" class="btn btn-wa-green" data-wa data-msg="Olá! Quero ser a próxima família atendida pela Magiway."><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg> Quero a mesma experiência</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="section faq" id="faq">
+  <div class="wrap">
+    <p class="eyebrow reveal">Dúvidas frequentes</p>
+    <h2 class="h-sec reveal" style="--d:60ms">O que as famílias mais perguntam</h2>
+    <div class="faq-list">
+      <details class="faq-item reveal"><summary>Preciso deixar caução bloqueada no cartão?<span class="plus"></span></summary>
+        <p class="answer">Não. A Magiway não bloqueia valor de caução no seu cartão de crédito — o limite fica livre para a sua viagem.</p></details>
+      <details class="faq-item reveal" style="--d:50ms"><summary>O seguro já está incluso?<span class="plus"></span></summary>
+        <p class="answer">Sim. Todas as locações saem com seguro total, com cobertura completa e contra terceiros já inclusa no valor combinado.</p></details>
+      <details class="faq-item reveal" style="--d:100ms"><summary>A cadeirinha infantil é cobrada à parte?<span class="plus"></span></summary>
+        <p class="answer">Não. A cadeirinha é cortesia e já vai instalada no carro na hora da entrega. Avise quantas e para que idades no momento do orçamento.</p></details>
+      <details class="faq-item reveal" style="--d:150ms"><summary>Como funcionam os pedágios da Flórida?<span class="plus"></span></summary>
+        <p class="answer">O SunPass já vem no veículo, então você passa pelos pedágios sem parar e sem se preocupar em ter dinheiro trocado.</p></details>
+      <details class="faq-item reveal" style="--d:200ms"><summary>A quilometragem é ilimitada?<span class="plus"></span></summary>
+        <p class="answer">Sim. Você roda a Flórida inteira sem controle de quilometragem.</p></details>
+      <details class="faq-item reveal" style="--d:250ms"><summary>Como é a retirada no aeroporto?<span class="plus"></span></summary>
+        <p class="answer">Cerca de 30 minutos antes do seu desembarque enviamos a foto e a localização exata do carro. Você vai direto do desembarque para o veículo, sem fila e sem balcão.</p></details>
+      <details class="faq-item reveal" style="--d:300ms"><summary>Posso parcelar o pagamento?<span class="plus"></span></summary>
+        <p class="answer">Sim, em até 10x sem juros. As condições exatas são confirmadas junto com o orçamento pelo WhatsApp.</p></details>
+      <details class="faq-item reveal" style="--d:350ms"><summary>Que documentos eu preciso levar?<span class="plus"></span></summary>
+        <p class="answer">Nossa equipe orienta você sobre toda a documentação necessária antes da viagem, para você chegar na Flórida sem nenhuma surpresa. Fale com a gente no WhatsApp e mandamos a lista completa.</p></details>
+    </div>
+
+    <div class="section-cta reveal">
+      <a href="#" class="btn btn-wa-green" data-wa data-msg="Olá! Fiquei com uma dúvida que não está no site."><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg> Minha dúvida não está aqui</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTATO ===================== -->
+<section class="contact" id="contato">
+  <div class="bgmedia media" data-label="assets/familia-pacifica.jpg">
+    <img src="assets/familia-pacifica.jpg" alt="Família brasileira ao lado da Chrysler Pacifica alugada na Magiway" onerror="phFail(this)">
+  </div>
+  <div class="wrap">
+    <div class="contact-grid">
+      <div>
+        <p class="eyebrow reveal" style="justify-content:flex-start">Fale com a gente</p>
+        <h2 class="reveal" style="--d:60ms">Sua viagem já tem roteiro. <span class="hl">Falta só o carro.</span></h2>
+        <p class="lead reveal" style="--d:120ms">Conte as datas da sua viagem e o tipo de carro que você precisa. Em poucos minutos você recebe um orçamento personalizado, em português, sem letra miúda.</p>
+
+        <div class="contact-info">
+          <a class="info-row reveal" style="--d:170ms" id="infoMail" href="#">
+            <svg aria-hidden="true"><use href="#i-mail"/></svg>
+            <span><span class="k">E-mail</span><br><span class="v" data-slot="email"></span></span></a>
+          <a class="info-row reveal" style="--d:220ms" id="infoPhone" href="#">
+            <svg aria-hidden="true"><use href="#i-phone"/></svg>
+            <span><span class="k">Telefone / WhatsApp</span><br><span class="v" data-slot="telefone"></span></span></a>
+          <a class="info-row reveal" style="--d:270ms" id="infoInsta" href="#" target="_blank" rel="noopener">
+            <svg aria-hidden="true"><use href="#i-insta"/></svg>
+            <span><span class="k">Instagram</span><br><span class="v" data-slot="instagram"></span></span></a>
+          <a class="info-row reveal" style="--d:320ms" id="infoGoogle" href="#" target="_blank" rel="noopener">
+            <svg aria-hidden="true"><use href="#i-google"/></svg>
+            <span><span class="k">Avaliações</span><br><span class="v">Deixe sua avaliação no Google</span></span></a>
+        </div>
+      </div>
+
+      <form class="form-card reveal" id="leadForm" style="--d:200ms" novalidate>
+        <h3>Peça seu orçamento</h3>
+        <p class="fc-sub">Respondemos no WhatsApp, em português.</p>
+
+        <div class="field">
+          <label for="f-nome">Nome</label>
+          <input id="f-nome" name="nome" type="text" placeholder="Seu nome completo" required autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="f-tel">Telefone</label>
+          <input id="f-tel" name="telefone" type="tel" placeholder="(00) 00000-0000" required autocomplete="tel">
+        </div>
+        <div class="field">
+          <label for="f-cidade">Cidade de retirada</label>
+          <select id="f-cidade" name="cidade" required>
+            <option value="" disabled selected>Escolha a cidade</option>
+            <option>Orlando</option>
+            <option>Miami</option>
+            <option>Tampa</option>
+            <option>Fort Lauderdale (FLL)</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg> Enviar</button>
+          <a href="#" class="btn btn-wa-green" data-wa><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg> Falar com a equipe</a>
+        </div>
+        <p class="form-note">Ao enviar, abrimos o WhatsApp com seus dados já preenchidos.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="logo"><span class="wordmark">Mag<span class="dot">i</span>way</span> <small>Florida</small></div>
+        <p>Locação de veículos na Flórida para famílias brasileiras, com contrato em português, seguro total e suporte 24 horas.</p>
+      </div>
+      <div>
+        <h4>Navegação</h4>
+        <ul>
+          <li><a href="#diferenciais">Diferenciais</a></li>
+          <li><a href="#excelencia">Excelência</a></li>
+          <li><a href="#como-funciona">Como funciona</a></li>
+          <li><a href="#frota">Frota</a></li>
+          <li><a href="#pacifica-360">Pacifica 360°</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contato</h4>
+        <ul>
+          <li><a href="#" data-wa><svg aria-hidden="true"><use href="#i-wa"/></svg> WhatsApp 24 horas</a></li>
+          <li><a href="#" data-slot-href="email"><svg aria-hidden="true"><use href="#i-mail"/></svg> <span data-slot="email"></span></a></li>
+          <li><a href="#" data-slot-href="telefone"><svg aria-hidden="true"><use href="#i-phone"/></svg> <span data-slot="telefone"></span></a></li>
+          <li><a href="#" data-slot-href="instagram" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-insta"/></svg> <span data-slot="instagram"></span></a></li>
+          <li><a href="#" data-slot-href="google" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-google"/></svg> Avaliações no Google</a></li>
+          <li>Orlando · Miami · Tampa · Fort Lauderdale</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Magiway Florida. Todos os direitos reservados.</span>
+      <span>Feito para quem viaja em família.</span>
+    </div>
+  </div>
+</footer>
+
+<a href="#" class="float-wa" data-wa aria-label="Falar no WhatsApp"><svg aria-hidden="true"><use href="#i-wa"/></svg></a>
+
+<script>
+/* ============================================================
+   CONFIGURAÇÃO — edite só este bloco
+   ============================================================ */
+const CONTATO = {
+  whatsapp:  '5500000000000',                          // <-- DDI+DDD+número, só dígitos
+  telefone:  '+1 (000) 000-0000',                      // <-- exibido no site
+  email:     'contato@magiway.com',                    // <--
+  instagram: '@magiwayflorida',                        // <--
+  instaUrl:  'https://instagram.com/magiwayflorida',   // <--
+  googleUrl: 'https://g.page/r/SEU-ID-AQUI/review'     // <-- link de avaliação do Google
+};
+const WHATSAPP_MSG = 'Olá! Vim pelo site e quero um orçamento.';
+
+/* Fotos do interior da Pacifica Limited — acrescente quantas quiser */
+const INTERIOR = [
+  ['painel.jpg',            'Painel'],
+  ['bancos-couro.jpg',      'Bancos de couro'],
+  ['teto-solar.jpg',        'Teto solar panorâmico'],
+  ['porta-malas.jpg',       'Porta-malas'],
+  ['terceira-fileira.jpg',  'Terceira fileira'],
+  ['central-multimidia.jpg','Central multimídia'],
+  ['stow-n-go.jpg',         'Bancos Stow ’n Go'],
+  ['ar-condicionado.jpg',   'Ar-condicionado tri-zone'],
+  ['cadeirinha.jpg',        'Cadeirinha instalada'],
+  ['portas-eletricas.jpg',  'Portas elétricas']
+];
+
+const SPIN_FRAMES = 36;
+const SPIN_SRC = i => `assets/spin/pacifica-${String(i + 1).padStart(2,'0')}.jpg`;
+
+/* ============================================================ */
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const waLink  = msg => `https://wa.me/${CONTATO.whatsapp}?text=${encodeURIComponent(msg || WHATSAPP_MSG)}`;
+
+/* Links de WhatsApp */
+document.querySelectorAll('[data-wa]').forEach(el => {
+  el.href = waLink(el.dataset.msg);
+  el.target = '_blank'; el.rel = 'noopener';
+});
+
+/* Preenche e-mail / telefone / instagram / google */
+document.querySelectorAll('[data-slot="email"]').forEach(e => e.textContent = CONTATO.email);
+document.querySelectorAll('[data-slot="telefone"]').forEach(e => e.textContent = CONTATO.telefone);
+document.querySelectorAll('[data-slot="instagram"]').forEach(e => e.textContent = CONTATO.instagram);
+const hrefFor = { email:`mailto:${CONTATO.email}`, telefone:`tel:${CONTATO.telefone.replace(/[^\d+]/g,'')}`,
+                  instagram:CONTATO.instaUrl, google:CONTATO.googleUrl };
+document.querySelectorAll('[data-slot-href]').forEach(a => a.href = hrefFor[a.dataset.slotHref]);
+document.getElementById('infoMail').href   = hrefFor.email;
+document.getElementById('infoPhone').href  = hrefFor.telefone;
+document.getElementById('infoInsta').href  = CONTATO.instaUrl;
+document.getElementById('infoGoogle').href = CONTATO.googleUrl;
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ---------- Header ---------- */
+const header = document.getElementById('header');
+const onScrollHeader = () => header.classList.toggle('scrolled', scrollY > 40);
+onScrollHeader(); addEventListener('scroll', onScrollHeader, { passive:true });
+
+/* ---------- Menu mobile ---------- */
+const burger = document.getElementById('burger'), nav = document.getElementById('nav');
+burger.addEventListener('click', () => {
+  const open = nav.classList.toggle('open');
+  burger.classList.toggle('open', open);
+  burger.setAttribute('aria-expanded', String(open));
+  burger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+});
+nav.addEventListener('click', e => {
+  if (e.target.tagName === 'A'){ nav.classList.remove('open'); burger.classList.remove('open'); burger.setAttribute('aria-expanded','false'); }
+});
+
+/* ---------- Marquee sem emenda ---------- */
+(() => { const t = document.getElementById('marqueeTrack'); t.appendChild(t.firstElementChild.cloneNode(true)); })();
+
+/* ---------- Reveal ---------- */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}), { threshold:.14, rootMargin:'0px 0px -8% 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ---------- Passo a passo ---------- */
+(() => {
+  const steps = [...document.querySelectorAll('#steps .step')];
+  steps.forEach((s,i) => s.style.setProperty('--d', `${i*80}ms`));
+  const so = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting){ e.target.classList.add('in'); so.unobserve(e.target); }
+  }), { threshold:.2 });
+  steps.forEach(s => so.observe(s));
+
+  const section = document.getElementById('como-funciona');
+  const fill = document.querySelector('#trackBar i');
+  const update = () => {
+    const r = section.getBoundingClientRect();
+    const p = Math.min(1, Math.max(0, (innerHeight - r.top) / (r.height + innerHeight)));
+    fill.style.right = `${Math.max(0, (1 - p*1.35) * 100)}%`;
+  };
+  update(); addEventListener('scroll', update, { passive:true }); addEventListener('resize', update);
+})();
+
+/* ---------- Números ---------- */
+(() => {
+  const fmt = n => n.toLocaleString('pt-BR');
+  const no = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    no.unobserve(e.target);
+    const target = +e.target.dataset.count, suffix = e.target.dataset.suffix || '';
+    if (reduced || target === 0){ e.target.textContent = fmt(target) + suffix; return; }
+    const dur = 1400, t0 = performance.now();
+    const tick = now => {
+      const p = Math.min(1, (now - t0) / dur);
+      e.target.textContent = fmt(Math.round(target * (1 - Math.pow(1 - p, 3)))) + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }), { threshold:.5 });
+  document.querySelectorAll('[data-count]').forEach(n => no.observe(n));
+})();
+
+/* ============================================================
+   CARROSSEL DA FROTA — loop com clones, arraste e autoplay
+   ============================================================ */
+(() => {
+  const viewport = document.getElementById('viewport'), track = document.getElementById('track'),
+        dotsWrap = document.getElementById('dots'), real = [...track.children], N = real.length;
+  if (!N) return;
+  /* Os prints mostram só as setas; se um dia quiser os indicadores,
+     basta devolver <div class="dots" id="dots"></div> ao lado dos botões. */
+
+  real.forEach(s => track.appendChild(s.cloneNode(true)));
+  real.slice().reverse().forEach(s => track.insertBefore(s.cloneNode(true), track.firstChild));
+
+  let index = N, slideW = 0, animating = false, timer = null;
+  const perView = () => matchMedia('(max-width:860px)').matches ? 1 : 2;
+  const measure = () => { slideW = viewport.clientWidth / perView(); };
+  const place = (anim, extra = 0) => {
+    track.style.transition = anim ? 'transform .62s cubic-bezier(.22,1,.36,1)' : 'none';
+    track.style.transform  = `translate3d(${-index * slideW + extra}px,0,0)`;
+  };
+  const activeReal = () => ((index - N) % N + N) % N;
+  const syncDots = () => { if (dotsWrap) [...dotsWrap.children].forEach((d,i) => d.setAttribute('aria-current', String(i === activeReal()))); };
+  const go = d => { if (animating) return; animating = true; index += d; place(true); syncDots(); };
+
+  track.addEventListener('transitionend', () => {
+    animating = false;
+    if (index >= 2*N){ index -= N; place(false); }
+    else if (index < N){ index += N; place(false); }
+  });
+
+  if (dotsWrap) real.forEach((_,i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.setAttribute('role','tab'); b.setAttribute('aria-label', `Ir para o veículo ${i+1}`);
+    b.addEventListener('click', () => go(i - activeReal()));
+    dotsWrap.appendChild(b);
+  });
+  document.getElementById('prev').addEventListener('click', () => go(-1));
+  document.getElementById('next').addEventListener('click', () => go(1));
+
+  let startX = 0, dx = 0, dragging = false;
+  viewport.addEventListener('pointerdown', e => {
+    if (animating || e.button !== 0) return;
+    dragging = true; startX = e.clientX; dx = 0;
+    viewport.setPointerCapture(e.pointerId); viewport.classList.add('dragging'); stopAuto();
+  });
+  viewport.addEventListener('pointermove', e => { if (dragging){ dx = e.clientX - startX; place(false, dx); } });
+  const endDrag = () => {
+    if (!dragging) return;
+    dragging = false; viewport.classList.remove('dragging');
+    if (Math.abs(dx) > slideW * .18) go(dx < 0 ? 1 : -1); else place(true);
+    dx = 0; startAuto();
+  };
+  viewport.addEventListener('pointerup', endDrag);
+  viewport.addEventListener('pointercancel', endDrag);
+
+  function startAuto(){ if (reduced || timer) return; timer = setInterval(() => go(1), 5500); }
+  function stopAuto(){ clearInterval(timer); timer = null; }
+  viewport.addEventListener('mouseenter', stopAuto);
+  viewport.addEventListener('mouseleave', startAuto);
+  viewport.addEventListener('focusin', stopAuto);
+  viewport.addEventListener('focusout', startAuto);
+  document.addEventListener('visibilitychange', () => document.hidden ? stopAuto() : startAuto());
+
+  measure(); place(false); syncDots(); startAuto();
+  addEventListener('resize', () => { measure(); place(false); });
+})();
+
+/* ============================================================
+   PACIFICA 360° — só muda de ângulo com arraste, nunca sozinha
+   ============================================================ */
+(() => {
+  const stage = document.getElementById('spinStage'), ticks = document.getElementById('spinTicks');
+  if (!stage) return;
+
+  const imgs = []; let loaded = 0, failed = false, frame = 0;
+  const TICKS = 7;
+  for (let i = 0; i < TICKS; i++) ticks.appendChild(document.createElement('i'));
+
+  for (let i = 0; i < SPIN_FRAMES; i++){
+    const img = new Image();
+    img.alt = ''; img.decoding = 'async';
+    img.addEventListener('load', () => { if (++loaded === SPIN_FRAMES){ stage.classList.add('ready'); show(0); } });
+    img.addEventListener('error', () => { if (!failed){ failed = true; stage.classList.add('no-frames'); } }, { once:true });
+    img.src = SPIN_SRC(i);
+    imgs.push(img); stage.appendChild(img);
+  }
+
+  const show = i => {
+    frame = ((i % SPIN_FRAMES) + SPIN_FRAMES) % SPIN_FRAMES;
+    imgs.forEach((im,k) => im.classList.toggle('on', k === frame));
+    const active = Math.round(frame / SPIN_FRAMES * TICKS) % TICKS;
+    [...ticks.children].forEach((t,k) => t.classList.toggle('on', k === active));
+  };
+
+  let startX = 0, startFrame = 0, dragging = false;
+  stage.addEventListener('pointerdown', e => {
+    if (failed || !stage.classList.contains('ready')) return;
+    dragging = true; startX = e.clientX; startFrame = frame;
+    stage.setPointerCapture(e.pointerId); stage.classList.add('grabbing','touched');
+  });
+  stage.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const pxPerFrame = (stage.clientWidth / SPIN_FRAMES) * 1.5;
+    show(startFrame - Math.round((e.clientX - startX) / pxPerFrame));
+  });
+  const stop = () => { dragging = false; stage.classList.remove('grabbing'); };
+  stage.addEventListener('pointerup', stop);
+  stage.addEventListener('pointercancel', stop);
+  stage.addEventListener('keydown', e => {
+    if (failed) return;
+    if (e.key === 'ArrowRight'){ show(frame - 1); stage.classList.add('touched'); e.preventDefault(); }
+    if (e.key === 'ArrowLeft'){  show(frame + 1); stage.classList.add('touched'); e.preventDefault(); }
+  });
+})();
+
+/* ============================================================
+   GALERIA DO INTERIOR + LIGHTBOX
+   ============================================================ */
+(() => {
+  const grid = document.getElementById('interiorGrid');
+  const lb = document.getElementById('lightbox'), lbImg = document.getElementById('lbImg'),
+        lbCap = document.getElementById('lbCaption'), lbMedia = document.getElementById('lbMedia');
+  let current = 0, lastFocus = null;
+
+  INTERIOR.forEach(([file, label], i) => {
+    const src = `assets/interior/${file}`;
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'thumb'; b.setAttribute('aria-label', `Abrir foto: ${label}`);
+    b.innerHTML = `<div class="media" data-label="interior/${file}"><img src="${src}" alt="${label} da Chrysler Pacifica Limited" loading="lazy" decoding="async" onerror="phFail(this)"></div><span>${label}</span>`;
+    b.addEventListener('click', () => open(i));
+    grid.appendChild(b);
+  });
+
+  function open(i){
+    current = ((i % INTERIOR.length) + INTERIOR.length) % INTERIOR.length;
+    const [file, label] = INTERIOR[current];
+    lbMedia.classList.remove('is-missing');
+    lbMedia.dataset.label = label;
+    lbImg.src = `assets/interior/${file}`;
+    lbImg.alt = `${label} da Chrysler Pacifica Limited`;
+    lbCap.textContent = label;
+    if (!lb.classList.contains('open')){
+      lastFocus = document.activeElement;
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('lbClose').focus();
+    }
+  }
+  function close(){
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+    if (lastFocus) lastFocus.focus();
+  }
+
+  document.getElementById('lbClose').addEventListener('click', close);
+  document.getElementById('lbPrev').addEventListener('click', () => open(current - 1));
+  document.getElementById('lbNext').addEventListener('click', () => open(current + 1));
+  lb.addEventListener('click', e => { if (e.target === lb) close(); });
+  addEventListener('keydown', e => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowRight') open(current + 1);
+    if (e.key === 'ArrowLeft')  open(current - 1);
+  });
+})();
+
+/* ============================================================
+   FORMULÁRIO — monta a mensagem e abre o WhatsApp
+   ============================================================ */
+document.getElementById('leadForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.currentTarget;
+  const nome = f.nome.value.trim(), tel = f.telefone.value.trim(), cidade = f.cidade.value;
+  if (!nome || !tel || !cidade){
+    [f.nome, f.telefone, f.cidade].find(el => !el.value.trim())?.focus();
+    return;
+  }
+  const msg = `Olá! Meu nome é ${nome}.\nTelefone: ${tel}\nCidade de retirada: ${cidade}\n\nGostaria de um orçamento.`;
+  open(waLink(msg), '_blank', 'noopener');
+});
+</script>
+</body>
+</html>
