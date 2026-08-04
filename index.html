@@ -738,6 +738,10 @@ select.ffi option{background:#000020;color:#FF0000}
       </div>
 
       <div class="sb-sec">Frota &amp; Reservas</div>
+      <div class="sb-item" onclick="nav('frota',this)">
+        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 17h14M5 17a2 2 0 01-2-2v-1.5a1 1 0 01.076-.383L4.7 9.28A2 2 0 016.558 8h10.884a2 2 0 011.858 1.28l1.624 3.837A1 1 0 0121 13.5V15a2 2 0 01-2 2M5 17a2 2 0 002 2h0a2 2 0 002-2m10 0a2 2 0 002 2h0a2 2 0 002-2M9 17h6"></path><circle cx="7.5" cy="14.5" r="1.2" fill="currentColor" stroke="none"></circle><circle cx="16.5" cy="14.5" r="1.2" fill="currentColor" stroke="none"></circle></svg>
+        Frota
+      </div>
       <div class="sb-item" onclick="nav('calendario',this)">
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"></rect><path stroke-linecap="round" stroke-width="2" d="M8 2v4M16 2v4M3 10h18"></path><rect x="6" y="13" width="4" height="3" rx="0.5" fill="currentColor" stroke="none"></rect><rect x="12" y="13" width="6" height="3" rx="0.5" fill="currentColor" stroke="none" opacity="0.5"></rect></svg>
         Calendário Frota <span class="sb-bdg bdg-live">LIVE</span>
@@ -5793,6 +5797,18 @@ Data de retirada = din"></textarea>
 </style>
 
 <!-- ═══════════ CALENDÁRIO DA FROTA ═══════════ -->
+<!-- ═══════════ FROTA (cadastro de veículos — alimenta o Calendário) ═══════════ -->
+<div class="panel" id="panel-frota">
+  <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">🚗 FROTA</span><div class="sec-line"></div></div>
+  <div class="mgw-hint">📌 Todo carro cadastrado aqui vira uma linha no <b>Calendário</b>, agrupado pela Categoria informada. Placa, VIN, cor, ano, observações de manutenção e os gastos de manutenção (quantos você quiser) ficam salvos por veículo.</div>
+  <div class="mgrsv-toolbar">
+    <input id="frota-search" class="mgw-input" style="flex:1;min-width:200px" placeholder="🔎 Buscar por modelo, marca, placa, VIN, cor ou categoria…" oninput="frotaSearch(this.value)">
+    <button class="mgw-btn" onclick="frotaAbrirForm()">+ Adicionar veículo</button>
+  </div>
+  <div id="frota-tabs" class="frota-tabs"></div>
+  <div id="frota-content"></div>
+</div>
+
 <div class="panel" id="panel-calendario">
   <div class="mgcal-toolbar">
     <button class="mgw-btn" onclick="MGW_RESV.refresh()">↻ Atualizar</button>
@@ -5800,14 +5816,19 @@ Data de retirada = din"></textarea>
     <select id="mgcal-filt-city" class="mgw-input" onchange="MGW_RESV.applyFilters()" title="Filtrar por cidade de início">
       <option value="">Todas as cidades</option>
       <option value="orl">Orlando (MCO)</option>
+      <option value="sfd">Sanford (SFB)</option>
+      <option value="pcv">Porto Canaveral</option>
       <option value="mia">Miami (MIA)</option>
       <option value="fll">FLL</option>
       <option value="tpa">Tampa</option>
+      <option value="oth">Outras cidades</option>
     </select>
     <select id="mgcal-filt-cat" class="mgw-input" onchange="MGW_RESV.applyFilters()" title="Filtrar por categoria"><option value="">Todas as categorias</option></select>
     <button class="mgw-btn" id="mgcal-clearov" onclick="MGW_RESV.clearOverrides()" title="Desfazer todos os remanejamentos manuais" style="display:none">↺ Limpar remanejamentos</button>
     <div class="mgcal-legend">
       <span><i style="background:#3B9EFF"></i>Orlando (MCO)</span>
+      <span><i style="background:#8C6BFF"></i>Sanford (SFB)</span>
+      <span><i style="background:#FF8C3B"></i>Porto Canaveral</span>
       <span><i style="background:#FF4757"></i>Miami (MIA)</span>
       <span><i style="background:#1AFF9D"></i>FLL</span>
       <span><i style="background:#FFD11A"></i>Tampa</span>
@@ -7842,6 +7863,7 @@ const NAV={
   dashboard:['DASHBOARD','Visão geral · Daniel Souza'],
   cotacao:['COTAÇÃO','Gerar cotação personalizada'],
   vendasmes:['VENDAS DO MÊS','Ciclo do dia 13 ao dia 12 · comissão e pagamento do mês'],
+  frota:['FROTA','Cadastro de veículos · placa, VIN, cor, ano e manutenção · alimenta o Calendário'],
   calendario:['CALENDÁRIO DA FROTA','Reservas por categoria · barras horizontais até Abr/2027 · linha vermelha = hoje'],
   reservas:['RESERVAS','Tabela de fechamento extraída da aba Histórico · overbooking em vermelho'],
   agenda:['AGENDA DO DIA','Entregas (saídas) e devoluções (retornos) por data'],
@@ -16371,7 +16393,61 @@ const FROTA_VEICULOS_BASE=[
   {id:'v413',  modelId:'sedan',   modelo:'Corolla',         placa:'82FQJC',  cor:'Branco'},
 ];
 
-let _frotaTab='minivan';
+// ── VEÍCULOS — cadastro editável (fonte real da frota: alimenta o Calendário) ──
+// Unifica o que antes eram FROTA_VEICULOS_BASE (21 veículos, só 4 categorias) e
+// CAL_VEHS (frota completa, mas fixa no código). A partir de agora o cadastro é
+// editável na aba Frota, e todo carro adicionado ou removido aqui passa a valer
+// no Calendário automaticamente (ele recalcula as categorias a cada render).
+const FROTA_VEIC_KEY='gs_frota_veiculos_v1';
+let FROTA_VEICULOS=[];
+
+function frotaVeiculosSeed(){
+  const porPlaca={};
+  FROTA_VEICULOS_BASE.forEach(function(v){
+    const modelo=(FROTA_MODELS.find(function(m){return m.id===v.modelId;})||{});
+    porPlaca[v.placa]={id:v.id,cat:modelo.nome||v.modelId,marca:'',modelo:v.modelo,placa:v.placa,vin:'',cor:v.cor||'',ano:'',obsManutencao:'',manutencoes:[]};
+  });
+  CAL_VEHS.forEach(function(v,i){
+    if(porPlaca[v.placa]){ if(!porPlaca[v.placa].marca) porPlaca[v.placa].marca=v.marca; return; }
+    porPlaca[v.placa]={id:'cv'+i,cat:v.cat,marca:v.marca,modelo:v.modelo,placa:v.placa,vin:'',cor:'',ano:'',obsManutencao:'',manutencoes:[]};
+  });
+  return Object.values(porPlaca);
+}
+function frotaVeiculosLoad(){
+  try{
+    const s=localStorage.getItem(FROTA_VEIC_KEY);
+    if(s){ const p=JSON.parse(s); if(Array.isArray(p)){ FROTA_VEICULOS=p; return; } }
+  }catch(e){}
+  FROTA_VEICULOS=frotaVeiculosSeed();
+  frotaVeiculosSave();
+}
+function frotaVeiculosSave(){
+  try{ localStorage.setItem(FROTA_VEIC_KEY,JSON.stringify(FROTA_VEICULOS)); }catch(e){ toast('⚠️ LocalStorage cheio — não salvou','orange'); }
+}
+function frotaVeiculoNovoId(){ return 'v_'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function frotaVeiculosCategorias(){
+  const s=new Set(); FROTA_VEICULOS.forEach(function(v){ s.add((v.cat||'Outros').trim()||'Outros'); });
+  return Array.from(s).sort(function(a,b){ return a.localeCompare(b,'pt-BR'); });
+}
+function frotaAddVeiculo(v){
+  v.id=frotaVeiculoNovoId();
+  v.manutencoes=v.manutencoes||[];
+  FROTA_VEICULOS.push(v);
+  frotaVeiculosSave();
+  return v;
+}
+function frotaUpdateVeiculo(id,patch){
+  const v=FROTA_VEICULOS.find(function(x){return x.id===id;}); if(!v) return;
+  Object.assign(v,patch);
+  frotaVeiculosSave();
+}
+function frotaRemoveVeiculo(id){
+  FROTA_VEICULOS=FROTA_VEICULOS.filter(function(x){return x.id!==id;});
+  frotaVeiculosSave();
+}
+frotaVeiculosLoad();
+
+let _frotaTab='';
 let _frotaSearch='';
 let _frotaData={};   // {vid: {fotos:[{name,dataUrl}], videos:[{name,dataUrl}]}}
 let _frotaImgs={};   // {modelId: dataUrl} — foto ilustrativa do modelo
@@ -16388,105 +16464,188 @@ function frotaSave(){
 
 function frotaRender(){
   frotaLoad();
-  // Tabs
+  const cats=frotaVeiculosCategorias();
+  if(!_frotaTab || cats.indexOf(_frotaTab)===-1) _frotaTab=cats[0]||'';
   const tabsEl=document.getElementById('frota-tabs');
   if(!tabsEl)return;
-  tabsEl.innerHTML=FROTA_CATS.map(c=>`
-    <div class="frota-tab${_frotaTab===c.id?' active':''}" onclick="frotaSetTab('${c.id}')" style="${_frotaTab===c.id?'border-color:'+c.color+';color:'+c.color:''}">${c.label}</div>
-  `).join('');
+  tabsEl.innerHTML=cats.map(function(c){
+    return '<div class="frota-tab'+(_frotaTab===c?' active':'')+'" onclick="frotaSetTab(\''+esc(c).replace(/'/g,"\\'")+'\')">'+esc(c)+'</div>';
+  }).join('');
   frotaRenderContent();
 }
 
-function frotaSetTab(id){
-  _frotaTab=id;
+function frotaSetTab(cat){
+  _frotaTab=cat;
   _frotaSearch='';
   const si=document.getElementById('frota-search');if(si)si.value='';
   frotaRender();
 }
 
 function frotaSearch(q){
-  _frotaSearch=q.trim().toLowerCase();
+  _frotaSearch=(q||'').trim().toLowerCase();
   frotaRenderContent();
 }
 
 function frotaRenderContent(){
   const el=document.getElementById('frota-content');
   if(!el)return;
-
-  // Filter models for current tab (or search all)
-  let models=FROTA_MODELS;
+  let vehs;
   if(_frotaSearch){
-    // search across all tabs
     const q=_frotaSearch;
-    const matchVehs=FROTA_VEICULOS_BASE.filter(v=>
-      v.modelo.toLowerCase().includes(q)||
-      v.placa.toLowerCase().includes(q)||
-      v.cor.toLowerCase().includes(q)
-    );
-    const matchModelIds=new Set(matchVehs.map(v=>v.modelId));
-    models=FROTA_MODELS.filter(m=>matchModelIds.has(m.id)||m.nome.toLowerCase().includes(q));
+    vehs=FROTA_VEICULOS.filter(function(v){
+      return (v.modelo||'').toLowerCase().indexOf(q)>-1 ||
+             (v.marca||'').toLowerCase().indexOf(q)>-1 ||
+             (v.placa||'').toLowerCase().indexOf(q)>-1 ||
+             (v.vin||'').toLowerCase().indexOf(q)>-1 ||
+             (v.cor||'').toLowerCase().indexOf(q)>-1 ||
+             (v.cat||'').toLowerCase().indexOf(q)>-1;
+    });
   } else {
-    models=FROTA_MODELS.filter(m=>m.cat===_frotaTab);
+    vehs=FROTA_VEICULOS.filter(function(v){ return (v.cat||'Outros')===_frotaTab; });
+  }
+  if(!vehs.length){ el.innerHTML='<div class="frota-empty">Nenhum veículo aqui ainda. Clique em "+ Adicionar veículo" para cadastrar.</div>'; return; }
+  el.innerHTML='<div class="frota-grid">'+vehs.map(frotaVeiculoCardHTML).join('')+'</div>';
+}
+
+function frotaVeiculoCardHTML(v){
+  const d=_frotaData[v.id]||{fotos:[],videos:[]};
+  const nF=(d.fotos||[]).length, nV=(d.videos||[]).length;
+  const manut=v.manutencoes||[];
+  const gastoTotal=manut.reduce(function(a,m){return a+(+m.valor||0);},0);
+  return '<div class="frota-card">'
+    +'<div class="frota-card-hdr">'
+      +'<div class="frota-card-hdr-glow"></div>'
+      +'<div class="frota-card-name">'+esc(v.marca?v.marca+' ':'')+esc(v.modelo||'—')+'</div>'
+      +'<div class="frota-card-price">'+esc(v.placa||'—')+(v.ano?' · '+esc(v.ano):'')+(v.cor?' · '+esc(v.cor):'')+'</div>'
+    +'</div>'
+    +'<div class="frota-vehs">'
+      +'<div class="frota-veh-row"><div class="frota-veh-info"><div class="frota-veh-model">VIN</div><span class="frota-veh-plate">'+esc(v.vin||'não informado')+'</span></div></div>'
+      +(v.obsManutencao?('<div class="frota-veh-row"><div class="frota-veh-info"><div class="frota-veh-model">Observações</div><span class="frota-veh-plate">'+esc(v.obsManutencao)+'</span></div></div>'):'')
+      +'<div class="frota-veh-row">'
+        +'<div class="frota-veh-info"><div class="frota-veh-model">Manutenção</div><span class="frota-veh-plate">'+manut.length+' registro'+(manut.length!==1?'s':'')+(gastoTotal?' · $'+gastoTotal.toFixed(2):'')+'</span></div>'
+        +'<button class="frota-btn" onclick="frotaAbrirForm(\''+v.id+'\')">✎ Editar</button>'
+      +'</div>'
+      +'<div class="frota-veh-row">'
+        +'<button class="frota-btn fotos" onclick="frotaOpenMedia(\''+v.id+'\',\'fotos\')">📷 '+nF+'</button>'
+        +'<button class="frota-btn videos" onclick="frotaOpenMedia(\''+v.id+'\',\'videos\')">▶ '+nV+'</button>'
+        +'<button class="frota-btn" style="border-color:rgba(255,71,87,.3);color:#FF4757" onclick="frotaConfirmarExcluir(\''+v.id+'\')">🗑 Excluir</button>'
+      +'</div>'
+    +'</div>'
+  +'</div>';
+}
+
+/* ── FORMULÁRIO DE VEÍCULO (adicionar / editar) ── */
+let _frotaFormId=null;
+let _frotaFormManut=[];
+
+function frotaAbrirForm(id){
+  const editing=!!id;
+  const v=editing ? FROTA_VEICULOS.find(function(x){return x.id===id;}) : null;
+  if(editing && !v) return;
+  _frotaFormId=editing?id:null;
+  _frotaFormManut=editing?(v.manutencoes||[]).map(function(m){return Object.assign({},m);}):[];
+
+  let modal=document.getElementById('frota-form-modal');
+  if(!modal){modal=document.createElement('div');modal.id='frota-form-modal';modal.className='frota-modal';document.body.appendChild(modal);}
+
+  const catsDatalist=frotaVeiculosCategorias()
+    .concat((typeof _CFG!=='undefined'&&_CFG.cats)?_CFG.cats.map(function(c){return c.nome;}):[])
+    .filter(function(c,i,arr){return c&&arr.indexOf(c)===i;});
+
+  function renderManutList(){
+    const box=document.getElementById('ff-manut-list'); if(!box)return;
+    if(!_frotaFormManut.length){ box.innerHTML='<div class="frota-empty" style="padding:8px 0">Nenhum gasto registrado ainda.</div>'; return; }
+    box.innerHTML=_frotaFormManut.map(function(m,i){
+      return '<div class="rl-form" style="grid-template-columns:1fr 1fr 2fr auto;margin-bottom:6px">'
+        +'<div class="rl-f"><label>Data</label><input type="date" style="color-scheme:dark" value="'+esc(m.data||'')+'" onchange="frotaFormManutSet('+i+',\'data\',this.value)"></div>'
+        +'<div class="rl-f"><label>Valor (R$)</label><input type="number" step="0.01" value="'+(m.valor!=null&&m.valor!==''?m.valor:'')+'" onchange="frotaFormManutSet('+i+',\'valor\',this.value)"></div>'
+        +'<div class="rl-f"><label>Descrição</label><input value="'+esc(m.descricao||'')+'" placeholder="Ex.: Troca de óleo" onchange="frotaFormManutSet('+i+',\'descricao\',this.value)"></div>'
+        +'<div class="rl-f"><label>&nbsp;</label><button class="rl-btn ghost" style="color:#FF4757" onclick="frotaFormRemoveManut('+i+')">✕</button></div>'
+      +'</div>';
+    }).join('');
   }
 
-  if(!models.length){el.innerHTML='<div class="frota-empty">Nenhum resultado encontrado.</div>';return;}
-
-  el.innerHTML=`<div class="frota-grid">${models.map(m=>frotaCardHTML(m)).join('')}</div>`;
+  modal.innerHTML='<div class="frota-modal-box">'
+    +'<div class="frota-modal-hdr">'
+      +'<div><div class="frota-modal-title">'+(editing?'✎ EDITAR VEÍCULO':'+ NOVO VEÍCULO')+'</div>'
+      +'<div class="frota-modal-sub">'+(editing?(esc(v.marca||'')+' '+esc(v.modelo||'')):'Preencha os dados do carro')+'</div></div>'
+      +'<button onclick="document.getElementById(\'frota-form-modal\').remove()" style="background:none;border:none;color:var(--chalk3);cursor:pointer;font-size:1.1rem">✕</button>'
+    +'</div>'
+    +'<div class="frota-modal-body">'
+      +'<div class="rl-form" style="margin-bottom:12px">'
+        +'<div class="rl-f"><label>Categoria *</label><input list="frota-cats-dl" id="ff-cat" value="'+esc(editing?v.cat:'')+'" placeholder="Ex.: Minivan, SUV Premium, Mustang..."></div>'
+        +'<div class="rl-f"><label>Marca</label><input id="ff-marca" value="'+esc(editing?v.marca:'')+'" placeholder="Ex.: CHRYSLER"></div>'
+        +'<div class="rl-f"><label>Modelo</label><input id="ff-modelo" value="'+esc(editing?v.modelo:'')+'" placeholder="Ex.: Pacifica"></div>'
+        +'<div class="rl-f"><label>Placa *</label><input id="ff-placa" value="'+esc(editing?v.placa:'')+'" placeholder="Ex.: ID68JC"></div>'
+        +'<div class="rl-f"><label>VIN</label><input id="ff-vin" value="'+esc(editing?v.vin:'')+'" placeholder="Chassi (17 caracteres)"></div>'
+        +'<div class="rl-f"><label>Cor</label><input id="ff-cor" value="'+esc(editing?v.cor:'')+'" placeholder="Ex.: Prata"></div>'
+        +'<div class="rl-f"><label>Ano</label><input id="ff-ano" value="'+esc(editing?v.ano:'')+'" placeholder="Ex.: 2024"></div>'
+        +'<div class="rl-f" style="grid-column:1/-1"><label>Observações de manutenção</label><textarea id="ff-obs" placeholder="Anotações gerais sobre manutenção deste carro...">'+esc(editing?v.obsManutencao:'')+'</textarea></div>'
+      +'</div>'
+      +'<datalist id="frota-cats-dl">'+catsDatalist.map(function(c){return '<option value="'+esc(c)+'">';}).join('')+'</datalist>'
+      +'<div class="rl-ttl" style="margin-top:6px">▸ GASTOS DE MANUTENÇÃO</div>'
+      +'<div id="ff-manut-list"></div>'
+      +'<button class="rl-btn ghost" style="margin-top:6px" onclick="frotaFormAddManut()">+ Adicionar gasto</button>'
+      +'<div class="rl-acoes" style="margin-top:16px">'
+        +'<button class="rl-btn" onclick="frotaFormSalvar()">💾 Salvar veículo</button>'
+        +'<button class="rl-btn ghost" onclick="document.getElementById(\'frota-form-modal\').remove()">Cancelar</button>'
+      +'</div>'
+      +'<div class="rl-status" id="ff-status"></div>'
+    +'</div>'
+  +'</div>';
+  modal.style.display='flex';
+  modal._renderManutList=renderManutList;
+  renderManutList();
 }
 
-function frotaCardHTML(model){
-  const vehs=FROTA_VEICULOS_BASE.filter(v=>v.modelId===model.id);
-  const imgSrc=_frotaImgs[model.id]||'';
-  const vehsHTML=vehs.map(v=>{
-    const d=_frotaData[v.id]||{fotos:[],videos:[]};
-    const nF=d.fotos?.length||0;
-    const nV=d.videos?.length||0;
-    return`<div class="frota-veh-row">
-      <div class="frota-veh-info">
-        <div class="frota-veh-model">${v.modelo}</div>
-        <span class="frota-veh-plate">${v.placa} · ${v.cor}</span>
-      </div>
-      <button class="frota-btn fotos" onclick="frotaOpenMedia('${v.id}','fotos')">📷 ${nF}</button>
-      <button class="frota-btn videos" onclick="frotaOpenMedia('${v.id}','videos')">▶ ${nV}</button>
-    </div>`;
-  }).join('');
-
-  return`<div class="frota-card">
-    <div class="frota-card-hdr">
-      <div class="frota-card-hdr-glow"></div>
-      <div class="frota-card-name">${model.nome}</div>
-      <div class="frota-card-price">$${model.price}/dia &nbsp;·&nbsp; ${vehs.length} veículo${vehs.length!==1?'s':''}</div>
-    </div>
-    <div class="frota-card-img" onclick="frotaUploadModelImg('${model.id}',this)" title="Clique para adicionar foto do modelo">
-      ${imgSrc
-        ?`<img src="${imgSrc}" alt="${model.nome}">`
-        :`<div class="frota-card-img-ph"><div class="frota-card-img-ph-icon">📷</div><div class="frota-card-img-ph-txt">Adicionar foto</div></div>`}
-      <input type="file" accept="image/*" style="display:none" onchange="frotaSetModelImg('${model.id}',this,event.target.closest('.frota-card-img'))">
-    </div>
-    <div class="frota-vehs">${vehsHTML||'<div class="frota-empty">Sem veículos</div>'}</div>
-  </div>`;
+function frotaFormAddManut(){
+  _frotaFormManut.push({data:'',valor:'',descricao:''});
+  const m=document.getElementById('frota-form-modal'); if(m&&m._renderManutList)m._renderManutList();
+}
+function frotaFormRemoveManut(i){
+  _frotaFormManut.splice(i,1);
+  const m=document.getElementById('frota-form-modal'); if(m&&m._renderManutList)m._renderManutList();
+}
+function frotaFormManutSet(i,campo,val){
+  if(!_frotaFormManut[i])return;
+  _frotaFormManut[i][campo]=campo==='valor'?(val===''?'':+val):val;
 }
 
-function frotaUploadModelImg(modelId, el){
-  const inp=el.querySelector('input[type=file]');
-  if(inp)inp.click();
-}
-
-function frotaSetModelImg(modelId, inp, el){
-  const file=inp.files[0];if(!file)return;
-  const r=new FileReader();
-  r.onload=e=>{
-    _frotaImgs[modelId]=e.target.result;
-    frotaSave();
-    el.innerHTML=`<img src="${e.target.result}" alt=""><input type="file" accept="image/*" style="display:none" onchange="frotaSetModelImg('${modelId}',this,event.target.closest('.frota-card-img'))">`;
-    toast('✅ Foto do modelo salva');
+function frotaFormSalvar(){
+  const cat=(document.getElementById('ff-cat').value||'').trim();
+  const placa=(document.getElementById('ff-placa').value||'').trim();
+  const st=document.getElementById('ff-status');
+  if(!cat||!placa){ if(st)st.innerHTML='<span style="color:var(--fire)">⚠️ Preencha ao menos Categoria e Placa.</span>'; return; }
+  const dados={
+    cat:cat,
+    marca:(document.getElementById('ff-marca').value||'').trim(),
+    modelo:(document.getElementById('ff-modelo').value||'').trim(),
+    placa:placa,
+    vin:(document.getElementById('ff-vin').value||'').trim(),
+    cor:(document.getElementById('ff-cor').value||'').trim(),
+    ano:(document.getElementById('ff-ano').value||'').trim(),
+    obsManutencao:(document.getElementById('ff-obs').value||'').trim(),
+    manutencoes:_frotaFormManut.filter(function(m){return m.data||m.valor||m.descricao;})
   };
-  r.readAsDataURL(file);
+  if(_frotaFormId){ frotaUpdateVeiculo(_frotaFormId,dados); toast('✅ Veículo atualizado'); }
+  else { frotaAddVeiculo(dados); toast('✅ Veículo adicionado à frota'); }
+  const modal=document.getElementById('frota-form-modal'); if(modal)modal.remove();
+  _frotaTab=cat;
+  frotaRender();
+}
+
+function frotaConfirmarExcluir(id){
+  const v=FROTA_VEICULOS.find(function(x){return x.id===id;}); if(!v)return;
+  if(!confirm('Excluir o veículo '+(v.marca?v.marca+' ':'')+(v.modelo||'')+' ('+v.placa+') da frota?\n\nIsso também remove as fotos/vídeos cadastrados dele. Essa ação não pode ser desfeita.')) return;
+  delete _frotaData[id]; frotaSave();
+  frotaRemoveVeiculo(id);
+  toast('🗑 Veículo removido da frota');
+  frotaRender();
 }
 
 function frotaOpenMedia(vid, tipo){
   frotaLoad();
-  const veh=FROTA_VEICULOS_BASE.find(v=>v.id===vid);
+  const veh=FROTA_VEICULOS.find(v=>v.id===vid);
   if(!veh)return;
   if(!_frotaData[vid])_frotaData[vid]={fotos:[],videos:[]};
   const d=_frotaData[vid];
@@ -17739,12 +17898,25 @@ var CACHE_KEY='magiway_resv_cache_v1';
 
 /* Frota oficial — ordem de cima p/ baixo + nº de carros por categoria.
    15 Minivan · 2 SUV Premium · 2 SUV · 2 Sedan = 21 carros */
-var CATS=[
-  {key:'Minivan',     label:'Minivan',      cars:15},
-  {key:'SUV Premium', label:'SUV Premium',  cars:2},
-  {key:'SUV',         label:'SUV',          cars:2},
-  {key:'Sedan',       label:'Sedan',        cars:2}
-];
+/* CATS é calculado a partir da Frota cadastrada (aba Frota) — cada categoria
+   vira uma linha no calendário, com tantos "carros" quantos estiverem
+   cadastrados ali. Adicionar/excluir um carro na Frota já reflete aqui. */
+var CATS=[];
+function computeCATS(){
+  var priority=['Minivan','SUV Premium','SUV','Sedan'];
+  var counts={};
+  FROTA_VEICULOS.forEach(function(v){
+    var cat=(v.cat||'Outros').trim()||'Outros';
+    counts[cat]=(counts[cat]||0)+1;
+  });
+  var keys=Object.keys(counts);
+  keys.sort(function(a,b){
+    var pa=priority.indexOf(a); if(pa===-1) pa=99;
+    var pb=priority.indexOf(b); if(pb===-1) pb=99;
+    return pa!==pb ? pa-pb : a.localeCompare(b,'pt-BR');
+  });
+  return keys.map(function(k){ return {key:k,label:k,cars:counts[k]}; });
+}
 /* Qualquer coisa fora da frota oficial vira linha dinâmica, sem cálculo de overbooking */
 var FALLBACK_CATS=['Outros'];
 
@@ -17864,10 +18036,12 @@ function tel4(c){
 }
 function cityOf(local){
   var s=norm(local);
-  if(/^mco|orlando|sanford|^sfb/.test(s)) return {city:'Orlando',color:'#3B9EFF',k:'orl'};
-  if(/^mia|miami/.test(s))               return {city:'Miami',  color:'#FF4757',k:'mia'};
-  if(/^fll|lauderdale/.test(s))          return {city:'FLL',    color:'#1AFF9D',k:'fll'};
-  if(/^tpa|tampa/.test(s))               return {city:'Tampa',  color:'#FFD11A',k:'tpa'};
+  if(/sanford|^sfb\b/.test(s))                     return {city:'Sanford',        color:'#8C6BFF',k:'sfd'};
+  if(/porto\s*canaveral|port\s*canaveral/.test(s)) return {city:'Porto Canaveral',color:'#FF8C3B',k:'pcv'};
+  if(/^mco|orlando/.test(s))                       return {city:'Orlando',        color:'#3B9EFF',k:'orl'};
+  if(/^mia|miami/.test(s))                         return {city:'Miami',          color:'#FF4757',k:'mia'};
+  if(/^fll|lauderdale/.test(s))                    return {city:'FLL',            color:'#1AFF9D',k:'fll'};
+  if(/^tpa|tampa/.test(s))                         return {city:'Tampa',          color:'#FFD11A',k:'tpa'};
   return {city:local||'—',color:'#7B93B5',k:'oth'};
 }
 function textColorFor(k){ return (k==='tpa'||k==='fll')?'#04101e':'#fff'; }
@@ -17882,6 +18056,16 @@ function foraDaFrota(modelo,obs){
 }
 function categoryOf(modelo,obs){
   var s=norm(modelo+' '+obs);
+  /* 1) tenta casar com um veículo cadastrado de verdade na aba Frota — assim
+     qualquer categoria nova (Mustang, Elétrico, etc.) já é reconhecida sem
+     precisar mexer em código, e a categoria usada é a que está na Frota. */
+  var candidatos=FROTA_VEICULOS.filter(function(v){ return v.modelo && norm(v.modelo).length>=3; })
+    .slice().sort(function(a,b){ return norm(b.modelo).length-norm(a.modelo).length; });
+  for(var i=0;i<candidatos.length;i++){
+    var vm=norm(candidatos[i].modelo);
+    if(s.indexOf(vm)>-1) return (candidatos[i].cat||'Outros').trim()||'Outros';
+  }
+  /* 2) fallback: regras fixas para os modelos históricos da frota */
   /* MINIVAN — inclui Pacifica, Voyager, Carnival, Sienna, 7L, 7L Limited, 8L */
   if(/minivan|pacifica|voyager|carnival|sienna|odyssey|7\s*l\b|\b7l\b|8\s*l\b|\b8l\b/.test(s)) return 'Minivan';
   /* SUV PREMIUM — Expedition e os SUVs grandes/luxo */
@@ -17890,6 +18074,8 @@ function categoryOf(modelo,obs){
   if(/sedan|altima|corolla|passat|jetta|sentra|elantra|\bk4\b|\bk5\b/.test(s)) return 'Sedan';
   /* SUV comum */
   if(/suv|rogue|compass|tucson|sportage|outlander|equinox|cr-?v|rav4|venue|kicks/.test(s)) return 'SUV';
+  /* outros modelos conhecidos que já viraram categoria própria na Frota */
+  if(/mustang/.test(s)) return 'Mustang';
   return 'Outros';
 }
 /* Exposto para o módulo de Reservas classificar as reservas locais na mesma régua */
@@ -18422,6 +18608,7 @@ function ivFree(r, intervals){ /* só evita sobreposição visual (linhas de ove
 }
 function ovKey(r){ return dedupeKey(r); }
 function assignCars(){
+  CATS=computeCATS();
   DATA.forEach(function(r){
     r.car=null; r.over=false; r._pinned=false;
     r.startDT=combine(r.entrega,r.hEnt,10);
@@ -18518,6 +18705,7 @@ function trackBg(){
 function renderCalendar(){
   var wrap=document.getElementById('mgcal-grid'); if(!wrap) return;
   if(!LOADED){ wrap.innerHTML='<div style="padding:40px;text-align:center;color:var(--chalk3);font-size:.8rem">Carregando reservas da planilha…</div>'; return; }
+  CATS=computeCATS();
   computeWindow();
   var days=calWinDays, start=calWinStart, fullW=LEFT+days*DW, bg=trackBg(), i, j;
   var mkDate=function(n){ return new Date(start.getFullYear(),start.getMonth(),start.getDate()+n); };
@@ -18624,11 +18812,12 @@ function showDetail(i){
 
 /* ---------------- tabela de reservas ---------------- */
 function populateCatFilter(){
+  CATS=computeCATS();
   var keys=CATS.map(function(c){return c.key;}).concat(FALLBACK_CATS);
   var sel=document.getElementById('mgrsv-filtcat');
-  if(sel&&!catFilterDone){ keys.forEach(function(k){ var o=document.createElement('option'); o.value=k; o.textContent=k; sel.appendChild(o); }); catFilterDone=true; }
+  if(sel){ var cur=sel.value; sel.innerHTML='<option value="">Todas as categorias</option>'; keys.forEach(function(k){ var o=document.createElement('option'); o.value=k; o.textContent=k; sel.appendChild(o); }); sel.value=cur; }
   var selc=document.getElementById('mgcal-filt-cat');
-  if(selc&&!catFilterCalDone){ keys.forEach(function(k){ var o=document.createElement('option'); o.value=k; o.textContent=k; selc.appendChild(o); }); catFilterCalDone=true; }
+  if(selc){ var cur2=selc.value; selc.innerHTML='<option value="">Todas as categorias</option>'; keys.forEach(function(k){ var o=document.createElement('option'); o.value=k; o.textContent=k; selc.appendChild(o); }); selc.value=cur2; }
 }
 /* ── Colunas da aba Reservas: exatamente as da aba 📦 HISTÓRICO da planilha ── */
 var RSV_COLS=[
