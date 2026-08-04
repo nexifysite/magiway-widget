@@ -17914,11 +17914,12 @@ var CACHE_KEY='magiway_resv_cache_v1';
    cadastrados ali. Adicionar/excluir um carro na Frota já reflete aqui. */
 var CATS=[];
 function computeCATS(){
-  var priority=['Minivan','SUV Premium','SUV','Sedan'];
-  var counts={};
+  var priority=['Minivan 7L','SUV Premium','SUV','Sedan'];
+  var counts={}, placas={};
   FROTA_VEICULOS.forEach(function(v){
     var cat=(v.cat||'Outros').trim()||'Outros';
     counts[cat]=(counts[cat]||0)+1;
+    (placas[cat]=placas[cat]||[]).push(v.placa||'—');
   });
   var keys=Object.keys(counts);
   keys.sort(function(a,b){
@@ -17926,7 +17927,14 @@ function computeCATS(){
     var pb=priority.indexOf(b); if(pb===-1) pb=99;
     return pa!==pb ? pa-pb : a.localeCompare(b,'pt-BR');
   });
-  return keys.map(function(k){ return {key:k,label:k,cars:counts[k]}; });
+  /* placas[k][rw] é a placa do carro que ocupa o slot rw dessa categoria —
+     usado pra mostrar a placa de verdade na linha do calendário em vez de
+     um genérico "Carro 1", "Carro 2"... */
+  return keys.map(function(k){ return {key:k,label:k,cars:counts[k],placas:placas[k]}; });
+}
+function placaOf(catKey,idx){
+  var cfg=CATS.filter(function(c){ return c.key===catKey; })[0];
+  return (cfg && cfg.placas && cfg.placas[idx]) ? cfg.placas[idx] : ('Carro '+(idx+1));
 }
 /* Qualquer coisa fora da frota oficial vira linha dinâmica, sem cálculo de overbooking */
 var FALLBACK_CATS=['Outros'];
@@ -18680,13 +18688,13 @@ function moveReservation(idx, targetCat, targetRow){
   var r=DATA[idx]; if(!r) return;
   if(r.cat!==targetCat){ if(typeof toast==='function') toast('Só dá para mover dentro da mesma categoria','red'); return; }
   if(r.car===targetRow) return; /* já está nesse carro */
-  if(carHasConflict(targetCat,targetRow,r)){ if(typeof toast==='function') toast('Carro '+(targetRow+1)+' ocupado nesse período (regra de 24h)','red'); return; }
+  if(carHasConflict(targetCat,targetRow,r)){ if(typeof toast==='function') toast(placaOf(targetCat,targetRow)+' ocupado nesse período (regra de 24h)','red'); return; }
   var key=ovKey(r), prev=OVERRIDES[key];
   OVERRIDES[key]={cat:targetCat,car:targetRow};
   assignCars();
   if(r.car===targetRow && !r.over){
     saveOverrides(); var sc=grabScroll(); renderCalendar(); restoreScroll(sc); renderReservas(); renderAgenda();
-    if(typeof toast==='function') toast('✓ '+r.tel+' → Carro '+(targetRow+1));
+    if(typeof toast==='function') toast('✓ '+r.tel+' → '+placaOf(targetCat,targetRow));
   }else{
     if(prev) OVERRIDES[key]=prev; else delete OVERRIDES[key];
     assignCars(); var sc2=grabScroll(); renderCalendar(); restoreScroll(sc2);
@@ -18755,9 +18763,9 @@ function renderCalendar(){
     var key=r.cat+'|'+r.car; (cellBars[key]=cellBars[key]||[]).push(bar);
   });
 
-  var allCats=CATS.map(function(c){ return {key:c.key,label:c.label,cars:c.cars,overflow:c._overflow||0,fallback:false}; })
+  var allCats=CATS.map(function(c){ return {key:c.key,label:c.label,cars:c.cars,overflow:c._overflow||0,fallback:false,placas:c.placas||[]}; })
     .concat(FALLBACK_CATS.filter(function(k){ return DATA.some(function(r){ return r.cat===k; }); })
-      .map(function(k){ return {key:k,label:k+' (fora da frota)',cars:fallbackRows[k]||1,overflow:0,fallback:true}; }));
+      .map(function(k){ return {key:k,label:k+' (fora da frota)',cars:fallbackRows[k]||1,overflow:0,fallback:true,placas:[]}; }));
 
   allCats.forEach(function(cat){
     var totalRows=cat.cars+(cat.overflow||0);
@@ -18770,7 +18778,7 @@ function renderCalendar(){
       html+='<div class="mgcal-rowlabel'+(emManut?' manut':'')+'" style="width:'+LEFT+'px;height:'+ROWH+'px">'
         +(isOver?'<span class="mgcal-overtag">⚠ OVERBOOKING</span>'
           :(cat.fallback?'Carro '+(rw+1)
-            :('<span class="mgcal-carnum">Carro '+(rw+1)+'</span>'
+            :('<span class="mgcal-carnum" title="Carro '+(rw+1)+'">'+esc((cat.placas&&cat.placas[rw])?cat.placas[rw]:('Carro '+(rw+1)))+'</span>'
               +'<button class="mgcal-manutbtn'+(emManut?' on':'')+'" title="'+(emManut?'Em reparo — clique para liberar':'Marcar este carro em reparo (bloqueia locação)')+'" onclick="event.stopPropagation();MGW_RESV.toggleManut(\''+esc(cat.key)+'\','+rw+')">'+(emManut?'🔧 EM REPARO':'🔧')+'</button>')))
         +'</div>';
       var canDrop=(!cat.fallback && !isOver);
