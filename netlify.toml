@@ -1,0 +1,40 @@
+# Magiway Sales OS — configuração do Netlify
+[build]
+  publish = "."
+
+# Não deixa o navegador guardar uma versão velha do app
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-store, must-revalidate"
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# O service worker precisa poder controlar a raiz inteira e nunca ser servido
+# de uma versão velha — senão o app fica preso numa build antiga.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-store, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+    Cache-Control = "public, max-age=3600"
+
+# Ícones não mudam: podem ficar bem cacheados
+[[headers]]
+  for = "/icon-*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# A raiz serve o app.
+# O Netlify entrega arquivos que existem de verdade ANTES de aplicar este
+# rewrite, então /sw.js, /manifest.webmanifest e os ícones não caem aqui.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
