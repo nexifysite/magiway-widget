@@ -5432,7 +5432,7 @@ select.ffi option{background:#000020;color:#FF0000}
       <div class="ctrl-cfg-item" onclick="openConfigFromControle()">
         <div class="cci-ico">🤖</div>
         <div class="cci-ttl">Inteligência Artificial</div>
-        <div class="cci-sub">Chaves API · Claude · Gemini</div>
+        <div class="cci-sub">Chaves API · Claude</div>
       </div>
       <div class="ctrl-cfg-item" onclick="openConfigFromControle()">
         <div class="cci-ico">💾</div>
@@ -5656,14 +5656,10 @@ Data de retirada = din"></textarea>
         <!-- IA -->
         <div class="card" style="margin-bottom:16px">
           <div class="card-title">🤖 Chaves de API (IA)</div>
-          <div class="card-sub">Claude e Gemini — para o briefing e o preenchimento automático.</div>
+          <div class="card-sub">Claude — para o briefing e o preenchimento automático.</div>
           <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;margin-top:14px">
             <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Chave Claude</label><input class="ffi" id="cfg-ai-key-claude" type="text" placeholder="sk-ant-..."></div>
             <button class="form-btn" onclick="cfgSaveAIKey('claude','cfg-ai-key-claude')">SALVAR</button>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;margin-top:10px">
-            <div class="ff"><label class="fl" style="font-size:.62rem;color:var(--chalk3);text-transform:uppercase;letter-spacing:.08em">Chave Gemini</label><input class="ffi" id="cfg-ai-key-gemini" type="text" placeholder="AIza..."></div>
-            <button class="form-btn" onclick="cfgSaveAIKey('gemini','cfg-ai-key-gemini')">SALVAR</button>
           </div>
           <span id="cfg-ai-ok" style="display:none;color:var(--green);font-size:.75rem;font-family:'DM Mono',monospace;margin-top:10px">✓ Salvo</span>
         </div>
@@ -7097,7 +7093,7 @@ load();
 })();
 </script>
 <!-- ═══════════════════════════════════════════════════════════════════
-     RELATÓRIOS — modelo corporativo Magiway + revisão de texto pelo Gemini
+     RELATÓRIOS — modelo corporativo Magiway + revisão de texto pela IA (Claude)
      ═══════════════════════════════════════════════════════════════════ -->
 <style>
 .rl-wrap{display:flex;flex-direction:column;gap:14px}
@@ -7175,22 +7171,13 @@ load();
         <div class="rl-f" style="grid-column:1/-1"><label>Descrição — escreva do seu jeito, a IA ajusta</label><textarea id="rl-desc" placeholder="Escreva solto, sem se preocupar com formalidade. Ex.: esse mês vendemos bem, a equipe bateu a meta, o Dickson fechou 12 reservas, tivemos problema com atraso de entrega em Miami duas vezes..." oninput="rlRender()"></textarea></div>
       </div>
       <div class="rl-acoes">
-        <button class="rl-btn ia" id="rl-btn-ia" onclick="rlRevisarIA()">✨ Ajustar para linguagem corporativa (Gemini)</button>
+        <button class="rl-btn ia" id="rl-btn-ia" onclick="rlRevisarIA()">✨ Ajustar para linguagem corporativa</button>
         <button class="rl-btn ghost" onclick="rlDesfazer()">↺ Desfazer revisão</button>
         <button class="rl-btn" onclick="rlImprimir()">🖨️ Imprimir / Salvar PDF</button>
         <button class="rl-btn ghost" onclick="rlArquivar()">💾 Salvar no histórico</button>
         <button class="rl-btn ghost" onclick="rlLimpar()">🗑 Limpar</button>
       </div>
       <div class="rl-status" id="rl-status"></div>
-    </div>
-
-    <div class="rl-card">
-      <div class="rl-ttl">▸ CONEXÃO COM O GEMINI (projeto Vendedor Magiway)</div>
-      <div class="rl-form">
-        <div class="rl-f" style="grid-column:span 2"><label>Chave da API do Gemini</label><input id="rl-key" type="password" placeholder="AIza… (Google AI Studio)"></div>
-        <div class="rl-f"><button class="rl-btn ghost" onclick="rlSalvarKey()">💾 Salvar para a equipe</button></div>
-        <div class="rl-f" style="grid-column:1/-1"><div class="rl-hint" id="rl-key-st">—</div></div>
-      </div>
     </div>
 
     <!-- RELATÓRIOS JÁ EMITIDOS -->
@@ -7248,13 +7235,13 @@ load();
 /* ═══════════════════════════════════════════════════════════════════
    RELATÓRIOS
    O usuário preenche título, data, responsável, função e uma descrição
-   solta. O Gemini reescreve a descrição em linguagem corporativa,
+   solta. O Claude reescreve a descrição em linguagem corporativa,
    mantendo os fatos. A folha segue o layout dos documentos Magiway e
    sai em PDF pela impressão do navegador.
    A chave da API vive só no localStorage — nunca no arquivo publicado.
    ═══════════════════════════════════════════════════════════════════ */
 (function(){
-var RL_HIST='gs_relatorios_v1', MODELO_PADRAO='gemini-2.0-flash';
+var RL_HIST='gs_relatorios_v1';
 var RESPONSAVEIS=['LUCIANO','JANES','DICKSON','CARLOS','MARIANA','LEANDRO'];
 var MESES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 var _antes='';   /* guarda o texto original para o "desfazer" */
@@ -7268,20 +7255,10 @@ function fmtBR(iso){ var m=String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})/); re
 function v(id){ var e=document.getElementById(id); return e?(e.value||'').trim():''; }
 function setSt(h){ var e=document.getElementById('rl-status'); if(e) e.innerHTML=h; }
 
-/* ── chave do Gemini ──
+/* ── chave do Claude ──
    Usa a MESMA chave que já existe em Configurações (gs_ai_keys). Essa chave é
    um dado da empresa: sobe para o Supabase e vale para a equipe inteira, então
-   basta uma pessoa colar uma vez. O campo aqui é só um atalho para o mesmo
-   lugar — não existe mais "cada um cola a sua". */
-function getKey(){
-  try{
-    if(typeof AI_KEYS!=='undefined' && Array.isArray(AI_KEYS)){
-      var g=AI_KEYS.filter(function(k){ return k.provider==='gemini' && k.key && k.key.trim(); })[0];
-      if(g) return g.key.trim();
-    }
-  }catch(e){}
-  return '';
-}
+   basta uma pessoa colar uma vez. */
 function temClaude(){
   try{
     if(typeof AI_KEYS!=='undefined' && Array.isArray(AI_KEYS))
@@ -7289,25 +7266,6 @@ function temClaude(){
   }catch(e){}
   return false;
 }
-function getModel(){ try{ return (typeof AI_GEMINI_MODEL!=='undefined' && AI_GEMINI_MODEL) || MODELO_PADRAO; }catch(e){ return MODELO_PADRAO; } }
-function statusChave(){
-  var e=document.getElementById('rl-key-st'); if(!e) return;
-  var k=getKey();
-  if(k) e.innerHTML='<span style="color:#1AFF9D">✓ Gemini conectado</span> — a chave é a mesma de <b>Configurações › Chaves API</b> e vale para a equipe toda. Modelo: <b>'+esc(getModel())+'</b>.';
-  else if(temClaude()) e.innerHTML='<span style="color:var(--gold)">Sem chave do Gemini.</span> Existe uma chave Claude configurada e a revisão vai usar ela. Para usar o Gemini, cole a chave acima (gere em <b>aistudio.google.com/apikey</b>).';
-  else e.innerHTML='<span style="color:var(--fire)">Nenhuma chave de IA configurada.</span> Cole a chave do Gemini acima (gere em <b>aistudio.google.com/apikey</b>). Ela é salva uma vez e sincroniza com a equipe.';
-}
-window.rlSalvarKey=function(){
-  var k=v('rl-key');
-  if(!k){ setSt('<span style="color:var(--fire)">⚠️ Cole a chave antes de salvar.</span>'); return; }
-  try{
-    if(typeof atualizarChaveAI==='function') atualizarChaveAI('gemini',k,0);
-    else throw new Error('sem gerenciador de chaves');
-  }catch(e){ setSt('<span style="color:var(--fire)">⚠️ Não consegui salvar: '+esc(e.message||e)+'</span>'); return; }
-  var el=document.getElementById('rl-key'); if(el) el.value='';
-  statusChave();
-  setSt('<span style="color:#1AFF9D">✓ Chave do Gemini salva e sincronizada com a equipe.</span>');
-};
 
 function popularResp(){
   var s=document.getElementById('rl-resp'); if(!s||s.dataset.ok) return;
@@ -7350,7 +7308,7 @@ window.rlRender=function(){
     : 'Preencha a descrição no formulário acima. O texto aparece aqui já formatado no padrão Magiway.';
 };
 
-/* ── revisão pelo Gemini ── */
+/* ── revisão pela IA (Claude) ── */
 var PROMPT_REVISAO=
   'Você é redator corporativo da Magiway Rental Car, locadora de veículos para brasileiros na Flórida.\n'+
   'Reescreva o texto abaixo em português do Brasil, em linguagem corporativa, clara e objetiva, própria de um relatório executivo interno.\n\n'+
@@ -7362,36 +7320,19 @@ var PROMPT_REVISAO=
   '- Não use marcadores, títulos, markdown, asteriscos nem emojis.\n'+
   '- Devolva SOMENTE o texto reescrito, sem comentários ou introdução.\n\n';
 
-async function revisarComGemini(texto){
-  var key=getKey();
-  var url='https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(getModel())+':generateContent?key='+encodeURIComponent(key);
-  var r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({contents:[{parts:[{text:PROMPT_REVISAO+'TEXTO ORIGINAL:\n'+texto}]}],
-      generationConfig:{temperature:0.4,maxOutputTokens:2048}})});
-  var j=await r.json();
-  if(!r.ok) throw new Error((j&&j.error&&j.error.message)||('erro '+r.status));
-  var out='';
-  try{ out=(j.candidates[0].content.parts||[]).map(function(p){return p.text||'';}).join('').trim(); }catch(e){}
-  if(!out) throw new Error('o Gemini não devolveu texto (confira a chave e o modelo)');
-  return out;
-}
-
 window.rlRevisarIA=async function(){
   var texto=v('rl-desc');
   if(!texto){ setSt('<span style="color:var(--fire)">⚠️ Escreva a descrição primeiro — a IA reescreve o que você digitar.</span>'); return; }
-  var temGemini=!!getKey();
-  if(!temGemini && !temClaude()){
-    setSt('<span style="color:var(--fire)">⚠️ Nenhuma chave de IA configurada. Cole a chave do Gemini no card acima (ou em Configurações › Chaves API).</span>');
+  if(!temClaude()){
+    setSt('<span style="color:var(--fire)">⚠️ Nenhuma chave de IA configurada. Configure em Configurações › Chaves API.</span>');
     return;
   }
   var btn=document.getElementById('rl-btn-ia');
   if(btn){ btn.disabled=true; btn.textContent='⏳ Revisando…'; }
-  setSt('<span style="color:var(--ice)">⏳ '+(temGemini?'Enviando ao Gemini…':'Sem chave Gemini — usando a IA configurada no app…')+'</span>');
+  setSt('<span style="color:var(--ice)">⏳ Enviando ao Claude…</span>');
 
   try{
-    var out;
-    if(temGemini) out=await revisarComGemini(texto);
-    else out=(await aiCall([{role:'user',content:'TEXTO ORIGINAL:\n'+texto}],PROMPT_REVISAO,2048)||'').trim();
+    var out=(await aiCall([{role:'user',content:'TEXTO ORIGINAL:\n'+texto}],PROMPT_REVISAO,2048)||'').trim();
     if(!out) throw new Error('a IA não devolveu texto');
     _antes=texto;
     document.getElementById('rl-desc').value=out;
@@ -7401,7 +7342,7 @@ window.rlRevisarIA=async function(){
   }catch(e){
     setSt('<span style="color:var(--fire)">⚠️ Falhou: '+esc(e&&e.message||e)+'</span>');
   }finally{
-    if(btn){ btn.disabled=false; btn.textContent='✨ Ajustar para linguagem corporativa (Gemini)'; }
+    if(btn){ btn.disabled=false; btn.textContent='✨ Ajustar para linguagem corporativa'; }
   }
 };
 
@@ -7522,7 +7463,7 @@ loadHist();
     if(id==='relatorios'){
       try{
         var dt=document.getElementById('rl-data'); if(dt&&!dt.value)dt.value=hojeISO();
-        loadHist(); renderHist(); statusChave(); rlRender();
+        loadHist(); renderHist(); rlRender();
       }catch(e){}
     }
   };
@@ -11037,7 +10978,7 @@ function initCoach(){
       ${juros>0?`<div class="insight info"><div class="insight-ico">💳</div><div><p>Juros pagos pelos clientes: $${juros.toFixed(2)}</p><span>Incentive PIX para reduzir custo e aumentar competitividade.</span></div></div>`:''}
       ${semVou>0?`<div class="insight warn"><div class="insight-ico">⚠️</div><div><p>${semVou} venda${semVou>1?'s':''} sem voucher vinculado</p><span>Adicione o link do Drive para manter o histórico completo.</span></div></div>`:''}
       ${convPct?`<div class="insight tip"><div class="insight-ico">📊</div><div><p>Taxa de conversão: ${convPct}%</p><span>Cotações no histórico vs vendas ganhas marcadas.</span></div></div>`:''}
-      <div class="insight tip"><div class="insight-ico">🤖</div><div><p>Coach IA ativo · <span class="ai-key-indicator">${aiGetActive().label}</span></p><span>Faça perguntas abaixo. Fallback automático entre Claude e Gemini.</span></div></div>`;
+      <div class="insight tip"><div class="insight-ico">🤖</div><div><p>Coach IA ativo · <span class="ai-key-indicator">${aiGetActive().label}</span></p><span>Faça perguntas abaixo.</span></div></div>`;
   }
 }
 
@@ -13261,21 +13202,24 @@ document.addEventListener('keydown',e=>{
 
 
 
-// ═══ MULTI-PROVIDER AI ENGINE ═══
-// Modelos atuais (troque aqui se a Anthropic/Google atualizarem os IDs)
+// ═══ AI ENGINE (Claude) ═══
+// Modelo atual (troque aqui se a Anthropic atualizar o ID)
 const AI_CLAUDE_MODEL = 'claude-opus-5';
 /* Claude 5 pensa por padrão, e max_tokens cobre raciocínio + resposta juntos.
    Sem isso, uma chamada com max_tokens apertado (ex.: 1600 na leitura de
    documento) pode truncar a resposta no meio do raciocínio. */
 const AI_CLAUDE_THINKING = {type:'disabled'};
-const AI_GEMINI_MODEL = 'gemini-2.0-flash';
-// Load user-configured API keys from localStorage if available
+// Load user-configured API keys from localStorage if available.
+// Só filtra chaves 'claude' — descarta qualquer chave 'gemini' salva de uma
+// versão antiga do app, já que o Gemini não é mais usado.
 function loadAIKeys(){
   const saved=localStorage.getItem('gs_ai_keys');
-  if(saved){try{return JSON.parse(saved);}catch(e){}}
+  if(saved){try{
+    const parsed=JSON.parse(saved);
+    if(Array.isArray(parsed)) return parsed.filter(k=>k&&k.provider==='claude');
+  }catch(e){}}
   return [
     {provider:'claude', key:'', label:'Claude 1'},
-    {provider:'gemini', key:'', label:'Gemini 1'},
   ];
 }
 const AI_KEYS = loadAIKeys();
@@ -13343,47 +13287,29 @@ async function aiCall(messages, system, maxTokens=600){
   if(!validKeys.length) throw new Error('IA indisponível. Verifique as chaves de API nas configurações.');
   for(let attempt=0;attempt<validKeys.length;attempt++){
     const k=validKeys[attempt];
+    if(k.provider!=='claude')continue; // ignora chaves de provedores antigos (ex.: gemini salvo antes)
     try{
-      let res, data;
-      if(k.provider==='claude'){
-        res=await fetch('https://api.anthropic.com/v1/messages',{
-          method:'POST',
-          headers:{'Content-Type':'application/json','x-api-key':k.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-          body:JSON.stringify({model:AI_CLAUDE_MODEL,max_tokens:maxTokens,thinking:AI_CLAUDE_THINKING,system,messages})
-        });
-        data=await res.json();
-        if(data.error){
-          const code=data.error.type||'';
-          if(code==='authentication_error'||code==='permission_error'||code==='overloaded_error'||res.status===401||res.status===402||res.status===529){
-            console.warn('Claude key failed:',data.error.message||code);continue;
-          }
-          throw new Error(data.error.message||'Claude error');
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':k.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:AI_CLAUDE_MODEL,max_tokens:maxTokens,thinking:AI_CLAUDE_THINKING,system,messages})
+      });
+      const data=await res.json();
+      if(data.error){
+        const code=data.error.type||'';
+        if(code==='authentication_error'||code==='permission_error'||code==='overloaded_error'||res.status===401||res.status===402||res.status===529){
+          console.warn('Claude key failed:',data.error.message||code);continue;
         }
-        aiUpdateIndicator();
-        return data.content?.[0]?.text||'';
-      } else {
-        // Gemini
-        const model=AI_GEMINI_MODEL;
-        const geminiMessages=messages.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}) );
-        if(system)geminiMessages.unshift({role:'user',parts:[{text:'[SYSTEM] '+system}]},{role:'model',parts:[{text:'Entendido.'}]});
-        res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${k.key}`,{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({contents:geminiMessages,generationConfig:{maxOutputTokens:maxTokens}})
-        });
-        data=await res.json();
-        if(data.error||res.status===400||res.status===403||res.status===429){
-          console.warn('Gemini key failed:',(data.error?.message)||`HTTP ${res.status}`);continue;
-        }
-        aiUpdateIndicator();
-        return data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+        throw new Error(data.error.message||'Claude error');
       }
+      aiUpdateIndicator();
+      return data.content?.[0]?.text||'';
     }catch(e){
       if(attempt<validKeys.length-1){console.warn('AI key error:',e.message);continue;}
       throw e;
     }
   }
-  throw new Error('IA indisponível. Verifique as chaves de API nas configurações.');
+  throw new Error('IA indisponível. Verifique a chave da API nas configurações.');
 }
 
 /* Lê IMAGENS e PDFs.
@@ -13395,49 +13321,29 @@ async function aiCall(messages, system, maxTokens=600){
 async function aiCallWithFiles(arquivos, prompt, maxTokens=1600){
   const lista=Array.isArray(arquivos)?arquivos:[arquivos];
   if(!lista.length) throw new Error('Nenhum arquivo para ler.');
-  const validKeys=AI_KEYS.filter(k=>k.key&&k.key.trim());
-  if(!validKeys.length) throw new Error('IA indisponível. Configure a chave do Gemini em Configurações › Chaves API.');
-  /* o Gemini lê PDF nativamente; para o Claude o PDF vai como "document" */
+  const validKeys=AI_KEYS.filter(k=>k.key&&k.key.trim()&&k.provider==='claude');
+  if(!validKeys.length) throw new Error('IA indisponível. Configure a chave do Claude em Configurações › Chaves API.');
   let ultimoErro=null;
   for(let attempt=0;attempt<validKeys.length;attempt++){
     const k=validKeys[attempt];
     try{
-      let res, data;
-      if(k.provider==='claude'){
-        const conteudo=lista.map(f=> f.mimeType==='application/pdf'
-          ? {type:'document',source:{type:'base64',media_type:'application/pdf',data:f.base64}}
-          : {type:'image',source:{type:'base64',media_type:f.mimeType,data:f.base64}});
-        conteudo.push({type:'text',text:prompt});
-        res=await fetch('https://api.anthropic.com/v1/messages',{
-          method:'POST',
-          headers:{'Content-Type':'application/json','x-api-key':k.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-          body:JSON.stringify({model:AI_CLAUDE_MODEL,max_tokens:maxTokens,thinking:AI_CLAUDE_THINKING,messages:[{role:'user',content:conteudo}]})
-        });
-        data=await res.json();
-        if(data.error){
-          ultimoErro=data.error.message||data.error.type;
-          console.warn('Claude (documento) falhou:',ultimoErro);
-          continue;
-        }
-        aiUpdateIndicator();
-        return (data.content||[]).map(p=>p.text||'').join('');
-      } else {
-        const parts=lista.map(f=>({inline_data:{mime_type:f.mimeType,data:f.base64}}));
-        parts.push({text:prompt});
-        res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${AI_GEMINI_MODEL}:generateContent?key=${k.key}`,{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({contents:[{parts}],generationConfig:{temperature:0.1,maxOutputTokens:maxTokens}})
-        });
-        data=await res.json();
-        if(data.error||!res.ok){
-          ultimoErro=(data.error?.message)||`HTTP ${res.status}`;
-          console.warn('Gemini (documento) falhou:',ultimoErro);
-          continue;
-        }
-        aiUpdateIndicator();
-        return (data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||'').join('');
+      const conteudo=lista.map(f=> f.mimeType==='application/pdf'
+        ? {type:'document',source:{type:'base64',media_type:'application/pdf',data:f.base64}}
+        : {type:'image',source:{type:'base64',media_type:f.mimeType,data:f.base64}});
+      conteudo.push({type:'text',text:prompt});
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':k.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:AI_CLAUDE_MODEL,max_tokens:maxTokens,thinking:AI_CLAUDE_THINKING,messages:[{role:'user',content:conteudo}]})
+      });
+      const data=await res.json();
+      if(data.error){
+        ultimoErro=data.error.message||data.error.type;
+        console.warn('Claude (documento) falhou:',ultimoErro);
+        continue;
       }
+      aiUpdateIndicator();
+      return (data.content||[]).map(p=>p.text||'').join('');
     }catch(e){
       ultimoErro=e.message;
       if(attempt<validKeys.length-1){console.warn('Erro na leitura do documento:',e.message);continue;}
@@ -13863,7 +13769,7 @@ function _emVal(id){return (document.getElementById(id)?.value||'').trim();}
    EMITIR · LEITOR DE DOCUMENTOS COM IA
    ───────────────────────────────────────────────────────────────────
    Recebe fotos/prints/PDFs (CNH, passaporte, voucher, e-mail da reserva,
-   comprovante) e pede para o Gemini devolver os campos em JSON. Depois:
+   comprovante) e pede para o Claude devolver os campos em JSON. Depois:
      • preenche o que está vazio;
      • para o que já estava preenchido e veio diferente, PERGUNTA antes;
      • guarda o estado anterior para o "desfazer".
@@ -13978,7 +13884,7 @@ window.emLerDocumentos=async function(){
   if(!_emIAArquivos.length && !texto){ emIASt('Cole o texto do cliente ou escolha um arquivo.','var(--fire)'); return; }
   var btn=document.getElementById('em-ia-btn');
   var temChave=(typeof AI_KEYS!=='undefined'&&AI_KEYS.some(function(k){return k.key&&k.key.trim();}));
-  if(!temChave){ emIASt('⚠️ Nenhuma chave de IA configurada. Cole a chave do Gemini em <b>Configurações › Chaves API</b> (ou na aba Relatórios) — ela vale para a equipe toda.','var(--fire)'); return; }
+  if(!temChave){ emIASt('⚠️ Nenhuma chave de IA configurada. Cole a chave do Claude em <b>Configurações › Chaves API</b> — ela vale para a equipe toda.','var(--fire)'); return; }
   if(btn){ btn.disabled=true; btn.dataset.ocupado='1'; btn.textContent='⏳ Lendo…'; }
   var oQue=[];
   if(_emIAArquivos.length) oQue.push(_emIAArquivos.length+' arquivo(s)');
@@ -16184,14 +16090,9 @@ function cfgPopulateAIKeys(){
   try{
     const keys=JSON.parse(savedKeys);
     const claudeK=keys.find(k=>k.provider==='claude'&&k.key);
-    const geminiK=keys.find(k=>k.provider==='gemini'&&k.key);
     if(claudeK){
       const el=document.getElementById('cfg-ai-key-claude');
       if(el)el.value=claudeK.key.substring(0,20)+'...';
-    }
-    if(geminiK){
-      const el=document.getElementById('cfg-ai-key-gemini');
-      if(el)el.value=geminiK.key.substring(0,20)+'...';
     }
   }catch(e){}
 }
