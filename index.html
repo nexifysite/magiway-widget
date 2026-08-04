@@ -16398,6 +16398,10 @@ const FROTA_VEICULOS_BASE=[
 // CAL_VEHS (frota completa, mas fixa no código). A partir de agora o cadastro é
 // editável na aba Frota, e todo carro adicionado ou removido aqui passa a valer
 // no Calendário automaticamente (ele recalcula as categorias a cada render).
+/* Este bloco de script não tem acesso ao `esc()` definido em outros blocos
+   isolados do arquivo — sem isto, toda função da Frota que monta HTML
+   (cards, formulário, abas) quebra com "esc is not defined" assim que roda. */
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 const FROTA_VEIC_KEY='gs_frota_veiculos_v1';
 let FROTA_VEICULOS=[];
 
