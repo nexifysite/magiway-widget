@@ -57,6 +57,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--chalk);m
 /* Lista aberta dos filtros: sem isto o sistema pinta o fundo de branco e o texto some */
 select{color-scheme:dark}
 select option,select optgroup{background:var(--ink2);color:var(--chalk)}
+/* ── valores sob sigilo (comissão e pagamento) ── */
+.vlr-sigilo{transition:.15s}
+body.sigilo-on .vlr-sigilo{position:relative;color:transparent !important;cursor:pointer;user-select:none;
+  text-shadow:none !important;-webkit-text-fill-color:transparent}
+body.sigilo-on .vlr-sigilo::after{content:'\2022\2022\2022\2022\2022';position:absolute;left:0;top:0;right:0;bottom:0;
+  display:flex;align-items:center;justify-content:inherit;letter-spacing:.14em;
+  color:var(--chalk3);-webkit-text-fill-color:var(--chalk3);font-family:'DM Mono',monospace;font-size:.8em}
+body.sigilo-on .vlr-sigilo:hover::after{color:var(--ice);-webkit-text-fill-color:var(--ice)}
+body.sigilo-on .vlr-sigilo *{visibility:hidden}
+.vm-trava{border:1px solid rgba(255,209,26,.4);background:rgba(255,209,26,.05);border-radius:14px;
+  padding:20px 22px;margin-bottom:18px}
+.vm-trava h4{font-size:.92rem;font-weight:800;color:var(--gold);margin-bottom:8px}
+.vm-trava p{font-size:.75rem;line-height:1.7;color:var(--chalk2);margin-bottom:12px}
+.vm-trava-form{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.vm-trava-form input{padding:9px 13px;border-radius:9px;border:1px solid var(--edge);
+  background:rgba(255,255,255,.04);color:var(--chalk);font-size:.8rem;outline:none;min-width:190px}
+.vm-trava-form input:focus{border-color:var(--gold)}
+
 select option:checked,select option:hover{background:var(--ink3);color:#fff}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(ellipse 60% 40% at 5% 15%,rgba(255,0,0,.05) 0%,transparent 60%),
@@ -200,6 +218,14 @@ body.sidebar-collapsed .main{margin-left:0}
 .col-toggle.active{border-color:rgba(255,0,0,.4);background:rgba(255,0,0,.1);color:var(--fire)}
 .pill-ice{background:var(--iceD);border:1px solid var(--edgeT);color:var(--ice)}
 .tb-time{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--chalk3)}
+/* botão de atualizar a cotação — mora na barra do topo, que é a mesma em toda aba */
+.tb-cotbtn{width:28px;height:28px;border-radius:50%;border:1px solid var(--edgeT);background:var(--iceD);
+  color:var(--ice);font-size:.9rem;line-height:1;cursor:pointer;transition:.18s;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;padding:0}
+.tb-cotbtn:hover{background:rgba(31,169,166,.22);transform:rotate(90deg)}
+.tb-cotbtn:disabled{opacity:.5;cursor:default;transform:none}
+.tb-cotbtn.girando{animation:tbGira .9s linear infinite}
+@keyframes tbGira{to{transform:rotate(360deg)}}
 
 /* CONTENT */
 .content{padding:22px 26px;flex:1;min-width:0;overflow-x:hidden}
@@ -848,6 +874,8 @@ select.ffi option{background:#000020;color:#FF0000}
       </div>
       <div class="tb-right">
         <span class="tb-pill pill-ice" onclick="openCamModal()" title="Clique para editar câmbio" style="cursor:pointer" id="topbar-cambio-pill">R$ <span id="topbar-cambio-val">5.2000</span> ✎</span>
+        <button class="tb-cotbtn" id="tb-cotacao-btn" onclick="mgwAtualizarCambio(this)"
+                title="Buscar a cotação do dólar agora e aplicar em todo o app">↻</button>
         <span class="tb-pill pill-fire" id="dash-pill-mes">Jul/2026</span>
         <button id="btn-export-app" style="display:none" onclick="exportarAppAtualizado()" style="padding: 5px 14px; border-radius: 18px; font-size: 0.68rem; font-weight: 600; background: linear-gradient(135deg, rgba(255, 0, 0, 0.3), rgba(255, 0, 0, 0.15)); border: 1px solid rgba(255, 0, 0, 0.45); color: var(--fire); cursor: pointer; font-family: &quot;DM Mono&quot;, monospace; letter-spacing: 0.06em; transition: 0.2s; white-space: nowrap;" onmouseover="this.style.background='linear-gradient(135deg,rgba(255,0,0,.3),rgba(255,0,0,.15))'" onmouseout="this.style.background='linear-gradient(135deg,rgba(255,0,0,.18),rgba(255,0,0,.08))'">💾 EXPORTAR APP</button>
         <span class="tb-time" id="live-time">--:--:--</span>
@@ -875,7 +903,8 @@ select.ffi option{background:#000020;color:#FF0000}
     <input type="date" class="fi" id="cal-to-dv" style="width:140px;padding:.3rem .5rem" onchange="calApply('dv')">
   </div>
   <span id="cal-label-dv" style="font-size:.65rem;font-family:'DM Mono',monospace;color:var(--ice);margin-left:4px">Julho 2026</span>
-  <button class="tbtn tbtn-o" onclick="gerarRelatorioVendas()" style="margin-left:auto">📊 EMITIR RELATÓRIO</button>
+  <button class="tbtn tbtn-o" onclick="gerarRelatorioVendas()" style="margin-left:auto"
+          title="Único lugar com comissão e total a receber por extenso — pede senha">🔒 EMITIR RELATÓRIO (COM VALORES)</button>
 </div>
 <div class="card card-hero" id="dash-hero-meta" style="margin-bottom:16px">
   <div class="ring-meta">
@@ -6139,6 +6168,41 @@ Data de retirada = din"></textarea>
     <div class="nps-zonas-grid" id="nps-zonas-grid"></div>
     <div class="nps-explica" id="nps-explica"></div>
   </div>
+
+  <!-- O que os clientes falaram, na letra deles. É daqui que a IA lê. -->
+  <div class="nps-card" style="margin-top:16px">
+    <div class="nps-ttl">O que os clientes falaram</div>
+    <div class="nps-vozes">
+      <div class="nps-voz-col det">
+        <div class="nps-voz-h" style="--cor:#FF3B4E">😠 Reclamações — detratores <span id="nps-voz-nd">0</span></div>
+        <div class="nps-voz-form">
+          <input id="nps-vd-cli" placeholder="Cliente (opcional)">
+          <textarea id="nps-vd-txt" rows="3" placeholder="O que ele reclamou, com as palavras dele. Quanto mais literal, melhor a análise depois."></textarea>
+          <button class="mgw-btn" onclick="npsVozAdd('d')">＋ Registrar reclamação</button>
+        </div>
+        <div id="nps-voz-lista-d"></div>
+      </div>
+      <div class="nps-voz-col pro">
+        <div class="nps-voz-h" style="--cor:#1AFF9D">😍 Elogios — promotores <span id="nps-voz-np">0</span></div>
+        <div class="nps-voz-form">
+          <input id="nps-vp-cli" placeholder="Cliente (opcional)">
+          <textarea id="nps-vp-txt" rows="3" placeholder="O que ele elogiou. Serve para saber o que NÃO mexer."></textarea>
+          <button class="mgw-btn" onclick="npsVozAdd('p')">＋ Registrar elogio</button>
+        </div>
+        <div id="nps-voz-lista-p"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fica no fim de propósito: a IA lê o que está acima, então precisa vir depois. -->
+  <div class="nps-card" id="nps-ia-card" style="margin-top:16px">
+    <div class="nps-ttl">🤖 Análise da IA — o que essas falas estão dizendo</div>
+    <div class="nps-ia-topo">
+      <button class="mgw-btn" onclick="npsAnalisarIA()">Analisar reclamações e elogios</button>
+      <span class="nps-ia-nota" id="nps-ia-nota">Usa a chave do Gemini configurada em Configurações → Chaves API.</span>
+    </div>
+    <div id="nps-ia-saida" class="nps-ia-saida"></div>
+  </div>
 </div>
 <!-- ═══════════════════════════════════════════════════════════════════
      NOTAS & PENDÊNCIAS — tarefas por responsável, com calendário
@@ -7363,7 +7427,10 @@ load();
 .rl-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:6mm}
 .rl-hd .marca{font-family:'Bebas Neue',sans-serif;font-size:27pt;letter-spacing:.16em;color:#0d1030;line-height:1}
 .rl-hd .marca b{color:#BD0003;font-weight:400}
-.rl-hd img{height:34px;width:auto;object-fit:contain}
+/* A logo da marca é branca. Numa folha creme ela some, então vai sobre uma
+   placa escura — a mesma leitura que ela tem na tela, agora no papel. */
+.rl-hd #rl-logo:has(img){background:#0d1030;border-radius:6px;padding:7px 11px;display:inline-block}
+.rl-hd img{height:34px;width:auto;object-fit:contain;display:block}
 .rl-hd .sub{font-size:6.6pt;letter-spacing:.24em;text-transform:uppercase;color:#2f2c79;margin-top:5px;font-weight:600}
 .rl-hd .meta{text-align:right;font-size:7pt;letter-spacing:.14em;text-transform:uppercase;color:#6b6b80;line-height:1.9}
 .rl-rule{height:1px;background:linear-gradient(90deg,#2f2c79,rgba(47,44,121,.15));margin:0 0 7mm}
@@ -7388,15 +7455,24 @@ load();
    rlImprimir() move #rl-folha para ser filho direto do <body> e marca o body
    com .rl-imprimindo. Aí basta esconder todos os outros filhos do body: a
    folha ocupa a página inteira, sem herdar rolagem nem posicionamento do painel. */
+.rl-exemplo{color:#8a8a9e;font-style:italic}
 @media print{
   body.rl-imprimindo{background:#fff !important}
   body.rl-imprimindo > *{display:none !important}
   body.rl-imprimindo > #rl-folha{
-    display:block !important;position:static !important;width:100% !important;max-width:none !important;
-    margin:0 !important;box-shadow:none !important;min-height:auto !important;padding:14mm !important;
+    display:block !important;position:static !important;width:210mm !important;max-width:210mm !important;
+    margin:0 auto !important;box-shadow:none !important;min-height:auto !important;padding:14mm 16mm !important;
+    background:#FAF7F0 !important;color:#1a1a2e !important;font-size:10.5pt !important;line-height:1.6 !important;
     -webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
   body.rl-imprimindo > #rl-folha *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
   body.rl-imprimindo > #rl-folha .rl-ft{position:static;margin-top:10mm;left:auto;right:auto;bottom:auto}
+  /* o texto de exemplo é ajuda de tela — nunca vai para o papel */
+  body.rl-imprimindo .rl-exemplo{display:none !important}
+  /* nada de bloco partido no meio nem linha órfã no fim da página */
+  body.rl-imprimindo .rl-hd,body.rl-imprimindo .rl-ident,
+  body.rl-imprimindo .rl-titulo,body.rl-imprimindo .rl-ass{page-break-inside:avoid;break-inside:avoid}
+  body.rl-imprimindo .rl-secao{page-break-after:avoid;break-after:avoid}
+  body.rl-imprimindo .rl-corpo p{orphans:3;widows:3}
   @page{size:A4;margin:0}
 }
 </style>
@@ -7465,7 +7541,7 @@ load();
         </div>
 
         <div class="rl-secao">Conteúdo</div>
-        <div class="rl-corpo" id="rl-vcorpo">Preencha a descrição no formulário acima. O texto aparece aqui já formatado no padrão Magiway.</div>
+        <div class="rl-corpo" id="rl-vcorpo"><span class="rl-exemplo">Preencha a descrição no formulário acima. O texto aparece aqui já formatado no padrão Magiway.</span></div>
 
         <div class="rl-div">✦</div>
 
@@ -7586,9 +7662,11 @@ window.rlRender=function(){
   el('rl-afunc').textContent=func;
   el('rl-metadata').textContent=fmtBR(d);
   el('rl-fdata').textContent=fmtBR(d);
+  /* O texto de exemplo é ajuda de tela, não conteúdo: leva a classe rl-exemplo
+     e o CSS de impressão o esconde. Já saiu impresso uma vez; não sai mais. */
   el('rl-vcorpo').innerHTML=corpo
     ? corpo.split(/\n\s*\n/).map(function(p){ return '<p>'+esc(p).replace(/\n/g,'<br>')+'</p>'; }).join('')
-    : 'Preencha a descrição no formulário acima. O texto aparece aqui já formatado no padrão Magiway.';
+    : '<span class="rl-exemplo">Preencha a descrição no formulário acima. O texto aparece aqui já formatado no padrão Magiway.</span>';
 };
 
 /* ── revisão pelo Gemini ── */
@@ -7659,6 +7737,9 @@ window.rlDesfazer=function(){
 var _rlImprimindo=false;
 window.rlImprimir=function(){
   if(!v('rl-titulo')){ setSt('<span style="color:var(--fire)">⚠️ Informe ao menos o título antes de imprimir.</span>'); return; }
+  /* sem descrição a folha sai com o corpo em branco — melhor avisar do que
+     deixar a pessoa descobrir na impressora */
+  if(!v('rl-desc') && !confirm('A descrição está vazia — o relatório vai sair sem o corpo do texto.\n\nImprimir mesmo assim?')) return;
   /* Sem esta trava, clicar duas vezes seguidas fazia a 2ª chamada guardar o
      <body> como "lugar de origem" da folha (a 1ª já a tinha movido para lá).
      A folha então era devolvida para o body e a pré-visualização sumia da aba. */
@@ -7844,6 +7925,35 @@ loadHist();
 .nps-zcard-vc{align-self:flex-start;margin-top:10px;font-family:'DM Mono',monospace;font-size:.53rem;letter-spacing:.15em;text-transform:uppercase;color:#03101c;background:var(--cor);padding:3px 9px;border-radius:20px;font-weight:700;box-shadow:0 0 16px -3px var(--cor)}
 .nps-explica{margin-top:15px;padding-top:14px;border-top:1px solid var(--edge);font-size:.69rem;line-height:1.9;color:var(--chalk3)}
 .nps-explica b{color:var(--chalk2)}
+
+/* ── o que os clientes falaram ── */
+.nps-vozes{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:880px){.nps-vozes{grid-template-columns:1fr}}
+.nps-voz-h{font-family:'DM Mono',monospace;font-size:.63rem;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--cor);margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.nps-voz-h span{margin-left:auto;font-size:.58rem;opacity:.7}
+.nps-voz-form{display:flex;flex-direction:column;gap:7px;margin-bottom:13px}
+.nps-voz-form input,.nps-voz-form textarea{width:100%;padding:8px 11px;border-radius:9px;border:1px solid var(--edge);
+  background:rgba(255,255,255,.04);color:var(--chalk);font-size:.73rem;font-family:'DM Sans',sans-serif;outline:none;line-height:1.5}
+.nps-voz-form textarea{resize:vertical;min-height:56px}
+.nps-voz-form input:focus,.nps-voz-form textarea:focus{border-color:var(--cor,var(--ice))}
+.nps-voz-form .mgw-btn{align-self:flex-start}
+.nps-voz-item{border:1px solid var(--edge);border-left:3px solid var(--cor);border-radius:10px;padding:10px 12px;
+  margin-bottom:8px;background:rgba(255,255,255,.02)}
+.nps-voz-col.det .nps-voz-item{--cor:#FF3B4E}
+.nps-voz-col.pro .nps-voz-item{--cor:#1AFF9D}
+.nps-voz-cab{display:flex;align-items:baseline;gap:9px;margin-bottom:5px}
+.nps-voz-cli{font-size:.74rem;font-weight:700}
+.nps-voz-data{font-family:'DM Mono',monospace;font-size:.54rem;color:var(--chalk3);margin-left:auto}
+.nps-voz-x{cursor:pointer;color:var(--chalk3);font-size:.8rem;line-height:1}
+.nps-voz-x:hover{color:#FF6B78}
+.nps-voz-txt{font-size:.71rem;line-height:1.6;color:var(--chalk2);white-space:pre-wrap}
+.nps-voz-vazio{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--chalk3);padding:14px 4px;line-height:1.8}
+.nps-ia-topo{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:13px}
+.nps-ia-nota{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--chalk3)}
+.nps-ia-saida{font-size:.76rem;line-height:1.85;color:var(--chalk2);white-space:pre-wrap}
+.nps-ia-saida:empty{display:none}
+.nps-ia-saida b{color:var(--chalk)}
 </style>
 <style>
 /* ── RELATÓRIOS DO VENDEDOR ── */
@@ -8820,7 +8930,8 @@ function initDashboard(){
   const pill=document.getElementById('dash-pill-mes');if(pill)pill.textContent=mesLabel;
   const lbl=document.getElementById('dash-mes-label');if(lbl)lbl.textContent=mesLabel;
   const subDaily=document.getElementById('dash-sub-daily');if(subDaily)subDaily.textContent=`Volume $ por dia · ${mesLabel}`;
-  const subMetas=document.getElementById('dash-sub-metas');if(subMetas)subMetas.textContent=`comissão $${comissao.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
+  const subMetas=document.getElementById('dash-sub-metas');
+  if(subMetas){ subMetas.classList.add('vlr-sigilo'); subMetas.textContent=`comissão $${comissao.toLocaleString('pt-BR',{minimumFractionDigits:2})}`; }
   // Render KPI grid
   const kpis=document.getElementById('dash-kpis-main');
   if(kpis){
@@ -8829,16 +8940,16 @@ function initDashboard(){
     } else {
       const kpiDefs=[
         {cls:'kpi-o',tag:'Faturamento Total',val:total,fmt:v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:0}),sub:`${D.length} reservas`},
-        {cls:'kpi-t',tag:'Comissão Ganha',val:comissao,fmt:v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:0}),sub:`${comissaoPctAtual()}% sobre vendas`},
-        {cls:'kpi-y',tag:'Total a Receber',val:aReceberUSD,fmt:v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),sub:`Comissão $${comissao.toFixed(2)} + Ajuda $${_ajudaUSD.toFixed(2)} (${_diasTrab}d)`},
+        {cls:'kpi-t',tag:'Comissão Ganha',val:comissao,fmt:v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:0}),sub:'no relatório, com senha',sigilo:true},
+        {cls:'kpi-y',tag:'Total a Receber',val:aReceberUSD,fmt:v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),sub:'no relatório, com senha',sigilo:true},
         {cls:'kpi-b',tag:'Ticket Médio',val:ticket,fmt:v=>'$'+v.toFixed(0),sub:'por reserva'},
         {cls:'kpi-g',tag:'Melhor Dia',val:melhorDia!=='—'?melhorVal:0,fmt:v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:0}),sub:melhorDia!=='—'?melhorDia+' · '+melhorN+' vendas':'sem dados',staticText:melhorDia==='—'?'—':null},
         {cls:'kpi-o',tag:'Maior Venda',val:maiorVenda?maiorVenda.v:0,fmt:v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:0}),sub:maiorVenda?(maiorVenda.c.split(' ')[0]+' · #'+maiorVenda.r):'—',staticText:maiorVenda?null:'—'},
-        {cls:'kpi-t',tag:'Comissão/Dia',val:comDia,fmt:v=>'$'+v.toFixed(2),sub:'média diária do mês'},
+        {cls:'kpi-t',tag:'Comissão/Dia',val:comDia,fmt:v=>'$'+v.toFixed(2),sub:'no relatório, com senha',sigilo:true},
         {cls:'kpi-g',tag:'Reservas OK',val:valid.length,fmt:v=>Math.round(v)+'/'+D.length,sub:`${D.length?((valid.length/D.length)*100).toFixed(0):0}% validadas`}
       ];
       kpis.innerHTML=kpiDefs.map((k,i)=>
-        `<div class="kpi ${k.cls}"><div class="kg"></div><div class="kpi-tag">${k.tag}</div><div class="kpi-val" data-kpi-idx="${i}">${k.staticText!=null?k.staticText:k.fmt(0)}</div><div class="kpi-sub">${k.sub}</div><div class="kpi-bar"></div></div>`
+        `<div class="kpi ${k.cls}"><div class="kg"></div><div class="kpi-tag">${k.tag}</div><div class="kpi-val${k.sigilo?' vlr-sigilo':''}" data-kpi-idx="${i}">${k.staticText!=null?k.staticText:k.fmt(0)}</div><div class="kpi-sub">${k.sub}</div><div class="kpi-bar"></div></div>`
       ).join('');
       kpiDefs.forEach((k,i)=>{
         if(k.staticText!=null)return;
@@ -10716,7 +10827,7 @@ function renderDashboardExtra(data){
   const totFat=data.reduce((a,s)=>a+s.v,0);
   const elCom=document.getElementById('dash-comissao-detail');
   if(elCom){elCom.innerHTML=`
-    <div>💰 Total Comissão: <strong style="color:var(--ice)">$${totCom.toFixed(2)}</strong></div>
+    <div>💰 Total Comissão: <strong class="vlr-sigilo" style="color:var(--ice)">$${totCom.toFixed(2)}</strong></div>
     <div>📊 Sobre Faturamento: <strong style="color:var(--fire)">$${totFat.toFixed(2)}</strong></div>
     <div>% Comissão Média: <strong>${comissaoPctAtual()}%</strong></div>
     <div>🎯 Meta: ${totCom>=1000?'<strong style="color:var(--ice)">✅ DIAMANTE</strong>':totCom>=800?'<strong style="color:var(--gold)">🥇 OURO</strong>':totCom>=500?'<strong style="color:#aaa">🥈 PRATA</strong>':'<strong style="color:var(--gold)">🥉 BRONZE</strong>'}</div>`;}
@@ -11871,7 +11982,7 @@ function renderDashVendas(){
     <div class="kpi kpi-o"><div class="kg"></div><div class="kpi-tag">Faturamento · Período</div><div class="kpi-val">$${total.toFixed(0)}</div><div class="kpi-sub" style="color:${col}">${arrow} ${Math.abs(delta).toFixed(1)}% vs período anterior</div><div class="kpi-bar"></div></div>
     <div class="kpi kpi-t"><div class="kg"></div><div class="kpi-tag">Vendas no Período</div><div class="kpi-val">${data.length}</div><div class="kpi-sub">${valid} validadas · ${data.length-valid} pendentes</div><div class="kpi-bar"></div></div>
     <div class="kpi kpi-g"><div class="kg"></div><div class="kpi-tag">Ticket Médio</div><div class="kpi-val">$${ticket.toFixed(0)}</div><div class="kpi-sub">média por reserva</div><div class="kpi-bar"></div></div>
-    <div class="kpi kpi-y"><div class="kg"></div><div class="kpi-tag">Comissão · Período</div><div class="kpi-val">$${comissao.toFixed(0)}</div><div class="kpi-sub">${comissaoPctAtual()}% sobre faturamento</div><div class="kpi-bar"></div></div>`;
+    <div class="kpi kpi-y"><div class="kg"></div><div class="kpi-tag">Comissão · Período</div><div class="kpi-val vlr-sigilo">$${comissao.toFixed(0)}</div><div class="kpi-sub">liberada no relatório, com senha</div><div class="kpi-bar"></div></div>`;
   // Render extra charts with filtered data
   renderDashboardExtra(data);
 }
@@ -11880,6 +11991,15 @@ function renderDashVendas(){
 function gerarRelatorioVendas(){
   const D=SALES_DATA;
   if(!D.length){toast('Sem dados para gerar relatório','orange');return;}
+
+  /* Este é o ÚNICO lugar onde comissão e total a receber aparecem por extenso.
+     Nas telas eles ficam mascarados; aqui é preciso a senha. */
+  if(window.MGW_SIGILO && !MGW_SIGILO.aberto()){
+    const s=prompt('Este relatório mostra comissão e total a receber.\n\nSenha:');
+    if(s==null) return;
+    if(!MGW_SIGILO.abrir(s)){ toast('Senha incorreta — relatório não gerado','red'); return; }
+    toast('🔓 Valores liberados nesta aba','green');
+  }
 
   const now=new Date();
   const mesLabel=(()=>{const ym=DB_MES_ATIVO||dbCurrentYM();const[yr,mo]=ym.split('_');const ms=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];return ms[parseInt(mo)-1]+' '+yr;})();
@@ -11896,10 +12016,43 @@ function gerarRelatorioVendas(){
   const AJUDA=1700;
   const _ym=DB_MES_ATIVO||dbCurrentYM();
   const[_yr,_mo]=_ym.split('_').map(Number);
-  const _diasMes=new Date(_yr,_mo,0).getDate();
+  const _cicR=(function(){ try{ if(window.MGW_CICLO) return MGW_CICLO.ciclo(_ym); }catch(e){} return null; })();
+  const _diasMes=_cicR?_cicR.dias:new Date(_yr,_mo,0).getDate();
   const _diasTrab=(_yr===2026&&_mo===5)?11:_diasMes;
   const ajudaUSD=(AJUDA*(_diasTrab/_diasMes))/CAMBIO;
   const totalReceberUSD=comissao+ajudaUSD;
+
+  /* ── A conta do ciclo: 5% sobre as reservas do Luciano, 3% sobre as dos
+     demais vendedores. É a regra do contrato dele, e o relatório é o único
+     lugar que a mostra aberta. ── */
+  const _R3=(function(){ try{ if(window.MGW_CICLO) return MGW_CICLO.resumo(_cicR||undefined); }catch(e){} return null; })();
+  const _fR=v=>'R$ '+(+v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const blocoCiclo=_R3 ? `
+  <div class="sec" style="margin-top:24px">
+    <div class="sec-title">COMISSÃO DO CICLO — 5% PRÓPRIAS · 3% DOS DEMAIS</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Origem</th><th>Reservas</th><th>Faturamento</th><th>%</th><th>Comissão</th></tr></thead>
+        <tbody>
+          <tr><td>Reservas feitas por Luciano</td><td class="num">${_R3.nMinhas}</td>
+              <td class="num fire">${_fR(_R3.meuFaturamento)}</td><td class="num">${_R3.pct}%</td>
+              <td class="num ice">${_fR(_R3.comissaoPropria)}</td></tr>
+          <tr><td>Reservas dos demais vendedores</td><td class="num">${_R3.nOutros}</td>
+              <td class="num fire">${_fR(_R3.outrosFaturamento)}</td><td class="num">${_R3.pctOutros}%</td>
+              <td class="num ice">${_fR(_R3.comissaoOutros)}</td></tr>
+          <tr><td style="font-weight:700">Fixo mensal</td><td class="num">—</td><td class="num">—</td>
+              <td class="num">—</td><td class="num ice">${_fR(_R3.fixo)}</td></tr>
+          <tr style="border-top:2px solid rgba(31,169,166,.5)">
+              <td style="font-weight:800">TOTAL A RECEBER</td><td class="num">${_R3.n}</td>
+              <td class="num fire">${_fR(_R3.faturamento)}</td><td class="num">—</td>
+              <td class="num green" style="font-weight:800">${_fR(_R3.aReceber)}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:#7B93B5;margin-top:8px">
+      Ciclo ${_R3.ciclo.label} · ${_R3.ciclo.periodo} · custo real ${_fR(_R3.custoReal)} · lucro bruto ${_fR(_R3.lucroBruto)}
+    </div>
+  </div>` : '';
 
   // Por categoria
   const catMap={};D.forEach(s=>{const k=s.cat||'N/D';if(!catMap[k])catMap[k]={n:0,v:0};catMap[k].n++;catMap[k].v+=s.v;});
@@ -12063,6 +12216,8 @@ tr:last-child td{border-bottom:none}
       </table>
     </div>
   </div>
+
+  ${blocoCiclo}
 
   <div class="card-row">
     <div class="card">
@@ -15922,7 +16077,8 @@ function renderControle(){
   vendors.forEach(v=>{
     const st = computeVendorStats(v.id);
     const elV=document.getElementById('vstat-vendas-'+v.id); if(elV) elV.textContent = st.vendas;
-    const elC=document.getElementById('vstat-com-'+v.id);    if(elC) elC.textContent = '$'+Math.round(st.comissao);
+    const elC=document.getElementById('vstat-com-'+v.id);
+    if(elC){ elC.classList.add('vlr-sigilo'); elC.textContent = '$'+Math.round(st.comissao); }
     const elT=document.getElementById('vstat-cot-'+v.id);    if(elT) elT.textContent = st.cotacoes;
   });
 
@@ -16186,6 +16342,69 @@ async function cfgFetchCambio(btn){
   }
   if(btn){btn.disabled=false;btn.style.opacity='';btn.textContent=prevLabel||'🔄 Atualizar câmbio (USD/BRL)';}
 }
+
+/* ═══ Cotação em um clique, de qualquer aba ═══
+   O botão ↻ da barra do topo (que é a mesma em todas as telas) busca a cotação
+   e JÁ APLICA: salva em _CFG, recalcula vendas, metas e a cotação aberta. O
+   botão de Configurações continua só preenchendo o campo — lá a pessoa está
+   revisando parâmetros, aqui ela quer o número do dia. */
+async function mgwBuscarCotacaoUSD(){
+  const fontes=[
+    async()=>{
+      const r=await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL',{cache:'no-store'});
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      const j=await r.json(), o=j&&j.USDBRL, bid=o&&parseFloat(o.bid);
+      if(!(bid>0)) throw new Error('sem cotação');
+      return {valor:bid, fonte:'AwesomeAPI', quando:(o.create_date||'')};
+    },
+    async()=>{
+      const r=await fetch('https://api.exchangerate.host/latest?base=USD&symbols=BRL',{cache:'no-store'});
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      const j=await r.json(), v=j&&j.rates&&parseFloat(j.rates.BRL);
+      if(!(v>0)) throw new Error('sem cotação');
+      return {valor:v, fonte:'exchangerate.host', quando:(j.date||'')};
+    }
+  ];
+  let ultimo=null;
+  for(const fn of fontes){
+    try{ const r=await fn(); if(r&&r.valor>0) return r; }catch(e){ ultimo=e; }
+  }
+  throw ultimo||new Error('nenhuma fonte respondeu');
+}
+let _cotacaoOcupado=false;
+async function mgwAtualizarCambio(btn){
+  if(_cotacaoOcupado) return;
+  _cotacaoOcupado=true;
+  if(btn){ btn.disabled=true; btn.classList.add('girando'); }
+  try{
+    const res=await mgwBuscarCotacaoUSD();
+    const v=parseFloat(res.valor.toFixed(4));
+    const antes=(typeof _CFG!=='undefined'&&_CFG.cambio)?Number(_CFG.cambio):null;
+    if(typeof _CFG!=='undefined'){ _CFG.cambio=v; if(typeof cfgSave==='function') cfgSave(); }
+    if(typeof CS!=='undefined' && CS) CS.cambio=v;
+    const tv=document.getElementById('topbar-cambio-val'); if(tv) tv.textContent=v.toFixed(4);
+    const cv=document.getElementById('conv-cam-disp'); if(cv) cv.textContent='R$ '+v.toFixed(4)+' ✎';
+    const ci=document.getElementById('cfg-cambio'); if(ci) ci.value=v;
+    /* tudo que depende do câmbio recalcula na hora */
+    try{ if(typeof enrichSalesData==='function') enrichSalesData(); }catch(e){}
+    try{ if(typeof renderVendas==='function') renderVendas(); }catch(e){}
+    try{ if(typeof renderMetas==='function') renderMetas(); }catch(e){}
+    try{ const cc=document.getElementById('c-cat'); if(cc&&cc.value&&typeof cCalc==='function') cCalc(); }catch(e){}
+    try{ if(typeof dashInited!=='undefined'){ dashInited=false;
+      const dv=document.getElementById('panel-dashboard');
+      if(dv&&dv.classList.contains('active')&&typeof initDashboard==='function'){ dashInited=true; initDashboard(); } } }catch(e){}
+    const pill=document.getElementById('topbar-cambio-pill');
+    if(pill) pill.title='Cotação de '+(res.quando?String(res.quando).slice(0,16):'agora')+' ('+res.fonte+') · clique para editar à mão';
+    const dif=(antes&&antes>0)?(' · era R$ '+antes.toFixed(4)):'';
+    if(typeof toast==='function') toast('💱 Dólar a R$ '+v.toFixed(4)+' ('+res.fonte+')'+dif,'green');
+  }catch(e){
+    if(typeof toast==='function') toast('⚠️ Não consegui buscar a cotação agora — o valor atual continua valendo','red');
+  }finally{
+    _cotacaoOcupado=false;
+    if(btn){ btn.disabled=false; btn.classList.remove('girando'); }
+  }
+}
+window.mgwAtualizarCambio=mgwAtualizarCambio;
 
 function cfgSaveFinanceiro(){
   _CFG.cambio=parseFloat(document.getElementById('cfg-cambio')?.value)||5.2;
@@ -17492,6 +17711,25 @@ function renderVendasMes(){
   if(!R.n){
     box.innerHTML='<div class="vm-vazio">Nenhuma reserva com data de fechamento entre <b>'+fmtBR(c.ini)+'</b> e <b>'+fmtBR(c.fim)+'</b>.'
       +'<br><span style="color:var(--chalk3);font-size:.75rem">As reservas vêm da aba Reservas (planilha FECHAMENTO + as salvas aqui). Clique em ↻ Atualizar se acabou de lançar algo.</span></div>';
+    return;
+  }
+
+  /* O pagamento é valor de pessoa: só abre com a senha, como o relatório. */
+  if(window.MGW_SIGILO && !MGW_SIGILO.aberto()){
+    box.innerHTML='<div class="vm-trava">'
+      +'<h4>🔒 Comissão e pagamento estão ocultos</h4>'
+      +'<p>Esta tela mostra quanto você tem a receber no ciclo <b>'+esc(c.label)+'</b> ('+esc(c.periodo)+'), '
+      +'com as duas faixas — 5% das suas reservas e 3% das reservas dos demais vendedores. '
+      +'Ela abre com a senha e fica aberta enquanto esta aba do navegador estiver de pé.</p>'
+      +'<div class="vm-trava-form">'
+        +'<input type="password" id="vm-senha" placeholder="Senha" '
+        +'onkeydown="if(event.key===\'Enter\')mgwAbrirValores()">'
+        +'<button class="mgw-btn" onclick="mgwAbrirValores()">Liberar valores</button>'
+      +'</div></div>'
+      +'<div class="vm-kpis">'
+        +kpi('Reservas no ciclo', String(R.n), R.nMinhas+' suas · '+R.nOutros+' de outros', '#9AB4CC')
+        +kpi('Faturamento da empresa', fmtR0(R.faturamento), 'sem sigilo: é volume, não pagamento', '#1AFF9D')
+      +'</div>';
     return;
   }
 
@@ -19688,7 +19926,9 @@ var TIMER=null;
 function padrao(){
   return { modo:'simples', corteD:6, corteN:8,
            simples:{d:0,n:0,p:0},
-           notas:[0,0,0,0,0,0,0,0,0,0,0] };
+           notas:[0,0,0,0,0,0,0,0,0,0,0],
+           /* o que o cliente falou, na letra dele — é o que a IA analisa */
+           vozes:[] };
 }
 function ler(){
   var d=padrao();
@@ -19700,6 +19940,7 @@ function ler(){
       if(isFinite(v.corteN)) d.corteN=Math.max(d.corteD+1,Math.min(9,+v.corteN));
       if(v.simples) d.simples={d:+v.simples.d||0,n:+v.simples.n||0,p:+v.simples.p||0};
       if(Array.isArray(v.notas)) for(var i=0;i<11;i++) d.notas[i]=Math.max(0,+v.notas[i]||0);
+      if(Array.isArray(v.vozes)) d.vozes=v.vozes.filter(function(x){ return x && x.id && x.texto; });
     }
   }catch(e){}
   return d;
@@ -19986,6 +20227,15 @@ window.npsExportar=function(){
     L.push(''); L.push('Nota;Respostas');
     for(var i=0;i<=10;i++) L.push(i+';'+(+c.cfg.notas[i]||0));
   }
+  var vz=ler().vozes||[];
+  if(vz.length){
+    L.push(''); L.push('Falas dos clientes');
+    L.push('Grupo;Data;Cliente;O que falou');
+    vz.slice().sort(function(a,b){ return (a.ts||0)-(b.ts||0); }).forEach(function(v){
+      L.push((v.grupo==='d'?'Detrator':'Promotor')+';'+(v.data||'')+';'+String(v.cliente||'').replace(/;/g,',')
+             +';'+String(v.texto||'').replace(/[\r\n;]/g,' '));
+    });
+  }
   var blob=new Blob(['\ufeff'+L.join('\r\n')],{type:'text/csv;charset=utf-8'});
   var a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
@@ -19994,6 +20244,86 @@ window.npsExportar=function(){
   setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },800);
   if(typeof toast==='function') toast('CSV do NPS exportado','green');
 };
+/* ── o que os clientes falaram ──────────────────────────────────────
+   Nota sozinha não diz o que consertar. Aqui fica a frase do cliente,
+   separada por lado: o detrator conta o que quebrou, o promotor conta o
+   que não se pode mexer. É a matéria-prima da análise da IA lá embaixo. */
+function _npsEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function _npsHoje(){ var d=new Date(); return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(); }
+function vozes(grupo){
+  return ler().vozes.filter(function(v){ return v.grupo===grupo; })
+              .sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
+}
+window.npsVozAdd=function(grupo){
+  var pre=(grupo==='d')?'nps-vd-':'nps-vp-';
+  var cli=document.getElementById(pre+'cli'), txt=document.getElementById(pre+'txt');
+  var t=String(txt&&txt.value||'').trim();
+  if(t.length<3){ if(typeof toast==='function') toast('Escreva o que o cliente falou','orange'); return; }
+  salvarE(function(d){
+    d.vozes.push({ id:'v'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),
+                   grupo:(grupo==='d'?'d':'p'),
+                   cliente:String(cli&&cli.value||'').trim(),
+                   texto:t, data:_npsHoje(), ts:Date.now() });
+  }, false);
+  if(cli) cli.value=''; if(txt) txt.value='';
+  renderVozes();
+  if(typeof toast==='function') toast(grupo==='d'?'Reclamação registrada':'Elogio registrado','green');
+};
+window.npsVozDel=function(id){
+  if(!confirm('Apagar esta fala do cliente?')) return;
+  salvarE(function(d){ d.vozes=d.vozes.filter(function(v){ return v.id!==id; }); }, false);
+  renderVozes();
+};
+function renderVozes(){
+  [['d','nps-voz-lista-d','nps-voz-nd','Nenhuma reclamação registrada.\nSempre que um detrator falar, cole aqui a frase dele.'],
+   ['p','nps-voz-lista-p','nps-voz-np','Nenhum elogio registrado.\nO que o promotor elogia é o que não se pode mexer.']
+  ].forEach(function(cfg){
+    var lista=vozes(cfg[0]);
+    var cont=document.getElementById(cfg[2]); if(cont) cont.textContent=lista.length;
+    var box=document.getElementById(cfg[1]); if(!box) return;
+    box.innerHTML=lista.length ? lista.map(function(v){
+      return '<div class="nps-voz-item">'
+        +'<div class="nps-voz-cab"><span class="nps-voz-cli">'+_npsEsc(v.cliente||'cliente não identificado')+'</span>'
+          +'<span class="nps-voz-data">'+_npsEsc(v.data||'')+'</span>'
+          +'<span class="nps-voz-x" title="Apagar" onclick="npsVozDel(\''+v.id+'\')">✕</span></div>'
+        +'<div class="nps-voz-txt">'+_npsEsc(v.texto)+'</div></div>';
+    }).join('') : '<div class="nps-voz-vazio">'+_npsEsc(cfg[3]).replace(/\n/g,'<br>')+'</div>';
+  });
+}
+/* A IA lê as falas — as reclamações primeiro, que é o que dói. */
+window.npsAnalisarIA=async function(){
+  var saida=document.getElementById('nps-ia-saida'); if(!saida) return;
+  var det=vozes('d'), pro=vozes('p');
+  if(!det.length && !pro.length){
+    saida.innerHTML='<span style="color:var(--chalk3)">Registre pelo menos uma fala de cliente acima — sem texto não há o que analisar.</span>';
+    return;
+  }
+  if(typeof aiCall!=='function'){
+    saida.innerHTML='<span style="color:#FF6B78">A IA não está disponível nesta versão.</span>';
+    return;
+  }
+  saida.innerHTML='<span style="color:var(--chalk3)">🤖 Lendo '+det.length+' reclamação(ões) e '+pro.length+' elogio(s)…</span>';
+  var c=calcular();
+  var bloco=function(arr){ return arr.map(function(v,i){
+    return (i+1)+'. '+(v.cliente?('['+v.cliente+'] '):'')+v.texto; }).join('\n') || '(nenhuma)'; };
+  var prompt=
+     'Você analisa a satisfação de clientes de uma locadora de carros na Flórida que atende brasileiros (Magiway Rental Car).\n\n'
+    +'NPS atual: '+c.nps+' ('+c.det+' detratores, '+c.neu+' neutros, '+c.pro+' promotores, '+c.total+' respostas).\n\n'
+    +'RECLAMAÇÕES DOS DETRATORES:\n'+bloco(det)+'\n\n'
+    +'ELOGIOS DOS PROMOTORES:\n'+bloco(pro)+'\n\n'
+    +'Responda em português do Brasil, direto, sem enrolação, nesta ordem:\n'
+    +'1) CAUSAS — agrupe as reclamações por causa raiz, da mais frequente para a menos, dizendo quantas falas caem em cada uma.\n'
+    +'2) O QUE ESTÁ FUNCIONANDO — o que os promotores elogiam e que não pode ser mexido.\n'
+    +'3) AS 3 AÇÕES — três ações concretas, na ordem em que devem ser feitas, cada uma com o responsável provável (operação, comercial ou frota) e o efeito esperado no NPS.\n'
+    +'4) SINAL DE ALERTA — a reclamação que, se se repetir, é a mais cara para o negócio, e por quê.\n'
+    +'Não invente dados que não estão nas falas.';
+  try{
+    var r=await aiCall([{role:'user',content:prompt}], '', 900);
+    saida.innerHTML=_npsEsc(r).replace(/\n/g,'<br>').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+  }catch(e){
+    saida.innerHTML='<span style="color:#FF6B78">⚠️ '+_npsEsc(e&&e.message||'falha na análise')+'</span>';
+  }
+};
 window.npsRender=render;
 
 /* entra no roteador sem mexer nos handlers que já existem */
@@ -20001,9 +20331,64 @@ window.npsRender=render;
   var prev=window.onNavChange;
   window.onNavChange=function(id){
     if(typeof prev==='function'){ try{ prev(id); }catch(e){} }
-    if(id==='nps'){ try{ ULTIMO=-100; render(true); }catch(e){} }
+    if(id==='nps'){ try{ ULTIMO=-100; render(true); renderVozes(); }catch(e){} }
   };
 })();
+})();
+</script>
+
+<script id="mgw-sigilo-js">
+/* ═══════════════════════════════════════════════════════════════════
+   MAGIWAY — SIGILO DE VALORES
+
+   Comissão e total a receber são pagamento de pessoa. Ficavam à vista
+   em qualquer tela aberta na frente da equipe ou de um cliente. Agora
+   saem mascarados por padrão e só aparecem no relatório, atrás de uma
+   senha, que vale enquanto a aba estiver aberta.
+
+   Isto organiza, não protege: a senha é conferida no navegador e está
+   no código publicado, como já acontece no Fluxo de Caixa. Serve para
+   o valor não aparecer sem querer, não para segurar quem abre o
+   DevTools de propósito.
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+'use strict';
+var SENHA='carioteca';
+var CHAVE='mgw_sigilo_ok';
+function aberto(){ try{ return sessionStorage.getItem(CHAVE)==='1'; }catch(e){ return false; } }
+function aplicar(){
+  document.body.classList.toggle('sigilo-on', !aberto());
+}
+function abrir(senha){
+  if(String(senha||'').trim().toLowerCase()!==SENHA) return false;
+  try{ sessionStorage.setItem(CHAVE,'1'); }catch(e){}
+  aplicar();
+  try{ if(typeof renderVendasMes==='function') renderVendasMes(); }catch(e){}
+  return true;
+}
+function fechar(){
+  try{ sessionStorage.removeItem(CHAVE); }catch(e){}
+  aplicar();
+  try{ if(typeof renderVendasMes==='function') renderVendasMes(); }catch(e){}
+}
+/* clicar num valor mascarado pergunta a senha — evita caçar onde destravar */
+document.addEventListener('click', function(e){
+  var alvo=e.target && e.target.closest && e.target.closest('.vlr-sigilo');
+  if(!alvo || aberto()) return;
+  e.preventDefault(); e.stopPropagation();
+  var s=prompt('Valores de comissão e pagamento estão ocultos.\n\nSenha para liberar nesta aba:');
+  if(s==null) return;
+  if(abrir(s)){ if(typeof toast==='function') toast('🔓 Valores liberados nesta aba','green'); }
+  else if(typeof toast==='function') toast('Senha incorreta','red');
+}, true);
+window.MGW_SIGILO={ aberto:aberto, abrir:abrir, fechar:fechar, aplicar:aplicar, SENHA_DICA:'combinada com o Luciano' };
+window.mgwAbrirValores=function(){
+  var i=document.getElementById('vm-senha');
+  if(abrir(i?i.value:'')){ if(typeof toast==='function') toast('🔓 Valores liberados nesta aba','green'); }
+  else{ if(i) i.value=''; if(typeof toast==='function') toast('Senha incorreta','red'); }
+};
+aplicar();
+document.addEventListener('DOMContentLoaded', aplicar);
 })();
 </script>
 
