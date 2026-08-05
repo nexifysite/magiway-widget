@@ -157,6 +157,44 @@ body.sidebar-collapsed .main{margin-left:0}
   body:not(.sidebar-collapsed) .sidebar{transform:translateX(0)}
   body:not(.sidebar-collapsed) .sb-backdrop{display:block}
   .main{margin-left:0 !important}
+
+  /* ── CELULAR ──
+     No telefone a barra do topo é a parte mais cara da tela. O subtítulo
+     descrevia a aba em seis linhas e empurrava a cotação para fora; o
+     relógio não vale o espaço. Fica o essencial: menu, nome da aba,
+     cotação e o botão de atualizar. */
+  /* Duas linhas no celular: o nome da aba não cabe ao lado da cotação sem
+     virar reticências. Em cima o menu e o título, embaixo os controles. */
+  .topbar{padding:9px 12px;gap:7px;flex-wrap:wrap}
+  .topbar>div:first-child{min-width:0;flex:1 1 100%;gap:10px}
+  .topbar>div:first-child>div{min-width:0}
+  .tb-title{font-size:16px;letter-spacing:.07em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tb-sub{display:none}
+  .tb-right{gap:7px;flex:1 1 100%;justify-content:flex-start}
+  .tb-time{display:none}
+  .tb-pill{padding:4px 11px;font-size:.65rem;white-space:nowrap}
+  .tb-cotbtn{width:28px;height:28px}
+
+  /* dedo, não mouse: alvo mínimo confortável nos botões e campos */
+  .mgw-btn,.fr-b,.mgag-flagbtn,.tbtn{min-height:38px}
+  .mgw-input,.fr-f input,.fr-f select,.fr-f textarea{font-size:16px}  /* <16px faz o iPhone dar zoom sozinho */
+
+  /* painéis: menos margem lateral, mais conteúdo */
+  #panel-frota,#panel-suporte,#panel-auditoria,
+  #panel-calendario,#panel-reservas,#panel-agenda{padding:14px 12px}
+  .fr-grid{grid-template-columns:1fr}
+  .fr-form{grid-template-columns:1fr}
+  .fr-box{padding:18px 15px}
+  .fr-modal{padding:12px 8px}
+  .au-tipo{min-width:0;flex:1 1 90px;padding:10px 6px}
+  .au-tipo .s{display:none}
+
+  /* barras de ferramentas quebram em linhas, sem espremer o campo de busca */
+  .fr-toolbar,.mgcal-toolbar,.mgrsv-toolbar,.mgag-toolbar{gap:7px}
+  .fr-toolbar .mgw-input,.mgrsv-toolbar .mgw-input{flex:1 1 100%}
+
+  /* o botão de instalar não pode tapar o conteúdo do rodapé */
+  #mgw-instalar{right:10px;bottom:10px;padding:9px 14px;font-size:.74rem}
 }
 
 .sb-head{padding:20px 18px 16px;border-bottom:1px solid var(--edge);flex-shrink:0}
@@ -5997,6 +6035,12 @@ Data de retirada = din"></textarea>
 .sp-kpi{border:1px solid var(--edge);border-radius:12px;padding:13px 15px;background:rgba(255,255,255,.02)}
 .sp-kpi-n{font-size:1.5rem;font-weight:800;font-family:'DM Sans',sans-serif;line-height:1.1}
 .sp-kpi-l{font-family:'DM Mono',monospace;font-size:.53rem;letter-spacing:.07em;text-transform:uppercase;color:var(--chalk3);margin-top:3px}
+/* no celular cabem dois números por linha — cinco cartões empilhados viravam rolagem à toa */
+@media(max-width:640px){
+  .sp-kpis{grid-template-columns:repeat(2,1fr);gap:9px}
+  .sp-kpi{padding:11px 12px}
+  .sp-kpi-n{font-size:1.25rem}
+}
 .sp-top{border:1px solid var(--edge);border-radius:12px;padding:14px 16px;margin-bottom:18px;background:rgba(255,255,255,.02)}
 .sp-top-h{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--chalk3);margin-bottom:11px}
 .sp-top-row{display:flex;align-items:center;gap:11px;padding:7px 0;border-bottom:1px solid var(--edge);font-size:.74rem}
@@ -21191,7 +21235,22 @@ body.mgw-sem-rede #mgw-offline{display:block}
   padding:11px 17px;font-size:.8rem;font-weight:600;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.5)}
 #mgw-instalar.on{display:flex}
 #mgw-instalar span.x{opacity:.7;font-size:1rem;line-height:1;padding-left:4px}
-@media print{#mgw-offline,#mgw-instalar{display:none !important}}
+#mgw-ios-passos{position:fixed;inset:0;z-index:9999;background:rgba(0,0,10,.78);display:none;
+  align-items:flex-end;justify-content:center;padding:0}
+#mgw-ios-passos.on{display:flex}
+#mgw-ios-passos .cx{width:100%;max-width:520px;background:var(--ink2);border-top:1px solid var(--edge);
+  border-radius:20px 20px 0 0;padding:24px 22px calc(24px + env(safe-area-inset-bottom))}
+#mgw-ios-passos h3{font-size:1.05rem;font-weight:800;margin-bottom:11px}
+#mgw-ios-passos p{font-size:.8rem;line-height:1.65;color:var(--chalk2);margin-bottom:12px}
+#mgw-ios-passos ol{margin:0 0 14px 20px;font-size:.82rem;line-height:1.9;color:var(--chalk)}
+#mgw-ios-passos li{margin-bottom:6px}
+#mgw-ios-passos .ic{display:inline-block;border:1px solid var(--chalk3);border-radius:4px;
+  padding:0 6px;font-size:.85rem;line-height:1.5}
+#mgw-ios-passos .obs{font-size:.72rem;color:var(--chalk3)}
+#mgw-ios-passos button{width:100%;padding:13px;border:none;border-radius:12px;
+  background:linear-gradient(135deg,var(--fire),var(--fireDark));color:#fff;font-size:.9rem;
+  font-weight:700;cursor:pointer;margin-top:4px}
+@media print{#mgw-offline,#mgw-instalar,#mgw-ios-passos{display:none !important}}
 </style>
 <div id="mgw-offline">⚠ sem conexão — mostrando os dados já baixados</div>
 <button id="mgw-instalar" title="Instalar o Magiway na tela inicial">
@@ -21257,19 +21316,55 @@ window.addEventListener('offline', function(){
 });
 estadoRede();
 
-/* ── 3. Botão de instalar ── */
+/* ── 3. Botão de instalar ──
+   No Android o navegador avisa que dá para instalar (beforeinstallprompt) e o
+   botão faz tudo num toque. No iPhone esse aviso NÃO existe: o Safari só
+   instala pelo menu Compartilhar. Antes o botão simplesmente nunca aparecia
+   no iPhone e a pessoa ficava sem saber que dava para instalar — agora ele
+   aparece e ensina o caminho. */
 var _promptInstalar=null;
+var _ehIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)
+        || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+var _jaInstalado=window.matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
+
 window.addEventListener('beforeinstallprompt', function(e){
   e.preventDefault(); _promptInstalar=e;
   var b=document.getElementById('mgw-instalar'); if(b) b.classList.add('on');
 });
 var btn=document.getElementById('mgw-instalar');
 if(btn) btn.addEventListener('click', async function(){
+  if(_ehIOS && !_promptInstalar){ mostrarPassoIOS(); return; }
   if(!_promptInstalar) { btn.classList.remove('on'); return; }
   btn.classList.remove('on');
   try{ _promptInstalar.prompt(); await _promptInstalar.userChoice; }catch(e){}
   _promptInstalar=null;
 });
+/* iPhone: mostra o botão (não vem aviso do sistema) e explica os dois toques */
+if(_ehIOS && !_jaInstalado && btn){
+  var rot=btn.childNodes[0];
+  if(rot && rot.nodeType===3) rot.nodeValue='📲 Instalar no iPhone';
+  setTimeout(function(){ btn.classList.add('on'); }, 2500);
+}
+function mostrarPassoIOS(){
+  var v=document.getElementById('mgw-ios-passos');
+  if(v){ v.classList.add('on'); return; }
+  v=document.createElement('div');
+  v.id='mgw-ios-passos';
+  v.className='on';
+  v.innerHTML='<div class="cx">'
+    +'<h3>Instalar na tela de início</h3>'
+    +'<p>O iPhone não instala sozinho — são dois toques, feitos no próprio Safari:</p>'
+    +'<ol><li>Toque em <b>Compartilhar</b> <span class="ic">&#x2191;</span> na barra de baixo do Safari.</li>'
+    +'<li>Role e toque em <b>Adicionar à Tela de Início</b>, depois em <b>Adicionar</b>.</li></ol>'
+    +'<p class="obs">Depois disso o Magiway abre pelo ícone, em tela cheia e sem a barra do navegador — '
+    +'e continua abrindo mesmo sem sinal, mostrando o que já foi baixado.</p>'
+    +'<p class="obs">Se você abriu este endereço pelo Chrome ou pelo Instagram, o botão Compartilhar não '
+    +'tem essa opção: abra no <b>Safari</b> primeiro.</p>'
+    +'<button onclick="document.getElementById(\'mgw-ios-passos\').classList.remove(\'on\')">Entendi</button>'
+  +'</div>';
+  v.addEventListener('click', function(e){ if(e.target===v) v.classList.remove('on'); });
+  document.body.appendChild(v);
+}
 window.addEventListener('appinstalled', function(){
   var b=document.getElementById('mgw-instalar'); if(b) b.classList.remove('on');
   if(typeof toast==='function') toast('📲 Magiway instalado');

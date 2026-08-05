@@ -9,15 +9,74 @@
   "background_color": "#000020",
   "theme_color": "#000020",
   "lang": "pt-BR",
-  "categories": ["business", "productivity"],
+  "categories": [
+    "business",
+    "productivity"
+  ],
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "shortcuts": [
-    { "name": "Agenda do Dia", "short_name": "Agenda", "url": "/?aba=agenda", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Calendário da Frota", "short_name": "Calendário", "url": "/?aba=calendario", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Notas & Pendências", "short_name": "Pendências", "url": "/?aba=tarefas", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] }
+    {
+      "name": "Agenda do Dia",
+      "short_name": "Agenda",
+      "url": "/?aba=agenda",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Calendário da Frota",
+      "short_name": "Calendário",
+      "url": "/?aba=calendario",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Suporte",
+      "short_name": "Suporte",
+      "url": "/?aba=suporte",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Frota",
+      "short_name": "Frota",
+      "url": "/?aba=frota",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }
