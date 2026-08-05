@@ -5,6 +5,10 @@ body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relati
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <title>MAGIWAY Rental Car — Sistema</title>
+<!-- Marca da versão publicada. Serve para responder "qual versão está no ar?"
+     sem depender de olhar arquivo ou data de download: aparece no rodapé da
+     barra lateral, na tela de login e em window.MGW_VERSAO no console. -->
+<script>window.MGW_VERSAO={ build:'a6748a1', data:'2026-08-05' };</script>
 <!-- App instalável no celular: quem entrega o carro no aeroporto abre a Agenda
      do Dia pelo ícone da tela inicial, e ela abre mesmo sem sinal. -->
 <link rel="manifest" href="/manifest.webmanifest">
@@ -692,7 +696,7 @@ select.ffi option{background:#000020;color:#FF0000}
     <div class="lg-rec" id="l-rec"></div>
     <script>(function(){var p=document.getElementById('l-pass');if(p){p.value='';setTimeout(function(){try{p.focus();}catch(e){}},250);}})();</script>
     <div class="lg-err" id="l-err" style="display: none;">Credenciais inválidas. Tente novamente.</div>
-    <div class="lg-status"><div class="ls-dot"></div>Sistema Magiway · Florida, USA · acesso pela nuvem</div>
+    <div class="lg-status"><div class="ls-dot"></div>Sistema Magiway · Florida, USA · acesso pela nuvem <span id="lg-versao" style="opacity:.55"></span></div>
   </div>
 
   <!-- Definir senha nova — é aqui que a pessoa cai ao clicar no link do e-mail -->
@@ -19676,6 +19680,21 @@ body.mgw-sem-rede #mgw-offline{display:block}
 <script>
 (function(){
 'use strict';
+
+/* ── 0. Marca da versão ──
+   Depois de várias publicações seguidas, "qual versão está no ar?" virou uma
+   pergunta sem resposta: o app não trazia nenhuma identificação. Agora traz,
+   em três lugares — rodapé da barra lateral, tela de login e o console. */
+(function marcarVersao(){
+  var v=window.MGW_VERSAO; if(!v) return;
+  var texto='v '+v.build+' · '+v.data;
+  try{
+    var lg=document.getElementById('lg-versao'); if(lg) lg.textContent='· '+texto;
+    var sb=document.getElementById('sb-storage-info');
+    if(sb && sb.textContent.indexOf(v.build)<0) sb.textContent += ' · '+texto;
+    console.log('%c[Magiway] '+texto,'color:#1FA9A6');
+  }catch(e){}
+})();
 
 /* ── 1. Service worker ──
    Só faz sentido em http(s). Aberto como arquivo local (file://) o registro
