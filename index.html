@@ -24,6 +24,19 @@ body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relati
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<script>
+/* Sem sinal (ou com o CDN bloqueado pela rede do hotel), o Chart.js não carrega.
+   Antes disso derrubava a montagem do Dashboard no meio: os gráficos ficavam em
+   branco E os números paravam de aparecer, porque a exceção interrompia a
+   função. Com este substituto de mentira, o gráfico fica vazio e o resto da
+   tela continua funcionando — que é o que importa para quem está no aeroporto. */
+if(typeof Chart==='undefined'){
+  window.Chart=function(){ return { destroy:function(){}, update:function(){}, resize:function(){}, data:{}, options:{} }; };
+  window.Chart.defaults={ color:'#9AB4CC', font:{ family:"'DM Sans',sans-serif" } };
+  window.MGW_SEM_GRAFICOS=true;
+  console.warn('[app] Chart.js não carregou — os gráficos ficam vazios, o resto do app funciona normalmente');
+}
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -18485,6 +18498,27 @@ function foraDaFrota(modelo,obs){
 }
 function categoryOf(modelo,obs){
   var s=norm(modelo+' '+obs);
+  /* Primeiro pergunta à FROTA cadastrada: se a equipe criou uma categoria nova
+     (ex.: "Van 12 lugares") e cadastrou o Transit nela, a reserva do Transit
+     tem de cair lá — senão a categoria nova nasceria vazia no calendário e a
+     reserva iria parar em "Outros". As regras fixas abaixo continuam valendo
+     para tudo que a frota não reconhecer. */
+  try{
+    if(window.MGW_FROTA){
+      var carros=MGW_FROTA.carros();
+      /* modelo mais específico primeiro: "Pacifica Hybrid" antes de "Pacifica" */
+      var ord=carros.slice().sort(function(a,b){ return String(b.modelo||'').length-String(a.modelo||'').length; });
+      for(var i=0;i<ord.length;i++){
+        var m=norm(ord[i].modelo); if(m.length<4) continue;
+        if(s.indexOf(m)>=0) return ord[i].cat;
+      }
+      var cats=MGW_FROTA.categorias();
+      for(var j=0;j<cats.length;j++){
+        var ck=norm(cats[j].label||cats[j].key);
+        if(ck.length>=3 && s.indexOf(ck)>=0) return cats[j].key;
+      }
+    }
+  }catch(e){}
   /* MINIVAN — inclui Pacifica, Voyager, Carnival, Sienna, 7L, 7L Limited, 8L */
   if(/minivan|pacifica|voyager|carnival|sienna|odyssey|7\s*l\b|\b7l\b|8\s*l\b|\b8l\b/.test(s)) return 'Minivan';
   /* SUV PREMIUM — Expedition e os SUVs grandes/luxo */
@@ -19066,7 +19100,13 @@ function assignCars(){
     cfg._overflow=overRows.length;
   });
 
-  FALLBACK_CATS.forEach(function(key){
+  /* Linhas dinâmicas: "Outros" mais qualquer categoria que apareça nas reservas
+     sem ter carro cadastrado na Frota. Sem isto a reserva ficava sem carro
+     atribuído e simplesmente não desenhava barra nenhuma no calendário. */
+  var oficiaisA={}; CATS.forEach(function(c){ oficiaisA[c.key]=1; });
+  var dinamicasA=FALLBACK_CATS.slice();
+  Object.keys(byCat).forEach(function(k){ if(k && !oficiaisA[k] && dinamicasA.indexOf(k)<0) dinamicasA.push(k); });
+  dinamicasA.forEach(function(key){
     var list=(byCat[key]||[]).slice().sort(function(a,b){ return a.startDT-b.startDT; });
     var rows=[];
     list.forEach(function(r){
@@ -19160,8 +19200,15 @@ function renderCalendar(){
     var key=r.cat+'|'+r.car; (cellBars[key]=cellBars[key]||[]).push(bar);
   });
 
+  /* Categoria que aparece nas reservas mas não tem carro cadastrado na Frota
+     não pode sumir da tela: entra como linha dinâmica, sem conta de
+     overbooking (não há frota para comparar). */
+  var oficiais={}; CATS.forEach(function(c){ oficiais[c.key]=1; });
+  var extras=[];
+  DATA.forEach(function(r){ if(r.cat && !oficiais[r.cat] && FALLBACK_CATS.indexOf(r.cat)<0 && extras.indexOf(r.cat)<0) extras.push(r.cat); });
+  var dinamicas=FALLBACK_CATS.concat(extras);
   var allCats=CATS.map(function(c){ return {key:c.key,label:c.label,cars:c.cars,overflow:c._overflow||0,fallback:false}; })
-    .concat(FALLBACK_CATS.filter(function(k){ return DATA.some(function(r){ return r.cat===k; }); })
+    .concat(dinamicas.filter(function(k){ return DATA.some(function(r){ return r.cat===k; }); })
       .map(function(k){ return {key:k,label:k+' (fora da frota)',cars:fallbackRows[k]||1,overflow:0,fallback:true}; }));
 
   allCats.forEach(function(cat){
@@ -19899,10 +19946,13 @@ window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, rend
   irParaDia:irParaDia,
   abrirEdicao:abrirEdicao, salvarEdicao:salvarEdicao, excluir:excluir, juntarDuplicata:juntarDuplicata,
   setObs:setObs, obsCresce:obsCresce,
-  /* chamado pela aba Frota sempre que a lista de carros muda */
+  /* Chamado pela aba Frota sempre que a lista de carros muda. Reclassifica as
+     reservas antes de realocar: cadastrar o Transit numa categoria nova só
+     serve se a reserva do Transit passar a cair nela. */
   aplicarFrota:function(){
     sincronizarFrota();
     catFilterDone=false; catFilterCalDone=false;
+    DATA.forEach(function(r){ r.cat=categoryOf(r.modelo, r.obs); });
     try{ populateCatFilter(); }catch(e){}
     if(LOADED){ assignCars(); renderAll(); }
   },
