@@ -19,11 +19,11 @@
 
 -- ── 1. PERFIS ──────────────────────────────────────────────────────
 -- Uma linha por pessoa que entra no app. É o 'role' daqui que decide
--- quem é gerente.
+-- o nível de acesso: admin, diretoria ou usuario.
 create table if not exists public.profiles (
   id         uuid primary key references auth.users(id) on delete cascade,
   nome       text,
-  role       text not null default 'vendedor',   -- 'admin' = gerente
+  role       text not null default 'usuario',    -- admin | diretoria | usuario
   vendor_id  text,
   criado_em  timestamptz not null default now()
 );
@@ -48,21 +48,41 @@ insert into public.profiles (id, nome)
 select u.id, split_part(u.email,'@',1) from auth.users u
 on conflict (id) do nothing;
 
--- ── 2. QUEM É GERENTE ──────────────────────────────────────────────
--- SOMENTE O LUCIANO. Diretoria, Janes e Dickson são 'vendedor'.
+-- ── 2. OS TRÊS NÍVEIS DE ACESSO ────────────────────────────────────
+--   admin      Luciano. Tudo, inclusive Configurações.
+--   diretoria  Tudo, menos Configurações. Vê o financeiro.
+--   usuario    A operação. Não mexe em acessos nem em Configurações.
+--
+-- Só o Luciano é admin. Os outros começam como 'usuario' — para
+-- promover alguém a diretoria, troque o e-mail na linha marcada abaixo.
 update public.profiles p set role = 'admin'
   from auth.users u
  where u.id = p.id and lower(u.email) = 'luciano_lira19@hotmail.com';
 
-update public.profiles p set role = 'vendedor'
+update public.profiles p set role = 'usuario'
   from auth.users u
- where u.id = p.id and lower(u.email) <> 'luciano_lira19@hotmail.com';
+ where u.id = p.id
+   and lower(u.email) <> 'luciano_lira19@hotmail.com'
+   and p.role not in ('diretoria');   -- não rebaixa quem já é diretoria
 
--- Função usada pelas políticas. É SECURITY DEFINER de propósito: sem
+-- QUEM É DIRETORIA: descomente e ponha o e-mail.
+-- update public.profiles p set role = 'diretoria'
+--   from auth.users u
+--  where u.id = p.id and lower(u.email) = 'magiwayrentalcarusa@gmail.com';
+
+-- Funções usadas pelas políticas. SECURITY DEFINER de propósito: sem
 -- isso, ler profiles dentro de uma política de profiles entra em laço.
+
+-- Só o Luciano. É esta que guarda o canal anônimo.
 create or replace function public.eh_gerente()
 returns boolean language sql stable security definer set search_path = public as $$
   select coalesce((select role = 'admin' from public.profiles where id = auth.uid()), false);
+$$;
+
+-- Administrador OU diretoria. É esta que libera o fluxo de caixa.
+create or replace function public.ve_financeiro()
+returns boolean language sql stable security definer set search_path = public as $$
+  select coalesce((select role in ('admin','diretoria') from public.profiles where id = auth.uid()), false);
 $$;
 
 -- ── 3. DADOS DE CADA PESSOA ────────────────────────────────────────
@@ -125,27 +145,28 @@ create policy "meus dados" on public.app_state
   with check (user_id = auth.uid());
 
 -- Dados da empresa: todo mundo lê e grava, MENOS o fluxo de caixa, que
--- só sai do servidor para o gerente. Era isso que faltava: a trava
--- existia só no navegador.
+-- só sai do servidor para administrador e diretoria. Era isso que
+-- faltava: a trava existia só no navegador.
 create policy "empresa le" on public.shared_state
   for select to authenticated
-  using (k <> 'gs_fluxo_v1' or public.eh_gerente());
+  using (k <> 'gs_fluxo_v1' or public.ve_financeiro());
 
 create policy "empresa insere" on public.shared_state
   for insert to authenticated
-  with check (k <> 'gs_fluxo_v1' or public.eh_gerente());
+  with check (k <> 'gs_fluxo_v1' or public.ve_financeiro());
 
 create policy "empresa atualiza" on public.shared_state
   for update to authenticated
-  using      (k <> 'gs_fluxo_v1' or public.eh_gerente())
-  with check (k <> 'gs_fluxo_v1' or public.eh_gerente());
+  using      (k <> 'gs_fluxo_v1' or public.ve_financeiro())
+  with check (k <> 'gs_fluxo_v1' or public.ve_financeiro());
 
 create policy "empresa apaga" on public.shared_state
   for delete to authenticated
   using (public.eh_gerente());
 
 -- Canal anônimo: qualquer um escreve, ninguém lê de volta — nem quem
--- escreveu. Só o gerente enxerga a caixa.
+-- escreveu. Só o ADMIN (Luciano) enxerga a caixa: nem a diretoria entra
+-- aqui, porque quem escreve leu na tela que só ele lê.
 create policy "todos escrevem" on public.auditoria
   for insert to authenticated with check (true);
 
@@ -175,7 +196,8 @@ select tablename, rowsecurity
    and tablename in ('profiles','app_state','shared_state','auditoria')
  order by tablename;
 
--- E aqui, exatamente uma linha com role = 'admin'.
+-- E aqui: exatamente uma linha com role = 'admin'; o resto entre
+-- 'diretoria' e 'usuario'.
 select u.email, p.role
   from public.profiles p join auth.users u on u.id = p.id
  order by p.role, u.email;

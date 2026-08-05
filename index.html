@@ -683,8 +683,9 @@ select.ffi option{background:#000020;color:#FF0000}
 .va-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .va-grid label{display:flex;flex-direction:column;gap:3px;font-size:.65rem;color:var(--chalk3);font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
 .va-grid label:last-child{grid-column:1/-1}
-.va-grid input{padding:12px 14px;background:rgba(0,0,0,.4);border:1px solid var(--edge);border-radius:9px;color:var(--chalk);font-size:.9rem;outline:none;font-family:'DM Mono',monospace;min-height:44px}
-.va-grid input:focus{border-color:var(--fire);box-shadow:0 0 0 2px rgba(255,0,0,.18)}
+.va-grid input,.va-grid select{padding:12px 14px;background:rgba(0,0,0,.4);border:1px solid var(--edge);border-radius:9px;color:var(--chalk);font-size:.9rem;outline:none;font-family:'DM Mono',monospace;min-height:44px}
+.va-grid input:focus,.va-grid select:focus{border-color:var(--fire);box-shadow:0 0 0 2px rgba(255,0,0,.18)}
+.va-grid label:has(select){grid-column:1/-1}
 .va-grid input[type=color]{padding:2px;height:36px;cursor:pointer}
 .va-actions{display:flex;gap:8px;margin-top:14px}
 .va-actions .vendor-btn{flex:1}
@@ -5483,7 +5484,11 @@ select.ffi option{background:#000020;color:#FF0000}
 
   <div class="controle-banner">
     <div class="cb-ttl">🔐 Sessão ativa: <span id="controle-active-name" style="color:var(--fire);">Luciano Lira</span></div>
-    <div class="cb-sub"><strong>Gerente</strong> (Luciano) tem acesso total e é quem entra no cálculo de comissão. <strong>Usuários</strong> usam a operação — Cotação, Emitir Documentos, Calendário, Reservas e Agenda — e não veem Vendas do Mês, Controle nem Configurações.<br>As <strong>reservas são compartilhadas</strong>: todo mundo trabalha no mesmo calendário.</div>
+    <div class="cb-sub">
+      <strong style="color:var(--fire)">Administrador</strong> (Luciano) vê tudo, inclusive Configurações, e é o único que entra no cálculo da comissão.<br>
+      <strong style="color:var(--gold)">Diretoria</strong> vê tudo, <strong>menos Configurações</strong> — não mexe em preço, câmbio, meta, chave de IA nem DocuSign, que são o motor de cálculo do app.<br>
+      <strong style="color:var(--ice)">Usuário</strong> usa a operação inteira, mas não abre Configurações nem este Controle de Acesso.<br>
+      As <strong>reservas são compartilhadas</strong>: todo mundo trabalha no mesmo calendário. E o <strong>Canal Anônimo</strong> continua só do Luciano, em qualquer nível.</div>
   </div>
 
   <div id="controle-list" class="vendor-list">
@@ -5491,9 +5496,9 @@ select.ffi option{background:#000020;color:#FF0000}
 
   <div class="ctrl-divider"></div>
 
-  <div class="sec-head" style="margin-top:32px"><div class="sec-dot" style="background:var(--ice)"></div><span class="sec-ttl">⚙ CONFIGURAÇÕES DA EMPRESA</span><div class="sec-line"></div></div>
+  <div class="sec-head" id="ctrl-cfg-head" style="margin-top:32px"><div class="sec-dot" style="background:var(--ice)"></div><span class="sec-ttl">⚙ CONFIGURAÇÕES DA EMPRESA</span><div class="sec-line"></div></div>
 
-  <div class="ctrl-cfg-card">
+  <div class="ctrl-cfg-card" id="ctrl-cfg-bloco">
     <div class="ctrl-cfg-grid">
       <div class="ctrl-cfg-item" onclick="openConfigFromControle()">
         <div class="cci-ico">💰</div>
@@ -7192,8 +7197,12 @@ function liberado(){ try{ return sessionStorage.getItem(FX_SESS)==='1'; }catch(e
 /* O fluxo de caixa só sincroniza na conta do gerente. Quem não é gerente pode
    abrir com a senha, mas o que lançar fica só neste navegador — melhor dizer
    isso na cara do que deixar a pessoa lançar e o dado sumir depois. */
+/* Quem tem o financeiro sincronizado: administrador e diretoria. Para os
+   demais a aba abre com a senha, mas o que for lançado fica só naquele
+   navegador — melhor dizer isso na cara do que deixar o dado sumir depois. */
 function ehGerente(){
-  try{ if(window.CLOUD && CLOUD.role) return CLOUD.role==='admin'; }catch(e){}
+  try{ if(window.CLOUD && CLOUD.role) return CLOUD.role==='admin'||CLOUD.role==='diretoria'; }catch(e){}
+  try{ if(window.MGW_PAPEL) return window.MGW_PAPEL==='admin'||window.MGW_PAPEL==='diretoria'; }catch(e){}
   return !!window.IS_MASTER;
 }
 function avisoSincronia(){
@@ -8335,8 +8344,8 @@ const NAV={
 
 function nav(id,el){
   // Controle de acesso: vendedor não entra em áreas exclusivas do administrador
-  if(!window.IS_MASTER && (window.ADMIN_ONLY_PANELS||[]).includes(id)){
-    if(typeof toast==='function') toast('🔒 Área exclusiva do administrador','red');
+  if(typeof window.podeVer==='function' && !window.podeVer(id)){
+    if(typeof toast==='function') toast('🔒 '+(id==='config'?'Configurações são do administrador':'Área sem acesso para o seu perfil'),'red');
     return;
   }
   document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
@@ -8434,12 +8443,46 @@ async function hashCreds(e,p){
   const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
   return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
 }
-// Painéis exclusivos do administrador. O vendedor não acessa nenhum destes.
-/* Painéis exclusivos do gerente. 'vendasmes' tem a comissão dele — usuário não vê. */
-/* Acesso elevado é só do Luciano. Todo o resto da equipe é usuário: usa a
-   operação (Cotação, Emitir, Calendário, Reservas, Agenda, Pendências) e não
-   entra em Controle, Configurações nem Vendas do Mês. */
-window.ADMIN_ONLY_PANELS=['vendedores','config','vendasmes'];
+/* ═══════════════════════════════════════════════════════════════════
+   TRÊS NÍVEIS DE ACESSO
+
+     admin      — Luciano. Tudo, inclusive Configurações.
+     diretoria  — tudo, MENOS Configurações. Não mexe em preço, câmbio,
+                  meta, chave de IA nem DocuSign, que são o motor de
+                  cálculo do app inteiro.
+     usuario    — tudo, menos Configurações e Controle de Acesso.
+                  Ou seja: usa a operação inteira, mas não cria, apaga
+                  nem muda o acesso de ninguém.
+
+   Comissão é outra conversa: quem entra no rateio é só quem tem
+   role 'admin' (veja ehVendedor). Diretoria enxerga os números, mas
+   não vira vendedor por causa disso.
+
+   O canal anônimo continua SÓ do Luciano, mesmo para a diretoria — as
+   pessoas que escrevem lá leram na tela que só ele lê. Isso não se
+   muda sem avisar quem já escreveu.
+   ═══════════════════════════════════════════════════════════════════ */
+window.MGW_PAPEIS={
+  admin:     { nome:'Administrador', desc:'acesso total, inclusive Configurações', bloqueia:[] },
+  diretoria: { nome:'Diretoria',     desc:'acesso a tudo, menos Configurações',    bloqueia:['config'] },
+  usuario:   { nome:'Usuário',       desc:'operação; não mexe em acessos',         bloqueia:['config','vendedores'] }
+};
+window.MGW_PAPEL='usuario';
+function mgwPapel(){
+  var p=window.MGW_PAPEL;
+  return (p && window.MGW_PAPEIS[p]) ? p : (window.IS_MASTER?'admin':'usuario');
+}
+/* Fonte única da verdade: quem pode abrir qual painel. */
+window.podeVer=function(painel){
+  var cfg=window.MGW_PAPEIS[mgwPapel()];
+  return !cfg || cfg.bloqueia.indexOf(painel)<0;
+};
+/* Mantido porque outras partes do arquivo ainda leem esta lista. Passa a ser
+   o que o papel ATUAL não pode ver, em vez de uma lista fixa de admin. */
+Object.defineProperty(window,'ADMIN_ONLY_PANELS',{
+  get:function(){ var c=window.MGW_PAPEIS[mgwPapel()]; return c?c.bloqueia.slice():[]; },
+  configurable:true
+});
 window.CURRENT_USER=null;   // preenchido no login
 // E-mails que SEMPRE entram como administrador (dono do sistema), mesmo que a
 // tabela 'profiles' da nuvem não esteja marcada como 'admin'. Adicione aqui os e-mails de admin.
@@ -8560,12 +8603,16 @@ async function doLogin(){
           if(_masterCreds||_adminEmail) role='admin';
         }catch(_){}
         CLOUD.session=data.session; CLOUD.uid=uid; CLOUD.role=role; CLOUD.email=e;
+        window.MGW_PAPEL=(role==='admin'||role==='diretoria')?role:'usuario';
         if(role==='admin'){
           window.IS_MASTER=true; window.CURRENT_VENDOR_ID=null;
           window.CURRENT_USER={nome:(prof&&prof.nome)||'Luciano Lira', email:e, role:'admin', cargo:'Gerente Comercial', initials:'LL'};
           try{ if(typeof toast==='function')toast('☁ Carregando dados da nuvem...'); await cloudHydrateAdmin(); }catch(err){ console.warn('[nuvem] hydrate admin',err); }
         } else {
           window.IS_MASTER=false; window.CURRENT_VENDOR_ID=uid;
+          window.CURRENT_USER={nome:(prof&&prof.nome)||e.split('@')[0], email:e, role:window.MGW_PAPEL,
+                               cargo:(prof&&prof.cargo)||window.MGW_PAPEIS[window.MGW_PAPEL].nome,
+                               initials:String((prof&&prof.nome)||e).slice(0,2).toUpperCase()};
           try{ await cloudHydrateUsuario(uid, prof); }catch(err){ console.warn('[nuvem] hydrate usuário',err); }
         }
         _enterApp();
@@ -8584,6 +8631,7 @@ async function doLogin(){
   // 1) ADMINISTRADOR (login mestre) — acesso total: troca de vendedor, Geral, Controle, Configurações.
   if((CREDS_HASH && h===CREDS_HASH) || matchCfg){
     window.IS_MASTER=true;
+    window.MGW_PAPEL='admin';
     window.CURRENT_VENDOR_ID=null;
     window.CURRENT_USER={nome:'Luciano Lira', email:e, role:'admin', cargo:'Gerente Comercial', initials:'LL'};
     _enterApp();
@@ -8606,6 +8654,7 @@ async function doLogin(){
   if(vend){
     const papel=(vend.role||'usuario');
     window.IS_MASTER=(papel==='admin');
+    window.MGW_PAPEL=window.MGW_PAPEIS[papel]?papel:'usuario';
     window.CURRENT_VENDOR_ID=vend.id;
     window.CURRENT_USER={nome:vend.nome, email:vend.email, role:papel, cargo:vend.cargo||'Usuário', initials:vend.initials||'U'};
     if(typeof setActiveVendorId==='function') setActiveVendorId(vend.id);
@@ -8650,24 +8699,41 @@ function applyRoleAccess(){
   // Seletor de troca de vendedor (topo da barra lateral) — só admin
   const vselWrap=document.querySelector('.sb-vendor');
   if(vselWrap) vselWrap.style.display=master?'':'none';
-  // Itens de menu exclusivos do admin (Geral, Controle)
+  /* Some do menu só o que o papel NÃO pode abrir. Antes esta linha escondia
+     o item para qualquer um que não fosse admin, o que deixava a diretoria
+     sem o Controle de Acesso mesmo tendo direito a ele. */
   document.querySelectorAll('.sb-item').forEach(it=>{
     const oc=it.getAttribute('onclick')||'';
-    const restricted=(window.ADMIN_ONLY_PANELS||[]).some(id=>oc.includes("'"+id+"'"));
-    if(restricted) it.style.display=master?'':'none';
+    const m=oc.match(/nav\('([^']+)'/);
+    if(!m) return;
+    it.style.display = window.podeVer(m[1]) ? '' : 'none';
   });
   // Barra de armazenamento / apagar todos os dados — só admin
   const stor=document.getElementById('sb-storage-bar');
   if(stor) stor.style.display=master?'':'none';
-  // Se o vendedor caiu (por qualquer motivo) num painel administrativo, volta ao Dashboard
-  if(!master){
+  /* Configurações moram DENTRO do Controle, em cartões. A diretoria entra no
+     Controle, então o bloco inteiro sai da frente dela — sem isso ela veria
+     seis cartões que só respondem com "🔒 apenas o administrador". */
+  ['ctrl-cfg-head','ctrl-cfg-bloco'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display=window.podeVer('config')?'':'none';
+  });
+  // Se a pessoa caiu (por qualquer motivo) num painel que não pode ver, volta ao Dashboard
+  {
     const active=document.querySelector('.panel.active');
     const pid=active?active.id.replace('panel-',''):'';
-    if((window.ADMIN_ONLY_PANELS||[]).includes(pid)){
+    if(pid && !window.podeVer(pid)){
       const dash=document.querySelector(".sb-item[onclick*=\"'dashboard'\"]");
       if(dash) dash.click(); else if(typeof nav==='function') nav('dashboard');
     }
   }
+  /* Rodapé do menu diz o nível de acesso — evita a dúvida de "por que não
+     aparece Configurações para mim?" */
+  try{
+    const cfgP=window.MGW_PAPEIS[mgwPapel()];
+    const ur2=document.querySelector('.sb-urole');
+    if(ur2 && cfgP && mgwPapel()!=='admin') ur2.title=cfgP.nome+' — '+cfgP.desc;
+  }catch(_){}
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -8877,7 +8943,7 @@ const SOMENTE_GERENTE = ['gs_fluxo_v1'];
 async function _cloudPullShared(){
   try{
     const {data}=await CLOUD.client.from('shared_state').select('k,v');
-    const ehGerente = (CLOUD.role==='admin');
+    const ehGerente = (CLOUD.role==='admin'||CLOUD.role==='diretoria');
     (data||[]).forEach(r=>{
       if(r.v==null) return;
       if(!ehGerente && SOMENTE_GERENTE.includes(r.k)) return;
@@ -8928,7 +8994,7 @@ async function cloudHydrateAdmin(){
 function doLogout(){
   try{ if(window.MGW_LIVE) MGW_LIVE.desligar(); }catch(_){}
   window.MGW_AUTENTICADO=false;
-  window.IS_MASTER=false;
+  window.IS_MASTER=false; window.MGW_PAPEL='usuario';
   window.CURRENT_VENDOR_ID=null;
   window.CURRENT_USER=null;
   /* apaga o cache de reservas do navegador: são dados de clientes e não devem
@@ -15634,7 +15700,10 @@ const _VENDORS_DEFAULT = [ Object.assign({}, MGW_GERENTE) ].concat(MGW_USUARIOS.
 // Fallback seguro — é sempre o próprio gerente
 const _VENDOR_EMPTY = Object.assign({}, MGW_GERENTE);
 /* Quem é vendedor de verdade (entra na comissão): só o papel admin/gerente. */
-function ehVendedor(v){ return !!v && (v.role||'admin')==='admin'; }
+/* Quem entra no rateio da comissão. Só 'admin'. A diretoria enxerga os
+   números mas não é vendedora, e cadastro sem papel definido não pode cair
+   como vendedor por omissão — era o que acontecia com o antigo (v.role||'admin'). */
+function ehVendedor(v){ return !!v && v.role==='admin'; }
 
 // Shared keys — same data across vendors (company-level)
 /* gs_reservas_v1 é compartilhada: a reserva é da empresa, não de um usuário.
@@ -15683,7 +15752,10 @@ const VENDOR_SHARED_PREFIXES = ['gs_seedver_'];
    cargo e preservando qualquer outra alteração feita em Controle. */
 const MGW_CARGOS_CORRETOS={
   '6bafe0bf-64a9-438c-b751-8b25c0b0f36d':{cargo:'SDR'},                                    // Dickson
-  '2e2b5819-d978-4589-91aa-aaac51ea918d':{nome:'Diretoria', initials:'DI', cargo:'Diretoria'},
+  /* A conta Diretoria passa a ter o papel 'diretoria': tudo, menos
+     Configurações. Continua fora do rateio da comissão — quem entra ali é
+     só 'admin' (veja ehVendedor). */
+  '2e2b5819-d978-4589-91aa-aaac51ea918d':{nome:'Diretoria', initials:'DI', cargo:'Diretoria', role:'diretoria'},
   '6316d403-3d2f-4f87-94ef-d74fb48a9b1f':{cargo:'Gestora Operacional'}                     // Janes
 };
 /* `sincronizar` = grava pelo localStorage normal, que enfileira para o Supabase.
@@ -15884,6 +15956,8 @@ function vendorCreate(){
   const pass  = (document.getElementById('va-pass')?.value  || '').trim();
   const cargo = (document.getElementById('va-cargo')?.value || '').trim() || 'Vendedor(a)';
   const color = (document.getElementById('va-color')?.value || '#1FA9A6');
+  let   role  = (document.getElementById('va-role')?.value  || 'usuario');
+  if(!window.MGW_PAPEIS[role]) role='usuario';
   if(!nome){  if(typeof toast==='function')toast('✗ Nome obrigatório','red'); return; }
   if(!email){ if(typeof toast==='function')toast('✗ Email obrigatório','red'); return; }
   if(!pass || pass.length<4){ if(typeof toast==='function')toast('✗ Senha mín. 4 caracteres','red'); return; }
@@ -15896,10 +15970,13 @@ function vendorCreate(){
     if(typeof toast==='function')toast('✗ Email já cadastrado','red');
     return;
   }
-  list.push({id, nome, initials:init, email, pass, cargo, color});
+  /* role explícito: sem ele o app tratava a pessoa como vendedor no rateio da
+     comissão, porque ehVendedor assumia 'admin' quando o campo faltava */
+  list.push({id, nome, initials:init, email, pass, cargo, color, role});
   vendorsSave(list);
-  if(typeof toast==='function')toast('✓ '+nome+' adicionado','green');
+  if(typeof toast==='function')toast('✓ '+nome+' adicionado como '+window.MGW_PAPEIS[role].nome,'green');
   ['va-nome','va-init','va-email','va-pass','va-cargo'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
+  const _vr=document.getElementById('va-role'); if(_vr) _vr.value='usuario';
   vendorAddToggle();
   if(typeof renderControle==='function')renderControle();
   if(typeof populateVendorSelect==='function')populateVendorSelect();
@@ -16067,7 +16144,13 @@ function renderControle(){
         <div style="flex:1;min-width:0">
           <div class="vendor-name">${v.nome}</div>
           <div class="vendor-email">${v.email}</div>
-          <div class="vendor-role">${v.cargo}${v.role==='admin'?' · <span style="color:var(--fire)">GERENTE</span>':' · <span style="color:var(--ice)">USUÁRIO</span>'}${!String(v.pass||'').length?' · <span style="color:var(--gold)" title="Sem senha local: entra só pela nuvem (Supabase)">☁ só nuvem</span>':''}</div>
+          <div class="vendor-role">${v.cargo}${(function(){
+            const pp=(v.role==='admin'||v.role==='diretoria')?v.role:'usuario';
+            const cor={admin:'var(--fire)',diretoria:'var(--gold)',usuario:'var(--ice)'}[pp];
+            const txt={admin:'ADMINISTRADOR',diretoria:'DIRETORIA',usuario:'USUÁRIO'}[pp];
+            const dica=(window.MGW_PAPEIS&&window.MGW_PAPEIS[pp])?window.MGW_PAPEIS[pp].desc:'';
+            return ' · <span style="color:'+cor+'" title="'+dica+'">'+txt+'</span>';
+          })()}${!String(v.pass||'').length?' · <span style="color:var(--gold)" title="Sem senha local: entra só pela nuvem (Supabase)">☁ só nuvem</span>':''}</div>
         </div>
         ${isA?'<div class="vendor-badge">🟢 ATIVO</div>':''}
       </div>
@@ -16098,8 +16181,9 @@ function renderControle(){
           <label>Senha <input type="text" value="${v.pass}" onchange="vendorUpdate('${v.id}','pass',this.value)"></label>
           <label>Cargo <input type="text" value="${v.cargo}" onchange="vendorUpdate('${v.id}','cargo',this.value)"></label>
           <label>Tipo de acesso <select onchange="vendorUpdate('${v.id}','role',this.value);renderControle()">
-            <option value="usuario"${(v.role||'usuario')==='usuario'?' selected':''}>Usuário (operacional)</option>
-            <option value="admin"${v.role==='admin'?' selected':''}>Gerente (acesso total + comissão)</option>
+            <option value="usuario"${(v.role||'usuario')==='usuario'?' selected':''}>Usuário — operação; não mexe em acessos</option>
+            <option value="diretoria"${v.role==='diretoria'?' selected':''}>Diretoria — tudo, menos Configurações</option>
+            <option value="admin"${v.role==='admin'?' selected':''}>Administrador — tudo, e entra no rateio da comissão</option>
           </select></label>
           <label>Cor <input type="color" value="${v.color}" onchange="vendorUpdate('${v.id}','color',this.value);renderControle()"></label>
           ${canDel ? `<button class="vendor-btn vendor-btn-danger" onclick="vendorDelete('${v.id}')">🗑 EXCLUIR VENDEDOR</button>` : ''}
@@ -16124,6 +16208,13 @@ function renderControle(){
           <label>Senha <input type="text" id="va-pass" placeholder="mínimo 4 caracteres"></label>
           <label>Cargo <input type="text" id="va-cargo" placeholder="Vendedor(a)"></label>
           <label>Cor de destaque <input type="color" id="va-color" value="#1FA9A6"></label>
+          <label>Tipo de acesso
+            <select id="va-role">
+              <option value="usuario" selected>Usuário — operação; não mexe em acessos</option>
+              <option value="diretoria">Diretoria — tudo, menos Configurações</option>
+              <option value="admin">Administrador — tudo, e entra no rateio da comissão</option>
+            </select>
+          </label>
         </div>
         <div class="va-actions">
           <button class="vendor-btn" onclick="vendorCreate()">✓ CRIAR VENDEDOR</button>
@@ -17546,7 +17637,7 @@ async function puxar(silencioso){
        é o cinto de segurança do lado de cá — sem ela, este caminho pedia as
        chaves restritas de volta a cada 60 segundos. */
     var ehGerente=false;
-    try{ ehGerente=(window.CLOUD && CLOUD.role==='admin'); }catch(e){}
+    try{ ehGerente=(window.CLOUD && (CLOUD.role==='admin'||CLOUD.role==='diretoria')); }catch(e){}
     var restritas=(typeof SOMENTE_GERENTE!=='undefined')?SOMENTE_GERENTE:['gs_fluxo_v1'];
     var pedir=ehGerente ? CHAVES : CHAVES.filter(function(k){ return restritas.indexOf(k)<0; });
     var r=await CLOUD.client.from('shared_state').select('k,v').in('k',pedir);
