@@ -17520,6 +17520,20 @@ function redesenhar(chaves){
     if(chaves.indexOf('gs_fluxo_v1')>=0){
       try{ if(typeof window.fxReload==='function') window.fxReload(); }catch(e){}
     }
+    /* Carro cadastrado, editado ou tirado da frota por outra pessoa. Redesenha a
+       aba E manda o calendário refazer as linhas: a frota é a base da alocação,
+       então um carro a mais ou a menos muda a conta de overbooking de todo
+       mundo na hora. */
+    if(chaves.indexOf('gs_frota_v3')>=0){
+      try{ if(window.MGW_FROTA) MGW_FROTA.recarregar(); }catch(e){}
+      try{ if(window.MGW_RESV && MGW_RESV.aplicarFrota) MGW_RESV.aplicarFrota(); }catch(e){}
+    }
+    /* chamado aberto ou resolvido por outra pessoa — muda a aba Suporte e
+       também o contador de chamados na ficha de cada carro */
+    if(chaves.indexOf('gs_suporte_v1')>=0){
+      try{ if(window.MGW_SUPORTE) MGW_SUPORTE.render(); }catch(e){}
+      try{ if(window.MGW_FROTA) MGW_FROTA.render(); }catch(e){}
+    }
   } finally { aplicando=false; }
 }
 
