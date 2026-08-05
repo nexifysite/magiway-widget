@@ -54,6 +54,10 @@ body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relati
 html{font-size:14px}
 body{font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--chalk);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--fire);border-radius:2px}
+/* Lista aberta dos filtros: sem isto o sistema pinta o fundo de branco e o texto some */
+select{color-scheme:dark}
+select option,select optgroup{background:var(--ink2);color:var(--chalk)}
+select option:checked,select option:hover{background:var(--ink3);color:#fff}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(ellipse 60% 40% at 5% 15%,rgba(255,0,0,.05) 0%,transparent 60%),
              radial-gradient(ellipse 50% 50% at 95% 85%,rgba(31,169,166,.03) 0%,transparent 60%)}
@@ -742,6 +746,14 @@ select.ffi option{background:#000020;color:#FF0000}
       </div>
 
       <div class="sb-sec">Frota &amp; Reservas</div>
+      <div class="sb-item" onclick="nav('frota',this)">
+        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 17h14M5 17a2 2 0 11-4 0 2 2 0 014 0zm14 0a2 2 0 104 0 2 2 0 00-4 0zM3 17V9l2.5-4.5h11L20 9v8"></path><path stroke-linecap="round" stroke-width="2" d="M3 12h18"></path></svg>
+        Frota
+      </div>
+      <div class="sb-item" onclick="nav('suporte',this)">
+        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728M5.636 18.364a9 9 0 010-12.728M12 9a3 3 0 100 6 3 3 0 000-6z"></path></svg>
+        Suporte
+      </div>
       <div class="sb-item" onclick="nav('calendario',this)">
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"></rect><path stroke-linecap="round" stroke-width="2" d="M8 2v4M16 2v4M3 10h18"></path><rect x="6" y="13" width="4" height="3" rx="0.5" fill="currentColor" stroke="none"></rect><rect x="12" y="13" width="6" height="3" rx="0.5" fill="currentColor" stroke="none" opacity="0.5"></rect></svg>
         Calendário Frota <span class="sb-bdg bdg-live">LIVE</span>
@@ -772,6 +784,11 @@ select.ffi option{background:#000020;color:#FF0000}
       <div class="sb-item" onclick="nav('tarefas',this)">
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
         Notas &amp; Pendências
+      </div>
+
+      <div class="sb-item" onclick="nav('auditoria',this)">
+        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" stroke-width="2"></rect><path stroke-linecap="round" stroke-width="2" d="M8 11V7a4 4 0 018 0v4"></path></svg>
+        Canal Anônimo
       </div>
 
       <div class="sb-item" onclick="nav('fluxo',this)">
@@ -5752,6 +5769,14 @@ Data de retirada = din"></textarea>
 .mgag-flagbtn.on-ret{background:rgba(26,255,157,.16);border-color:#1AFF9D;color:#1AFF9D}
 .mgag-flagbtn.on-ent{background:rgba(59,158,255,.16);border-color:#3B9EFF;color:#3B9EFF}
 .mgag-flagbtn.on-gas{background:rgba(255,71,87,.18);border-color:#FF6B78;color:#FF6B78}
+.mgag-obs{margin-top:9px}
+.mgag-obs-lbl{display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.07em;text-transform:uppercase;color:var(--chalk3);margin-bottom:4px}
+.mgag-obs-assin{font-size:.52rem;color:var(--chalk3);opacity:.8;text-transform:none;letter-spacing:0}
+.mgag-obs-in{width:100%;min-height:32px;resize:vertical;padding:7px 10px;border-radius:8px;border:1px solid var(--edge);background:rgba(255,255,255,.03);color:var(--chalk);font-family:'DM Sans',sans-serif;font-size:.7rem;line-height:1.45;outline:none}
+.mgag-obs-in:focus{border-color:var(--ice)}
+.mgag-obs-in::placeholder{color:var(--chalk3);opacity:.55}
+.mgag-obs.tem .mgag-obs-in{border-color:rgba(255,209,26,.45);background:rgba(255,209,26,.05)}
+.mgag-obs.tem .mgag-obs-lbl{color:var(--gold)}
 .mgag-card.returned{opacity:.72}
 .mgag-daylabel{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--gold);letter-spacing:.04em}
 /* extras: hint, drag/drop, filtros, disponibilidade, inconsistências */
@@ -5865,6 +5890,219 @@ Data de retirada = din"></textarea>
     </div>
   </div>
 </div>
+
+<!-- ═══════════ FROTA · SUPORTE · AUDITORIA ═══════════ -->
+<style>
+#panel-frota,#panel-suporte,#panel-auditoria{padding:20px 24px}
+.fr-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.fr-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}
+.fr-tab{padding:8px 15px;border-radius:10px;border:1px solid var(--edge);background:rgba(255,255,255,.03);
+  color:var(--chalk2);font-family:'DM Mono',monospace;font-size:.64rem;letter-spacing:.06em;cursor:pointer;
+  text-transform:uppercase;transition:.15s;display:flex;align-items:center;gap:8px}
+.fr-tab:hover{border-color:var(--chalk3);color:var(--chalk)}
+.fr-tab.on{background:rgba(255,255,255,.07);color:var(--chalk);font-weight:700}
+.fr-tab .n{font-size:.56rem;opacity:.65}
+.fr-tab .x{opacity:.45;font-size:.8rem;line-height:1}
+.fr-tab .x:hover{opacity:1;color:#FF6B78}
+.fr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.fr-card{border:1px solid var(--edge);border-radius:13px;background:rgba(255,255,255,.02);padding:14px 15px;position:relative}
+.fr-card.alerta{border-color:rgba(255,209,26,.45)}
+.fr-card.parado{border-color:rgba(255,71,87,.5);background:rgba(255,71,87,.04)}
+.fr-h{display:flex;align-items:baseline;gap:9px;margin-bottom:3px;flex-wrap:wrap}
+.fr-modelo{font-size:.95rem;font-weight:800;font-family:'DM Sans',sans-serif}
+.fr-placa{font-family:'DM Mono',monospace;font-size:.66rem;letter-spacing:.11em;padding:2px 8px;border-radius:6px;
+  background:rgba(255,255,255,.07);color:var(--chalk2)}
+.fr-sub{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--chalk3);letter-spacing:.05em;margin-bottom:10px}
+.fr-linhas{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.fr-l{display:flex;gap:8px;font-size:.68rem;line-height:1.4}
+.fr-lk{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--chalk3);min-width:74px;flex-shrink:0;padding-top:2px}
+.fr-lv{color:var(--chalk);word-break:break-word;flex:1;min-width:0}
+.fr-lv.vazio{color:var(--chalk3);opacity:.6;font-style:italic}
+.fr-venc{font-family:'DM Mono',monospace;font-size:.53rem;padding:1px 6px;border-radius:20px;margin-left:6px}
+.fr-venc.ok{background:rgba(26,255,157,.14);color:#1AFF9D}
+.fr-venc.perto{background:rgba(255,209,26,.16);color:var(--gold)}
+.fr-venc.venceu{background:rgba(255,71,87,.18);color:#FF6B78}
+.fr-rodape{display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--edge);padding-top:10px;margin-top:2px}
+.fr-mini{flex:1;min-width:86px}
+.fr-mini-n{font-size:1.05rem;font-weight:800;font-family:'DM Sans',sans-serif;line-height:1.1}
+.fr-mini-l{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;color:var(--chalk3)}
+.fr-btns{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+.fr-b{font-family:'DM Mono',monospace;font-size:.57rem;letter-spacing:.04em;padding:6px 11px;border-radius:8px;
+  border:1px solid var(--edgeO);background:rgba(255,255,255,.03);color:var(--chalk2);cursor:pointer;transition:.15s}
+.fr-b:hover{border-color:var(--chalk3);color:var(--chalk)}
+.fr-b.perigo:hover{border-color:#FF6B78;color:#FF6B78}
+.fr-vazio{padding:34px 20px;text-align:center;color:var(--chalk3);font-size:.78rem;
+  border:1px dashed var(--edge);border-radius:13px}
+.fr-modal{position:fixed;inset:0;z-index:9600;background:rgba(0,0,10,.72);display:none;align-items:flex-start;
+  justify-content:center;overflow-y:auto;padding:34px 16px}
+.fr-modal.on{display:flex}
+.fr-box{width:100%;max-width:640px;background:var(--ink2);border:1px solid var(--edge);border-radius:16px;
+  padding:22px 24px;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.fr-box h3{font-size:1rem;font-weight:800;margin-bottom:3px}
+.fr-box .fr-box-sub{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--chalk3);letter-spacing:.05em;margin-bottom:16px}
+.fr-form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fr-form .full{grid-column:1/-1}
+.fr-f label{display:block;font-family:'DM Mono',monospace;font-size:.53rem;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--chalk3);margin-bottom:4px}
+.fr-f input,.fr-f select,.fr-f textarea{width:100%;padding:8px 11px;border-radius:9px;border:1px solid var(--edge);
+  background:rgba(255,255,255,.04);color:var(--chalk);font-size:.75rem;font-family:'DM Sans',sans-serif;outline:none}
+.fr-f input:focus,.fr-f select:focus,.fr-f textarea:focus{border-color:var(--ice)}
+.fr-f textarea{resize:vertical;min-height:74px;line-height:1.5}
+.fr-f .dica{font-size:.58rem;color:var(--chalk3);margin-top:4px;line-height:1.4}
+.fr-acoes{display:flex;gap:9px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+.fr-ok{background:linear-gradient(135deg,var(--fire),var(--fireDark));color:#fff;border:none;border-radius:9px;
+  padding:9px 20px;font-size:.75rem;font-weight:700;cursor:pointer}
+.fr-cancel{background:transparent;border:1px solid var(--edge);color:var(--chalk2);border-radius:9px;
+  padding:9px 18px;font-size:.75rem;cursor:pointer}
+.fr-oficina{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.fr-of-row{display:flex;gap:9px;align-items:center;font-size:.66rem;padding:6px 9px;border-radius:8px;
+  background:rgba(255,255,255,.03)}
+.fr-of-row .d{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--chalk3);white-space:nowrap}
+.fr-of-row .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fr-of-row .v{font-weight:700;white-space:nowrap;color:#FF9E7A}
+.fr-of-row .x{cursor:pointer;color:var(--chalk3);font-size:.75rem}
+.fr-of-row .x:hover{color:#FF6B78}
+/* ── Suporte ── */
+.sp-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.sp-kpi{border:1px solid var(--edge);border-radius:12px;padding:13px 15px;background:rgba(255,255,255,.02)}
+.sp-kpi-n{font-size:1.5rem;font-weight:800;font-family:'DM Sans',sans-serif;line-height:1.1}
+.sp-kpi-l{font-family:'DM Mono',monospace;font-size:.53rem;letter-spacing:.07em;text-transform:uppercase;color:var(--chalk3);margin-top:3px}
+.sp-top{border:1px solid var(--edge);border-radius:12px;padding:14px 16px;margin-bottom:18px;background:rgba(255,255,255,.02)}
+.sp-top-h{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--chalk3);margin-bottom:11px}
+.sp-top-row{display:flex;align-items:center;gap:11px;padding:7px 0;border-bottom:1px solid var(--edge);font-size:.74rem}
+.sp-top-row:last-child{border-bottom:none}
+.sp-medal{font-size:1rem;width:20px;text-align:center;flex-shrink:0}
+.sp-top-car{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp-top-n{font-family:'DM Mono',monospace;font-size:.64rem;color:#FF6B78;font-weight:700;white-space:nowrap}
+.sp-bar{height:5px;border-radius:3px;background:rgba(255,71,87,.65);margin-top:4px}
+.sp-cat{margin-bottom:20px}
+.sp-cat-h{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.sp-cat-t{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;color:var(--chalk)}
+.sp-cat-n{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--chalk3)}
+.sp-cat-line{flex:1;height:1px;background:var(--edge)}
+.sp-card{border:1px solid var(--edge);border-left-width:3px;border-radius:11px;padding:12px 14px;
+  background:rgba(255,255,255,.02);margin-bottom:9px}
+.sp-card.aberto{border-left-color:#FF6B78}
+.sp-card.andamento{border-left-color:var(--gold)}
+.sp-card.resolvido{border-left-color:#1AFF9D}
+.sp-h{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
+.sp-tipo{font-weight:700;font-size:.82rem}
+.sp-tag{font-family:'DM Mono',monospace;font-size:.5rem;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.sp-tag.st-aberto{background:rgba(255,71,87,.18);color:#FF6B78}
+.sp-tag.st-andamento{background:rgba(255,209,26,.16);color:var(--gold)}
+.sp-tag.st-resolvido{background:rgba(26,255,157,.16);color:#1AFF9D}
+.sp-tag.terceiro{background:rgba(154,180,204,.16);color:var(--chalk2)}
+.sp-tag.rev-sim{background:rgba(26,255,157,.14);color:#1AFF9D}
+.sp-tag.rev-nao{background:rgba(255,71,87,.16);color:#FF6B78}
+.sp-meta{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--chalk3);letter-spacing:.04em;margin-bottom:7px}
+.sp-desc{font-size:.72rem;line-height:1.55;color:var(--chalk2);white-space:pre-wrap;margin-bottom:8px}
+.sp-linhas{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:9px}
+.sp-li{font-size:.66rem}
+.sp-li b{display:block;font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--chalk3);font-weight:400;margin-bottom:2px}
+/* ── Auditoria anônima ── */
+.au-wrap{max-width:660px;margin:0 auto}
+.au-selo{border:1px solid rgba(31,169,166,.4);background:rgba(31,169,166,.05);border-radius:14px;
+  padding:18px 20px;margin-bottom:20px}
+.au-selo h3{font-size:.95rem;font-weight:800;margin-bottom:9px;color:var(--ice)}
+.au-selo p{font-size:.76rem;line-height:1.65;color:var(--chalk2);margin-bottom:9px}
+.au-selo p:last-child{margin-bottom:0}
+.au-selo b{color:var(--chalk)}
+.au-tipos{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:15px}
+.au-tipo{flex:1;min-width:130px;padding:13px;border-radius:11px;border:1px solid var(--edge);
+  background:rgba(255,255,255,.03);cursor:pointer;text-align:center;transition:.15s}
+.au-tipo:hover{border-color:var(--chalk3)}
+.au-tipo.on{border-color:var(--fire);background:rgba(255,0,0,.07)}
+.au-tipo .e{font-size:1.4rem;display:block;margin-bottom:4px}
+.au-tipo .t{font-size:.74rem;font-weight:700}
+.au-tipo .s{font-size:.58rem;color:var(--chalk3);margin-top:2px}
+.au-nota{font-size:.65rem;color:var(--chalk3);line-height:1.6;margin-top:12px}
+</style>
+
+<div class="panel" id="panel-frota">
+  <div class="fr-toolbar">
+    <input id="fr-busca" class="mgw-input" style="flex:1;min-width:200px"
+           placeholder="🔎 Buscar por modelo, placa, VIN, cor…" oninput="MGW_FROTA.buscar(this.value)">
+    <button class="mgw-btn" onclick="MGW_FROTA.novoCarro()">＋ Novo carro</button>
+    <button class="mgw-btn" onclick="MGW_FROTA.novaCategoria()">＋ Nova categoria</button>
+    <button class="mgw-btn" onclick="MGW_FROTA.exportarCSV()" title="Planilha com a frota inteira">📤 Exportar CSV</button>
+  </div>
+  <div class="mgw-hint">💡 O que estiver aqui é o que o <b>Calendário da Frota</b> usa para alocar as reservas. Criou um carro, o calendário ganha a linha na hora; tirou um, ele recalcula os overbookings.</div>
+  <div id="fr-tabs" class="fr-tabs"></div>
+  <div id="fr-conteudo"></div>
+</div>
+
+<div class="panel" id="panel-suporte">
+  <div class="fr-toolbar">
+    <input id="sp-busca" class="mgw-input" style="flex:1;min-width:200px"
+           placeholder="🔎 Buscar por carro, placa, tipo de problema, descrição…" oninput="MGW_SUPORTE.buscar(this.value)">
+    <select id="sp-filtro-st" class="mgw-input" onchange="MGW_SUPORTE.render()">
+      <option value="">Todos os status</option>
+      <option value="aberto">Abertos</option>
+      <option value="andamento">Em andamento</option>
+      <option value="resolvido">Resolvidos</option>
+    </select>
+    <select id="sp-filtro-per" class="mgw-input" onchange="MGW_SUPORTE.render()" title="O mês da Magiway vai do dia 13 ao dia 12">
+      <option value="ciclo">Mês corrente (13 → 12)</option>
+      <option value="90">Últimos 90 dias</option>
+      <option value="">Tudo</option>
+    </select>
+    <button class="mgw-btn" onclick="MGW_SUPORTE.novo()">＋ Novo chamado</button>
+    <button class="mgw-btn" onclick="MGW_SUPORTE.exportarCSV()">📤 Exportar CSV</button>
+  </div>
+  <div id="sp-kpis" class="sp-kpis"></div>
+  <div id="sp-top3"></div>
+  <div id="sp-lista"></div>
+</div>
+
+<div class="panel" id="panel-auditoria">
+  <div class="au-wrap">
+    <div class="au-selo">
+      <h3>🔒 Canal anônimo — só o Luciano lê</h3>
+      <p>Esta mensagem vai <b>direto para o Luciano</b> e não passa por mais ninguém.
+         Nem gestora, nem coordenação, nem colega de equipe. Ele responde pessoalmente
+         por isso: <b>o cargo dele e o contrato dele são a garantia</b> de que o sigilo
+         será respeitado.</p>
+      <p>O app <b>não grava</b> quem escreveu: não guarda seu nome, seu login, seu
+         aparelho nem a hora exata. Se você quiser resposta, escreva um jeito de te
+         encontrar dentro do texto — aí é escolha sua, não obrigação.</p>
+      <p>Pode ser reclamação, denúncia, sugestão ou agradecimento. Fala o que precisa
+         ser falado.</p>
+    </div>
+    <div class="au-tipos">
+      <div class="au-tipo on" id="au-t-rec" onclick="MGW_AUDITORIA.tipo('reclamacao')">
+        <span class="e">⚠️</span><div class="t">Reclamação</div><div class="s">algo está errado</div>
+      </div>
+      <div class="au-tipo" id="au-t-agr" onclick="MGW_AUDITORIA.tipo('agradecimento')">
+        <span class="e">🙏</span><div class="t">Agradecimento</div><div class="s">alguém merece crédito</div>
+      </div>
+      <div class="au-tipo" id="au-t-sug" onclick="MGW_AUDITORIA.tipo('sugestao')">
+        <span class="e">💡</span><div class="t">Sugestão</div><div class="s">dá para melhorar</div>
+      </div>
+    </div>
+    <div class="fr-f" style="margin-bottom:12px">
+      <label>Assunto (opcional)</label>
+      <input id="au-assunto" placeholder="Em uma linha, do que se trata">
+    </div>
+    <div class="fr-f">
+      <label>Sua mensagem</label>
+      <textarea id="au-texto" rows="9" placeholder="Escreva com suas palavras. Quanto mais concreto (o que aconteceu, quando, o que você esperava), mais o Luciano consegue agir."></textarea>
+    </div>
+    <div class="fr-acoes" style="justify-content:flex-start">
+      <button class="fr-ok" onclick="MGW_AUDITORIA.enviar()">Enviar anonimamente</button>
+      <button class="fr-cancel" onclick="MGW_AUDITORIA.limpar()">Limpar</button>
+    </div>
+    <div class="au-nota" id="au-nota">
+      A mensagem sobe direto para a caixa do Luciano e <b>não desce para o
+      aplicativo de mais ninguém</b> — nem da gestora, nem da coordenação.
+      Não é enviada pelo seu e-mail: se fosse, sairia com o seu nome, e aí de
+      anônimo não teria nada.
+    </div>
+  </div>
+</div>
+
+<div class="fr-modal" id="fr-modal"><div class="fr-box" id="fr-modal-box"></div></div>
 
 <div class="panel" id="panel-nps">
   <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">NPS — SATISFAÇÃO DOS CLIENTES</span><div class="sec-line"></div></div>
@@ -6749,9 +6987,27 @@ function brl(n){ return 'R$ '+(Number(n)||0).toLocaleString('pt-BR',{minimumFrac
 function brlC(n){ var v=Number(n)||0; return (v<0?'-':'')+'R$ '+Math.abs(v).toLocaleString('pt-BR',{maximumFractionDigits:0}); }
 function num(s){ if(typeof s==='number') return s; s=String(s||'').replace(/[R$\s.]/g,'').replace(',','.'); var n=parseFloat(s); return isFinite(n)?n:0; }
 function hojeISO(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function ym(iso){ return String(iso||'').slice(0,7); }
+/* O mês da Magiway vai do dia 13 ao dia 12 do mês seguinte. Um lançamento do
+   dia 05/08 pertence ao mês de JULHO. É aqui que essa regra entra no fluxo —
+   todo o resto (dashboard, gráficos, seletor) já agrupa por esta chave. */
+var FX_VIRADA=(function(){ try{ return (window.MGW_CICLO&&MGW_CICLO.DIA_VIRADA)||12; }catch(e){ return 12; } })();
+function ym(iso){
+  var m=String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(!m) return String(iso||'').slice(0,7);
+  var ano=+m[1], mes=+m[2], dia=+m[3];
+  if(dia<=FX_VIRADA){ mes-=1; if(mes<1){ mes=12; ano-=1; } }
+  return ano+'-'+String(mes).padStart(2,'0');
+}
 function fmtBR(iso){ var m=String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})/); return m?(m[3]+'/'+m[2]+'/'+m[1]):(iso||''); }
 function ymLabel(k){ var p=k.split('-'); return MESES[(+p[1])-1]+'/'+p[0].slice(2); }
+/* rótulo com o período do ciclo, para ninguém achar que "julho" é 01 a 31 */
+function ymPeriodo(k){
+  var p=String(k||'').split('-'); var a=+p[0], m=+p[1];
+  if(!isFinite(a)||!isFinite(m)) return '';
+  var ini=new Date(a,m-1,FX_VIRADA+1), fim=new Date(a,m,FX_VIRADA);
+  var f=function(d){ return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2); };
+  return f(ini)+' a '+f(fim);
+}
 
 /* ── vendas do app viram entradas automáticas ── */
 function vendasComoEntradas(){
@@ -6848,7 +7104,7 @@ function montarMeses(){
   ks[ym(hojeISO())]=1;
   var arr=Object.keys(ks).sort().reverse();
   var atual=mesSel||ym(hojeISO());
-  sel.innerHTML=arr.map(function(k){ return '<option value="'+k+'"'+(k===atual?' selected':'')+'>'+ymLabel(k)+'</option>'; }).join('');
+  sel.innerHTML=arr.map(function(k){ return '<option value="'+k+'"'+(k===atual?' selected':'')+'>'+ymLabel(k)+' · '+ymPeriodo(k)+'</option>'; }).join('');
   mesSel=sel.value||atual;
 }
 
@@ -7889,6 +8145,9 @@ const NAV={
   calendario:['CALENDÁRIO DA FROTA','Reservas por categoria · barras horizontais até Abr/2027 · linha vermelha = hoje'],
   reservas:['RESERVAS','Tabela de fechamento extraída da aba Histórico · overbooking em vermelho'],
   agenda:['AGENDA DO DIA','Entregas (saídas) e devoluções (retornos) por data'],
+  frota:['FROTA','Carros da empresa · placa, VIN, documento, seguro, oficina e histórico de suporte'],
+  suporte:['SUPORTE','Chamados por categoria · tempo de resposta, resolução e reversão do cliente'],
+  auditoria:['CANAL ANÔNIMO','Reclamação, agradecimento ou sugestão — lida só pelo Luciano'],
   nova:['NOVA VENDA','Registrar nova reserva'],
   emitir:['EMITIR DOCUMENTOS','Reserva completa · voucher e contrato · assinatura DocuSign'],
   vouchers:['VOUCHERS','Arquivos de reservas'],
@@ -8278,7 +8537,7 @@ function _cloudRawSet(k,v){ try{ localStorage.__proto__.setItem.call(localStorag
    qualquer usuário pode gravar. */
 /* Pendências, marcações de entrega/devolução e relatórios emitidos são operação
    do dia a dia: quem executa precisa poder confirmar sem depender do gerente. */
-const SHARED_WRITABLE_BY_ALL = ['gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1'];
+const SHARED_WRITABLE_BY_ALL = ['gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1','gs_auditoria_v1'];
 function _cloudBucket(fullKey){
   if(!fullKey || typeof fullKey!=='string') return null;
   if(CLOUD.uid && fullKey.indexOf('mgv_'+CLOUD.uid+'__')===0) return 'own';
@@ -8444,7 +8703,7 @@ async function cloudFlush(){
    gerente. O fluxo de caixa é o caso: a senha da aba é conferida no navegador e
    está no código publicado, então ela não segura ninguém que abra o DevTools —
    quem protege de verdade é não mandar o dado para essa máquina. */
-const SOMENTE_GERENTE = ['gs_fluxo_v1'];
+const SOMENTE_GERENTE = ['gs_fluxo_v1','gs_auditoria_v1'];
 async function _cloudPullShared(){
   try{
     const {data}=await CLOUD.client.from('shared_state').select('k,v');
@@ -8528,10 +8787,14 @@ function initDashboard(){
   // Ajuda proporcional para o mês ativo — Maio 2026 = 11 dias trabalhados
   const _ym=DB_MES_ATIVO||dbCurrentYM();
   const [_yr,_mo]=_ym.split('_').map(Number);
-  const _diasMes=new Date(_yr,_mo,0).getDate();
+  /* ciclo 13 → 12: os dias do período são os do ciclo, não os do mês do calendário */
+  const _cic=(function(){ try{ if(window.MGW_CICLO) return MGW_CICLO.ciclo(_ym); }catch(e){} return null; })();
+  const _diasMes=_cic?_cic.dias:new Date(_yr,_mo,0).getDate();
   const _isMay2026=(_yr===2026&&_mo===5);
-  const _isCurrentMes=(_yr===new Date().getFullYear()&&_mo===new Date().getMonth()+1);
-  const _diasTrab=_isMay2026?11:(_isCurrentMes?new Date().getDate():_diasMes);
+  const _hj=new Date();
+  const _isCurrentMes=_cic?(_hj>=_cic.ini&&new Date(_hj.getFullYear(),_hj.getMonth(),_hj.getDate())<=_cic.fim)
+                         :(_yr===_hj.getFullYear()&&_mo===_hj.getMonth()+1);
+  const _diasTrab=_isMay2026?11:(_isCurrentMes?(_cic?Math.min(_diasMes,Math.round((new Date(_hj.getFullYear(),_hj.getMonth(),_hj.getDate())-_cic.ini)/86400000)+1):_hj.getDate()):_diasMes);
   const _ajudaTotal=parseFloat(document.getElementById('cfg-ajuda')?.value)||(typeof _CFG!=='undefined'&&_CFG.ajuda)||1700;
   const _ajuda=_ajudaTotal*(_diasTrab/_diasMes);
   const _ajudaUSD=_ajuda/cambio;
@@ -9903,14 +10166,19 @@ function gerarPDFResumo(dataIni, dataFim){
   if(ymAtivo&&ymAtivo.includes('_')){const[a,m]=ymAtivo.split('_').map(Number);anoR=a;mesR=m-1;}
   const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const mesNome=MESES[mesR]+' de '+anoR;
-  const diasNoMes=new Date(anoR,mesR+1,0).getDate();
-  // dia de referência para ajuda proporcional: se for o mês corrente usa o dia de hoje, senão mês cheio
-  const ehMesCorrente=(anoR===now.getFullYear()&&mesR===now.getMonth());
-  let diaRef=ehMesCorrente?now.getDate():diasNoMes;
+  /* O mês da Magiway vai do dia 13 ao dia 12 do mês seguinte — a ajuda de custo
+     é proporcional aos dias DESSE ciclo, não aos do mês do calendário. */
+  const _ciclo=(function(){ try{ if(window.MGW_CICLO) return MGW_CICLO.ciclo(anoR+'_'+String(mesR+1).padStart(2,'0')); }catch(e){} return null; })();
+  const _isoD=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  const diasNoMes=_ciclo?_ciclo.dias:new Date(anoR,mesR+1,0).getDate();
+  // dia de referência para ajuda proporcional: se o ciclo ainda está aberto usa o dia de hoje, senão ciclo cheio
+  const ehMesCorrente=_ciclo?(now>=_ciclo.ini&&now<=new Date(_ciclo.fim.getFullYear(),_ciclo.fim.getMonth(),_ciclo.fim.getDate(),23,59,59))
+                            :(anoR===now.getFullYear()&&mesR===now.getMonth());
+  let diaRef=ehMesCorrente?(_ciclo?Math.min(diasNoMes,Math.round((new Date(now.getFullYear(),now.getMonth(),now.getDate())-_ciclo.ini)/86400000)+1):now.getDate()):diasNoMes;
   // Parte 5: com filtro de período, a ajuda é proporcional aos dias do intervalo selecionado
   if(_filtro){
-    const _di=dataIni||(anoR+'-'+String(mesR+1).padStart(2,'0')+'-01');
-    const _df=dataFim||(anoR+'-'+String(mesR+1).padStart(2,'0')+'-'+String(diasNoMes).padStart(2,'0'));
+    const _di=dataIni||(_ciclo?_isoD(_ciclo.ini):(anoR+'-'+String(mesR+1).padStart(2,'0')+'-01'));
+    const _df=dataFim||(_ciclo?_isoD(_ciclo.fim):(anoR+'-'+String(mesR+1).padStart(2,'0')+'-'+String(diasNoMes).padStart(2,'0')));
     const _d1=new Date(_di+'T12:00:00'), _d2=new Date(_df+'T12:00:00');
     let _nd=Math.round((_d2-_d1)/86400000)+1;
     if(!(_nd>0))_nd=0;
@@ -10139,7 +10407,11 @@ function gerarPDFVendedores(dataIni, dataFim){
   let anoR=now.getFullYear(), mesR=now.getMonth();
   if(ym&&ym.includes('_')){const[a,m]=ym.split('_').map(Number);anoR=a;mesR=m-1;}
   const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  const mesNome=MESES[mesR]+' de '+anoR;
+  const mesNome=(function(){
+    const base=MESES[mesR]+' de '+anoR;
+    try{ if(window.MGW_CICLO) return base+' ('+MGW_CICLO.ciclo(anoR+'_'+String(mesR+1).padStart(2,'0')).periodo+')'; }catch(e){}
+    return base;
+  })();
   const periodoLabel=_filtro?((dataIni?fmtDBR(dataIni):'início')+' a '+(dataFim?fmtDBR(dataFim):'fim')):mesNome;
 
   // ── coleta dados de cada vendedor SEM trocar o ativo ──
@@ -10595,10 +10867,13 @@ function getVendidoMes(cfg){
   return SALES_DATA.filter(_souEu).reduce((a,s)=>a+(s.valorBRL!=null?s.valorBRL:s.v*(s.cambio||_cambioCfg())),0);
 }
 
+/* Dias que faltam para fechar o CICLO (dia 13 → dia 12), não o mês do calendário. */
 function getDiasRestantes(){
   const now=new Date();
-  const lastDay=new Date(now.getFullYear(),now.getMonth()+1,0);
-  return Math.max(1,Math.ceil((lastDay-now)/(1000*60*60*24))+1);
+  let fim;
+  try{ if(window.MGW_CICLO) fim=MGW_CICLO.cicloAtual().fim; }catch(e){}
+  if(!fim){ const v=12; fim=(now.getDate()<=v)?new Date(now.getFullYear(),now.getMonth(),v):new Date(now.getFullYear(),now.getMonth()+1,v); }
+  return Math.max(1,Math.ceil((fim-now)/(1000*60*60*24))+1);
 }
 
 function getVendidoHoje(){
@@ -10752,7 +11027,8 @@ function renderMetas(){
   const vendido=getVendidoMes(cfg);
   const diasRest=getDiasRestantes();
   const now=new Date();
-  const diasNoMes=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  /* tamanho do CICLO (13 → 12), não do mês do calendário */
+  const diasNoMes=(function(){ try{ if(window.MGW_CICLO) return MGW_CICLO.cicloAtual().dias; }catch(e){} return new Date(now.getFullYear(),now.getMonth()+1,0).getDate(); })();
   const vendidoHoje=getVendidoHoje();
   const vendidoSemana=getVendidoSemana();
 
@@ -10767,9 +11043,12 @@ function renderMetas(){
   const nVendas=(function(){
     try{
       const r=(typeof calGetRange==='function')?calGetRange('mt'):{from:'',to:''};
+      /* sem filtro escolhido, o período é o ciclo 13 → 12 */
+      const _iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+      let cIni,cFim; try{ if(window.MGW_CICLO){ const c=MGW_CICLO.cicloAtual(); cIni=_iso(c.ini); cFim=_iso(c.fim); } }catch(e){}
       const y=now.getFullYear(), m=String(now.getMonth()+1).padStart(2,'0');
-      const de=r.from||`${y}-${m}-01`;
-      const ate=r.to||`${y}-${m}-${String(new Date(y,now.getMonth()+1,0).getDate()).padStart(2,'0')}`;
+      const de=r.from||cIni||`${y}-${m}-01`;
+      const ate=r.to||cFim||`${y}-${m}-${String(new Date(y,now.getMonth()+1,0).getDate()).padStart(2,'0')}`;
       const toISO=s=>{if(!s)return'';const p=String(s).split('/');return p.length===3?`${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`:s;};
       return SALES_DATA.filter(s=>{const d=toISO(s.d);return d>=de&&d<=ate;}).length;
     }catch(e){ return SALES_DATA.length; }
@@ -12083,6 +12362,13 @@ function initAllCalendars(){
   });
 }
 
+/* "Julho de 2026" na Magiway é 13/07/2026 a 12/08/2026. Todo filtro de mês
+   deste app passa por aqui, para não existirem duas definições de mês. */
+function calCicloRange(year,month){
+  const virada=(window.MGW_CICLO&&MGW_CICLO.DIA_VIRADA)||12;
+  const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  return {from:iso(new Date(year,month,virada+1)), to:iso(new Date(year,month+1,virada))};
+}
 function initCalendar(p,year,month){
   CAL_STATE[p]={mode:'mes',year,month,from:null,to:null};
   // populate month select
@@ -12102,9 +12388,9 @@ function initCalendar(p,year,month){
       aSel.appendChild(opt);
     }
   }
-  // set period defaults to current month
-  const firstDay=`${year}-${String(month+1).padStart(2,'0')}-01`;
-  const lastDay=`${year}-${String(month+1).padStart(2,'0')}-${String(new Date(year,month+1,0).getDate()).padStart(2,'0')}`;
+  // período padrão = o CICLO do mês escolhido (dia 13 → dia 12)
+  const _r0=calCicloRange(year,month);
+  const firstDay=_r0.from, lastDay=_r0.to;
   const fEl=document.getElementById('cal-from-'+p);
   const tEl=document.getElementById('cal-to-'+p);
   if(fEl)fEl.value=firstDay;
@@ -12133,9 +12419,7 @@ function calGetRange(p){
     const aSel=document.getElementById('cal-ano-sel-'+p);
     const m=mSel?parseInt(mSel.value):new Date().getMonth();
     const y=aSel?parseInt(aSel.value):new Date().getFullYear();
-    const firstDay=`${y}-${String(m+1).padStart(2,'0')}-01`;
-    const lastDay=`${y}-${String(m+1).padStart(2,'0')}-${String(new Date(y,m+1,0).getDate()).padStart(2,'0')}`;
-    return{from:firstDay,to:lastDay};
+    return calCicloRange(y,m);   /* dia 13 do mês → dia 12 do seguinte */
   } else {
     const fEl=document.getElementById('cal-from-'+p);
     const tEl=document.getElementById('cal-to-'+p);
@@ -12154,7 +12438,8 @@ function updateCalLabel(p){
       const aSel=document.getElementById('cal-ano-sel-'+p);
       const m=mSel?parseInt(mSel.value):new Date().getMonth();
       const y=aSel?parseInt(aSel.value):new Date().getFullYear();
-      lbl.textContent=CAL_MONTHS[m]+' '+y;
+      /* mostra o período real do ciclo — "Julho 2026 · 13/07 a 12/08" */
+      lbl.textContent=CAL_MONTHS[m]+' '+y+' · '+r.from.slice(5).split('-').reverse().join('/')+' a '+r.to.slice(5).split('-').reverse().join('/');
     } else {
       lbl.textContent=r.from.slice(5).split('-').reverse().join('/')+'  →  '+r.to.slice(5).split('-').reverse().join('/');
     }
@@ -13694,8 +13979,10 @@ async function aiMetasDiagnostico(){
   const com=D.reduce((a,s)=>a+s.com,0);
   const ticket=D.length?total/D.length:0;
   const hoje=new Date();
-  const diasNoMes=new Date(hoje.getFullYear(),hoje.getMonth()+1,0).getDate();
-  const diaAtual=hoje.getDate();
+  /* o "mês" aqui é o ciclo 13 → 12 */
+  const _c=(function(){ try{ if(window.MGW_CICLO) return MGW_CICLO.cicloAtual(); }catch(e){} return null; })();
+  const diasNoMes=_c?_c.dias:new Date(hoje.getFullYear(),hoje.getMonth()+1,0).getDate();
+  const diaAtual=_c?Math.max(1,Math.min(diasNoMes,Math.round((new Date(hoje.getFullYear(),hoje.getMonth(),hoje.getDate())-_c.ini)/86400000)+1)):hoje.getDate();
   const diasRestantes=diasNoMes-diaAtual;
   const ritmoNecessario=diaAtual>0?(total/diaAtual)*diasNoMes:0;
   try{
@@ -15142,7 +15429,7 @@ function ehVendedor(v){ return !!v && (v.role||'admin')==='admin'; }
    são da EMPRESA: a pendência que o Luciano lança na reunião tem de aparecer
    para o Dickson, e o carro que a Mariana marcou como entregue tem de aparecer
    entregue para todo mundo. */
-const VENDOR_SHARED_KEYS = ['gs_cfg_v1','gs_ai_keys','gs_frota_v2','gs_shortcuts','gs_cambio_modal','gs_focus_mode','gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1'];
+const VENDOR_SHARED_KEYS = ['gs_cfg_v1','gs_ai_keys','gs_frota_v2','gs_shortcuts','gs_cambio_modal','gs_focus_mode','gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1','gs_auditoria_v1'];
 const VENDOR_SHARED_PREFIXES = ['gs_seedver_'];
 
 /* MIGRAÇÃO ÚNICA — gs_reservas_v1 deixou de ser por usuário e passou a ser da
@@ -16666,7 +16953,7 @@ window.onNavChange = (function(){
     if(id==='dashcot'){renderDashCot();}
     if(id==='dashboard'){dashInited=false;initDashboard();renderDashVendas();setTimeout(aiDashBriefing,600);}
     if(id==='config'){cfgPopulate();cfgPopulateAIKeys();}
-    if(id==='frota'){frotaRender();}
+    /* a aba Frota é renderizada pelo módulo MGW_FROTA, mais adiante no arquivo */
     if(id==='nova'){const nvd=document.getElementById('nv-data');if(nvd&&!nvd.value)nvd.value=new Date().toISOString().split('T')[0];}
     if(id==='emitir')renderEmitir();
     if(id==='vendasmes')renderVendasMes();
@@ -16806,10 +17093,13 @@ function initCompSelects(){
   const meses=[{v:'01',l:'Jan'},{v:'02',l:'Fev'},{v:'03',l:'Mar'},{v:'04',l:'Abr'},{v:'05',l:'Mai'},{v:'06',l:'Jun'},{v:'07',l:'Jul'},{v:'08',l:'Ago'},{v:'09',l:'Set'},{v:'10',l:'Out'},{v:'11',l:'Nov'},{v:'12',l:'Dez'}];
   const anos=['2024','2025','2026','2027'];
   const now=new Date();
-  const cm=String(now.getMonth()+1).padStart(2,'0');
-  const pm=String(now.getMonth()===0?12:now.getMonth()).padStart(2,'0');
-  const ca=String(now.getFullYear());
-  const pa=now.getMonth()===0?String(now.getFullYear()-1):ca;
+  /* mês corrente = mês do CICLO (dia 13 → dia 12), não o do calendário */
+  let _cy=now.getFullYear(), _cmIdx=now.getMonth();
+  try{ if(window.MGW_CICLO){ const c=MGW_CICLO.cicloAtual(); _cy=c.ini.getFullYear(); _cmIdx=c.ini.getMonth(); } }catch(e){}
+  const cm=String(_cmIdx+1).padStart(2,'0');
+  const pm=String(_cmIdx===0?12:_cmIdx).padStart(2,'0');
+  const ca=String(_cy);
+  const pa=_cmIdx===0?String(_cy-1):ca;
   [['comp-mes-a',pm],['comp-mes-b',cm]].forEach(([id,def])=>{const el=document.getElementById(id);if(!el)return;el.innerHTML=meses.map(m=>`<option value="${m.v}"${m.v===def?' selected':''}>${m.l}</option>`).join('');});
   [['comp-ano-a',pa],['comp-ano-b',ca]].forEach(([id,def])=>{const el=document.getElementById(id);if(!el)return;el.innerHTML=anos.map(a=>`<option value="${a}"${a===def?' selected':''}>${a}</option>`).join('');});
 }
@@ -16885,7 +17175,7 @@ function exportarAppAtualizado(){
 (function(){
 'use strict';
 
-var CHAVES=['gs_reservas_v1','gs_cfg_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1'];   // o que é da empresa
+var CHAVES=['gs_reservas_v1','gs_cfg_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1','gs_auditoria_v1'];   // o que é da empresa
 var ultimoValor={};                          // último valor conhecido por chave
 var canal=null, timerPoll=null, ligado=false, aplicando=false;
 
@@ -17729,13 +18019,27 @@ var SOURCE_TABS=[
 var CACHE_KEY='magiway_resv_cache_v1';
 
 /* Frota oficial — ordem de cima p/ baixo + nº de carros por categoria.
-   15 Minivan · 2 SUV Premium · 2 SUV · 2 Sedan = 21 carros */
+   Estes valores são só o ponto de partida de quem abre o app pela primeira vez:
+   a lista de verdade vem da aba FROTA (MGW_FROTA), e sincronizarFrota() a
+   substitui antes de cada alocação. Cadastrou um carro lá, ele aparece aqui. */
 var CATS=[
   {key:'Minivan',     label:'Minivan',      cars:15},
   {key:'SUV Premium', label:'SUV Premium',  cars:2},
   {key:'SUV',         label:'SUV',          cars:2},
   {key:'Sedan',       label:'Sedan',        cars:2}
 ];
+/* Puxa a frota cadastrada. Mantém o mesmo array (outras funções guardam
+   referência para ele) e preserva o _overflow já calculado por categoria. */
+function sincronizarFrota(){
+  try{
+    if(!window.MGW_FROTA) return;
+    var novas=MGW_FROTA.categoriasCalendario();
+    if(!novas || !novas.length) return;
+    var antes={}; CATS.forEach(function(c){ antes[c.key]=c._overflow||0; });
+    CATS.length=0;
+    novas.forEach(function(c){ CATS.push({key:c.key,label:c.label,cars:c.cars,_overflow:antes[c.key]||0}); });
+  }catch(e){ console.warn('[reservas] frota',e); }
+}
 /* Qualquer coisa fora da frota oficial vira linha dinâmica, sem cálculo de overbooking */
 var FALLBACK_CATS=['Outros'];
 
@@ -17800,6 +18104,32 @@ function toggleFlag(idx,which){
   /* a marcação aparece na Agenda E na tabela de Reservas — redesenha as duas */
   renderAgenda(); renderReservas();
 }
+
+/* Observação da Agenda do Dia. Fica junto das marcações (mesma chave, mesma
+   sincronização), então todo mundo da equipe lê o que foi anotado.
+   Não redesenha a agenda: quem está digitando perderia o cursor. */
+function setObs(idx,txt){
+  var r=DATA[idx]; if(!r) return;
+  var k=dedupeKey(r), f=FLAGS[k]||{}, novo=String(txt||'').trim();
+  if((f.obs||'')===novo) return;
+  if(novo){ f.obs=novo; f.obsPor=quemMarcou(); f.obsEm=carimbo(); }
+  else { delete f.obs; delete f.obsPor; delete f.obsEm; }
+  if(Object.keys(f).length) FLAGS[k]=f; else delete FLAGS[k];
+  saveFlags();
+  var cx=document.activeElement;
+  if(cx && cx.classList && cx.classList.contains('mgag-obs-in')){
+    var caixa=cx.closest('.mgag-obs');
+    if(caixa){
+      caixa.classList.toggle('tem',!!novo);
+      var lbl=caixa.querySelector('.mgag-obs-lbl');
+      if(lbl) lbl.innerHTML='📝 Observação'+(novo?'<span class="mgag-obs-assin">'+esc(f.obsPor||'')+(f.obsEm?' · '+esc(f.obsEm):'')+'</span>':'');
+    }
+  }
+  renderReservas();
+  if(typeof toast==='function') toast(novo?'📝 Observação salva':'Observação apagada');
+}
+/* textarea que cresce com o texto, para a anotação longa não ficar escondida */
+function obsCresce(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px'; }
 
 var DOW=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 var MON=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -18413,6 +18743,7 @@ function ivFree(r, intervals){ /* só evita sobreposição visual (linhas de ove
 }
 function ovKey(r){ return dedupeKey(r); }
 function assignCars(){
+  sincronizarFrota();          /* a frota cadastrada manda na alocação */
   DATA.forEach(function(r){
     r.car=null; r.over=false; r._pinned=false;
     r.startDT=combine(r.entrega,r.hEnt,10);
@@ -19021,16 +19352,25 @@ function agCard(r,mode,idx){
   var statusBadges=
      (fl.delivered?' <span class="mgrsv-badge" style="background:rgba(59,158,255,.18);color:#3B9EFF" title="Marcado por '+esc(fl.deliveredPor||'—')+' em '+esc(fl.deliveredEm||'—')+'">🚗 ENTREGUE</span>':'')
     +(fl.returned?' <span class="mgrsv-badge" style="background:rgba(26,255,157,.16);color:#1AFF9D" title="Marcado por '+esc(fl.returnedPor||'—')+' em '+esc(fl.returnedEm||'—')+'">✅ DEVOLVIDO</span>':'')
-    +(fl.nogas?' <span class="mgrsv-badge" style="background:rgba(255,71,87,.18);color:#FF6B78">⛽ SEM GASOLINA</span>':'');
+    +(fl.nogas?' <span class="mgrsv-badge" style="background:rgba(255,71,87,.18);color:#FF6B78">⛽ SEM GASOLINA</span>':'')
+    +(fl.obs?' <span class="mgrsv-badge" style="background:rgba(255,209,26,.16);color:var(--gold)" title="'+esc(fl.obs)+'">📝 OBSERVAÇÃO</span>':'');
   var log=''
     +'<div class="mgag-log'+(isEnt?' primary':'')+'"><span class="mgag-ll">🛫 Entrega</span>'+fmtBR(r.entrega)+' · <b>'+(timeStr(r.hEnt)||'--:--')+'</b> · <span class="mgrsv-dot" style="background:'+cityE.color+'"></span>'+esc(r.localEnt||'—')+' ('+esc(cityE.city)+')</div>'
     +'<div class="mgag-log'+(isEnt?'':' primary')+'"><span class="mgag-ll">🛬 Devolução</span>'+fmtBR(r.devolucao)+' · <b>'+(timeStr(r.hDev)||'--:--')+'</b> · <span class="mgrsv-dot" style="background:'+cityD.color+'"></span>'+esc(r.localDev||'—')+' ('+esc(cityD.city)+')</div>'
     +(hasInfo(r.aerea)?'<div class="mgag-log"><span class="mgag-ll">✈ Cia aérea</span>'+esc(r.aerea)+'</div>':'')
     +(hasInfo(r.whats)?'<div class="mgag-log"><span class="mgag-ll">📞 Contato</span>'+esc(r.whats)+'</div>':'');
-  var actions=(idx!=null)?('<div class="mgag-actions">'
-    +'<button class="mgag-flagbtn'+(fl.delivered?' on-ent':'')+'" onclick="MGW_RESV.toggleFlag('+idx+',\'delivered\')" title="Confirma que o carro saiu para o cliente. Todo mundo da equipe vê a marcação.">'+(fl.delivered?('🚗 Entregue'+quando('delivered')):'☐ Marcar entregue')+'</button>'
-    +'<button class="mgag-flagbtn'+(fl.returned?' on-ret':'')+'" onclick="MGW_RESV.toggleFlag('+idx+',\'returned\')" title="Confirma que o carro voltou. Todo mundo da equipe vê a marcação.">'+(fl.returned?('✅ Devolvido'+quando('returned')):'☐ Marcar devolvido')+'</button>'
-    +'<button class="mgag-flagbtn'+(fl.nogas?' on-gas':'')+'" onclick="MGW_RESV.toggleFlag('+idx+',\'nogas\')">'+(fl.nogas?'⛽ Sem gasolina':'⛽ Falta gasolina?')+'</button>'
+  /* Cada coluna mostra só o botão que faz sentido ali: na entrega não se marca
+     devolução nem gasolina; na devolução não se marca entrega. */
+  var botoes = isEnt
+    ? '<button class="mgag-flagbtn'+(fl.delivered?' on-ent':'')+'" onclick="MGW_RESV.toggleFlag('+idx+',\'delivered\')" title="Confirma que o carro saiu para o cliente. Todo mundo da equipe vê a marcação.">'+(fl.delivered?('🚗 Entregue'+quando('delivered')):'☐ Marcar entregue')+'</button>'
+    : '<button class="mgag-flagbtn'+(fl.returned?' on-ret':'')+'" onclick="MGW_RESV.toggleFlag('+idx+',\'returned\')" title="Confirma que o carro voltou. Todo mundo da equipe vê a marcação.">'+(fl.returned?('✅ Devolvido'+quando('returned')):'☐ Marcar devolvido')+'</button>'
+      +'<button class="mgag-flagbtn'+(fl.nogas?' on-gas':'')+'" onclick="MGW_RESV.toggleFlag('+idx+',\'nogas\')" title="O carro voltou sem o tanque combinado.">'+(fl.nogas?'⛽ Sem gasolina':'⛽ Falta gasolina?')+'</button>';
+  var obsAssin = (fl.obsPor||fl.obsEm) ? '<span class="mgag-obs-assin">'+esc(fl.obsPor||'')+(fl.obsEm?' · '+esc(fl.obsEm):'')+'</span>' : '';
+  var actions=(idx!=null)?('<div class="mgag-actions">'+botoes+'</div>'
+    +'<div class="mgag-obs'+(fl.obs?' tem':'')+'">'
+      +'<label class="mgag-obs-lbl">📝 Observação'+obsAssin+'</label>'
+      +'<textarea class="mgag-obs-in" rows="1" placeholder="Anote aqui o que a equipe precisa saber deste atendimento (arranhão, atraso, pedido do cliente…)" '
+      +'oninput="MGW_RESV.obsCresce(this)" onchange="MGW_RESV.setObs('+idx+',this.value)" onblur="MGW_RESV.setObs('+idx+',this.value)">'+esc(fl.obs||'')+'</textarea>'
     +'</div>'):'';
   return '<div class="mgag-card'+(r.over?' over':'')+(fl.returned?' returned':'')+'" style="border-left-color:'+accent+'">'
     +'<div class="mgag-time">'+bigT+'</div>'
@@ -19210,6 +19550,8 @@ function exportAgendaPDF(){
       ];
       var det=[]; if(hasInfo(r.aerea)) det.push('Cia aerea: '+r.aerea); if(hasInfo(r.whats)) det.push('Contato: '+r.whats); if(needsSeat(r.cadeirinha)) det.push('Cadeirinha: '+r.cadeirinha);
       if(det.length) lines.push(det.join('    '));
+      var flp=getFlags(r);
+      if(flp.obs) lines.push('Obs.: '+flp.obs+(flp.obsPor?'  ('+flp.obsPor+(flp.obsEm?' '+flp.obsEm:'')+')':''));
       lines.forEach(function(ln){ var wr=doc.splitTextToSize(ln, W-2*M-10); for(var j=0;j<wr.length;j++){ if(y>805){ doc.addPage(); y=54; } doc.setTextColor(70,70,70); doc.text(wr[j], M+10, y); y+=11; } });
       if(r.over){ if(y>805){ doc.addPage(); y=54; } doc.setTextColor(200,20,20); doc.setFontSize(9); doc.text('*** OVERBOOKING — sem carro disponivel ***', M+10, y); y+=12; }
       doc.setDrawColor(232); doc.line(M,y,W-M,y); y+=9;
@@ -19274,6 +19616,14 @@ window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, rend
   exportCSV:exportReservasCSV, delLocal:delLocal, syncLocais:syncLocais, dados:function(){return DATA;},
   irParaDia:irParaDia,
   abrirEdicao:abrirEdicao, salvarEdicao:salvarEdicao, excluir:excluir, juntarDuplicata:juntarDuplicata,
+  setObs:setObs, obsCresce:obsCresce,
+  /* chamado pela aba Frota sempre que a lista de carros muda */
+  aplicarFrota:function(){
+    sincronizarFrota();
+    catFilterDone=false; catFilterCalDone=false;
+    try{ populateCatFilter(); }catch(e){}
+    if(LOADED){ assignCars(); renderAll(); }
+  },
   toggleManut:toggleManut, carregarManutencao:loadManut, carregarFlags:loadFlags,
   carregarRemanejamentos:loadOverrides, disponibilidade:disponibilidadePeriodo,
   regraCorte:function(v){ if(!v) return; REGRA.corte=v; saveRegra(); classificarOrigem(DATA); renderReservas();
@@ -19654,6 +20004,792 @@ window.npsRender=render;
     if(id==='nps'){ try{ ULTIMO=-100; render(true); }catch(e){} }
   };
 })();
+})();
+</script>
+
+<script id="mgw-frota-js">
+/* ═══════════════════════════════════════════════════════════════════
+   MAGIWAY — FROTA, SUPORTE e CANAL ANÔNIMO
+
+   FROTA é a lista oficial de carros da empresa e a ÚNICA fonte de
+   verdade da alocação: o Calendário da Frota monta as linhas a partir
+   daqui. Criou carro, o calendário ganha a linha; tirou, ele recalcula
+   os overbookings na hora.
+
+   SUPORTE são os chamados. Cada chamado aponta para um carro (ou para
+   "não é nosso"), e a ficha do carro mostra o histórico dele.
+
+   CANAL ANÔNIMO é a caixa que só o Luciano abre — ver o comentário
+   sobre sigilo lá embaixo, é o ponto mais delicado deste arquivo.
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+'use strict';
+
+var FROTA_K='gs_frota_v3';
+var SUP_K='gs_suporte_v1';
+var AUD_K='gs_auditoria_v1';
+
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function norm(s){ return String(s==null?'':s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim(); }
+function uid(p){ return (p||'x')+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function brl(n){ return 'R$ '+(Number(n)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function hojeISO(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function brData(iso){ var m=String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})/); return m?(m[3]+'/'+m[2]+'/'+m[1]):''; }
+function aviso(t,c){ if(typeof toast==='function') toast(t,c); }
+function quem(){
+  try{ if(typeof getActiveVendor==='function'){ var v=getActiveVendor(); if(v&&v.nome) return String(v.nome).split(' ')[0]; } }catch(e){}
+  return '';
+}
+
+/* ════════════════ FROTA ════════════════ */
+
+/* Semente: os 21 carros reais da operação, com as placas do catálogo.
+   Só é usada quando não existe nada salvo — depois disso quem manda é
+   o que a equipe cadastrou. */
+var SEMENTE={
+  cats:[
+    {key:'Minivan',     label:'Minivan 7 lugares', cor:'#FFD11A'},
+    {key:'SUV Premium', label:'SUV Premium',       cor:'#FF4757'},
+    {key:'SUV',         label:'SUV',               cor:'#1FA9A6'},
+    {key:'Sedan',       label:'Sedan',             cor:'#9AB4CC'}
+  ],
+  carros:[
+    {id:'v195', cat:'Minivan', modelo:'Chrysler Pacifica',        placa:'ID68JC',  cor:'Prata'},
+    {id:'v198', cat:'Minivan', modelo:'Chrysler Pacifica',        placa:'Z91FGQ',  cor:'Branco'},
+    {id:'v271', cat:'Minivan', modelo:'Chrysler Pacifica',        placa:'IJ31ZA',  cor:'Preto'},
+    {id:'v359', cat:'Minivan', modelo:'Chrysler Pacifica',        placa:'FEUB19',  cor:'Branco'},
+    {id:'v402', cat:'Minivan', modelo:'Chrysler Pacifica',        placa:'19FYBN',  cor:'Preto'},
+    {id:'v403', cat:'Minivan', modelo:'Chrysler Pacifica',        placa:'63FQJC',  cor:'Preto'},
+    {id:'v373', cat:'Minivan', modelo:'Chrysler Pacifica Hybrid', placa:'',        cor:'Branco'},
+    {id:'v345', cat:'Minivan', modelo:'Chrysler Voyager',         placa:'DK071G',  cor:'Prata'},
+    {id:'v372', cat:'Minivan', modelo:'Chrysler Voyager',         placa:'64FQJC',  cor:'Branco'},
+    {id:'v349', cat:'Minivan', modelo:'Kia Carnival',             placa:'DVT0395', cor:'Cinza'},
+    {id:'v360', cat:'Minivan', modelo:'Kia Carnival',             placa:'DT95GP',  cor:'Cinza'},
+    {id:'v363', cat:'Minivan', modelo:'Kia Carnival',             placa:'DT87GP',  cor:'Branco'},
+    {id:'v398', cat:'Minivan', modelo:'Kia Carnival',             placa:'83FQJC',  cor:'Vermelho'},
+    {id:'v411', cat:'Minivan', modelo:'Kia Carnival',             placa:'70FQJC',  cor:'Cinza'},
+    {id:'v370', cat:'Minivan', modelo:'Toyota Sienna',            placa:'XBI988',  cor:'Prata'},
+    {id:'v354', cat:'SUV Premium', modelo:'Chevrolet Suburban',   placa:'FHUZ30',  cor:'Branco'},
+    {id:'v368', cat:'SUV Premium', modelo:'Chevrolet Suburban',   placa:'LEKV12',  cor:'Cinza'},
+    {id:'v120', cat:'SUV',     modelo:'Nissan Rogue',             placa:'IH84AF',  cor:'Cinza'},
+    {id:'v374', cat:'SUV',     modelo:'Hyundai Tucson',           placa:'52FQJC',  cor:'Branco'},
+    {id:'v107', cat:'Sedan',   modelo:'Nissan Altima',            placa:'IC47HV',  cor:'Branco'},
+    {id:'v413', cat:'Sedan',   modelo:'Toyota Corolla',           placa:'82FQJC',  cor:'Branco'}
+  ]
+};
+
+var F={cats:[],carros:[]};
+var abaFrota='', buscaFrota='';
+
+function fCarregar(){
+  try{
+    var s=localStorage.getItem(FROTA_K);
+    if(s){ var p=JSON.parse(s);
+      if(p && Array.isArray(p.cats) && Array.isArray(p.carros)){ F=p; normalizar(); return; } }
+  }catch(e){}
+  F=JSON.parse(JSON.stringify(SEMENTE));
+  normalizar();
+  fGravar();
+}
+function normalizar(){
+  F.cats=(F.cats||[]).filter(function(c){ return c && c.key; });
+  /* id = key: é o que a fusão de 3 vias usa para casar item a item quando duas
+     pessoas mexem na frota ao mesmo tempo */
+  F.cats.forEach(function(c){ if(c.id==null) c.id=c.key; });
+  F.carros=(F.carros||[]).filter(function(v){ return v && v.id; });
+  F.carros.forEach(function(v){ if(!Array.isArray(v.oficina)) v.oficina=[]; });
+  if(!F.cats.length) F.cats=JSON.parse(JSON.stringify(SEMENTE.cats));
+  /* carro numa categoria que não existe mais não pode sumir da tela */
+  var chaves={}; F.cats.forEach(function(c){ chaves[c.key]=1; });
+  var orfaos=F.carros.filter(function(v){ return !chaves[v.cat]; });
+  if(orfaos.length){
+    F.cats.push({key:'Sem categoria',label:'Sem categoria',cor:'#7B93B5'});
+    orfaos.forEach(function(v){ v.cat='Sem categoria'; });
+  }
+  if(!abaFrota || !F.cats.some(function(c){ return c.key===abaFrota; })) abaFrota=F.cats[0].key;
+}
+function fGravar(){
+  try{ localStorage.setItem(FROTA_K, JSON.stringify(F)); }
+  catch(e){ aviso('⚠ Não consegui salvar a frota (armazenamento cheio)','red'); }
+  /* o calendário monta as linhas a partir daqui — avisa na hora */
+  try{ if(window.MGW_RESV && MGW_RESV.aplicarFrota) MGW_RESV.aplicarFrota(); }catch(e){}
+}
+
+/* O que o Calendário da Frota consome: chave, rótulo e quantos carros. */
+function categoriasCalendario(){
+  fCarregar();
+  return F.cats.map(function(c){
+    return {key:c.key, label:c.label||c.key,
+            cars:F.carros.filter(function(v){ return v.cat===c.key; }).length};
+  }).filter(function(c){ return c.cars>0; });
+}
+function carrosDaCategoria(key){ return F.carros.filter(function(v){ return v.cat===key; }); }
+function carroPorId(id){ return F.carros.filter(function(v){ return v.id===id; })[0]||null; }
+function todosCarros(){ fCarregar(); return F.carros.slice(); }
+function todasCategorias(){ fCarregar(); return F.cats.slice(); }
+
+/* Documento e seguro: quanto falta vencer. */
+function statusVenc(iso){
+  if(!iso) return null;
+  var d=new Date(iso+'T12:00:00'); if(isNaN(d)) return null;
+  var dias=Math.round((d-new Date())/86400000);
+  if(dias<0)  return {cls:'venceu', txt:'vencido há '+Math.abs(dias)+'d'};
+  if(dias<=30) return {cls:'perto',  txt:'vence em '+dias+'d'};
+  return {cls:'ok', txt:'ok'};
+}
+function gastoOficina(v){ return (v.oficina||[]).reduce(function(a,g){ return a+(Number(g.valor)||0); },0); }
+
+function fRender(){
+  fCarregar();
+  var tabs=document.getElementById('fr-tabs'); if(!tabs) return;
+  tabs.innerHTML=F.cats.map(function(c){
+    var n=carrosDaCategoria(c.key).length;
+    return '<div class="fr-tab'+(abaFrota===c.key?' on':'')+'" onclick="MGW_FROTA.aba(\''+esc(c.key)+'\')"'
+      +(abaFrota===c.key?' style="border-color:'+esc(c.cor||'#7B93B5')+';color:'+esc(c.cor||'#fff')+'"':'')+'>'
+      +esc(c.label||c.key)+'<span class="n">'+n+'</span>'
+      +'<span class="x" title="Renomear ou excluir esta categoria" onclick="event.stopPropagation();MGW_FROTA.editarCategoria(\''+esc(c.key)+'\')">⚙</span>'
+      +'</div>';
+  }).join('');
+
+  var alvo=document.getElementById('fr-conteudo'); if(!alvo) return;
+  var q=norm(buscaFrota);
+  var lista=q
+    ? F.carros.filter(function(v){ return norm([v.modelo,v.placa,v.vin,v.cor,v.ano,v.cat].join(' ')).indexOf(q)>=0; })
+    : carrosDaCategoria(abaFrota);
+
+  if(!lista.length){
+    alvo.innerHTML='<div class="fr-vazio">'+(q?'Nenhum carro bate com essa busca.'
+      :'Nenhum carro nesta categoria ainda. Use <b>＋ Novo carro</b> para cadastrar o primeiro.')+'</div>';
+    return;
+  }
+  alvo.innerHTML='<div class="fr-grid">'+lista.map(cardCarro).join('')+'</div>';
+}
+
+function cardCarro(v){
+  var doc=statusVenc(v.docVenc), seg=statusVenc(v.seguroVenc);
+  var chamados=(window.MGW_SUPORTE?MGW_SUPORTE.doCarro(v.id):[]);
+  var abertos=chamados.filter(function(c){ return c.status!=='resolvido'; }).length;
+  var gasto=gastoOficina(v);
+  var classe='fr-card'+(abertos?' parado':((doc&&doc.cls==='venceu')||(seg&&seg.cls==='venceu')?' alerta':''));
+  var linha=function(k,val,extra){
+    return '<div class="fr-l"><div class="fr-lk">'+k+'</div><div class="fr-lv'+(val?'':' vazio')+'">'
+      +(val?esc(val):'não informado')+(extra||'')+'</div></div>';
+  };
+  var selo=function(s){ return s?'<span class="fr-venc '+s.cls+'">'+s.txt+'</span>':''; };
+  var cat=F.cats.filter(function(c){ return c.key===v.cat; })[0]||{};
+  return '<div class="'+classe+'">'
+    +'<div class="fr-h"><span class="fr-modelo">'+esc(v.modelo||'sem modelo')+'</span>'
+      +'<span class="fr-placa">'+esc(v.placa||'sem placa')+'</span></div>'
+    +'<div class="fr-sub">'+esc(cat.label||v.cat)+(v.ano?' · '+esc(v.ano):'')+(v.cor?' · '+esc(v.cor):'')+'</div>'
+    +'<div class="fr-linhas">'
+      +linha('VIN', v.vin)
+      +linha('Documento', v.docVenc?('validade '+brData(v.docVenc)):(v.docObs||''), selo(doc))
+      +linha('Seguro', [v.seguradora,v.apolice].filter(Boolean).join(' · ')||(v.seguroVenc?'validade '+brData(v.seguroVenc):''), selo(seg))
+      +(v.obs?linha('Observação', v.obs):'')
+    +'</div>'
+    +'<div class="fr-rodape">'
+      +'<div class="fr-mini"><div class="fr-mini-n" style="color:#FF9E7A">'+brl(gasto).replace('R$ ','R$')+'</div><div class="fr-mini-l">oficina · '+(v.oficina||[]).length+' ida(s)</div></div>'
+      +'<div class="fr-mini"><div class="fr-mini-n" style="color:'+(abertos?'#FF6B78':'var(--chalk2)')+'">'+chamados.length+'</div><div class="fr-mini-l">chamados'+(abertos?' · '+abertos+' aberto(s)':'')+'</div></div>'
+    +'</div>'
+    +'<div class="fr-btns">'
+      +'<button class="fr-b" onclick="MGW_FROTA.editarCarro(\''+v.id+'\')">✎ Editar ficha</button>'
+      +'<button class="fr-b" onclick="MGW_FROTA.oficina(\''+v.id+'\')">🔧 Oficina</button>'
+      +'<button class="fr-b" onclick="MGW_FROTA.verChamados(\''+v.id+'\')">🛟 Suporte</button>'
+      +'<button class="fr-b perigo" onclick="MGW_FROTA.excluirCarro(\''+v.id+'\')">🗑</button>'
+    +'</div></div>';
+}
+
+/* ── modal ── */
+function abrirModal(html){
+  var m=document.getElementById('fr-modal'), b=document.getElementById('fr-modal-box');
+  if(!m||!b) return;
+  b.innerHTML=html; m.classList.add('on');
+  var primeiro=b.querySelector('input,select,textarea');
+  if(primeiro) setTimeout(function(){ try{ primeiro.focus(); }catch(e){} },60);
+}
+function fecharModal(){ var m=document.getElementById('fr-modal'); if(m) m.classList.remove('on'); }
+function val(id){ var e=document.getElementById(id); return e?String(e.value||'').trim():''; }
+
+function optsCategorias(sel){
+  return F.cats.map(function(c){
+    return '<option value="'+esc(c.key)+'"'+(c.key===sel?' selected':'')+'>'+esc(c.label||c.key)+'</option>';
+  }).join('');
+}
+
+function formCarro(v){
+  var novo=!v;
+  v=v||{cat:abaFrota};
+  return '<h3>'+(novo?'Novo carro':'Ficha do carro')+'</h3>'
+    +'<div class="fr-box-sub">'+(novo?'O calendário ganha a linha deste carro assim que você salvar.'
+        :esc(v.modelo||'')+' · '+esc(v.placa||'sem placa'))+'</div>'
+    +'<div class="fr-form">'
+      +'<div class="fr-f"><label>Categoria</label><select id="fc-cat">'+optsCategorias(v.cat)+'</select></div>'
+      +'<div class="fr-f"><label>Modelo</label><input id="fc-modelo" value="'+esc(v.modelo||'')+'" placeholder="Chrysler Pacifica"></div>'
+      +'<div class="fr-f"><label>Placa</label><input id="fc-placa" value="'+esc(v.placa||'')+'" placeholder="ID68JC"></div>'
+      +'<div class="fr-f"><label>Cor</label><input id="fc-cor" value="'+esc(v.cor||'')+'" placeholder="Prata"></div>'
+      +'<div class="fr-f"><label>Ano</label><input id="fc-ano" value="'+esc(v.ano||'')+'" placeholder="2024"></div>'
+      +'<div class="fr-f"><label>VIN (chassi)</label><input id="fc-vin" value="'+esc(v.vin||'')+'" placeholder="17 caracteres"></div>'
+      +'<div class="fr-f"><label>Documento — validade</label><input id="fc-docvenc" type="date" value="'+esc(v.docVenc||'')+'"></div>'
+      +'<div class="fr-f"><label>Documento — observação</label><input id="fc-docobs" value="'+esc(v.docObs||'')+'" placeholder="registration, título…"></div>'
+      +'<div class="fr-f"><label>Seguradora</label><input id="fc-seguradora" value="'+esc(v.seguradora||'')+'" placeholder="Progressive"></div>'
+      +'<div class="fr-f"><label>Apólice</label><input id="fc-apolice" value="'+esc(v.apolice||'')+'"></div>'
+      +'<div class="fr-f"><label>Seguro — validade</label><input id="fc-segvenc" type="date" value="'+esc(v.seguroVenc||'')+'"></div>'
+      +'<div class="fr-f full"><label>Observações</label><textarea id="fc-obs" rows="3" placeholder="Qualquer coisa que a equipe precise saber sobre este carro">'+esc(v.obs||'')+'</textarea></div>'
+    +'</div>'
+    +'<div class="fr-acoes">'
+      +'<button class="fr-cancel" onclick="MGW_FROTA.fechar()">Cancelar</button>'
+      +'<button class="fr-ok" onclick="MGW_FROTA.salvarCarro('+(novo?'null':'\''+v.id+'\'')+')">Salvar</button>'
+    +'</div>';
+}
+
+function salvarCarro(id){
+  var modelo=val('fc-modelo');
+  if(!modelo){ aviso('Escreva o modelo do carro','orange'); return; }
+  var placa=val('fc-placa').toUpperCase();
+  var repetida=F.carros.filter(function(v){ return placa && v.placa===placa && v.id!==id; })[0];
+  if(repetida && !confirm('Já existe um carro com a placa '+placa+' ('+repetida.modelo+').\n\nCadastrar assim mesmo?')) return;
+  var alvo=id?carroPorId(id):null;
+  if(!alvo){ alvo={id:uid('v'), oficina:[]}; F.carros.push(alvo); }
+  alvo.cat=val('fc-cat')||F.cats[0].key;
+  alvo.modelo=modelo;
+  alvo.placa=placa;
+  alvo.cor=val('fc-cor');
+  alvo.ano=val('fc-ano');
+  alvo.vin=val('fc-vin').toUpperCase();
+  alvo.docVenc=val('fc-docvenc');
+  alvo.docObs=val('fc-docobs');
+  alvo.seguradora=val('fc-seguradora');
+  alvo.apolice=val('fc-apolice');
+  alvo.seguroVenc=val('fc-segvenc');
+  alvo.obs=val('fc-obs');
+  abaFrota=alvo.cat;
+  fGravar(); fecharModal(); fRender();
+  aviso(id?'✓ Ficha atualizada':'✓ Carro cadastrado — já está no calendário');
+}
+
+function excluirCarro(id){
+  var v=carroPorId(id); if(!v) return;
+  if(!confirm('Tirar '+(v.modelo||'este carro')+' ('+(v.placa||'sem placa')+') da frota?\n\nO calendário passa a contar um carro a menos nesta categoria.')) return;
+  F.carros=F.carros.filter(function(x){ return x.id!==id; });
+  normalizar(); fGravar(); fRender();
+  aviso('🗑 Carro removido da frota');
+}
+
+function formCategoria(key){
+  var c=key?F.cats.filter(function(x){ return x.key===key; })[0]:null;
+  var novo=!c;
+  var n=key?carrosDaCategoria(key).length:0;
+  return '<h3>'+(novo?'Nova categoria':'Categoria')+'</h3>'
+    +'<div class="fr-box-sub">'+(novo?'Ela aparece no calendário assim que tiver o primeiro carro.'
+        :n+' carro(s) nesta categoria')+'</div>'
+    +'<div class="fr-form">'
+      +'<div class="fr-f full"><label>Nome</label><input id="fk-label" value="'+esc(c?(c.label||c.key):'')+'" placeholder="SUV Grande">'
+        +'<div class="dica">É este nome que aparece no calendário e na disponibilidade.</div></div>'
+      +'<div class="fr-f"><label>Cor</label><input id="fk-cor" type="color" value="'+esc(c&&c.cor||'#1FA9A6')+'"></div>'
+    +'</div>'
+    +'<div class="fr-acoes">'
+      +(novo?'':'<button class="fr-cancel" style="margin-right:auto;border-color:rgba(255,71,87,.4);color:#FF6B78" onclick="MGW_FROTA.excluirCategoria(\''+esc(key)+'\')">Excluir categoria</button>')
+      +'<button class="fr-cancel" onclick="MGW_FROTA.fechar()">Cancelar</button>'
+      +'<button class="fr-ok" onclick="MGW_FROTA.salvarCategoria('+(novo?'null':'\''+esc(key)+'\'')+')">Salvar</button>'
+    +'</div>';
+}
+function salvarCategoria(key){
+  var label=val('fk-label');
+  if(!label){ aviso('Dê um nome à categoria','orange'); return; }
+  var cor=val('fk-cor')||'#1FA9A6';
+  if(key){
+    var c=F.cats.filter(function(x){ return x.key===key; })[0];
+    if(c){ c.label=label; c.cor=cor; }
+  }else{
+    if(F.cats.some(function(x){ return norm(x.label||x.key)===norm(label); })){ aviso('Já existe uma categoria com esse nome','orange'); return; }
+    var nk=label;
+    F.cats.push({key:nk,label:label,cor:cor});
+    abaFrota=nk;
+  }
+  fGravar(); fecharModal(); fRender();
+  aviso(key?'✓ Categoria atualizada':'✓ Categoria criada');
+}
+function excluirCategoria(key){
+  var n=carrosDaCategoria(key).length;
+  if(F.cats.length<=1){ aviso('Precisa sobrar pelo menos uma categoria','orange'); return; }
+  if(n && !confirm('Esta categoria tem '+n+' carro(s).\n\nExcluir a categoria move esses carros para "Sem categoria". Continuar?')) return;
+  if(!n && !confirm('Excluir a categoria "'+key+'"?')) return;
+  F.cats=F.cats.filter(function(c){ return c.key!==key; });
+  normalizar(); fGravar(); fecharModal(); fRender();
+  aviso('🗑 Categoria excluída');
+}
+
+/* ── oficina ── */
+function formOficina(id){
+  var v=carroPorId(id); if(!v) return '';
+  var linhas=(v.oficina||[]).slice().sort(function(a,b){ return String(b.data||'').localeCompare(String(a.data||'')); });
+  return '<h3>Oficina — '+esc(v.modelo||'')+'</h3>'
+    +'<div class="fr-box-sub">'+esc(v.placa||'sem placa')+' · total gasto '+brl(gastoOficina(v))+'</div>'
+    +'<div class="fr-form">'
+      +'<div class="fr-f"><label>Data</label><input id="fo-data" type="date" value="'+hojeISO()+'"></div>'
+      +'<div class="fr-f"><label>Valor (R$)</label><input id="fo-valor" type="number" step="0.01" placeholder="0,00"></div>'
+      +'<div class="fr-f full"><label>O que foi feito</label><input id="fo-desc" placeholder="Troca de pastilha, revisão dos 60 mil…"></div>'
+    +'</div>'
+    +'<div class="fr-acoes" style="justify-content:flex-start;margin-top:12px">'
+      +'<button class="fr-ok" onclick="MGW_FROTA.oficinaAdd(\''+id+'\')">Lançar ida à oficina</button>'
+    +'</div>'
+    +(linhas.length?('<div class="fr-oficina">'+linhas.map(function(g){
+        return '<div class="fr-of-row"><span class="d">'+brData(g.data)+'</span>'
+          +'<span class="t">'+esc(g.desc||'—')+'</span>'
+          +'<span class="v">'+brl(g.valor)+'</span>'
+          +'<span class="x" title="Apagar este lançamento" onclick="MGW_FROTA.oficinaDel(\''+id+'\',\''+g.id+'\')">✕</span></div>';
+      }).join('')+'</div>'):'<div class="fr-vazio" style="margin-top:14px;padding:18px">Nenhuma ida à oficina lançada.</div>')
+    +'<div class="fr-acoes"><button class="fr-cancel" onclick="MGW_FROTA.fechar()">Fechar</button></div>';
+}
+function oficinaAdd(id){
+  var v=carroPorId(id); if(!v) return;
+  var valor=parseFloat(String(val('fo-valor')).replace(',','.'))||0;
+  var desc=val('fo-desc');
+  if(!desc && !valor){ aviso('Escreva o que foi feito ou o valor','orange'); return; }
+  v.oficina=v.oficina||[];
+  v.oficina.push({id:uid('g'), data:val('fo-data')||hojeISO(), valor:valor, desc:desc, por:quem()});
+  fGravar(); abrirModal(formOficina(id)); fRender();
+  aviso('🔧 Ida à oficina lançada');
+}
+function oficinaDel(id,gid){
+  var v=carroPorId(id); if(!v) return;
+  v.oficina=(v.oficina||[]).filter(function(g){ return g.id!==gid; });
+  fGravar(); abrirModal(formOficina(id)); fRender();
+}
+
+function verChamados(id){
+  var v=carroPorId(id); if(!v) return;
+  var lista=(window.MGW_SUPORTE?MGW_SUPORTE.doCarro(id):[]);
+  var corpo=lista.length
+    ? lista.map(function(c){ return MGW_SUPORTE.cartao(c,true); }).join('')
+    : '<div class="fr-vazio" style="padding:20px">Nenhum chamado de suporte para este carro. Ótimo sinal.</div>';
+  abrirModal('<h3>Suporte — '+esc(v.modelo||'')+'</h3>'
+    +'<div class="fr-box-sub">'+esc(v.placa||'sem placa')+' · '+lista.length+' chamado(s)</div>'
+    +corpo
+    +'<div class="fr-acoes">'
+      +'<button class="fr-cancel" onclick="MGW_FROTA.fechar()">Fechar</button>'
+      +'<button class="fr-ok" onclick="MGW_FROTA.fechar();MGW_SUPORTE.novo(\''+id+'\')">＋ Abrir chamado</button>'
+    +'</div>');
+}
+
+function exportarFrotaCSV(){
+  fCarregar();
+  var L=['Categoria;Modelo;Placa;VIN;Cor;Ano;Documento (validade);Documento (obs);Seguradora;Apolice;Seguro (validade);Idas a oficina;Gasto oficina (R$);Chamados de suporte;Observacoes'];
+  F.carros.forEach(function(v){
+    var ch=(window.MGW_SUPORTE?MGW_SUPORTE.doCarro(v.id).length:0);
+    var cat=F.cats.filter(function(c){ return c.key===v.cat; })[0]||{};
+    L.push([cat.label||v.cat, v.modelo, v.placa, v.vin, v.cor, v.ano, brData(v.docVenc), v.docObs,
+            v.seguradora, v.apolice, brData(v.seguroVenc), (v.oficina||[]).length,
+            (gastoOficina(v)).toFixed(2).replace('.',','), ch, String(v.obs||'').replace(/[\r\n;]/g,' ')]
+           .map(function(x){ return String(x==null?'':x); }).join(';'));
+  });
+  baixarCSV(L, 'MAGIWAY_FROTA_'+hojeISO()+'.csv');
+}
+function baixarCSV(linhas, nome){
+  var blob=new Blob(['﻿'+linhas.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=nome;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },800);
+  aviso('✓ CSV exportado');
+}
+
+window.MGW_FROTA={
+  render:fRender, recarregar:function(){ fCarregar(); fRender(); },
+  aba:function(k){ abaFrota=k; buscaFrota=''; var b=document.getElementById('fr-busca'); if(b) b.value=''; fRender(); },
+  buscar:function(q){ buscaFrota=q||''; fRender(); },
+  novoCarro:function(){ abrirModal(formCarro(null)); },
+  editarCarro:function(id){ var v=carroPorId(id); if(v) abrirModal(formCarro(v)); },
+  salvarCarro:salvarCarro, excluirCarro:excluirCarro,
+  novaCategoria:function(){ abrirModal(formCategoria(null)); },
+  editarCategoria:function(k){ abrirModal(formCategoria(k)); },
+  salvarCategoria:salvarCategoria, excluirCategoria:excluirCategoria,
+  oficina:function(id){ abrirModal(formOficina(id)); },
+  oficinaAdd:oficinaAdd, oficinaDel:oficinaDel,
+  verChamados:verChamados,
+  exportarCSV:exportarFrotaCSV,
+  fechar:fecharModal, abrirModal:abrirModal,
+  categoriasCalendario:categoriasCalendario,
+  carros:todosCarros, categorias:todasCategorias, carro:carroPorId
+};
+
+/* ════════════════ SUPORTE ════════════════ */
+
+var CATS_PROB=[
+  'Mecânico','Elétrico','Pneu','Ar-condicionado','Bateria','Documentação',
+  'Acidente / colisão','Multa / pedágio','Limpeza','Troca de carro',
+  'Atendimento','Aplicativo / GPS','Outro'
+];
+var S=[], buscaSup='';
+
+function sCarregar(){
+  try{ var s=localStorage.getItem(SUP_K); var a=s?JSON.parse(s):[]; S=Array.isArray(a)?a:[]; }
+  catch(e){ S=[]; }
+}
+function sGravar(){
+  try{ localStorage.setItem(SUP_K, JSON.stringify(S)); }
+  catch(e){ aviso('⚠ Não consegui salvar o chamado','red'); }
+}
+function doCarro(id){
+  sCarregar();
+  return S.filter(function(c){ return c.carroId===id; })
+          .sort(function(a,b){ return String(b.data||'').localeCompare(String(a.data||'')); });
+}
+/* "1h 20min" lê melhor que "80". */
+function tempoTxt(min){
+  var m=Math.max(0,Math.round(Number(min)||0));
+  if(!m) return '—';
+  if(m<60) return m+' min';
+  var h=Math.floor(m/60), r=m%60;
+  return h+'h'+(r?' '+r+'min':'');
+}
+function filtroPeriodo(){
+  var el=document.getElementById('sp-filtro-per');
+  var v=el?el.value:'ciclo';
+  if(v==='') return null;
+  if(v==='ciclo'){
+    try{ if(window.MGW_CICLO){ var c=MGW_CICLO.cicloAtual();
+      var iso=function(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+      return {de:iso(c.ini), ate:iso(c.fim)}; } }catch(e){}
+    return null;
+  }
+  var dias=parseInt(v,10)||90;
+  var d=new Date(); d.setDate(d.getDate()-dias);
+  return {de:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'), ate:'9999-12-31'};
+}
+function filtrados(){
+  sCarregar();
+  var per=filtroPeriodo();
+  var stEl=document.getElementById('sp-filtro-st');
+  var st=stEl?stEl.value:'';
+  var q=norm(buscaSup);
+  return S.filter(function(c){
+    if(per && c.data && (c.data<per.de || c.data>per.ate)) return false;
+    if(st && (c.status||'aberto')!==st) return false;
+    if(q){
+      var carro=carroPorId(c.carroId);
+      var texto=[c.tipo,c.catProb,c.desc,c.resolucao,c.placa,carro&&carro.modelo,carro&&carro.placa].join(' ');
+      if(norm(texto).indexOf(q)<0) return false;
+    }
+    return true;
+  }).sort(function(a,b){ return String(b.data||'').localeCompare(String(a.data||'')); });
+}
+
+function cartaoChamado(c, semCarro){
+  var carro=carroPorId(c.carroId);
+  var st=c.status||'aberto';
+  var stTxt={aberto:'ABERTO',andamento:'EM ANDAMENTO',resolvido:'RESOLVIDO'}[st]||'ABERTO';
+  var rev='';
+  if(c.reversao==='sim')  rev='<span class="sp-tag rev-sim">😊 CLIENTE REVERTIDO</span>';
+  if(c.reversao==='nao')  rev='<span class="sp-tag rev-nao">😞 CLIENTE NÃO REVERTIDO</span>';
+  if(c.reversao==='parcial') rev='<span class="sp-tag terceiro">😐 PARCIAL</span>';
+  var idCarro= c.naoNosso
+      ? '<span class="sp-tag terceiro">🚫 CARRO NÃO É NOSSO'+(c.placa?' · '+esc(c.placa):'')+'</span>'
+      : (carro?('<span class="sp-tag terceiro">'+esc(carro.modelo)+' · '+esc(carro.placa||'sem placa')+'</span>'):'');
+  return '<div class="sp-card '+st+'">'
+    +'<div class="sp-h"><span class="sp-tipo">'+esc(c.tipo||c.catProb||'Chamado')+'</span>'
+      +'<span class="sp-tag st-'+st+'">'+stTxt+'</span>'
+      +(semCarro?'':idCarro)+rev+'</div>'
+    +'<div class="sp-meta">'+brData(c.data)+(c.por?' · registrado por '+esc(c.por):'')
+      +(c.cliente?' · cliente '+esc(c.cliente):'')+' · '+esc(c.catProb||'sem categoria')+'</div>'
+    +(c.desc?'<div class="sp-desc">'+esc(c.desc)+'</div>':'')
+    +'<div class="sp-linhas">'
+      +'<div class="sp-li"><b>Tempo de resposta</b>'+tempoTxt(c.tempoResp)+'</div>'
+      +'<div class="sp-li" style="flex:1;min-width:180px"><b>Resolução</b>'+(c.resolucao?esc(c.resolucao):'—')+'</div>'
+    +'</div>'
+    +'<div class="fr-btns" style="margin-top:0">'
+      +'<button class="fr-b" onclick="MGW_SUPORTE.editar(\''+c.id+'\')">✎ Editar</button>'
+      +(st!=='resolvido'?'<button class="fr-b" onclick="MGW_SUPORTE.resolver(\''+c.id+'\')">✓ Marcar resolvido</button>':'')
+      +'<button class="fr-b perigo" onclick="MGW_SUPORTE.excluir(\''+c.id+'\')">🗑</button>'
+    +'</div></div>';
+}
+
+function sRender(){
+  var lista=filtrados();
+  var kpis=document.getElementById('sp-kpis');
+  if(kpis){
+    var abertos=lista.filter(function(c){ return (c.status||'aberto')!=='resolvido'; }).length;
+    var comTempo=lista.filter(function(c){ return Number(c.tempoResp)>0; });
+    var medio=comTempo.length?comTempo.reduce(function(a,c){ return a+Number(c.tempoResp); },0)/comTempo.length:0;
+    var revs=lista.filter(function(c){ return c.reversao==='sim'||c.reversao==='nao'||c.reversao==='parcial'; });
+    var ok=revs.filter(function(c){ return c.reversao==='sim'; }).length;
+    var terceiros=lista.filter(function(c){ return c.naoNosso; }).length;
+    kpis.innerHTML=''
+      +kpi(lista.length,'chamados no período','var(--chalk)')
+      +kpi(abertos,'em aberto',abertos?'#FF6B78':'#1AFF9D')
+      +kpi(tempoTxt(medio),'tempo médio de resposta','var(--gold)')
+      +kpi(revs.length?Math.round(ok*100/revs.length)+'%':'—','clientes revertidos','#1AFF9D')
+      +kpi(terceiros,'carro não era nosso','var(--chalk2)');
+  }
+  var top=document.getElementById('sp-top3');
+  if(top) top.innerHTML=htmlTop3(lista);
+
+  var alvo=document.getElementById('sp-lista'); if(!alvo) return;
+  if(!lista.length){
+    alvo.innerHTML='<div class="fr-vazio">Nenhum chamado no período escolhido. Use <b>＋ Novo chamado</b> para registrar o primeiro.</div>';
+    return;
+  }
+  /* agrupado por categoria de problema, que é como a operação enxerga */
+  var grupos={};
+  lista.forEach(function(c){ var k=c.catProb||'Outro'; (grupos[k]=grupos[k]||[]).push(c); });
+  var chaves=Object.keys(grupos).sort(function(a,b){ return grupos[b].length-grupos[a].length; });
+  alvo.innerHTML=chaves.map(function(k){
+    return '<div class="sp-cat"><div class="sp-cat-h"><span class="sp-cat-t">'+esc(k)+'</span>'
+      +'<span class="sp-cat-n">'+grupos[k].length+' chamado'+(grupos[k].length>1?'s':'')+'</span>'
+      +'<span class="sp-cat-line"></span></div>'
+      +grupos[k].map(function(c){ return cartaoChamado(c,false); }).join('')+'</div>';
+  }).join('');
+}
+function kpi(n,l,cor){
+  return '<div class="sp-kpi"><div class="sp-kpi-n" style="color:'+cor+'">'+esc(String(n))+'</div><div class="sp-kpi-l">'+l+'</div></div>';
+}
+/* Os 3 carros que mais vão para o suporte. Carro de terceiro fica de fora:
+   ele não diz nada sobre a nossa frota. */
+function htmlTop3(lista){
+  var cont={};
+  lista.forEach(function(c){ if(c.naoNosso||!c.carroId) return; cont[c.carroId]=(cont[c.carroId]||0)+1; });
+  var ord=Object.keys(cont).sort(function(a,b){ return cont[b]-cont[a]; }).slice(0,3);
+  if(!ord.length) return '';
+  var max=cont[ord[0]]||1;
+  var med=['🥇','🥈','🥉'];
+  return '<div class="sp-top"><div class="sp-top-h">🏆 Top 3 — carros que mais vão para o suporte</div>'
+    +ord.map(function(id,i){
+      var v=carroPorId(id);
+      var nome=v?(v.modelo+' · '+(v.placa||'sem placa')):'carro removido da frota';
+      return '<div class="sp-top-row"><span class="sp-medal">'+med[i]+'</span>'
+        +'<span class="sp-top-car">'+esc(nome)
+          +'<div class="sp-bar" style="width:'+Math.round(cont[id]*100/max)+'%"></div></span>'
+        +'<span class="sp-top-n">'+cont[id]+'</span></div>';
+    }).join('')
+    +'</div>';
+}
+
+function formChamado(c, carroPre){
+  var novo=!c;
+  c=c||{data:hojeISO(), status:'aberto', carroId:carroPre||'', catProb:'Mecânico', reversao:''};
+  var carros=todosCarros().slice().sort(function(a,b){ return String(a.modelo).localeCompare(String(b.modelo)); });
+  return '<h3>'+(novo?'Novo chamado':'Editar chamado')+'</h3>'
+    +'<div class="fr-box-sub">O que aconteceu, quanto tempo levou para responder e se o cliente virou o jogo.</div>'
+    +'<div class="fr-form">'
+      +'<div class="fr-f"><label>Data</label><input id="sc-data" type="date" value="'+esc(c.data||hojeISO())+'"></div>'
+      +'<div class="fr-f"><label>Categoria do problema</label><select id="sc-cat">'
+        +CATS_PROB.map(function(k){ return '<option'+(k===c.catProb?' selected':'')+'>'+esc(k)+'</option>'; }).join('')+'</select></div>'
+      +'<div class="fr-f full"><label>Tipo de problema (em uma linha)</label>'
+        +'<input id="sc-tipo" value="'+esc(c.tipo||'')+'" placeholder="Pneu furado na I-4 · cliente parado no acostamento"></div>'
+      +'<div class="fr-f"><label>Carro</label><select id="sc-carro">'
+        +'<option value="">— selecione —</option>'
+        +carros.map(function(v){ return '<option value="'+v.id+'"'+(v.id===c.carroId?' selected':'')+'>'+esc(v.modelo)+' · '+esc(v.placa||'sem placa')+'</option>'; }).join('')
+        +'</select>'
+        +'<div class="dica"><label style="display:flex;align-items:center;gap:7px;text-transform:none;letter-spacing:0;font-size:.66rem;color:var(--chalk2);margin-top:7px;cursor:pointer">'
+          +'<input type="checkbox" id="sc-naonosso" style="width:auto"'+(c.naoNosso?' checked':'')+' onchange="MGW_SUPORTE.alternaTerceiro()"> O carro não é nosso</label></div></div>'
+      +'<div class="fr-f"><label>Placa do carro de terceiro</label><input id="sc-placa" value="'+esc(c.placa||'')+'" placeholder="só quando o carro não é nosso"'+(c.naoNosso?'':' disabled')+'></div>'
+      +'<div class="fr-f"><label>Cliente (opcional)</label><input id="sc-cliente" value="'+esc(c.cliente||'')+'"></div>'
+      +'<div class="fr-f"><label>Tempo de resposta (minutos)</label><input id="sc-tempo" type="number" min="0" value="'+esc(c.tempoResp!=null?c.tempoResp:'')+'" placeholder="45">'
+        +'<div class="dica">Do momento em que o cliente avisou até alguém nosso responder.</div></div>'
+      +'<div class="fr-f"><label>Status</label><select id="sc-status">'
+        +['aberto','andamento','resolvido'].map(function(k){
+            var t={aberto:'Aberto',andamento:'Em andamento',resolvido:'Resolvido'}[k];
+            return '<option value="'+k+'"'+(k===(c.status||'aberto')?' selected':'')+'>'+t+'</option>'; }).join('')
+        +'</select></div>'
+      +'<div class="fr-f"><label>Reversão do cliente</label><select id="sc-rev">'
+        +[['','— ainda não sei —'],['sim','Sim, o cliente virou o jogo'],['parcial','Parcial'],['nao','Não, o cliente saiu chateado']]
+          .map(function(p){ return '<option value="'+p[0]+'"'+(p[0]===(c.reversao||'')?' selected':'')+'>'+p[1]+'</option>'; }).join('')
+        +'</select></div>'
+      +'<div class="fr-f full"><label>Resolução — o que foi feito</label>'
+        +'<input id="sc-resol" value="'+esc(c.resolucao||'')+'" placeholder="Guincho em 40 min e carro reserva no mesmo dia"></div>'
+      +'<div class="fr-f full"><label>Descrição detalhada</label>'
+        +'<textarea id="sc-desc" rows="5" placeholder="Conte a história inteira: como chegou, o que o cliente disse, o que a equipe fez, o que ficou pendente.">'+esc(c.desc||'')+'</textarea></div>'
+    +'</div>'
+    +'<div class="fr-acoes">'
+      +'<button class="fr-cancel" onclick="MGW_FROTA.fechar()">Cancelar</button>'
+      +'<button class="fr-ok" onclick="MGW_SUPORTE.salvar('+(novo?'null':'\''+c.id+'\'')+')">Salvar</button>'
+    +'</div>';
+}
+function alternaTerceiro(){
+  var ck=document.getElementById('sc-naonosso');
+  var pl=document.getElementById('sc-placa'), ca=document.getElementById('sc-carro');
+  if(!ck) return;
+  if(pl) pl.disabled=!ck.checked;
+  if(ca) ca.disabled=ck.checked;
+}
+function salvarChamado(id){
+  sCarregar();
+  var tipo=val('sc-tipo');
+  if(!tipo){ aviso('Escreva o tipo de problema','orange'); return; }
+  var naoNosso=!!(document.getElementById('sc-naonosso')||{}).checked;
+  var carroId=naoNosso?'':val('sc-carro');
+  if(!naoNosso && !carroId){ aviso('Escolha o carro — ou marque que o carro não é nosso','orange'); return; }
+  var alvo=id?S.filter(function(c){ return c.id===id; })[0]:null;
+  if(!alvo){ alvo={id:uid('s'), por:quem()}; S.push(alvo); }
+  alvo.data=val('sc-data')||hojeISO();
+  alvo.catProb=val('sc-cat');
+  alvo.tipo=tipo;
+  alvo.naoNosso=naoNosso;
+  alvo.carroId=carroId;
+  alvo.placa=naoNosso?val('sc-placa').toUpperCase():'';
+  alvo.cliente=val('sc-cliente');
+  alvo.tempoResp=Math.max(0,parseInt(val('sc-tempo'),10)||0);
+  alvo.status=val('sc-status')||'aberto';
+  alvo.reversao=val('sc-rev');
+  alvo.resolucao=val('sc-resol');
+  alvo.desc=val('sc-desc');
+  sGravar(); fecharModal(); sRender(); fRender();
+  aviso(id?'✓ Chamado atualizado':'✓ Chamado registrado');
+}
+function resolver(id){
+  sCarregar();
+  var c=S.filter(function(x){ return x.id===id; })[0]; if(!c) return;
+  c.status='resolvido';
+  if(!c.resolucao){
+    var r=prompt('O que resolveu o caso? (aparece no relatório de suporte)','');
+    if(r!=null) c.resolucao=String(r).trim();
+  }
+  sGravar(); sRender(); fRender();
+  aviso('✓ Chamado resolvido');
+}
+function excluirChamado(id){
+  sCarregar();
+  var c=S.filter(function(x){ return x.id===id; })[0]; if(!c) return;
+  if(!confirm('Excluir o chamado "'+(c.tipo||'')+'"?')) return;
+  S=S.filter(function(x){ return x.id!==id; });
+  sGravar(); fecharModal(); sRender(); fRender();
+  aviso('🗑 Chamado excluído');
+}
+function exportarSupCSV(){
+  var lista=filtrados();
+  var L=['Data;Categoria;Tipo de problema;Carro;Placa;Carro nosso?;Cliente;Tempo de resposta (min);Status;Reversao;Resolucao;Descricao;Registrado por'];
+  lista.forEach(function(c){
+    var v=carroPorId(c.carroId);
+    L.push([brData(c.data), c.catProb, c.tipo, v?v.modelo:'', c.naoNosso?c.placa:(v?v.placa:''),
+            c.naoNosso?'NAO':'SIM', c.cliente, c.tempoResp, c.status, c.reversao, c.resolucao,
+            String(c.desc||'').replace(/[\r\n;]/g,' '), c.por]
+           .map(function(x){ return String(x==null?'':x); }).join(';'));
+  });
+  baixarCSV(L,'MAGIWAY_SUPORTE_'+hojeISO()+'.csv');
+}
+
+window.MGW_SUPORTE={
+  render:sRender,
+  buscar:function(q){ buscaSup=q||''; sRender(); },
+  novo:function(carroId){ abrirModal(formChamado(null,carroId)); },
+  editar:function(id){ sCarregar(); var c=S.filter(function(x){ return x.id===id; })[0]; if(c) abrirModal(formChamado(c)); },
+  salvar:salvarChamado, resolver:resolver, excluir:excluirChamado,
+  alternaTerceiro:alternaTerceiro,
+  doCarro:doCarro, cartao:cartaoChamado, todos:function(){ sCarregar(); return S.slice(); },
+  exportarCSV:exportarSupCSV
+};
+
+/* ════════════════ CANAL ANÔNIMO ════════════════
+
+   Combinado: a mensagem é para o Luciano e só para ele.
+
+   Por que NÃO é um e-mail: um link mailto abriria o programa de e-mail da
+   própria pessoa — o endereço do Luciano ficaria à vista (que era justamente
+   para não acontecer) e a mensagem sairia com o nome e o endereço de quem
+   escreveu, ou seja, sem anonimato nenhum. O oposto do pedido.
+
+   Como funciona então: a mensagem sobe para a nuvem numa chave que SÓ a
+   conta de administrador baixa (a mesma trava do Fluxo de Caixa — veja
+   SOMENTE_GERENTE). Ninguém mais recebe o registro no navegador, então não
+   há o que vazar. E nada de quem escreveu é gravado: sem nome, sem login,
+   sem aparelho, e a data é arredondada para o dia, para não dar de reconhecer
+   alguém pelo horário em que mandou.                                       */
+
+var tipoAud='reclamacao';
+function audCarregar(){
+  try{ var s=localStorage.getItem(AUD_K); var a=s?JSON.parse(s):[]; return Array.isArray(a)?a:[]; }
+  catch(e){ return []; }
+}
+function audEnviar(){
+  var texto=val('au-texto');
+  if(texto.length<10){ aviso('Escreva um pouco mais — com 2 linhas o Luciano não consegue agir','orange'); return; }
+  var lista=audCarregar();
+  lista.push({
+    id:uid('a'),
+    tipo:tipoAud,
+    assunto:val('au-assunto'),
+    texto:texto,
+    dia:hojeISO()          /* só o dia — hora exata identificaria a pessoa */
+  });
+  try{ localStorage.setItem(AUD_K, JSON.stringify(lista)); }
+  catch(e){ aviso('⚠ Não consegui enviar agora. Tente de novo.','red'); return; }
+  /* empurra para a nuvem na hora, para não depender de a pessoa continuar no app */
+  try{ if(typeof cloudFlush==='function') cloudFlush(); }catch(e){}
+  var t=document.getElementById('au-texto'), a=document.getElementById('au-assunto');
+  if(t) t.value=''; if(a) a.value='';
+  audRender();
+  aviso('🔒 Enviado. Só o Luciano vai ler.','green');
+}
+/* A caixa de entrada só é montada na conta do administrador — nas outras
+   contas a chave nem chega da nuvem, então não há nada para mostrar. */
+function audRender(){
+  var box=document.getElementById('au-caixa');
+  var ehAdm=!!window.IS_MASTER;
+  if(!box){
+    if(!ehAdm) return;
+    var wrap=document.querySelector('#panel-auditoria .au-wrap'); if(!wrap) return;
+    box=document.createElement('div'); box.id='au-caixa'; box.style.marginTop='26px';
+    wrap.appendChild(box);
+  }
+  if(!ehAdm){ box.innerHTML=''; return; }
+  var lista=audCarregar().slice().reverse();
+  var rot={reclamacao:['⚠️','Reclamação'],agradecimento:['🙏','Agradecimento'],sugestao:['💡','Sugestão']};
+  box.innerHTML='<div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">CAIXA DO LUCIANO — '+lista.length+' MENSAGEM(NS)</span><div class="sec-line"></div></div>'
+    +(lista.length?lista.map(function(m){
+        var r=rot[m.tipo]||['✉️','Mensagem'];
+        return '<div class="sp-card aberto" style="border-left-color:var(--ice)">'
+          +'<div class="sp-h"><span class="sp-tipo">'+r[0]+' '+esc(m.assunto||r[1])+'</span>'
+            +'<span class="sp-tag terceiro">'+esc(r[1])+'</span></div>'
+          +'<div class="sp-meta">'+brData(m.dia)+' · autor não registrado</div>'
+          +'<div class="sp-desc">'+esc(m.texto)+'</div>'
+          +'<div class="fr-btns" style="margin-top:0"><button class="fr-b perigo" onclick="MGW_AUDITORIA.apagar(\''+m.id+'\')">🗑 Apagar</button></div>'
+        +'</div>';
+      }).join('')
+      :'<div class="fr-vazio">Nenhuma mensagem até agora.</div>');
+}
+window.MGW_AUDITORIA={
+  tipo:function(t){
+    tipoAud=t;
+    var m={reclamacao:'au-t-rec',agradecimento:'au-t-agr',sugestao:'au-t-sug'};
+    Object.keys(m).forEach(function(k){
+      var el=document.getElementById(m[k]); if(el) el.classList.toggle('on',k===t);
+    });
+  },
+  enviar:audEnviar,
+  limpar:function(){
+    var t=document.getElementById('au-texto'), a=document.getElementById('au-assunto');
+    if(t) t.value=''; if(a) a.value='';
+  },
+  apagar:function(id){
+    if(!window.IS_MASTER) return;
+    if(!confirm('Apagar esta mensagem? Ela some para sempre.')) return;
+    var lista=audCarregar().filter(function(m){ return m.id!==id; });
+    try{ localStorage.setItem(AUD_K, JSON.stringify(lista)); }catch(e){}
+    try{ if(typeof cloudFlush==='function') cloudFlush(); }catch(e){}
+    audRender();
+  },
+  render:audRender
+};
+
+/* entra no roteador sem apagar os handlers que já existem */
+(function(){
+  var prev=window.onNavChange;
+  window.onNavChange=function(id){
+    if(typeof prev==='function'){ try{ prev(id); }catch(e){ console.warn('[nav] handler anterior falhou',e); } }
+    try{
+      if(id==='frota')     fRender();
+      if(id==='suporte')   sRender();
+      if(id==='auditoria') audRender();
+    }catch(e){ console.warn('[frota/suporte] render',e); }
+  };
+})();
+/* fechar o modal clicando fora ou com Esc */
+document.addEventListener('click', function(e){
+  if(e.target && e.target.id==='fr-modal') fecharModal();
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape') fecharModal();
+});
 })();
 </script>
 
