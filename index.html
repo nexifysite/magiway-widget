@@ -6151,8 +6151,10 @@ Data de retirada = din"></textarea>
          por isso: <b>o cargo dele e o contrato dele são a garantia</b> de que o sigilo
          será respeitado.</p>
       <p>O app <b>não grava</b> quem escreveu: não guarda seu nome, seu login, seu
-         aparelho nem a hora exata. Se você quiser resposta, escreva um jeito de te
-         encontrar dentro do texto — aí é escolha sua, não obrigação.</p>
+         aparelho nem a hora exata — essas informações <b>nem existem</b> no lugar
+         onde a mensagem é armazenada, e o servidor só entrega a caixa para ele.
+         Se você quiser resposta, escreva um jeito de te encontrar dentro do
+         texto — aí é escolha sua, não obrigação.</p>
       <p>Pode ser reclamação, denúncia, sugestão ou agradecimento. Fala o que precisa
          ser falado.</p>
     </div>
@@ -6180,10 +6182,11 @@ Data de retirada = din"></textarea>
       <button class="fr-cancel" onclick="MGW_AUDITORIA.limpar()">Limpar</button>
     </div>
     <div class="au-nota" id="au-nota">
-      A mensagem sobe direto para a caixa do Luciano e <b>não desce para o
-      aplicativo de mais ninguém</b> — nem da gestora, nem da coordenação.
-      Não é enviada pelo seu e-mail: se fosse, sairia com o seu nome, e aí de
-      anônimo não teria nada.
+      A mensagem vai direto para a caixa do Luciano. Quem guarda o segredo é o
+      servidor, não o aplicativo: ele <b>se recusa a entregar</b> essas mensagens
+      para qualquer outra conta — gestora, coordenação, ninguém. Não é enviada
+      pelo seu e-mail: se fosse, sairia com o seu nome, e aí de anônimo não teria
+      nada. Precisa de internet no momento do envio.
     </div>
   </div>
 </div>
@@ -8704,7 +8707,7 @@ function _cloudRawSet(k,v){ try{ localStorage.__proto__.setItem.call(localStorag
    qualquer usuário pode gravar. */
 /* Pendências, marcações de entrega/devolução e relatórios emitidos são operação
    do dia a dia: quem executa precisa poder confirmar sem depender do gerente. */
-const SHARED_WRITABLE_BY_ALL = ['gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1','gs_auditoria_v1'];
+const SHARED_WRITABLE_BY_ALL = ['gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1'];
 function _cloudBucket(fullKey){
   if(!fullKey || typeof fullKey!=='string') return null;
   if(CLOUD.uid && fullKey.indexOf('mgv_'+CLOUD.uid+'__')===0) return 'own';
@@ -8870,7 +8873,7 @@ async function cloudFlush(){
    gerente. O fluxo de caixa é o caso: a senha da aba é conferida no navegador e
    está no código publicado, então ela não segura ninguém que abra o DevTools —
    quem protege de verdade é não mandar o dado para essa máquina. */
-const SOMENTE_GERENTE = ['gs_fluxo_v1','gs_auditoria_v1'];
+const SOMENTE_GERENTE = ['gs_fluxo_v1'];
 async function _cloudPullShared(){
   try{
     const {data}=await CLOUD.client.from('shared_state').select('k,v');
@@ -15641,7 +15644,7 @@ function ehVendedor(v){ return !!v && (v.role||'admin')==='admin'; }
    são da EMPRESA: a pendência que o Luciano lança na reunião tem de aparecer
    para o Dickson, e o carro que a Mariana marcou como entregue tem de aparecer
    entregue para todo mundo. */
-const VENDOR_SHARED_KEYS = ['gs_cfg_v1','gs_ai_keys','gs_frota_v2','gs_shortcuts','gs_cambio_modal','gs_focus_mode','gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1','gs_auditoria_v1'];
+const VENDOR_SHARED_KEYS = ['gs_cfg_v1','gs_ai_keys','gs_frota_v2','gs_shortcuts','gs_cambio_modal','gs_focus_mode','gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1'];
 const VENDOR_SHARED_PREFIXES = ['gs_seedver_'];
 
 /* MIGRAÇÃO ÚNICA — gs_reservas_v1 deixou de ser por usuário e passou a ser da
@@ -17451,7 +17454,7 @@ function exportarAppAtualizado(){
 (function(){
 'use strict';
 
-var CHAVES=['gs_reservas_v1','gs_cfg_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1','gs_auditoria_v1'];   // o que é da empresa
+var CHAVES=['gs_reservas_v1','gs_cfg_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1'];   // o que é da empresa
 var ultimoValor={};                          // último valor conhecido por chave
 var canal=null, timerPoll=null, ligado=false, aplicando=false;
 
@@ -17524,7 +17527,15 @@ function redesenhar(chaves){
 async function puxar(silencioso){
   if(!window.CLOUD || !CLOUD.enabled || !CLOUD.session || aplicando) return 0;
   try{
-    var r=await CLOUD.client.from('shared_state').select('k,v').in('k',CHAVES);
+    /* O fluxo de caixa não pode descer para quem não é gerente. A trava de
+       verdade está na política do Supabase (supabase/banco.sql); esta linha
+       é o cinto de segurança do lado de cá — sem ela, este caminho pedia as
+       chaves restritas de volta a cada 60 segundos. */
+    var ehGerente=false;
+    try{ ehGerente=(window.CLOUD && CLOUD.role==='admin'); }catch(e){}
+    var restritas=(typeof SOMENTE_GERENTE!=='undefined')?SOMENTE_GERENTE:['gs_fluxo_v1'];
+    var pedir=ehGerente ? CHAVES : CHAVES.filter(function(k){ return restritas.indexOf(k)<0; });
+    var r=await CLOUD.client.from('shared_state').select('k,v').in('k',pedir);
     if(r.error) return 0;
     var mudou=[];
     (r.data||[]).forEach(function(row){ if(aplicar(row.k, row.v)) mudou.push(row.k); });
@@ -20506,7 +20517,6 @@ document.addEventListener('DOMContentLoaded', aplicar);
 
 var FROTA_K='gs_frota_v3';
 var SUP_K='gs_suporte_v1';
-var AUD_K='gs_auditoria_v1';
 
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function norm(s){ return String(s==null?'':s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim(); }
@@ -21167,41 +21177,54 @@ window.MGW_SUPORTE={
    para não acontecer) e a mensagem sairia com o nome e o endereço de quem
    escreveu, ou seja, sem anonimato nenhum. O oposto do pedido.
 
-   Como funciona então: a mensagem sobe para a nuvem numa chave que SÓ a
-   conta de administrador baixa (a mesma trava do Fluxo de Caixa — veja
-   SOMENTE_GERENTE). Ninguém mais recebe o registro no navegador, então não
-   há o que vazar. E nada de quem escreveu é gravado: sem nome, sem login,
-   sem aparelho, e a data é arredondada para o dia, para não dar de reconhecer
-   alguém pelo horário em que mandou.                                       */
+   Como funciona: a mensagem vai direto para a tabela `auditoria` do Supabase,
+   que tem política de INSERT para todo mundo e SELECT só para o gerente. Quem
+   guarda o segredo é o SERVIDOR — ele se recusa a devolver as mensagens para
+   qualquer outra conta.
+
+   A primeira versão disto guardava as mensagens junto com as outras chaves
+   compartilhadas e filtrava no navegador. Não servia: o servidor mandava as
+   linhas para todo mundo e só o JavaScript é que jogava fora — bastava abrir
+   o DevTools para ler tudo. Num canal de denúncia isso não é detalhe.
+
+   E repare no que a tabela NÃO tem: coluna de autor, de login, de aparelho ou
+   de hora. Só a data do dia. Não é promessa, é a estrutura — não há de onde
+   tirar quem escreveu.                                                      */
 
 var tipoAud='reclamacao';
-function audCarregar(){
-  try{ var s=localStorage.getItem(AUD_K); var a=s?JSON.parse(s):[]; return Array.isArray(a)?a:[]; }
-  catch(e){ return []; }
+var audCache=[], audLendo=false;
+
+function audCliente(){
+  try{ return (window.CLOUD && CLOUD.enabled && CLOUD.session) ? CLOUD.client : null; }catch(e){ return null; }
 }
-function audEnviar(){
+async function audEnviar(){
   var texto=val('au-texto');
   if(texto.length<10){ aviso('Escreva um pouco mais — com 2 linhas o Luciano não consegue agir','orange'); return; }
-  var lista=audCarregar();
-  lista.push({
-    id:uid('a'),
-    tipo:tipoAud,
-    assunto:val('au-assunto'),
-    texto:texto,
-    dia:hojeISO()          /* só o dia — hora exata identificaria a pessoa */
-  });
-  try{ localStorage.setItem(AUD_K, JSON.stringify(lista)); }
-  catch(e){ aviso('⚠ Não consegui enviar agora. Tente de novo.','red'); return; }
-  /* empurra para a nuvem na hora, para não depender de a pessoa continuar no app */
-  try{ if(typeof cloudFlush==='function') cloudFlush(); }catch(e){}
-  var t=document.getElementById('au-texto'), a=document.getElementById('au-assunto');
-  if(t) t.value=''; if(a) a.value='';
-  audRender();
-  aviso('🔒 Enviado. Só o Luciano vai ler.','green');
+  var cli=audCliente();
+  if(!cli){ aviso('⚠ Sem conexão — o envio anônimo precisa de internet. Tente de novo daqui a pouco.','red'); return; }
+  var btn=document.querySelector('#panel-auditoria .fr-ok');
+  if(btn){ btn.disabled=true; btn.textContent='Enviando…'; }
+  try{
+    var r=await cli.from('auditoria').insert({
+      tipo:tipoAud,
+      assunto:val('au-assunto')||null,
+      texto:texto
+      /* dia fica com o padrão do banco: só a data, sem hora */
+    });
+    if(r && r.error) throw r.error;
+    var t=document.getElementById('au-texto'), a=document.getElementById('au-assunto');
+    if(t) t.value=''; if(a) a.value='';
+    aviso('🔒 Enviado. Só o Luciano vai ler.','green');
+    audRender();
+  }catch(e){
+    aviso('⚠ Não consegui enviar: '+((e&&e.message)||'falha de rede')+'. Nada foi gravado.','red');
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent='Enviar anonimamente'; }
+  }
 }
-/* A caixa de entrada só é montada na conta do administrador — nas outras
-   contas a chave nem chega da nuvem, então não há nada para mostrar. */
-function audRender(){
+/* A caixa de entrada só existe na conta do gerente — e não é o app que decide
+   isso: nas outras contas o Supabase devolve lista vazia. */
+async function audRender(){
   var box=document.getElementById('au-caixa');
   var ehAdm=!!window.IS_MASTER;
   if(!box){
@@ -21211,14 +21234,27 @@ function audRender(){
     wrap.appendChild(box);
   }
   if(!ehAdm){ box.innerHTML=''; return; }
-  var lista=audCarregar().slice().reverse();
+  var cli=audCliente();
+  if(!cli){ box.innerHTML='<div class="fr-vazio">Sem conexão — a caixa de mensagens vem do servidor.</div>'; return; }
+  if(audLendo) return;
+  audLendo=true;
+  try{
+    var r=await cli.from('auditoria').select('id,tipo,assunto,texto,dia').order('dia',{ascending:false});
+    audCache=(r && r.data) ? r.data : [];
+    if(r && r.error) throw r.error;
+  }catch(e){
+    box.innerHTML='<div class="fr-vazio">Não consegui ler a caixa: '+esc((e&&e.message)||'falha')+'<br>'
+      +'<span style="font-size:.7rem">Se aparecer erro de permissão, rode o arquivo <b>supabase/banco.sql</b> no SQL Editor.</span></div>';
+    audLendo=false; return;
+  }
+  audLendo=false;
   var rot={reclamacao:['⚠️','Reclamação'],agradecimento:['🙏','Agradecimento'],sugestao:['💡','Sugestão']};
-  box.innerHTML='<div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">CAIXA DO LUCIANO — '+lista.length+' MENSAGEM(NS)</span><div class="sec-line"></div></div>'
-    +(lista.length?lista.map(function(m){
-        var r=rot[m.tipo]||['✉️','Mensagem'];
+  box.innerHTML='<div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">CAIXA DO LUCIANO — '+audCache.length+' MENSAGEM(NS)</span><div class="sec-line"></div></div>'
+    +(audCache.length?audCache.map(function(m){
+        var r2=rot[m.tipo]||['✉️','Mensagem'];
         return '<div class="sp-card aberto" style="border-left-color:var(--ice)">'
-          +'<div class="sp-h"><span class="sp-tipo">'+r[0]+' '+esc(m.assunto||r[1])+'</span>'
-            +'<span class="sp-tag terceiro">'+esc(r[1])+'</span></div>'
+          +'<div class="sp-h"><span class="sp-tipo">'+r2[0]+' '+esc(m.assunto||r2[1])+'</span>'
+            +'<span class="sp-tag terceiro">'+esc(r2[1])+'</span></div>'
           +'<div class="sp-meta">'+brData(m.dia)+' · autor não registrado</div>'
           +'<div class="sp-desc">'+esc(m.texto)+'</div>'
           +'<div class="fr-btns" style="margin-top:0"><button class="fr-b perigo" onclick="MGW_AUDITORIA.apagar(\''+m.id+'\')">🗑 Apagar</button></div>'
@@ -21239,12 +21275,14 @@ window.MGW_AUDITORIA={
     var t=document.getElementById('au-texto'), a=document.getElementById('au-assunto');
     if(t) t.value=''; if(a) a.value='';
   },
-  apagar:function(id){
+  apagar:async function(id){
     if(!window.IS_MASTER) return;
     if(!confirm('Apagar esta mensagem? Ela some para sempre.')) return;
-    var lista=audCarregar().filter(function(m){ return m.id!==id; });
-    try{ localStorage.setItem(AUD_K, JSON.stringify(lista)); }catch(e){}
-    try{ if(typeof cloudFlush==='function') cloudFlush(); }catch(e){}
+    var cli=audCliente(); if(!cli) return;
+    try{
+      var r=await cli.from('auditoria').delete().eq('id',id);
+      if(r && r.error) throw r.error;
+    }catch(e){ aviso('⚠ Não consegui apagar: '+((e&&e.message)||'falha'),'red'); return; }
     audRender();
   },
   render:audRender
