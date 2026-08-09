@@ -11311,7 +11311,7 @@ function renderDashboardExtra(data){
    Quem está na frente aparece maior e mais claro; quem está atrás some
    no fundo. É o que dá a sensação de volume sem WebGL.
    ═══════════════════════════════════════════════════════════════════ */
-var MGS={pontos:[], raf:null, timer:null, viz:null, vizQuadro:0, cor:'#FC2877'};
+var MGS={pontos:[], raf:null, timer:null, viz:null, vizQuadro:0, ang:0, cor:'#FC2877'};
 
 function mgsCriarPontos(n){
   /* Espiral de Fibonacci (espalha melhor que sortear, que amontoa nos polos).
@@ -11420,13 +11420,16 @@ function mgsDesenhar(){
   var cx=L/2, cy=L/2, R=L*0.36, FOC=2.6;
   var inc=-0.32, ci=Math.cos(inc), si=Math.sin(inc);   /* leve inclinação */
 
-  /* Sem giro, de propósito: o movimento é o ponto indo e voltando na direção
-     do centro (p.rad), não o conjunto rodando. A inclinação fica só para dar
-     volume — ela é fixa. */
+  /* Três movimentos somados, e é a soma que dá vida:
+       · o RAIO de cada ponto (p.rad), que vai e volta na direção do centro;
+       · o GIRO lento do conjunto em torno do eixo vertical;
+       · a inclinação, essa fixa, só para dar volume. */
+  var ca=Math.cos(MGS.ang), sa=Math.sin(MGS.ang);
   var proj=MGS.pontos.map(function(p){
     var rr=p.rad;
-    var x=p.x*rr, y0=p.y*rr, z0=p.z*rr;
-    var y=y0*ci - z0*si, z=y0*si + z0*ci;              /* inclina */
+    var px=p.x*rr, py=p.y*rr, pz=p.z*rr;
+    var x=px*ca - pz*sa, z0=px*sa + pz*ca;             /* gira em Y */
+    var y=py*ci - z0*si, z=py*si + z0*ci;              /* inclina */
     var esc=FOC/(FOC-z);                                /* perspectiva */
     return {sx:cx+x*R*esc, sy:cy+y*R*esc, z:z, esc:esc};
   });
@@ -11503,6 +11506,7 @@ function mgsAnimar(){
     MGS.raf=requestAnimationFrame(laco);
     if(t-ultimo<16) return;                  /* ~60 quadros por segundo */
     ultimo=t;
+    MGS.ang+=0.0016;                         /* giro do conjunto, ~65s por volta */
     mgsMover();                              /* respiração + impulsos */
     mgsDesenhar();
   })(0);
@@ -11510,7 +11514,7 @@ function mgsAnimar(){
   MGS.timer=setInterval(function(){
     if(document.hidden) return;
     if(performance.now()-ultimo>240){        /* o rAF morreu: assume o desenho */
-      mgsMover(); mgsDesenhar();
+      MGS.ang+=0.006; mgsMover(); mgsDesenhar();
     }
   },120);
 }
