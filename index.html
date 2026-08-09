@@ -2051,6 +2051,7 @@ select.ffi option{background:#000020;color:#FF0000}
       <th>Total ($)</th>
       <th>Desc $</th>
       <th>Desc %</th>
+      <th>Fechou?</th>
       <th>Ação</th>
     </tr></thead>
     <tbody id="hist-tbody"><tr>
@@ -5641,6 +5642,12 @@ select.ffi option{background:#000020;color:#FF0000}
   <div class="card"><div class="card-title">COTAÇÕES POR HORÁRIO DO DIA</div><div class="card-sub">quando os clientes mais cotam</div><div style="height:220px;position:relative"><canvas id="dc-hora" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas></div></div>
 </div>
 <!-- Row 5 (médias de dias por categoria e por local) removida a pedido em 08/08/2026 -->
+<!-- Row 6: os dois filtros do CLIENTE IDEAL, em contagem. Entraram no lugar
+     dos gráficos que nasciam vazios — ver o comentário em renderDashCot. -->
+<div class="ch-grid2" style="margin-bottom:14px">
+  <div class="card"><div class="card-title">DIÁRIAS PEDIDAS</div><div class="card-sub">cliente ideal pede mais de 10</div><div style="height:220px;position:relative"><canvas id="dc-diarias"></canvas></div></div>
+  <div class="card"><div class="card-title">ANTECEDÊNCIA DA COTAÇÃO</div><div class="card-sub">da cotação até a retirada</div><div style="height:220px;position:relative"><canvas id="dc-antec"></canvas></div></div>
+</div>
 <!-- Row 6: valor por mês + taxa de conversão -->
 <div class="ch-grid2" style="margin-bottom:14px">
   <div class="card"><div class="card-title">VALOR TOTAL POR MÊS DE RETIRADA</div><div class="card-sub">$ cotado por mês</div><div style="height:220px;position:relative"><canvas id="dc-mes-val" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas></div></div>
@@ -12884,11 +12891,16 @@ function renderHistorico(){
     const pend=HIST_COT.filter(h=>!h.status||h.status==='pendente').length;
     stats.innerHTML='';
   }
-  if(!rows.length){tb.innerHTML=`<tr><td colspan="16" style="text-align:center;color:var(--chalk3);padding:24px">${HIST_COT.length?'Nenhuma cotação com esse filtro.':'Nenhuma cotação registrada ainda. Use Copiar WhatsApp ou Cotação Detalhada.'}</td></tr>`;return}
+  if(!rows.length){tb.innerHTML=`<tr><td colspan="17" style="text-align:center;color:var(--chalk3);padding:24px">${HIST_COT.length?'Nenhuma cotação com esse filtro.':'Nenhuma cotação registrada ainda. Use Copiar WhatsApp ou Cotação Detalhada.'}</td></tr>`;return}
   tb.innerHTML=rows.map((h,i)=>{
     const realIdx=HIST_COT.indexOf(h);
     const st=h.status||'pendente';
     const stColor=st==='ganha'?'var(--green)':st==='perdida'?'var(--red)':'var(--gold)';
+    /* stColor e stLabel eram calculados e jogados fora: a coluna de status
+       nunca chegou a existir na tabela. Sem ela ninguém conseguia marcar o
+       desfecho, e três gráficos do Dashboard de Cotações (FECHADAS POR
+       CATEGORIA, FECHADAS POR LOCAL e TAXA DE CONVERSÃO) nasciam vazios,
+       porque toda cotação ficava eternamente 'pendente'. */
     const stLabel=st==='ganha'?'✓ Ganha':st==='perdida'?'✗ Perdida':'⏳ Pendente';
     const precoDia=h.preco||(h.dias>0?h.total/h.dias:0);
     const discPct=h.discPct!=null?h.discPct:(h.subtotal>0&&h.disc>0?(h.disc/h.subtotal*100):0);
@@ -12909,6 +12921,14 @@ function renderHistorico(){
     <td class="val-c" style="color:var(--green);font-weight:700">$${(h.total||0).toFixed(2)}</td>
     <td style="color:var(--red);font-family:'DM Mono',monospace;font-size:.7rem">${h.disc>0?'-$'+h.disc.toFixed(2):'—'}</td>
     <td style="font-family:'DM Mono',monospace;font-size:.7rem;color:${discPct>0?'var(--red)':'var(--chalk3)'}">${discPct>0?discPct.toFixed(1)+'%':'—'}</td>
+    <td style="text-align:center">
+      <select onchange="toggleHistStatus(${realIdx},this.value)" title="Marque quando souber o desfecho — é isto que alimenta a taxa de conversão e os gráficos de FECHADAS"
+        style="background:rgba(255,255,255,.04);border:1px solid ${stColor};color:${stColor};font-size:.6rem;font-family:'DM Mono',monospace;padding:4px 6px;border-radius:5px;outline:none;cursor:pointer">
+        <option value="pendente"${st==='pendente'?' selected':''}>⏳ Pendente</option>
+        <option value="ganha"${st==='ganha'?' selected':''}>✓ Ganha</option>
+        <option value="perdida"${st==='perdida'?' selected':''}>✗ Perdida</option>
+      </select>
+    </td>
     <td style="text-align:center">
       <button onclick="deleteCotacao(${realIdx})" title="Apagar cotação" style="background:rgba(255,71,87,.12);border:1px solid var(--red);color:var(--red);font-size:.6rem;font-family:'DM Mono',monospace;padding:4px 10px;border-radius:5px;outline:none;cursor:pointer">🗑 Apagar</button>
     </td>
@@ -13230,6 +13250,48 @@ function renderDashCot(){
 
   /* Médias de dias por categoria e por local foram REMOVIDAS a pedido
      (08/08/2026) — os canvas dc-dias-cat / dc-dias-loc saíram do HTML. */
+
+  /* ── DIÁRIAS PEDIDAS ──
+     O cliente ideal do Luciano pede mais de 10 diárias. Este gráfico mostra
+     onde a procura de fato cai: se a maior barra estiver em 4-6, a régua do
+     ideal está longe do que o mercado pede, e isso muda a conversa sobre
+     meta antes de mudar a conversa sobre vendedor. */
+  const faixasD=[['1-3',1,3],['4-6',4,6],['7-9',7,9],['10-14',10,14],['15-21',15,21],['22+',22,999]];
+  const contD=faixasD.map(f=>data.filter(h=>{ const d=+h.dias||0; return d>=f[1]&&d<=f[2]; }).length);
+  const idealD=data.filter(h=>(+h.dias||0)>10).length;
+  rb('dc-diarias','bar',
+    {labels:faixasD.map(f=>f[0]+'d'),
+     datasets:[{data:contD,backgroundColor:COLORS,borderRadius:0,borderSkipped:false}]},
+    {...CT,plugins:{...CT.plugins,tooltip:{...CT.plugins.tooltip,callbacks:{label:ctx=>{
+        const q=ctx.parsed.y, t=data.length;
+        return ' '+q+' cotação(ões)'+(t?' · '+(q/t*100).toFixed(0)+'% do total':'');
+      },afterBody:()=>[' ',idealD+' de '+data.length+' passam de 10 diárias ('+
+        (data.length?(idealD/data.length*100).toFixed(0):0)+'%) — a régua do cliente ideal']}}},
+     scales:{...CT.scales,y:{...CT.scales.y,ticks:{...CT.scales.y.ticks,precision:0,callback:v=>v+'x'}}}});
+
+  /* ── ANTECEDÊNCIA ──
+     Quantos dias separam a cotação da retirada. É o ciclo de venda: diz
+     quanto tempo o vendedor tem para trabalhar o cliente, e alimenta a
+     quarta regra do ideal (retirada nos 3 meses seguintes à cotação). */
+  const faixasA=[['mesma semana',0,7],['8-30d',8,30],['1-2 meses',31,60],['2-3 meses',61,90],['+3 meses',91,9999]];
+  const antecDe=h=>{
+    if(!h.din) return null;
+    const base=h._ts?new Date(h._ts):(h.dt?new Date(String(h.dt).split(',')[0].split('/').reverse().join('-')+'T12:00:00'):null);
+    if(!base||isNaN(base)) return null;
+    const ret=new Date(h.din+'T12:00:00'); if(isNaN(ret)) return null;
+    return Math.round((ret-base)/86400000);
+  };
+  const antecs=data.map(antecDe).filter(v=>v!=null&&v>=0);
+  const contA=faixasA.map(f=>antecs.filter(v=>v>=f[1]&&v<=f[2]).length);
+  const dentro3=antecs.filter(v=>v<=90).length;
+  rb('dc-antec','bar',
+    {labels:faixasA.map(f=>f[0]),
+     datasets:[{data:contA,backgroundColor:COLORS.slice().reverse(),borderRadius:0,borderSkipped:false}]},
+    {...CT,plugins:{...CT.plugins,tooltip:{...CT.plugins.tooltip,callbacks:{label:ctx=>{
+        const q=ctx.parsed.y;
+        return ' '+q+' cotação(ões)'+(antecs.length?' · '+(q/antecs.length*100).toFixed(0)+'%':'');
+      },afterBody:()=>[' ',dentro3+' de '+antecs.length+' retiram dentro de 3 meses da cotação']}}},
+     scales:{...CT.scales,y:{...CT.scales.y,ticks:{...CT.scales.y.ticks,precision:0,callback:v=>v+'x'}}}});
 
   // ── Taxa de conversão gauge ──
   rb('dc-conv','doughnut',
