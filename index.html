@@ -126,6 +126,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--chalk);m
 /* Lista aberta dos filtros: sem isto o sistema pinta o fundo de branco e o texto some */
 select{color-scheme:dark}
 select option,select optgroup{background:var(--ink2);color:var(--chalk)}
+/* aviso de gráfico sem série — cobre a área do canvas em vez de deixar a grade nua */
+.mgw-vazio{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:9px;padding:18px 22px;text-align:center;pointer-events:none}
+.mgw-vazio-i{font-size:1.5rem;color:var(--chalk3);opacity:.45;line-height:1}
+.mgw-vazio-t{font-size:.72rem;line-height:1.65;color:var(--chalk3);max-width:46ch}
+.mgw-vazio-t b{color:var(--chalk2)}
 /* ── valores sob sigilo (comissão e pagamento) ── */
 .vlr-sigilo{transition:.15s}
 body.sigilo-on .vlr-sigilo{position:relative;color:transparent !important;cursor:pointer;user-select:none;
@@ -11297,6 +11303,8 @@ function renderDashboardExtra(data){
   const medDias=comDias.length?comDias.reduce((a,s)=>a+s.dias,0)/comDias.length:0;
   const maxDias=comDias.length?Math.max(...comDias.map(s=>s.dias)):0;
   const minDias=comDias.length?Math.min(...comDias.map(s=>s.dias)):0;
+  setTimeout(function(){ mgwMarcarVazios(['c-daily','c-count','c-cat-dash','c-locret-dash',
+    'c-mesret-dash','c-sexo-dash','c-idade-dash']); },60);
   const elDiar=document.getElementById('dash-diarias-detail');
   if(elDiar){elDiar.innerHTML=`
     <div>📅 Média de Diárias: <strong style="color:var(--fire)">${medDias.toFixed(1)} dias</strong></div>
@@ -11686,6 +11694,96 @@ function mgwFmtNum(v,sufixo){
 
 /* Lê o gráfico e escreve, em português, o que ele mostra. */
 /* ═══════════════════════════════════════════════════════════════════
+   DESFECHO DA COTAÇÃO — inferência por pareamento com a reserva
+
+   Problema observado: quatro gráficos (FECHADAS POR CATEGORIA, FECHADAS
+   POR LOCAL, CONVERSÃO IDEAL × COMPLEXO e POR LOCAL — COTADO × FECHADO)
+   permaneciam sem série alguma porque todos derivam de `status==='ganha'`,
+   e esse campo nunca era atribuído: a cotação nasce 'pendente' e só a
+   marcação manual a alteraria.
+
+   Exigir a marcação retroativa de todo o histórico é impraticável e, pior,
+   produziria dado de qualidade duvidosa — ninguém recorda o desfecho de
+   uma cotação de três meses atrás. A alternativa adotada é inferir o
+   desfecho por PAREAMENTO: se existe reserva efetivada para o mesmo
+   cliente, com retirada compatível, a cotação converteu.
+
+   Critério de pareamento (conjunção):
+     1. nome do cliente idêntico após normalização (maiúsculas, sem
+        acento, sem pontuação, espaços colapsados);
+     2. data de retirada da reserva dentro de ±10 dias da cotada — a
+        margem cobre a renegociação de data, comum no fechamento, sem
+        parear locações distintas do mesmo cliente no ano.
+
+   A marcação MANUAL sempre prevalece sobre a inferência: quem marcou
+   'perdida' sabe de algo que o pareamento não alcança. A inferência
+   preenche apenas o que está 'pendente'.
+   ═══════════════════════════════════════════════════════════════════ */
+var _mgwPareCache=null, _mgwPareSelo='';
+
+function _mgwNomeChave(s){
+  return String(s==null?'':s).toUpperCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9 ]/g,' ')
+    .replace(/\s+/g,' ').trim();
+}
+function _mgwDiaDe(v){
+  if(!v) return null;
+  if(v instanceof Date) return isNaN(v)?null:Math.floor(v.getTime()/86400000);
+  var m=String(v).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m) return Math.floor(Date.UTC(+m[1],+m[2]-1,+m[3])/86400000);
+  var b=String(v).match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+  if(b) return Math.floor(Date.UTC(+b[3],+b[2]-1,+b[1])/86400000);
+  var d=new Date(v); return isNaN(d)?null:Math.floor(d.getTime()/86400000);
+}
+/* Índice nome → lista de dias de retirada das reservas efetivadas. */
+function _mgwIndiceReservas(){
+  var fonte=[];
+  try{ if(window.MGW_RESV && MGW_RESV.dados) fonte=MGW_RESV.dados()||[]; }catch(e){}
+  if(!fonte.length){
+    try{ if(typeof SALES_DATA!=='undefined') fonte=(SALES_DATA||[]).map(function(s){
+      return {cliente:s.c, entrega:s.dinRaw||s.dIn}; }); }catch(e){}
+  }
+  var selo=fonte.length+'|'+(fonte[0]&&fonte[0].cliente||'');
+  if(_mgwPareCache && selo===_mgwPareSelo) return _mgwPareCache;
+  var idx={};
+  fonte.forEach(function(r){
+    var k=_mgwNomeChave(r&&r.cliente); if(!k) return;
+    var d=_mgwDiaDe(r.entrega);
+    (idx[k]=idx[k]||[]).push(d);
+  });
+  _mgwPareCache=idx; _mgwPareSelo=selo;
+  return idx;
+}
+/* Existe reserva efetivada correspondente a esta cotação? */
+function mgwCotacaoPareada(h){
+  if(!h) return false;
+  var k=_mgwNomeChave(h.cliente); if(!k) return false;
+  var lista=_mgwIndiceReservas()[k]; if(!lista||!lista.length) return false;
+  var alvo=_mgwDiaDe(h.din);
+  if(alvo==null) return true;              /* sem data cotada: o nome basta */
+  for(var i=0;i<lista.length;i++){
+    if(lista[i]==null) return true;
+    if(Math.abs(lista[i]-alvo)<=10) return true;
+  }
+  return false;
+}
+/* Desfecho efetivo: manual quando houver, inferido em seguida. */
+function mgwDesfecho(h){
+  var s=h&&h.status;
+  if(s==='ganha'||s==='perdida') return s;
+  return mgwCotacaoPareada(h) ? 'ganha' : 'pendente';
+}
+function mgwGanhou(h){ return mgwDesfecho(h)==='ganha'; }
+/* Quantas do conjunto foram inferidas, para declarar a origem do número. */
+function mgwQtdInferidas(arr){
+  return (arr||[]).filter(function(h){
+    return h.status!=='ganha' && h.status!=='perdida' && mgwCotacaoPareada(h);
+  }).length;
+}
+window.mgwDesfecho=mgwDesfecho; window.mgwGanhou=mgwGanhou;
+window.mgwCotacaoPareada=mgwCotacaoPareada; window.mgwQtdInferidas=mgwQtdInferidas;
+
+/* ═══════════════════════════════════════════════════════════════════
    LEITURA DE CADA GRÁFICO
 
    Antes existia só um resumo estatístico — "N itens somando X, média Y,
@@ -11702,112 +11800,99 @@ function mgwFmtNum(v,sufixo){
    ═══════════════════════════════════════════════════════════════════ */
 var MGW_VERBETES={
 
-/* ── DASHBOARD DE VENDAS ── */
-'c-daily':d=>`Quanto entrou <b>por dia</b> no período. Serve para achar ritmo, não total:
-  ${d.zeros} dia(s) sem nenhuma venda e o pico em <b>${d.lMax}</b> com ${d.vMax}.
-  ${d.zeros > d.n/2 ? 'Mais da metade dos dias em branco — o faturamento está concentrado em poucos dias, e isso torna a meta refém de uma semana boa.' : 'A distribuição está espalhada, que é o desejável: não depende de um dia salvador.'}`,
+/* ── PAINEL DE VENDAS ── */
+'c-daily':d=>`Distribuição do faturamento ao longo dos dias do período. A leitura relevante não é o total — esse já consta nos indicadores — e sim a <b>regularidade</b>: registram-se ${d.zeros} dia(s) sem receita e concentração máxima em <b>${d.lMax}</b> (${d.vMax}).
+  ${d.zeros>d.n/2?'Com mais da metade dos dias sem movimento, o resultado mensal depende de um número reduzido de ocorrências. Distribuições dessa natureza têm variância alta: a projeção de meta perde poder preditivo, porque a ausência de duas ou três vendas isoladas altera o mês inteiro.':'A dispersão é razoável, o que confere estabilidade à projeção: o resultado não está condicionado a um único dia excepcional.'}`,
 
-'c-count':d=>`<b>Quantas reservas</b> fecharam por dia — a mesma linha do faturamento, mas contando cabeças.
-  Comparar as duas responde uma pergunta só: o dia foi bom porque veio muita gente, ou porque veio uma reserva grande?
-  Pico de <b>${d.vMax}</b> reserva(s) em ${d.lMax}. Total de ${d.total} no período.`,
+'c-count':d=>`Número de reservas fechadas por dia, em contraposição ao faturamento diário. O confronto entre as duas séries isola <b>volume</b> de <b>ticket</b>: dia de receita elevada com poucas reservas indica contrato de valor alto; receita elevada com muitas reservas indica demanda. Máximo de <b>${d.vMax}</b> reserva(s) em ${d.lMax}, ${d.total} no acumulado.`,
 
-'c-cat-dash':d=>`Faturamento por <b>tipo de veículo</b>. <b>${d.lMax}</b> puxa ${d.pctMax}% de tudo.
-  ${+d.pctMax > 60 ? 'Concentração alta: a operação depende de uma categoria só. Se essa frota parar ou lotar, o mês para junto.' : 'A receita está repartida entre categorias, o que protege de um mês ruim em qualquer uma delas.'}
-  Leia junto com o quadro de disponibilidade da frota: categoria que fatura muito e vive lotada é sinal de comprar carro.`,
+'c-cat-dash':d=>`Composição da receita por categoria de veículo. <b>${d.lMax}</b> responde por ${d.pctMax}% do faturamento.
+  ${+d.pctMax>60?'A concentração é elevada. Carteiras concentradas transferem para uma única linha de frota todo o risco operacional: indisponibilidade, sinistro ou sazonalidade adversa nessa categoria comprometem o resultado agregado.':'A receita está distribuída entre categorias, o que atenua o efeito de um desempenho fraco em qualquer uma delas.'}
+  Recomenda-se a leitura conjunta com o quadro de disponibilidade da frota: categoria com alta participação na receita e ocupação persistentemente próxima da capacidade caracteriza restrição de oferta, não de demanda.`,
 
-'c-locret-dash':d=>`Onde o cliente <b>retira</b> o carro. Cada praça tem custo próprio — aeroporto fora de Orlando cobra taxa e consome motorista.
-  <b>${d.lMax}</b> concentra ${d.pctMax}%. ${d.n>1?'As outras '+(d.n-1)+' praças dividem o resto.':''}
-  Praça com pouco volume e taxa alta é candidata a sair da lista ou subir de preço.`,
+'c-locret-dash':d=>`Receita por praça de retirada. <b>${d.lMax}</b> concentra ${d.pctMax}%${d.n>1?', com as demais '+(d.n-1)+' praças dividindo o restante':''}.
+  Cada praça incorre em custo próprio — taxa aeroportuária, deslocamento de motorista, tempo ocioso. Praça com participação baixa e custo unitário alto é candidata a revisão de precificação ou a descontinuidade.`,
 
-'c-mesret-dash':d=>`Faturamento pelo <b>mês em que o carro sai</b> — não pelo mês em que a venda foi fechada.
-  É a curva que diz quando a frota vai estar cheia. Maior: <b>${d.lMax}</b> (${d.vMax}).
-  Use para decidir compra e manutenção: mês fraco é a janela para tirar carro de circulação.`,
+'c-mesret-dash':d=>`Receita segundo o <b>mês de retirada</b>, não o mês de fechamento. A distinção importa: esta é a curva de ocupação futura da frota, ao passo que o fechamento mede o esforço comercial já realizado. Máximo em <b>${d.lMax}</b> (${d.vMax}).
+  Serve ao planejamento de aquisição e de manutenção — os meses de menor demanda constituem a janela adequada para retirar veículos de circulação.`,
 
-'c-sexo-dash':d=>`Quem compra, por <b>sexo</b>. Onde o campo não foi preenchido, o app estima pelo primeiro nome e diz isso na legenda —
-  nome que não dá para afirmar vai para "Não identificado" em vez de virar chute.
-  ${d.lMax} lidera com ${d.pctMax}%. Serve para direcionar anúncio e escolher a foto do criativo, não para tratar cliente diferente.`,
+'c-sexo-dash':d=>`Distribuição das vendas por sexo. Onde o campo não foi informado, atribui-se por inferência a partir do prenome, e a legenda discrimina o que é declarado do que é inferido; prenomes ambíguos são classificados como "Não identificado" em vez de arbitrados.
+  Predomina <b>${d.lMax}</b>, com ${d.pctMax}%. A variável presta-se à segmentação de mídia e à escolha de peça publicitária — não à diferenciação de tratamento comercial.`,
 
-'c-idade-dash':d=>`<b>Faixa etária</b> de quem fecha. Só conta reserva com data de nascimento preenchida — sem ela não há de onde tirar, e inventar idade seria inventar cliente.
-  Faixa dominante: <b>${d.lMax}</b> (${d.pctMax}%).
-  Cruze com o ticket: se a faixa que mais compra não é a que mais gasta, o anúncio está trazendo volume no público errado.`,
+'c-idade-dash':d=>`Distribuição etária da carteira. Consideram-se apenas os registros com data de nascimento informada: a idade <b>não é estimada</b>, pois qualquer imputação produziria uma distribuição artificial.
+  Faixa modal: <b>${d.lMax}</b> (${d.pctMax}%). O cruzamento com o ticket médio é o que confere valor à variável — divergência entre a faixa de maior frequência e a de maior valor sugere que o investimento em mídia gera volume no público de menor rentabilidade.`,
 
-/* ── DASHBOARD DE COTAÇÕES ── */
-'dc-cat-val':d=>`<b>Quantas vezes</b> cada categoria foi cotada. É a procura, não a venda.
-  <b>${d.lMax}</b> é a mais pedida (${d.pctMax}% dos pedidos).
-  Compare com FECHADAS POR CATEGORIA logo ao lado: categoria muito pedida e pouco fechada é preço fora do mercado ou frota indisponível na data.`,
+/* ── PAINEL DE COTAÇÕES ── */
+'dc-cat-val':d=>`Frequência de solicitação por categoria — mede <b>demanda expressa</b>, não realizada. <b>${d.lMax}</b> concentra ${d.pctMax}% dos pedidos.
+  O confronto com FECHADAS POR CATEGORIA identifica onde a demanda não se converte. Categoria muito solicitada e pouco convertida admite três hipóteses: preço fora do intervalo de mercado, indisponibilidade na data pretendida, ou inadequação do produto à expectativa.`,
 
-'dc-cat-ticket':d=>`Quantas daquelas cotações <b>viraram venda</b>, por categoria.
-  ${d.total===0?'<b>Está zerado porque ninguém marcou o desfecho das cotações.</b> Vá em Histórico de Cotações e use a coluna "Fechou?" — sem isso este gráfico e a taxa de conversão nunca saem do zero.':'Melhor: <b>'+d.lMax+'</b> com '+d.vMax+' fechada(s). Categoria que aparece na procura e some aqui é onde o dinheiro está vazando.'}`,
+'dc-cat-ticket':d=>`Conversão em número absoluto, por categoria.
+  ${d.total===0?'A série está zerada. O desfecho de cada cotação é apurado por <b>pareamento com as reservas efetivadas</b> — mesmo cliente, retirada em janela de dez dias. Série vazia indica que as reservas ainda não foram carregadas nesta sessão, ou que a grafia do nome diverge entre as duas bases. A marcação manual, na coluna <b>Fechou?</b> do Histórico de Cotações, sempre prevalece sobre a inferência.':'Melhor desempenho: <b>'+d.lMax+'</b>, com '+d.vMax+' conversão(ões). A categoria que figura com destaque na demanda e desaparece nesta série é onde o processo comercial perde eficiência.'}`,
 
-'dc-daily':d=>`<b>Cotações feitas por dia</b> — o ritmo de trabalho da equipe, não o resultado.
-  Pico de ${d.vMax} em ${d.lMax}; ${d.zeros} dia(s) sem cotar nada.
-  ${d.zeros>d.n/3?'Muitos dias em branco: ou a demanda caiu, ou as cotações estão sendo feitas fora do app e não entram na conta.':'Ritmo constante.'}`,
+'dc-daily':d=>`Cotações emitidas por dia — indicador de <b>atividade</b>, não de resultado. Máximo de ${d.vMax} em ${d.lMax}; ${d.zeros} dia(s) sem emissão.
+  ${d.zeros>d.n/3?'A frequência de dias sem registro é alta. Duas hipóteses concorrentes: retração real da demanda, ou emissão de cotações fora do sistema, caso em que o indicador subestima a atividade e contamina toda a taxa de conversão.':'A cadência é regular, o que torna o indicador confiável como medida de esforço.'}`,
 
-'dc-valor':d=>`Cotações <b>acumuladas</b> no período. A inclinação é o que importa: trecho plano é dia sem cotar.
-  Chegou a <b>${d.vMax}</b> cotações. Curva que empina no fim do mês costuma ser corrida de meta — e cotação apressada converte menos.`,
+'dc-valor':d=>`Curva acumulada de cotações. A informação está na <b>inclinação</b>, não no nível: trechos horizontais correspondem a dias sem emissão. Acumulado de <b>${d.vMax}</b>.
+  Aceleração concentrada no fim do período costuma indicar corrida de meta — e cotação emitida sob pressão de prazo apresenta, sistematicamente, conversão inferior.`,
 
-'dc-loc-val':d=>`Quantas cotações por <b>praça de retirada</b>. <b>${d.lMax}</b> concentra ${d.pctMax}%.
-  Orlando é a praça de casa: quanto mais longe dela, mais caro entregar e mais difícil fechar. Este gráfico mostra quanto do esforço está fora de casa.`,
+'dc-loc-val':d=>`Distribuição das solicitações por praça de retirada. <b>${d.lMax}</b> concentra ${d.pctMax}%.
+  Orlando constitui a praça-sede; o afastamento dela eleva o custo de entrega e reduz a competitividade frente a operadores locais. A série dimensiona quanto do esforço comercial está sendo dirigido para fora da área de vantagem operacional.`,
 
-'dc-loc-ticket':d=>`Quantas cotações <b>fecharam</b>, por praça.
-  ${d.total===0?'<b>Zerado porque o desfecho das cotações não foi marcado.</b> Use a coluna "Fechou?" no Histórico de Cotações.':'<b>'+d.lMax+'</b> lidera com '+d.vMax+'. Praça muito cotada e pouco fechada tem problema de preço, de prazo de entrega ou de concorrente local.'}`,
+'dc-loc-ticket':d=>`Conversão por praça de retirada.
+  ${d.total===0?'Série vazia — ver a observação em FECHADAS POR CATEGORIA: o desfecho é inferido do pareamento com as reservas efetivadas, e depende de as reservas estarem carregadas e de os nomes coincidirem.':'<b>'+d.lMax+'</b> lidera com '+d.vMax+'. Praça com demanda expressiva e conversão baixa sinaliza desvantagem local — preço, prazo de entrega ou presença de concorrente estabelecido.'}`,
 
-'dc-mes':d=>`Para <b>qual mês</b> os clientes estão pedindo carro. É a demanda futura, com meses em ordem.
-  Pico em <b>${d.lMax}</b> (${d.vMax} pedidos).
-  Cruze com o quadro de disponibilidade: mês muito pedido e com frota apertada é onde se perde venda por não ter carro.`,
+'dc-mes':d=>`Demanda futura por mês de retirada, em ordem cronológica. Pico em <b>${d.lMax}</b> (${d.vMax} solicitações).
+  Deve ser lida contra o quadro de disponibilidade: coincidência entre mês de alta demanda e frota próxima da capacidade caracteriza <b>perda por restrição de oferta</b> — venda não realizada por ausência de veículo, que não aparece em nenhum indicador de desempenho comercial.`,
 
-'dc-hora':d=>`<b>A que horas</b> o cliente pede cotação. Serve para escalar gente, não para julgar vendedor.
-  Pico às <b>${d.lMax}</b>. ${d.total?'Se a maior parte cai fora do horário em que tem alguém respondendo, a cotação esfria antes de ser lida — e cotação fria não fecha.':''}`,
+'dc-hora':d=>`Distribuição horária das solicitações. Aplica-se ao dimensionamento de escala, não à avaliação individual. Concentração em <b>${d.lMax}</b>.
+  ${d.total?'Solicitações recebidas fora da janela de atendimento sofrem atraso de resposta, e o intervalo entre pedido e resposta é uma das variáveis de maior efeito sobre a conversão.':''}`,
 
-'dc-mes-val':d=>`<b>Valor total</b> cotado por mês de retirada — este é o único da tela em dinheiro, de propósito: mostra onde está o volume financeiro em jogo.
-  Maior: <b>${d.lMax}</b> com ${d.vMax}. Compare com COTAÇÕES POR MÊS: muitos pedidos e pouco valor significa cotação pequena; poucos pedidos e muito valor significa que aquele mês depende de fechar duas ou três.`,
+'dc-mes-val':d=>`Valor total cotado por mês de retirada — única série monetária desta tela, mantida deliberadamente: dimensiona o <b>montante em disputa</b> em cada mês. Máximo em <b>${d.lMax}</b> (${d.vMax}).
+  Confrontada com a contagem de cotações do mesmo mês, distingue dois regimes: muitos pedidos de valor baixo, ou poucos pedidos de valor alto — o segundo caso torna o mês dependente de um pequeno número de fechamentos.`,
 
-'dc-diarias':d=>`Quantos <b>dias de locação</b> o cliente pede. A régua do cliente ideal é mais de 10 diárias.
-  Faixa mais pedida: <b>${d.lMax}</b>.
-  ${d.iMax<=1?'A procura está concentrada em locação curta, longe da régua do ideal. Antes de cobrar o vendedor, vale perguntar se a régua bate com o mercado que o anúncio está trazendo.':'A procura está na faixa longa — é o terreno onde o vendedor tem mais margem e menos rotatividade de carro.'}`,
+'dc-diarias':d=>`Distribuição do número de diárias solicitadas. O critério de cliente ideal estabelece o limiar em mais de dez diárias. Faixa modal: <b>${d.lMax}</b>.
+  ${d.iMax<=1?'A demanda concentra-se em locação curta, abaixo do limiar adotado. Antes de atribuir o desempenho à atuação comercial, cabe examinar se o critério corresponde ao perfil de demanda que a captação está efetivamente gerando — um limiar desalinhado do mercado penaliza o vendedor por uma composição de carteira que ele não escolheu.':'A demanda situa-se predominantemente na faixa longa, que apresenta maior margem unitária e menor rotatividade de frota.'}`,
 
-'dc-antec':d=>`<b>Quanto tempo antes</b> da retirada o cliente cota. É o ciclo de venda: quanto tempo o vendedor tem para trabalhar o cliente.
-  Maior grupo: <b>${d.lMax}</b>.
-  ${d.iMax===0?'Muita cotação para a mesma semana — decisão rápida, pouco espaço para negociar, e frota difícil de garantir em cima da hora.':'Há prazo para acompanhar o cliente. Cotação com meses de antecedência exige lembrete: some se ninguém voltar a falar com ela.'}`,
+'dc-antec':d=>`Intervalo entre a emissão da cotação e a data de retirada — o <b>ciclo de venda</b>. Grupo modal: <b>${d.lMax}</b>.
+  ${d.iMax===0?'Predomínio de solicitações para a semana corrente: o intervalo de decisão é curto, restringe a negociação e dificulta a garantia de frota. Operações com esse perfil dependem de disponibilidade imediata mais do que de argumentação comercial.':'Há intervalo suficiente para acompanhamento. Cotações com meses de antecedência, porém, exigem rotina de retomada: na ausência de contato subsequente, a taxa de perda por inércia é substancial.'}`,
 
-'dc-conv':d=>`Desfecho das cotações: <b>ganhas</b>, <b>perdidas</b> e <b>pendentes</b>.
-  ${d.vals[2]===d.total&&d.total>0?'<b>Está tudo em Pendente porque ninguém marcou o desfecho.</b> Enquanto for assim, a taxa de conversão do app é ficção. A marcação é feita na coluna "Fechou?" do Histórico de Cotações.':'Ganhas: '+d.vals[0]+' · perdidas: '+d.vals[1]+' · pendentes: '+d.vals[2]+'. Pendente demais é pior que perdida: perdida ensina, pendente só ocupa a lista.'}`,
+'dc-conv':d=>`Composição das cotações por desfecho.
+  ${d.vals&&d.vals[2]===d.total&&d.total>0?'A totalidade permanece pendente. O desfecho é apurado por pareamento com as reservas efetivadas; sem reservas carregadas, nenhuma conversão é identificada e a taxa resultante não tem significado.':'Convertidas: '+((d.vals&&d.vals[0])||0)+' · perdidas: '+((d.vals&&d.vals[1])||0)+' · pendentes: '+((d.vals&&d.vals[2])||0)+'. Volume elevado de pendências degrada mais o indicador do que volume de perdas: a perda informa sobre o motivo, a pendência apenas obscurece o denominador.'}`,
 
 /* ── ANÁLISE AVANÇADA ── */
-'an-cat-chart':d=>`Faturamento por categoria no período filtrado. <b>${d.lMax}</b> responde por ${d.pctMax}%.`,
-'an-daily-chart':d=>`Faturamento dia a dia no período filtrado. Pico em <b>${d.lMax}</b>; ${d.zeros} dia(s) zerados.`,
-'an-disc-chart':d=>`<b>Desconto concedido</b>. Cada ponto aqui saiu direto da margem — só aparece onde o VALOR INTEGRAL foi preenchido na reserva.
-  ${d.total>0?'Total de '+d.total+' em desconto no período.':'Zerado: ou não houve desconto, ou o campo VALOR INTEGRAL não está sendo preenchido — sem ele o app não tem como saber que houve desconto.'}`,
-'an-estado-chart':d=>`De onde vêm os clientes. <b>${d.lMax}</b> concentra ${d.pctMax}% — é onde o anúncio está pegando.`,
-'an-loc-chart':d=>`Faturamento por praça de retirada no período. Maior: <b>${d.lMax}</b>.`,
-'an-mes-chart':d=>`Faturamento por mês no período filtrado. Maior: <b>${d.lMax}</b> (${d.vMax}).`,
+'an-cat-chart':d=>`Receita por categoria no intervalo filtrado. <b>${d.lMax}</b> responde por ${d.pctMax}%.`,
+'an-daily-chart':d=>`Receita diária no intervalo filtrado. Máximo em <b>${d.lMax}</b>; ${d.zeros} dia(s) sem registro.`,
+'an-disc-chart':d=>`Desconto concedido no intervalo. Trata-se de renúncia direta de margem — cada unidade aqui foi subtraída do resultado.
+  ${d.total>0?'Total de '+mgwFmtNum(d.total)+' no período.':'Série zerada. O desconto é <b>derivado</b> do campo VALOR INTEGRAL R$ da reserva: quando esse campo permanece em branco, o sistema não dispõe de referência para distinguir preço cheio de preço abatido, e o desconto real fica invisível no indicador.'}`,
+'an-estado-chart':d=>`Origem geográfica da carteira. <b>${d.lMax}</b> concentra ${d.pctMax}% — indica onde a captação apresenta maior penetração.`,
+'an-loc-chart':d=>`Receita por praça de retirada no intervalo. Máximo: <b>${d.lMax}</b>.`,
+'an-mes-chart':d=>`Receita mensal no intervalo filtrado. Máximo: <b>${d.lMax}</b> (${d.vMax}).`,
 
 /* ── FLUXO DE CAIXA ── */
-'fx-c1':d=>`Entradas contra saídas ao longo do tempo. O que importa é a distância entre as duas linhas: ela é o lucro do período.`,
-'fx-c2':d=>`Para onde o dinheiro <b>sai</b>, por natureza. <b>${d.lMax}</b> é o maior destino (${d.pctMax}%).
-  ${+d.pctMax>50?'Mais da metade da saída em uma só natureza — vale abrir essa categoria e conferir lançamento por lançamento.':''}`,
-'fx-c3':d=>`Saldo acumulado. Enquanto a curva sobe, entra mais do que sai. Trecho descendo é mês consumindo caixa.`,
-'fx-c4':d=>`Composição do período. Serve para ver o peso de cada natureza sem precisar somar na mão.`,
+'fx-c1':d=>`Entradas e saídas ao longo do tempo. A grandeza de interesse é a <b>distância vertical</b> entre as séries, que corresponde ao resultado do período; o cruzamento das linhas marca a inversão entre superávit e déficit.`,
+'fx-c2':d=>`Composição das saídas por natureza. <b>${d.lMax}</b> concentra ${d.pctMax}%.
+  ${+d.pctMax>50?'Concentração superior à metade em uma única natureza justifica auditoria dos lançamentos que a compõem: naturezas agregadas em excesso costumam ocultar rubricas heterogêneas.':'A distribuição está repartida, o que facilita o controle por rubrica.'}`,
+'fx-c3':d=>`Saldo acumulado. Trechos ascendentes indicam geração de caixa; trechos descendentes, consumo. O nível absoluto importa menos que a <b>persistência da inclinação</b>: consumo continuado, ainda que pequeno, esgota reserva.`,
+'fx-c4':d=>`Composição do período por natureza, em participação relativa. Dispensa a soma manual das rubricas para avaliar peso.`,
 
 /* ── COMPARATIVO ── */
-'cp-funil':d=>`O funil inteiro: <b>cotado → fechado</b>. Cada degrau que cai é gente que pediu preço e não levou carro.
-  A queda entre um degrau e o seguinte é onde o processo perde — e é o único lugar onde dá para agir.`,
-'cp-conv':d=>`<b>Taxa de conversão</b>: de cada 100 cotações, quantas viram venda.
-  ${d.total?'':'Precisa do desfecho marcado no Histórico de Cotações para significar alguma coisa.'}`,
-'cp-conv-cat':d=>`Conversão <b>por categoria</b>. Mostra o que a equipe pede muito e leva pouco.
-  ${d.lMax?'Melhor categoria: <b>'+d.lMax+'</b>.':''} Categoria com procura alta e conversão baixa é preço, prazo ou frota — não é esforço de vendedor.`,
-'cp-cat':d=>`Cotado contra fechado, <b>por categoria</b>, lado a lado. A diferença entre as duas barras é a venda que escapou naquele tipo de carro.`,
-'cp-loc':d=>`Cotado contra fechado, <b>por praça</b>. Praça onde as barras ficam longe uma da outra tem problema local: taxa, distância ou concorrente.`,
-'cp-mes':d=>`Cotado contra fechado, <b>mês a mês</b>. Serve para ver se a conversão piorou ou se apenas veio menos gente.`,
-'cp-dias':d=>`Cotado contra fechado por <b>faixa de diárias</b>. Testa na prática a régua do cliente ideal: se a locação longa converte melhor, a régua está certa.`,
-'cp-perfil':d=>`<b>Cliente ideal</b> contra <b>cliente complexo</b> na base de cotações.
-  Ideal é quem cumpre as quatro: mais de 10 diárias, Orlando→Orlando, minivan, e retirada nos 3 meses seguintes à cotação.
-  ${d.total?'Divisão atual: '+d.labels.map((l,i)=>l+' '+d.vals[i]).join(' · ')+'.':''}`,
-'cp-perfil-conv':d=>`Conversão do <b>ideal</b> contra a do <b>complexo</b>. É o número que decide a conversa sobre desempenho:
-  se o vendedor recebe majoritariamente cliente complexo, cobrar dele a mesma taxa do ideal é cobrar o que a base não oferece.`,
-'cp-gauge':d=>`Quanto da base é cliente ideal. Quanto menor, mais difícil é o mês — e menos a taxa de conversão fala sobre o vendedor.`,
-'cp-tend':d=>`Evolução da conversão ao longo do tempo. Tendência importa mais que o valor de um mês: um mês ruim é ruído, três em queda é processo.`
+'cp-funil':d=>`Funil da demanda: do volume cotado ao volume efetivado. Cada degrau representa perda, e a <b>magnitude relativa</b> de cada queda indica em que etapa o processo é menos eficiente — que é a única informação sobre a qual se pode agir.`,
+'cp-conv':d=>`Taxa de conversão agregada: proporção de cotações que resultaram em contrato.
+  ${d.total?'':'Requer desfecho apurado. Sem pareamento com reservas nem marcação manual, o indicador não é calculável.'}`,
+'cp-conv-cat':d=>`Conversão por categoria. Isola o efeito do produto sobre a eficiência comercial.
+  ${d.lMax?'Melhor desempenho: <b>'+d.lMax+'</b>. ':''}Categoria com demanda alta e conversão baixa aponta para preço, prazo ou disponibilidade — variáveis exógenas à atuação do vendedor, e portanto não corrigíveis por cobrança de desempenho.`,
+'cp-cat':d=>`Volume cotado e volume efetivado por categoria, em barras pareadas. A diferença entre as barras quantifica a <b>demanda não convertida</b> em cada linha de produto.`,
+'cp-loc':d=>`Volume cotado e efetivado por praça. Afastamento acentuado entre as barras caracteriza desvantagem localizada — taxa, distância operacional ou concorrência estabelecida na praça.`,
+'cp-mes':d=>`Volume cotado e efetivado mês a mês. Permite distinguir <b>queda de conversão</b> de <b>queda de demanda</b>: a primeira exige revisão de processo, a segunda de captação.`,
+'cp-dias':d=>`Volume cotado e efetivado por faixa de diárias. Submete o critério de cliente ideal a verificação empírica: se a locação longa apresenta conversão superior, o limiar de dez diárias está corroborado pelos dados; caso contrário, deve ser revisto.`,
+'cp-perfil':d=>`Classificação da base entre <b>cliente ideal</b> e <b>cliente complexo</b>. O critério de idealidade é conjuntivo — exige as quatro condições simultaneamente: mais de dez diárias, retirada e devolução em Orlando, categoria minivan, e retirada nos três meses subsequentes à cotação.
+  ${d.total&&d.labels?'Composição observada: '+d.labels.map((l,i)=>l+' '+d.vals[i]).join(' · ')+'.':''}`,
+'cp-perfil-conv':d=>`Conversão do segmento ideal contra a do segmento complexo. É o indicador que qualifica qualquer avaliação de desempenho individual: se a carteira recebida é majoritariamente complexa, exigir a taxa observada no segmento ideal equivale a cobrar um resultado que a composição da demanda não comporta.
+  ${d.total===0?'Ambas as barras estão em zero por ausência de desfecho apurado — a comparação permanece indeterminada.':''}`,
+'cp-gauge':d=>`Participação do cliente ideal no total da base. Quanto menor a proporção, maior a dificuldade intrínseca do período — e menor o poder explicativo da taxa de conversão agregada sobre a atuação da equipe.`,
+'cp-tend':d=>`Evolução temporal da conversão. A <b>tendência</b> tem maior valor informativo que o nível de um período isolado: oscilação de um mês é ruído amostral; três períodos em declínio configuram deterioração de processo.`
 };
+
 
 /* Monta o contexto e escolhe: verbete próprio do gráfico, ou o resumo
    estatístico de sempre para quem ainda não tem verbete. */
@@ -11942,6 +12027,60 @@ function mgwAbrirZoom(canvas){
   try{ _mgwZoomChart=new Chart(document.getElementById('mgwz-canvas'),cfg); }catch(e){ console.warn('[zoom]',e); }
   document.getElementById('mgwz-exp-c').innerHTML=mgwExplicarGrafico(orig,titulo,canvas.id);
 }
+
+/* ── Aviso de série vazia ──
+   Gráfico sem dado desenhava a grade e os eixos e mais nada: o cartão ficava
+   com cara de defeito, quando quase sempre é falta de dado de origem. Aqui a
+   mensagem cobre a área do gráfico dizendo O QUE falta — e o texto vem do
+   próprio verbete, que sabe do assunto. */
+function mgwAvisoVazio(canvas, motivo){
+  var cx=canvas && canvas.parentNode; if(!cx) return;
+  var v=cx.querySelector('.mgw-vazio');
+  if(!motivo){ if(v) v.remove(); canvas.style.visibility=''; return; }
+  canvas.style.visibility='hidden';
+  if(!v){
+    v=document.createElement('div'); v.className='mgw-vazio';
+    cx.style.position=cx.style.position||'relative';
+    cx.appendChild(v);
+  }
+  v.innerHTML='<div class="mgw-vazio-i">◍</div><div class="mgw-vazio-t">'+motivo+'</div>';
+}
+/* Percorre os gráficos de uma tela e põe o aviso onde a série for toda zero. */
+function mgwMarcarVazios(ids){
+  (ids||[]).forEach(function(id){
+    var cv=document.getElementById(id); if(!cv) return;
+    var ch=null;
+    try{ ch=(typeof Chart!=='undefined'&&Chart.getChart)?Chart.getChart(cv):null; }catch(e){}
+    if(!ch||!ch.data){ return; }
+    var vals=(ch.data.datasets||[]).reduce(function(a,d){
+      return a.concat((d.data||[]).map(function(x){
+        return (x&&typeof x==='object')?(+x.y||0):(+x||0); })); },[]);
+    var soma=vals.reduce(function(a,b){return a+Math.abs(b);},0);
+    mgwAvisoVazio(cv, soma>0 ? '' : (MGW_MOTIVO_VAZIO[id]||'Sem dados no período escolhido.'));
+  });
+}
+/* Por que cada um pode estar vazio — e o que fazer a respeito. */
+var MGW_MOTIVO_VAZIO={
+  'dc-cat-ticket':'Nenhuma cotação consta como fechada. O app deduz o fechamento cruzando o nome do cliente com as reservas efetivadas; se o histórico de reservas ainda não foi carregado, ou se os nomes divergem entre as duas bases, nada é pareado. Também é possível marcar o desfecho manualmente na coluna <b>Fechou?</b> do Histórico de Cotações.',
+  'dc-loc-ticket':'Nenhuma cotação consta como fechada — mesma origem do gráfico anterior. Verifique se as reservas foram carregadas e se o nome do cliente coincide entre a cotação e a reserva.',
+  'dc-conv':'Sem desfecho apurado para nenhuma cotação do período.',
+  'cp-perfil-conv':'A conversão por perfil exige cotações com desfecho apurado. Sem nenhuma fechada, ambas as barras são zero e a comparação entre cliente ideal e complexo fica indeterminada.',
+  'cp-conv-cat':'Sem cotações fechadas no período, a conversão por categoria não pode ser calculada.',
+  'cp-loc':'A série "Fechado" depende do desfecho apurado. A série "Cotado" aparece sozinha quando não há nenhuma conversão identificada.',
+  'cp-cat':'A série "Fechado" depende do desfecho apurado das cotações.',
+  'cp-mes':'A série "Fechado" depende do desfecho apurado das cotações.',
+  'cp-dias':'A série "Fechado" depende do desfecho apurado das cotações.',
+  'cp-funil':'Sem cotações no período escolhido não há funil a representar.',
+  'cp-conv':'Sem desfecho apurado, a taxa de conversão não é calculável.',
+  'cp-gauge':'Sem cotações no período escolhido.',
+  'cp-tend':'São necessários ao menos dois períodos com cotações para haver tendência.',
+  'cp-perfil':'Sem cotações no período escolhido não há perfil a classificar.',
+  'an-disc-chart':'Nenhum desconto registrado. O desconto é derivado do campo <b>VALOR INTEGRAL R$</b> da reserva: quando ele fica em branco, não há como distinguir preço cheio de preço com abatimento.',
+  'c-sexo-dash':'Nenhuma venda no período com cliente identificável.',
+  'c-idade-dash':'Nenhuma venda no período tem data de nascimento preenchida. A faixa etária não é estimada — sem a data, atribuir idade seria fabricar o dado.',
+  'dc-diarias':'Sem cotações no período escolhido.',
+  'dc-antec':'Sem cotações com data de retirada informada no período.'
+};
 
 /* Um clique só, no documento inteiro: pega qualquer canvas dentro de um card,
    inclusive os que ainda nem existem quando esta linha roda. */
@@ -12573,8 +12712,8 @@ function buildCoachContext(){
   const topCat=Object.entries(catMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>`${k}(${v})`).join(', ');
   const pagMap={};D.forEach(s=>{const k=s.pagamento||'PIX';pagMap[k]=(pagMap[k]||0)+1});
   const jurosTotal=D.reduce((a,s)=>a+(s.v*(s.juros||0)/100),0);
-  const perdidas=HIST_COT.filter(h=>h.status==='perdida').length;
-  const ganhas=HIST_COT.filter(h=>h.status==='ganha').length;
+  const perdidas=HIST_COT.filter(h=>mgwDesfecho(h)==='perdida').length;
+  const ganhas=HIST_COT.filter(mgwGanhou).length;
   const convRate=HIST_COT.length?((ganhas/HIST_COT.length)*100).toFixed(1):0;
   const semVou=D.filter(s=>!s.vou).length;
   // Dias com venda
@@ -12627,7 +12766,7 @@ function initCoach(){
     const semVou=D.filter(s=>!s.vou).length;
     const topV=[...D].sort((a,b)=>b.v-a.v)[0];
     const juros=D.reduce((a,s)=>a+(s.v*(s.juros||0)/100),0);
-    const convPct=HIST_COT.length?((HIST_COT.filter(h=>h.status==='ganha').length/HIST_COT.length)*100).toFixed(1):null;
+    const convPct=HIST_COT.length?((HIST_COT.filter(mgwGanhou).length/HIST_COT.length)*100).toFixed(1):null;
     insights.innerHTML=`
       <div class="insight good"><div class="insight-ico">💰</div><div><p>Faturamento: $${total.toFixed(2)}</p><span>${D.length} vendas · ticket médio $${ticket.toFixed(0)} · comissão $${D.reduce((a,s)=>a+s.com,0).toFixed(2)}</span></div></div>
       ${topV?`<div class="insight good"><div class="insight-ico">🏆</div><div><p>Maior venda: $${topV.v.toFixed(2)}</p><span>${topV.c} · ${topV.cat||'—'} · ${topV.d}</span></div></div>`:''}
@@ -13031,16 +13170,22 @@ function renderHistorico(){
   const tb=document.getElementById('hist-tbody');if(!tb)return;
   const stats=document.getElementById('hist-stats');
   if(stats){
-    const g=HIST_COT.filter(h=>h.status==='ganha').length;
-    const p=HIST_COT.filter(h=>h.status==='perdida').length;
-    const pend=HIST_COT.filter(h=>!h.status||h.status==='pendente').length;
+    const g=HIST_COT.filter(mgwGanhou).length;
+    const p=HIST_COT.filter(h=>mgwDesfecho(h)==='perdida').length;
+    const pend=HIST_COT.filter(h=>mgwDesfecho(h)==='pendente').length;
     stats.innerHTML='';
   }
   if(!rows.length){tb.innerHTML=`<tr><td colspan="17" style="text-align:center;color:var(--chalk3);padding:24px">${HIST_COT.length?'Nenhuma cotação com esse filtro.':'Nenhuma cotação registrada ainda. Use Copiar WhatsApp ou Cotação Detalhada.'}</td></tr>`;return}
   tb.innerHTML=rows.map((h,i)=>{
     const realIdx=HIST_COT.indexOf(h);
     const st=h.status||'pendente';
-    const stColor=st==='ganha'?'var(--green)':st==='perdida'?'var(--red)':'var(--gold)';
+    /* Desfecho efetivo: manual quando existe, inferido pelo pareamento com a
+       reserva quando não. O seletor mostra o inferido como opção escolhida,
+       mas rotulado — quem olha precisa distinguir "eu marquei" de "o app
+       deduziu", senão a inferência vira fato sem que ninguém tenha decidido. */
+    const stEfetivo=(typeof mgwDesfecho==='function')?mgwDesfecho(h):st;
+    const inferido=(st==='pendente'&&stEfetivo==='ganha');
+    const stColor=stEfetivo==='ganha'?'var(--green)':stEfetivo==='perdida'?'var(--red)':'var(--gold)';
     /* stColor e stLabel eram calculados e jogados fora: a coluna de status
        nunca chegou a existir na tabela. Sem ela ninguém conseguia marcar o
        desfecho, e três gráficos do Dashboard de Cotações (FECHADAS POR
@@ -13069,8 +13214,8 @@ function renderHistorico(){
     <td style="text-align:center">
       <select onchange="toggleHistStatus(${realIdx},this.value)" title="Marque quando souber o desfecho — é isto que alimenta a taxa de conversão e os gráficos de FECHADAS"
         style="background:rgba(255,255,255,.04);border:1px solid ${stColor};color:${stColor};font-size:.6rem;font-family:'DM Mono',monospace;padding:4px 6px;border-radius:5px;outline:none;cursor:pointer">
-        <option value="pendente"${st==='pendente'?' selected':''}>⏳ Pendente</option>
-        <option value="ganha"${st==='ganha'?' selected':''}>✓ Ganha</option>
+        <option value="pendente"${st==='pendente'&&!inferido?' selected':''}>⏳ Pendente</option>
+        <option value="ganha"${st==='ganha'||inferido?' selected':''}>${inferido?'✓ Ganha (pela reserva)':'✓ Ganha'}</option>
         <option value="perdida"${st==='perdida'?' selected':''}>✗ Perdida</option>
       </select>
     </td>
@@ -13093,7 +13238,7 @@ function exportHistoricoPDF(){
   const data=HIST_COT;
   if(!data.length){toast('Sem cotações para exportar','orange');return}
   const total=data.reduce((a,h)=>a+h.total,0);
-  const ganhas=data.filter(h=>h.status==='ganha').length;
+  const ganhas=data.filter(mgwGanhou).length;
   const conv=data.length?(ganhas/data.length*100).toFixed(1):0;
   const rows=data.map((h,i)=>`<tr style="${i%2===0?'':'background:rgba(255,255,255,.02)'}">
     <td>${h.id}</td><td style="font-size:11px">${h.dt}</td>
@@ -13200,7 +13345,7 @@ function renderDashCot(){
   const ticket=data.length?total/data.length:0;
   const diasAll=data.filter(h=>h.dias>0);
   const diasMed=diasAll.length?diasAll.reduce((a,h)=>a+h.dias,0)/diasAll.length:0;
-  const ganhas=data.filter(h=>h.status==='ganha').length;
+  const ganhas=data.filter(mgwGanhou).length;
 
   /* ── TAXA DE CONVERSÃO = VENDAS ÷ COTAÇÕES (pedido do Luciano) ──
      Antes era "cotações marcadas como ganha ÷ cotações", o que dependia de
@@ -13277,7 +13422,7 @@ function renderDashCot(){
      daquelas cotações VIRARAM VENDA — a informação que realmente ajuda:
      mostra qual categoria o cliente pede e leva, e qual ele pede e some. */
   const catGanhaMap={};
-  data.forEach(h=>{ if(h.status==='ganha'){ const k=h.cat||'Não inf.'; catGanhaMap[k]=(catGanhaMap[k]||0)+1; } });
+  data.forEach(h=>{ if(mgwGanhou(h)){ const k=h.cat||'Não inf.'; catGanhaMap[k]=(catGanhaMap[k]||0)+1; } });
   rb('dc-cat-ticket','bar',
     {labels:catOrdemCnt.map(l=>l.length>14?l.slice(0,14)+'…':l),
      datasets:[{data:catOrdemCnt.map(k=>catGanhaMap[k]||0),
@@ -13323,7 +13468,7 @@ function renderDashCot(){
      scales:{x:{...CT.scales.x,ticks:{...CT.scales.x.ticks,precision:0,callback:v=>v+'x'}},y:{...CT.scales.y}}});
 
   const locGanhaMap={};
-  data.forEach(h=>{ if(h.status==='ganha'){ const k=h.locRet||'Base Magiway'; locGanhaMap[k]=(locGanhaMap[k]||0)+1; } });
+  data.forEach(h=>{ if(mgwGanhou(h)){ const k=h.locRet||'Base Magiway'; locGanhaMap[k]=(locGanhaMap[k]||0)+1; } });
   rb('dc-loc-ticket','bar',
     {labels:locOrdemCnt.map(l=>l.length>16?l.slice(0,16)+'…':l),
      datasets:[{data:locOrdemCnt.map(k=>locGanhaMap[k]||0),
@@ -13440,8 +13585,13 @@ function renderDashCot(){
 
   // ── Taxa de conversão gauge ──
   rb('dc-conv','doughnut',
-    {labels:['Ganhas','Não ganhas','Pendentes'],datasets:[{data:[ganhas,data.filter(h=>h.status==='perdida').length,data.filter(h=>!h.status||h.status==='pendente').length],backgroundColor:['rgba(26,255,157,.85)','rgba(255,71,87,.8)','rgba(255,209,26,.7)'],borderWidth:2,borderColor:'rgba(4,8,15,.8)',hoverOffset:8}]},
+    {labels:['Ganhas','Não ganhas','Pendentes'],datasets:[{data:[ganhas,data.filter(h=>mgwDesfecho(h)==='perdida').length,data.filter(h=>mgwDesfecho(h)==='pendente').length],backgroundColor:['rgba(26,255,157,.85)','rgba(255,71,87,.8)','rgba(255,209,26,.7)'],borderWidth:2,borderColor:'rgba(4,8,15,.8)',hoverOffset:8}]},
     {responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:true,position:'bottom',labels:{color:'#9AB4CC',font:{size:11},padding:12,boxWidth:10}},tooltip:{...CT.plugins.tooltip}}});
+
+  /* nenhum cartão fica com a grade nua: onde a série é toda zero, entra o
+     aviso explicando de onde viria o dado */
+  setTimeout(function(){ mgwMarcarVazios(['dc-cat-val','dc-cat-ticket','dc-daily','dc-valor',
+    'dc-loc-val','dc-loc-ticket','dc-mes','dc-hora','dc-mes-val','dc-diarias','dc-antec','dc-conv']); },60);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -13571,7 +13721,7 @@ function renderComparativo(){
     if(c.ideal) ideais.push(h);
     else { complexos.push(h); c.faltou.forEach(function(m){ motivos[m]=(motivos[m]||0)+1; }); }
   });
-  var ganhouDe=function(arr){ return arr.filter(function(h){ return h.status==='ganha'; }).length; };
+  var ganhouDe=function(arr){ return arr.filter(mgwGanhou).length; };
   var gIdeal=ganhouDe(ideais), gComplexo=ganhouDe(complexos);
   var convIdeal=ideais.length?(gIdeal/ideais.length*100):0;
   var convComplexo=complexos.length?(gComplexo/complexos.length*100):0;
@@ -13752,6 +13902,9 @@ function renderComparativo(){
     gIdeal:gIdeal,gComplexo:gComplexo,convIdeal:convIdeal,convComplexo:convComplexo,
     pctIdeal:pctIdeal,convGeral:convGeral,catCot:catCot,catVen:catVen,mesKeys:mesKeys,
     mesCot:mesCot,mesVen:mesVen,mesLab:mesLab,convMes:convMes});
+
+  setTimeout(function(){ mgwMarcarVazios(['cp-funil','cp-conv','cp-conv-cat','cp-cat',
+    'cp-loc','cp-mes','cp-dias','cp-perfil','cp-perfil-conv','cp-gauge','cp-tend']); },60);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -16418,8 +16571,8 @@ async function aiDashBriefing(){
   const total=D.reduce((a,s)=>a+s.v,0);
   const com=D.reduce((a,s)=>a+s.com,0);
   const ticket=D.length?total/D.length:0;
-  const ganhas=HIST_COT.filter(h=>h.status==='ganha').length;
-  const perdidas=HIST_COT.filter(h=>h.status==='perdida').length;
+  const ganhas=HIST_COT.filter(mgwGanhou).length;
+  const perdidas=HIST_COT.filter(h=>mgwDesfecho(h)==='perdida').length;
   const pendentes=HIST_COT.filter(h=>h.status==='pendente').length;
   const conv=HIST_COT.length?((ganhas/HIST_COT.length)*100).toFixed(1):0;
   try{
@@ -16600,8 +16753,8 @@ async function aiHistoricoAnalise(){
   const el=document.getElementById('historico-ai-content');
   if(!el)return;
   el.innerHTML=`<span style="color:var(--chalk3);font-family:'DM Mono',monospace;font-size:.7rem">🤖 Analisando pipeline de cotações...</span>`;
-  const perdidas=HIST_COT.filter(h=>h.status==='perdida');
-  const ganhas=HIST_COT.filter(h=>h.status==='ganha');
+  const perdidas=HIST_COT.filter(h=>mgwDesfecho(h)==='perdida');
+  const ganhas=HIST_COT.filter(mgwGanhou);
   const pendentes=HIST_COT.filter(h=>h.status==='pendente');
   const perdCatMap={};
   perdidas.forEach(h=>{const k=h.cat||'N/D';perdCatMap[k]=(perdCatMap[k]||0)+1;});
