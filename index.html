@@ -2057,7 +2057,6 @@ select.ffi option{background:#000020;color:#FF0000}
       <th>Total ($)</th>
       <th>Desc $</th>
       <th>Desc %</th>
-      <th>Fechou?</th>
       <th>Ação</th>
     </tr></thead>
     <tbody id="hist-tbody"><tr>
@@ -11826,8 +11825,8 @@ var MGW_VERBETES={
 'dc-cat-val':d=>`Frequência de solicitação por categoria — mede <b>demanda expressa</b>, não realizada. <b>${d.lMax}</b> concentra ${d.pctMax}% dos pedidos.
   O confronto com FECHADAS POR CATEGORIA identifica onde a demanda não se converte. Categoria muito solicitada e pouco convertida admite três hipóteses: preço fora do intervalo de mercado, indisponibilidade na data pretendida, ou inadequação do produto à expectativa.`,
 
-'dc-cat-ticket':d=>`Conversão em número absoluto, por categoria.
-  ${d.total===0?'A série está zerada. O desfecho de cada cotação é apurado por <b>pareamento com as reservas efetivadas</b> — mesmo cliente, retirada em janela de dez dias. Série vazia indica que as reservas ainda não foram carregadas nesta sessão, ou que a grafia do nome diverge entre as duas bases. A marcação manual, na coluna <b>Fechou?</b> do Histórico de Cotações, sempre prevalece sobre a inferência.':'Melhor desempenho: <b>'+d.lMax+'</b>, com '+d.vMax+' conversão(ões). A categoria que figura com destaque na demanda e desaparece nesta série é onde o processo comercial perde eficiência.'}`,
+'dc-cat-ticket':d=>`Contratos efetivados no período, por categoria. A série provém das <b>reservas</b> — não da cotação: a reserva é o registro do que de fato se converteu, e já carrega categoria, praça e datas. A cotação permanece o que é, um pedido de preço.
+  ${d.total===0?'Série zerada: nenhuma reserva com data de fechamento dentro do intervalo filtrado. Verifique o período selecionado e se o histórico de reservas foi carregado nesta sessão.':'Maior volume: <b>'+d.lMax+'</b>, com '+d.vMax+' contrato(s). O confronto com COTAÇÕES POR CATEGORIA revela onde a demanda expressa não se traduz em contrato — a distância entre as duas séries é a perda atribuível àquela linha de produto.'}`,
 
 'dc-daily':d=>`Cotações emitidas por dia — indicador de <b>atividade</b>, não de resultado. Máximo de ${d.vMax} em ${d.lMax}; ${d.zeros} dia(s) sem emissão.
   ${d.zeros>d.n/3?'A frequência de dias sem registro é alta. Duas hipóteses concorrentes: retração real da demanda, ou emissão de cotações fora do sistema, caso em que o indicador subestima a atividade e contamina toda a taxa de conversão.':'A cadência é regular, o que torna o indicador confiável como medida de esforço.'}`,
@@ -11838,8 +11837,8 @@ var MGW_VERBETES={
 'dc-loc-val':d=>`Distribuição das solicitações por praça de retirada. <b>${d.lMax}</b> concentra ${d.pctMax}%.
   Orlando constitui a praça-sede; o afastamento dela eleva o custo de entrega e reduz a competitividade frente a operadores locais. A série dimensiona quanto do esforço comercial está sendo dirigido para fora da área de vantagem operacional.`,
 
-'dc-loc-ticket':d=>`Conversão por praça de retirada.
-  ${d.total===0?'Série vazia — ver a observação em FECHADAS POR CATEGORIA: o desfecho é inferido do pareamento com as reservas efetivadas, e depende de as reservas estarem carregadas e de os nomes coincidirem.':'<b>'+d.lMax+'</b> lidera com '+d.vMax+'. Praça com demanda expressiva e conversão baixa sinaliza desvantagem local — preço, prazo de entrega ou presença de concorrente estabelecido.'}`,
+'dc-loc-ticket':d=>`Contratos efetivados por praça de retirada, contados a partir das <b>reservas</b> do período.
+  ${d.total===0?'Série zerada: nenhuma reserva com fechamento no intervalo filtrado.':'<b>'+d.lMax+'</b> concentra '+d.vMax+'. Praça com demanda expressiva na série de cotações e volume reduzido aqui sinaliza desvantagem localizada — preço, prazo de entrega ou concorrente estabelecido na região.'}`,
 
 'dc-mes':d=>`Demanda futura por mês de retirada, em ordem cronológica. Pico em <b>${d.lMax}</b> (${d.vMax} solicitações).
   Deve ser lida contra o quadro de disponibilidade: coincidência entre mês de alta demanda e frota próxima da capacidade caracteriza <b>perda por restrição de oferta</b> — venda não realizada por ausência de veículo, que não aparece em nenhum indicador de desempenho comercial.`,
@@ -11856,8 +11855,8 @@ var MGW_VERBETES={
 'dc-antec':d=>`Intervalo entre a emissão da cotação e a data de retirada — o <b>ciclo de venda</b>. Grupo modal: <b>${d.lMax}</b>.
   ${d.iMax===0?'Predomínio de solicitações para a semana corrente: o intervalo de decisão é curto, restringe a negociação e dificulta a garantia de frota. Operações com esse perfil dependem de disponibilidade imediata mais do que de argumentação comercial.':'Há intervalo suficiente para acompanhamento. Cotações com meses de antecedência, porém, exigem rotina de retomada: na ausência de contato subsequente, a taxa de perda por inércia é substancial.'}`,
 
-'dc-conv':d=>`Composição das cotações por desfecho.
-  ${d.vals&&d.vals[2]===d.total&&d.total>0?'A totalidade permanece pendente. O desfecho é apurado por pareamento com as reservas efetivadas; sem reservas carregadas, nenhuma conversão é identificada e a taxa resultante não tem significado.':'Convertidas: '+((d.vals&&d.vals[0])||0)+' · perdidas: '+((d.vals&&d.vals[1])||0)+' · pendentes: '+((d.vals&&d.vals[2])||0)+'. Volume elevado de pendências degrada mais o indicador do que volume de perdas: a perda informa sobre o motivo, a pendência apenas obscurece o denominador.'}`,
+'dc-conv':d=>`Proporção entre contratos efetivados e cotações emitidas no período. As efetivadas vêm das <b>reservas</b>; o complemento é a demanda que não se converteu.
+  ${d.total===0?'Sem cotações nem reservas no intervalo filtrado.':'Efetivadas: '+((d.vals&&d.vals[0])||0)+' · sem fechamento: '+((d.vals&&d.vals[1])||0)+'. A razão constitui a taxa de conversão do período. Convém interpretá-la com o ciclo de venda em vista: cotação emitida no fim do intervalo para retirada meses adiante ainda não teve oportunidade de converter, e reduz a taxa sem indicar deficiência.'}`,
 
 /* ── ANÁLISE AVANÇADA ── */
 'an-cat-chart':d=>`Receita por categoria no intervalo filtrado. <b>${d.lMax}</b> responde por ${d.pctMax}%.`,
@@ -12061,9 +12060,9 @@ function mgwMarcarVazios(ids){
 }
 /* Por que cada um pode estar vazio — e o que fazer a respeito. */
 var MGW_MOTIVO_VAZIO={
-  'dc-cat-ticket':'Nenhuma cotação consta como fechada. O app deduz o fechamento cruzando o nome do cliente com as reservas efetivadas; se o histórico de reservas ainda não foi carregado, ou se os nomes divergem entre as duas bases, nada é pareado. Também é possível marcar o desfecho manualmente na coluna <b>Fechou?</b> do Histórico de Cotações.',
-  'dc-loc-ticket':'Nenhuma cotação consta como fechada — mesma origem do gráfico anterior. Verifique se as reservas foram carregadas e se o nome do cliente coincide entre a cotação e a reserva.',
-  'dc-conv':'Sem desfecho apurado para nenhuma cotação do período.',
+  'dc-cat-ticket':'Nenhuma reserva com data de fechamento dentro do período filtrado. Esta série conta <b>reservas</b>, não cotações marcadas: confira o intervalo selecionado e se o histórico de reservas foi carregado nesta sessão.',
+  'dc-loc-ticket':'Nenhuma reserva com fechamento no período filtrado — mesma origem do gráfico anterior.',
+  'dc-conv':'Sem cotações nem reservas no período filtrado.',
   'cp-perfil-conv':'A conversão por perfil exige cotações com desfecho apurado. Sem nenhuma fechada, ambas as barras são zero e a comparação entre cliente ideal e complexo fica indeterminada.',
   'cp-conv-cat':'Sem cotações fechadas no período, a conversão por categoria não pode ser calculada.',
   'cp-loc':'A série "Fechado" depende do desfecho apurado. A série "Cotado" aparece sozinha quando não há nenhuma conversão identificada.',
@@ -13175,23 +13174,14 @@ function renderHistorico(){
     const pend=HIST_COT.filter(h=>mgwDesfecho(h)==='pendente').length;
     stats.innerHTML='';
   }
-  if(!rows.length){tb.innerHTML=`<tr><td colspan="17" style="text-align:center;color:var(--chalk3);padding:24px">${HIST_COT.length?'Nenhuma cotação com esse filtro.':'Nenhuma cotação registrada ainda. Use Copiar WhatsApp ou Cotação Detalhada.'}</td></tr>`;return}
+  if(!rows.length){tb.innerHTML=`<tr><td colspan="16" style="text-align:center;color:var(--chalk3);padding:24px">${HIST_COT.length?'Nenhuma cotação com esse filtro.':'Nenhuma cotação registrada ainda. Use Copiar WhatsApp ou Cotação Detalhada.'}</td></tr>`;return}
   tb.innerHTML=rows.map((h,i)=>{
     const realIdx=HIST_COT.indexOf(h);
-    const st=h.status||'pendente';
-    /* Desfecho efetivo: manual quando existe, inferido pelo pareamento com a
-       reserva quando não. O seletor mostra o inferido como opção escolhida,
-       mas rotulado — quem olha precisa distinguir "eu marquei" de "o app
-       deduziu", senão a inferência vira fato sem que ninguém tenha decidido. */
-    const stEfetivo=(typeof mgwDesfecho==='function')?mgwDesfecho(h):st;
-    const inferido=(st==='pendente'&&stEfetivo==='ganha');
-    const stColor=stEfetivo==='ganha'?'var(--green)':stEfetivo==='perdida'?'var(--red)':'var(--gold)';
-    /* stColor e stLabel eram calculados e jogados fora: a coluna de status
-       nunca chegou a existir na tabela. Sem ela ninguém conseguia marcar o
-       desfecho, e três gráficos do Dashboard de Cotações (FECHADAS POR
-       CATEGORIA, FECHADAS POR LOCAL e TAXA DE CONVERSÃO) nasciam vazios,
-       porque toda cotação ficava eternamente 'pendente'. */
-    const stLabel=st==='ganha'?'✓ Ganha':st==='perdida'?'✗ Perdida':'⏳ Pendente';
+    /* Cotação é cotação: não carrega desfecho. Quem sabe o que fechou é a
+       RESERVA, e ela já tem tudo — categoria, praça, datas, valor. Os
+       gráficos de FECHADAS contam reserva, não cotação marcada à mão.
+       Chegou a existir aqui uma coluna "Fechou?" para marcação manual;
+       saiu por ser trabalho duplicado sobre um dado que já existe. */
     const precoDia=h.preco||(h.dias>0?h.total/h.dias:0);
     const discPct=h.discPct!=null?h.discPct:(h.subtotal>0&&h.disc>0?(h.disc/h.subtotal*100):0);
     const fmtDt=s=>{if(!s)return'—';try{return new Date(s+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});}catch(e){return s;}};
@@ -13211,14 +13201,6 @@ function renderHistorico(){
     <td class="val-c" style="color:var(--green);font-weight:700">$${(h.total||0).toFixed(2)}</td>
     <td style="color:var(--red);font-family:'DM Mono',monospace;font-size:.7rem">${h.disc>0?'-$'+h.disc.toFixed(2):'—'}</td>
     <td style="font-family:'DM Mono',monospace;font-size:.7rem;color:${discPct>0?'var(--red)':'var(--chalk3)'}">${discPct>0?discPct.toFixed(1)+'%':'—'}</td>
-    <td style="text-align:center">
-      <select onchange="toggleHistStatus(${realIdx},this.value)" title="Marque quando souber o desfecho — é isto que alimenta a taxa de conversão e os gráficos de FECHADAS"
-        style="background:rgba(255,255,255,.04);border:1px solid ${stColor};color:${stColor};font-size:.6rem;font-family:'DM Mono',monospace;padding:4px 6px;border-radius:5px;outline:none;cursor:pointer">
-        <option value="pendente"${st==='pendente'&&!inferido?' selected':''}>⏳ Pendente</option>
-        <option value="ganha"${st==='ganha'||inferido?' selected':''}>${inferido?'✓ Ganha (pela reserva)':'✓ Ganha'}</option>
-        <option value="perdida"${st==='perdida'?' selected':''}>✗ Perdida</option>
-      </select>
-    </td>
     <td style="text-align:center">
       <button onclick="deleteCotacao(${realIdx})" title="Apagar cotação" style="background:rgba(255,71,87,.12);border:1px solid var(--red);color:var(--red);font-size:.6rem;font-family:'DM Mono',monospace;padding:4px 10px;border-radius:5px;outline:none;cursor:pointer">🗑 Apagar</button>
     </td>
@@ -13324,9 +13306,42 @@ function calcSim(){
 
 // ═══ DASHBOARD COTAÇÕES ═══
 let dashCotCharts={};
+/* ── Reservas efetivadas no período ──
+   Cotação é cotação: não sabe o que fechou. Quem sabe é a RESERVA, e ela já
+   traz categoria, praça, datas e valor. Os gráficos de FECHADAS contam
+   reserva diretamente, em vez de depender de alguém marcar o desfecho na
+   cotação — trabalho duplicado sobre um dado que já existe.
+   O recorte é pela DATA DE FECHAMENTO, que é o que significa "fechado no
+   período"; a data de retirada pode cair meses depois. */
+function mgwReservasNoPeriodo(from,to){
+  var arr=[];
+  try{ if(window.MGW_RESV && MGW_RESV.dados) arr=MGW_RESV.dados()||[]; }catch(e){}
+  if(!arr.length) return [];
+  var iso=function(v){
+    if(!v) return '';
+    var d=(v instanceof Date)?v:new Date(v);
+    if(isNaN(d)) return '';
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  };
+  return arr.filter(function(r){
+    var f=iso(r.dataFech)||iso(r.entrega);
+    if(from && f && f<from) return false;
+    if(to   && f && f>to)   return false;
+    return true;
+  });
+}
+
 function renderDashCot(){
-  const from=document.getElementById('dc-from')?.value;
-  const to=document.getElementById('dc-to')?.value;
+  /* O filtro de período desta tela NÃO estava sendo aplicado. O código lia
+     `dc-from` / `dc-to`, campos legados que já não existem no HTML — o
+     calApply tentava sincronizá-los e encontrava null, então `from` e `to`
+     saíam undefined e nenhuma cotação era filtrada. Trocar o mês no seletor
+     não mudava nada na tela. Passa a ler o próprio componente de calendário,
+     que é quem tem o intervalo. */
+  const _r=(typeof calGetRange==='function')?calGetRange('dc'):{from:'',to:''};
+  const from=_r.from||document.getElementById('dc-from')?.value||'';
+  const to  =_r.to  ||document.getElementById('dc-to')?.value  ||'';
+  const reservas=mgwReservasNoPeriodo(from,to);
   let data=[...HIST_COT];
   if(from)data=data.filter(h=>h.dtISO>=from);
   if(to)data=data.filter(h=>h.dtISO<=to);
@@ -13422,14 +13437,17 @@ function renderDashCot(){
      daquelas cotações VIRARAM VENDA — a informação que realmente ajuda:
      mostra qual categoria o cliente pede e leva, e qual ele pede e some. */
   const catGanhaMap={};
-  data.forEach(h=>{ if(mgwGanhou(h)){ const k=h.cat||'Não inf.'; catGanhaMap[k]=(catGanhaMap[k]||0)+1; } });
+  reservas.forEach(r=>{ const k=cpCatCanon(r.cat||r.modelo); catGanhaMap[k]=(catGanhaMap[k]||0)+1; });
+  /* a barra precisa existir mesmo onde a categoria só aparece de um lado */
+  const catOrdemFech=catOrdemCnt.slice();
+  Object.keys(catGanhaMap).forEach(k=>{ if(catOrdemFech.indexOf(k)<0) catOrdemFech.push(k); });
   rb('dc-cat-ticket','bar',
-    {labels:catOrdemCnt.map(l=>l.length>14?l.slice(0,14)+'…':l),
-     datasets:[{data:catOrdemCnt.map(k=>catGanhaMap[k]||0),
+    {labels:catOrdemFech.map(l=>l.length>14?l.slice(0,14)+'…':l),
+     datasets:[{data:catOrdemFech.map(k=>catGanhaMap[k]||0),
        backgroundColor:COLORS.map(c=>c.replace('.85','.6')),borderRadius:0,borderSkipped:false}]},
     {...CT,indexAxis:'y',plugins:{...CT.plugins,tooltip:{...CT.plugins.tooltip,callbacks:{label:ctx=>{
-        const k=catOrdemCnt[ctx.dataIndex], g=catGanhaMap[k]||0, t=catCntMap[k]||0;
-        return ' '+g+' ganha(s) de '+t+' cotação(ões)'+(t?' · '+(g/t*100).toFixed(0)+'% de conversão':'');
+        const k=catOrdemFech[ctx.dataIndex], g=catGanhaMap[k]||0, t=catCntMap[k]||0;
+        return ' '+g+' reserva(s) fechada(s)'+(t?' · '+t+' cotação(ões) · '+(g/t*100).toFixed(0)+'%':'');
       }}}},
      scales:{x:{...CT.scales.x,ticks:{...CT.scales.x.ticks,precision:0,callback:v=>v+'x'}},y:{...CT.scales.y}}});
 
@@ -13467,15 +13485,18 @@ function renderDashCot(){
       }}}},
      scales:{x:{...CT.scales.x,ticks:{...CT.scales.x.ticks,precision:0,callback:v=>v+'x'}},y:{...CT.scales.y}}});
 
+  /* também vem da reserva, pela praça de retirada dela */
   const locGanhaMap={};
-  data.forEach(h=>{ if(mgwGanhou(h)){ const k=h.locRet||'Base Magiway'; locGanhaMap[k]=(locGanhaMap[k]||0)+1; } });
+  reservas.forEach(r=>{ const k=r.localEnt||'Base Magiway'; locGanhaMap[k]=(locGanhaMap[k]||0)+1; });
+  const locOrdemFech=locOrdemCnt.slice();
+  Object.keys(locGanhaMap).forEach(k=>{ if(locOrdemFech.indexOf(k)<0) locOrdemFech.push(k); });
   rb('dc-loc-ticket','bar',
-    {labels:locOrdemCnt.map(l=>l.length>16?l.slice(0,16)+'…':l),
-     datasets:[{data:locOrdemCnt.map(k=>locGanhaMap[k]||0),
+    {labels:locOrdemFech.map(l=>l.length>16?l.slice(0,16)+'…':l),
+     datasets:[{data:locOrdemFech.map(k=>locGanhaMap[k]||0),
        backgroundColor:COLORS.map(c=>c.replace('.85','.6')),borderRadius:0,borderSkipped:false}]},
     {...CT,indexAxis:'y',plugins:{...CT.plugins,tooltip:{...CT.plugins.tooltip,callbacks:{label:ctx=>{
-        const k=locOrdemCnt[ctx.dataIndex], g=locGanhaMap[k]||0, t=locCntMap[k]||0;
-        return ' '+g+' ganha(s) de '+t+' cotação(ões)'+(t?' · '+(g/t*100).toFixed(0)+'% de conversão':'');
+        const k=locOrdemFech[ctx.dataIndex], g=locGanhaMap[k]||0, t=locCntMap[k]||0;
+        return ' '+g+' reserva(s) fechada(s)'+(t?' · '+t+' cotação(ões) · '+(g/t*100).toFixed(0)+'%':'');
       }}}},
      scales:{x:{...CT.scales.x,ticks:{...CT.scales.x.ticks,precision:0,callback:v=>v+'x'}},y:{...CT.scales.y}}});
 
@@ -13584,8 +13605,11 @@ function renderDashCot(){
      scales:{...CT.scales,y:{...CT.scales.y,ticks:{...CT.scales.y.ticks,precision:0,callback:v=>v+'x'}}}});
 
   // ── Taxa de conversão gauge ──
+  /* Fechadas = reservas do período. O restante das cotações é o que não
+     virou contrato — sem exigir que alguém classifique uma a uma. */
+  const nFech=reservas.length;
   rb('dc-conv','doughnut',
-    {labels:['Ganhas','Não ganhas','Pendentes'],datasets:[{data:[ganhas,data.filter(h=>mgwDesfecho(h)==='perdida').length,data.filter(h=>mgwDesfecho(h)==='pendente').length],backgroundColor:['rgba(26,255,157,.85)','rgba(255,71,87,.8)','rgba(255,209,26,.7)'],borderWidth:2,borderColor:'rgba(4,8,15,.8)',hoverOffset:8}]},
+    {labels:['Fechadas (reservas)','Cotações sem fechamento'],datasets:[{data:[nFech,Math.max(0,data.length-nFech)],backgroundColor:['rgba(26,255,157,.85)','rgba(255,209,26,.7)'],borderWidth:2,borderColor:'rgba(4,8,15,.8)',hoverOffset:8}]},
     {responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:true,position:'bottom',labels:{color:'#9AB4CC',font:{size:11},padding:12,boxWidth:10}},tooltip:{...CT.plugins.tooltip}}});
 
   /* nenhum cartão fica com a grade nua: onde a série é toda zero, entra o
