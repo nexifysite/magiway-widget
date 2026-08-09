@@ -11685,9 +11685,154 @@ function mgwFmtNum(v,sufixo){
 }
 
 /* Lê o gráfico e escreve, em português, o que ele mostra. */
-function mgwExplicarGrafico(chart, titulo){
+/* ═══════════════════════════════════════════════════════════════════
+   LEITURA DE CADA GRÁFICO
+
+   Antes existia só um resumo estatístico — "N itens somando X, média Y,
+   o maior é Z" — e ele saía igual para os 40 gráficos do app. Servia
+   para qualquer um e não ajudava em nenhum: quem abria já via os
+   números no desenho, e o texto repetia o desenho em palavras.
+
+   Agora cada gráfico tem a SUA leitura: o que mede, como ler, e o que o
+   número está pedindo que se faça. O resumo estatístico continua como
+   rede — gráfico sem verbete cai nele em vez de ficar sem nada.
+
+   Cada verbete recebe um contexto já mastigado (rótulos, valores,
+   totais, maior, menor) e devolve HTML. `d.pct(i)` dá a fatia do item i.
+   ═══════════════════════════════════════════════════════════════════ */
+var MGW_VERBETES={
+
+/* ── DASHBOARD DE VENDAS ── */
+'c-daily':d=>`Quanto entrou <b>por dia</b> no período. Serve para achar ritmo, não total:
+  ${d.zeros} dia(s) sem nenhuma venda e o pico em <b>${d.lMax}</b> com ${d.vMax}.
+  ${d.zeros > d.n/2 ? 'Mais da metade dos dias em branco — o faturamento está concentrado em poucos dias, e isso torna a meta refém de uma semana boa.' : 'A distribuição está espalhada, que é o desejável: não depende de um dia salvador.'}`,
+
+'c-count':d=>`<b>Quantas reservas</b> fecharam por dia — a mesma linha do faturamento, mas contando cabeças.
+  Comparar as duas responde uma pergunta só: o dia foi bom porque veio muita gente, ou porque veio uma reserva grande?
+  Pico de <b>${d.vMax}</b> reserva(s) em ${d.lMax}. Total de ${d.total} no período.`,
+
+'c-cat-dash':d=>`Faturamento por <b>tipo de veículo</b>. <b>${d.lMax}</b> puxa ${d.pctMax}% de tudo.
+  ${+d.pctMax > 60 ? 'Concentração alta: a operação depende de uma categoria só. Se essa frota parar ou lotar, o mês para junto.' : 'A receita está repartida entre categorias, o que protege de um mês ruim em qualquer uma delas.'}
+  Leia junto com o quadro de disponibilidade da frota: categoria que fatura muito e vive lotada é sinal de comprar carro.`,
+
+'c-locret-dash':d=>`Onde o cliente <b>retira</b> o carro. Cada praça tem custo próprio — aeroporto fora de Orlando cobra taxa e consome motorista.
+  <b>${d.lMax}</b> concentra ${d.pctMax}%. ${d.n>1?'As outras '+(d.n-1)+' praças dividem o resto.':''}
+  Praça com pouco volume e taxa alta é candidata a sair da lista ou subir de preço.`,
+
+'c-mesret-dash':d=>`Faturamento pelo <b>mês em que o carro sai</b> — não pelo mês em que a venda foi fechada.
+  É a curva que diz quando a frota vai estar cheia. Maior: <b>${d.lMax}</b> (${d.vMax}).
+  Use para decidir compra e manutenção: mês fraco é a janela para tirar carro de circulação.`,
+
+'c-sexo-dash':d=>`Quem compra, por <b>sexo</b>. Onde o campo não foi preenchido, o app estima pelo primeiro nome e diz isso na legenda —
+  nome que não dá para afirmar vai para "Não identificado" em vez de virar chute.
+  ${d.lMax} lidera com ${d.pctMax}%. Serve para direcionar anúncio e escolher a foto do criativo, não para tratar cliente diferente.`,
+
+'c-idade-dash':d=>`<b>Faixa etária</b> de quem fecha. Só conta reserva com data de nascimento preenchida — sem ela não há de onde tirar, e inventar idade seria inventar cliente.
+  Faixa dominante: <b>${d.lMax}</b> (${d.pctMax}%).
+  Cruze com o ticket: se a faixa que mais compra não é a que mais gasta, o anúncio está trazendo volume no público errado.`,
+
+/* ── DASHBOARD DE COTAÇÕES ── */
+'dc-cat-val':d=>`<b>Quantas vezes</b> cada categoria foi cotada. É a procura, não a venda.
+  <b>${d.lMax}</b> é a mais pedida (${d.pctMax}% dos pedidos).
+  Compare com FECHADAS POR CATEGORIA logo ao lado: categoria muito pedida e pouco fechada é preço fora do mercado ou frota indisponível na data.`,
+
+'dc-cat-ticket':d=>`Quantas daquelas cotações <b>viraram venda</b>, por categoria.
+  ${d.total===0?'<b>Está zerado porque ninguém marcou o desfecho das cotações.</b> Vá em Histórico de Cotações e use a coluna "Fechou?" — sem isso este gráfico e a taxa de conversão nunca saem do zero.':'Melhor: <b>'+d.lMax+'</b> com '+d.vMax+' fechada(s). Categoria que aparece na procura e some aqui é onde o dinheiro está vazando.'}`,
+
+'dc-daily':d=>`<b>Cotações feitas por dia</b> — o ritmo de trabalho da equipe, não o resultado.
+  Pico de ${d.vMax} em ${d.lMax}; ${d.zeros} dia(s) sem cotar nada.
+  ${d.zeros>d.n/3?'Muitos dias em branco: ou a demanda caiu, ou as cotações estão sendo feitas fora do app e não entram na conta.':'Ritmo constante.'}`,
+
+'dc-valor':d=>`Cotações <b>acumuladas</b> no período. A inclinação é o que importa: trecho plano é dia sem cotar.
+  Chegou a <b>${d.vMax}</b> cotações. Curva que empina no fim do mês costuma ser corrida de meta — e cotação apressada converte menos.`,
+
+'dc-loc-val':d=>`Quantas cotações por <b>praça de retirada</b>. <b>${d.lMax}</b> concentra ${d.pctMax}%.
+  Orlando é a praça de casa: quanto mais longe dela, mais caro entregar e mais difícil fechar. Este gráfico mostra quanto do esforço está fora de casa.`,
+
+'dc-loc-ticket':d=>`Quantas cotações <b>fecharam</b>, por praça.
+  ${d.total===0?'<b>Zerado porque o desfecho das cotações não foi marcado.</b> Use a coluna "Fechou?" no Histórico de Cotações.':'<b>'+d.lMax+'</b> lidera com '+d.vMax+'. Praça muito cotada e pouco fechada tem problema de preço, de prazo de entrega ou de concorrente local.'}`,
+
+'dc-mes':d=>`Para <b>qual mês</b> os clientes estão pedindo carro. É a demanda futura, com meses em ordem.
+  Pico em <b>${d.lMax}</b> (${d.vMax} pedidos).
+  Cruze com o quadro de disponibilidade: mês muito pedido e com frota apertada é onde se perde venda por não ter carro.`,
+
+'dc-hora':d=>`<b>A que horas</b> o cliente pede cotação. Serve para escalar gente, não para julgar vendedor.
+  Pico às <b>${d.lMax}</b>. ${d.total?'Se a maior parte cai fora do horário em que tem alguém respondendo, a cotação esfria antes de ser lida — e cotação fria não fecha.':''}`,
+
+'dc-mes-val':d=>`<b>Valor total</b> cotado por mês de retirada — este é o único da tela em dinheiro, de propósito: mostra onde está o volume financeiro em jogo.
+  Maior: <b>${d.lMax}</b> com ${d.vMax}. Compare com COTAÇÕES POR MÊS: muitos pedidos e pouco valor significa cotação pequena; poucos pedidos e muito valor significa que aquele mês depende de fechar duas ou três.`,
+
+'dc-diarias':d=>`Quantos <b>dias de locação</b> o cliente pede. A régua do cliente ideal é mais de 10 diárias.
+  Faixa mais pedida: <b>${d.lMax}</b>.
+  ${d.iMax<=1?'A procura está concentrada em locação curta, longe da régua do ideal. Antes de cobrar o vendedor, vale perguntar se a régua bate com o mercado que o anúncio está trazendo.':'A procura está na faixa longa — é o terreno onde o vendedor tem mais margem e menos rotatividade de carro.'}`,
+
+'dc-antec':d=>`<b>Quanto tempo antes</b> da retirada o cliente cota. É o ciclo de venda: quanto tempo o vendedor tem para trabalhar o cliente.
+  Maior grupo: <b>${d.lMax}</b>.
+  ${d.iMax===0?'Muita cotação para a mesma semana — decisão rápida, pouco espaço para negociar, e frota difícil de garantir em cima da hora.':'Há prazo para acompanhar o cliente. Cotação com meses de antecedência exige lembrete: some se ninguém voltar a falar com ela.'}`,
+
+'dc-conv':d=>`Desfecho das cotações: <b>ganhas</b>, <b>perdidas</b> e <b>pendentes</b>.
+  ${d.vals[2]===d.total&&d.total>0?'<b>Está tudo em Pendente porque ninguém marcou o desfecho.</b> Enquanto for assim, a taxa de conversão do app é ficção. A marcação é feita na coluna "Fechou?" do Histórico de Cotações.':'Ganhas: '+d.vals[0]+' · perdidas: '+d.vals[1]+' · pendentes: '+d.vals[2]+'. Pendente demais é pior que perdida: perdida ensina, pendente só ocupa a lista.'}`,
+
+/* ── ANÁLISE AVANÇADA ── */
+'an-cat-chart':d=>`Faturamento por categoria no período filtrado. <b>${d.lMax}</b> responde por ${d.pctMax}%.`,
+'an-daily-chart':d=>`Faturamento dia a dia no período filtrado. Pico em <b>${d.lMax}</b>; ${d.zeros} dia(s) zerados.`,
+'an-disc-chart':d=>`<b>Desconto concedido</b>. Cada ponto aqui saiu direto da margem — só aparece onde o VALOR INTEGRAL foi preenchido na reserva.
+  ${d.total>0?'Total de '+d.total+' em desconto no período.':'Zerado: ou não houve desconto, ou o campo VALOR INTEGRAL não está sendo preenchido — sem ele o app não tem como saber que houve desconto.'}`,
+'an-estado-chart':d=>`De onde vêm os clientes. <b>${d.lMax}</b> concentra ${d.pctMax}% — é onde o anúncio está pegando.`,
+'an-loc-chart':d=>`Faturamento por praça de retirada no período. Maior: <b>${d.lMax}</b>.`,
+'an-mes-chart':d=>`Faturamento por mês no período filtrado. Maior: <b>${d.lMax}</b> (${d.vMax}).`,
+
+/* ── FLUXO DE CAIXA ── */
+'fx-c1':d=>`Entradas contra saídas ao longo do tempo. O que importa é a distância entre as duas linhas: ela é o lucro do período.`,
+'fx-c2':d=>`Para onde o dinheiro <b>sai</b>, por natureza. <b>${d.lMax}</b> é o maior destino (${d.pctMax}%).
+  ${+d.pctMax>50?'Mais da metade da saída em uma só natureza — vale abrir essa categoria e conferir lançamento por lançamento.':''}`,
+'fx-c3':d=>`Saldo acumulado. Enquanto a curva sobe, entra mais do que sai. Trecho descendo é mês consumindo caixa.`,
+'fx-c4':d=>`Composição do período. Serve para ver o peso de cada natureza sem precisar somar na mão.`,
+
+/* ── COMPARATIVO ── */
+'cp-funil':d=>`O funil inteiro: <b>cotado → fechado</b>. Cada degrau que cai é gente que pediu preço e não levou carro.
+  A queda entre um degrau e o seguinte é onde o processo perde — e é o único lugar onde dá para agir.`,
+'cp-conv':d=>`<b>Taxa de conversão</b>: de cada 100 cotações, quantas viram venda.
+  ${d.total?'':'Precisa do desfecho marcado no Histórico de Cotações para significar alguma coisa.'}`,
+'cp-conv-cat':d=>`Conversão <b>por categoria</b>. Mostra o que a equipe pede muito e leva pouco.
+  ${d.lMax?'Melhor categoria: <b>'+d.lMax+'</b>.':''} Categoria com procura alta e conversão baixa é preço, prazo ou frota — não é esforço de vendedor.`,
+'cp-cat':d=>`Cotado contra fechado, <b>por categoria</b>, lado a lado. A diferença entre as duas barras é a venda que escapou naquele tipo de carro.`,
+'cp-loc':d=>`Cotado contra fechado, <b>por praça</b>. Praça onde as barras ficam longe uma da outra tem problema local: taxa, distância ou concorrente.`,
+'cp-mes':d=>`Cotado contra fechado, <b>mês a mês</b>. Serve para ver se a conversão piorou ou se apenas veio menos gente.`,
+'cp-dias':d=>`Cotado contra fechado por <b>faixa de diárias</b>. Testa na prática a régua do cliente ideal: se a locação longa converte melhor, a régua está certa.`,
+'cp-perfil':d=>`<b>Cliente ideal</b> contra <b>cliente complexo</b> na base de cotações.
+  Ideal é quem cumpre as quatro: mais de 10 diárias, Orlando→Orlando, minivan, e retirada nos 3 meses seguintes à cotação.
+  ${d.total?'Divisão atual: '+d.labels.map((l,i)=>l+' '+d.vals[i]).join(' · ')+'.':''}`,
+'cp-perfil-conv':d=>`Conversão do <b>ideal</b> contra a do <b>complexo</b>. É o número que decide a conversa sobre desempenho:
+  se o vendedor recebe majoritariamente cliente complexo, cobrar dele a mesma taxa do ideal é cobrar o que a base não oferece.`,
+'cp-gauge':d=>`Quanto da base é cliente ideal. Quanto menor, mais difícil é o mês — e menos a taxa de conversão fala sobre o vendedor.`,
+'cp-tend':d=>`Evolução da conversão ao longo do tempo. Tendência importa mais que o valor de um mês: um mês ruim é ruído, três em queda é processo.`
+};
+
+/* Monta o contexto e escolhe: verbete próprio do gráfico, ou o resumo
+   estatístico de sempre para quem ainda não tem verbete. */
+function mgwExplicarGrafico(chart, titulo, idCanvas){
   try{
     var ds=(chart.data.datasets||[])[0]; if(!ds) return '';
+    var _lab=chart.data.labels||[];
+    var _v=(ds.data||[]).map(function(x){ return (x&&typeof x==='object')?(x.y!=null?x.y:0):(Number(x)||0); });
+    var verbete=MGW_VERBETES[idCanvas];
+    if(verbete && _v.length){
+      var _t=_v.reduce(function(a,b){return a+b;},0);
+      var _iM=_v.indexOf(Math.max.apply(null,_v));
+      var d={
+        labels:_lab, vals:_v, n:_v.length, total:_t,
+        iMax:_iM, lMax:String(_lab[_iM]!=null?_lab[_iM]:'—'), vMax:mgwFmtNum(_v[_iM]),
+        pctMax:_t>0?(_v[_iM]/_t*100).toFixed(0):'0',
+        zeros:_v.filter(function(x){return x===0;}).length,
+        pct:function(i){ return _t>0?(_v[i]/_t*100).toFixed(1):'0'; }
+      };
+      try{
+        var txt=verbete(d);
+        if(txt) return String(txt).replace(/\s*\n\s*/g,' ');
+      }catch(e){ console.warn('[zoom] verbete de '+idCanvas,e); }
+    }
+    /* rede: gráfico sem verbete, ou verbete que falhou */
     var labels=chart.data.labels||[];
     var vals=(ds.data||[]).map(function(v){ return (v&&typeof v==='object')?(v.y!=null?v.y:0):(Number(v)||0); });
     if(!vals.length) return 'Este gráfico ainda não tem dados no período escolhido.';
@@ -11795,7 +11940,7 @@ function mgwAbrirZoom(canvas){
            options:opcoes};
   m.classList.add('on');
   try{ _mgwZoomChart=new Chart(document.getElementById('mgwz-canvas'),cfg); }catch(e){ console.warn('[zoom]',e); }
-  document.getElementById('mgwz-exp-c').innerHTML=mgwExplicarGrafico(orig,titulo);
+  document.getElementById('mgwz-exp-c').innerHTML=mgwExplicarGrafico(orig,titulo,canvas.id);
 }
 
 /* Um clique só, no documento inteiro: pega qualquer canvas dentro de um card,
