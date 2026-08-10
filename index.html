@@ -18460,7 +18460,13 @@ function dsDiagnostico(){
    +'<th>Rótulo enviado (Data Label)</th><th>Valor</th><th>Situação</th></tr></thead>'
    +'<tbody>'+(linhas||'<tr><td colspan="3">Nenhum campo mapeado. Configurações → DocuSign → Campos.</td></tr>')+'</tbody></table></div>'
 
-   +'<div class="dsdg-t" style="margin-top:18px">O QUE CHECAR NO DOCUSIGN, NESTA ORDEM</div>'
+   +'<div class="dsdg-t" style="margin-top:18px">DEIXE O APP DESCOBRIR SOZINHO</div>'
+   +'<p class="dsdg-p">Em vez de você abrir o modelo e conferir 43 rótulos na mão, o app pergunta ao DocuSign '
+   +'quais são os nomes de verdade e conserta o mapeamento. Precisa da função publicada (o botão avisa se faltar).</p>'
+   +'<div class="dsdg-btns" style="margin-top:0"><button class="form-btn" onclick="dsCompararModelo()">🔄 LER OS RÓTULOS DO MODELO</button></div>'
+   +'<div id="dsdg-modelo"></div>'
+
+   +'<div class="dsdg-t" style="margin-top:18px">OU CHECAR NA MÃO, NESTA ORDEM</div>'
    +'<ol class="dsdg-ol">'
    +'<li><b>O rótulo bate letra por letra?</b> Abra o modelo, clique em cada campo e veja o <b>Data Label</b>. '
    +'Quando o modelo é reeditado ou o PDF é trocado, o DocuSign renomeia os campos sozinho para <i>Text 12</i>, '
@@ -18517,6 +18523,241 @@ function dsCopiarDiag(){
   if(typeof toast==='function') toast('✅ Lista copiada');
 }
 window.dsDiagnostico=dsDiagnostico;
+
+/* ═══════════════════════════════════════════════════════════════════
+   MAPEAMENTO QUE SE CONSERTA SOZINHO  (10/08/2026)
+   ───────────────────────────────────────────────────────────────────
+   O contrato chegava em branco porque o app mandava rótulos que já não
+   existiam mais no modelo. Quando o modelo é reeditado no DocuSign ou o
+   PDF é trocado, os campos são renomeados sozinhos (Text 12, Text 13…)
+   e todo Data Label antigo morre junto. O DocuSign descarta valor de
+   rótulo desconhecido em SILÊNCIO — sem erro, sem aviso, sem nada.
+
+   Em vez de o Luciano abrir o modelo e copiar 43 rótulos na mão, o app
+   pergunta à Edge Function quais são os nomes de verdade e refaz o
+   mapeamento. O casamento é por SIGNIFICADO, não por texto: cada campo
+   nosso tem uma lista de palavras que o identificam, e o rótulo do
+   modelo é normalizado (sem acento, sem maiúscula, sem _ e sem número)
+   antes de comparar. Assim "CPF_Cliente", "cpf do cliente" e "CPFCli"
+   caem todos no mesmo lugar.
+
+   Campo travado, só-leitura ou de fórmula é DESCARTADO do mapeamento e
+   listado à parte: mandar valor para ele é o mesmo que não mandar, e
+   deixá-lo no mapa só mascara o problema.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Palavras que identificam cada campo nosso. A ordem importa: a primeira
+   que casar vence, então o que é mais específico vem antes. */
+var DS_SINONIMOS=[
+  ['ad1nome',['nomeadd1','nomeadicional1','nomecondutor1','add1nome','condutor1nome']],
+  ['ad1cpf', ['cpfadd1','cpfadicional1','cpfcondutor1','add1cpf']],
+  ['ad1nasc',['nascimentoadd1','nascadd1','datanascimentoadd1','add1nascimento']],
+  ['ad1cnhval',['valcnhadd1','validadecnhadd1','vencimentocnhadd1']],
+  ['ad1cnh', ['cnhadd1','habilitacaoadd1','add1cnh']],
+  ['ad2nome',['nomeadd2','nomeadicional2','nomecondutor2']],
+  ['ad2cpf', ['cpfadd2','cpfadicional2']],
+  ['ad2nasc',['nascimentoadd2','nascadd2']],
+  ['ad2cnhval',['valcnhadd2','validadecnhadd2']],
+  ['ad2cnh', ['cnhadd2']],
+  ['ad3nome',['nomeadd3','nomeadicional3']], ['ad3cpf',['cpfadd3']],
+  ['ad3nasc',['nascimentoadd3','nascadd3']], ['ad3cnhval',['valcnhadd3']], ['ad3cnh',['cnhadd3']],
+  ['ad4nome',['nomeadd4','nomeadicional4']], ['ad4cpf',['cpfadd4']],
+  ['ad4nasc',['nascimentoadd4','nascadd4']], ['ad4cnhval',['valcnhadd4']], ['ad4cnh',['cnhadd4']],
+  ['dataass',['dataass','dataassinatura','assinaturadata','dataatual','datahoje']],
+  ['pgdata', ['datapagamento','datapag','pagamentodata','vencimento']],
+  ['forma',  ['modppagamento','formapagamento','modopagamento','pagamento','formadepagamento']],
+  ['extenso',['valorextenso','porextenso','extenso','numeroporextenso','valorporextenso']],
+  ['valor',  ['valormoeda','valortotal','valorcontrato','valor','preco','total']],
+  ['caent',  ['caentrega','companhiaentrega','voochegada','vooentrega','chegadavoo']],
+  ['cadev',  ['cadevolucao','companhiadevolucao','voopartida','voodevolucao','partidavoo']],
+  ['hc',     ['horaentrega','horarioentrega','horaretirada']],
+  ['hd',     ['horadevolucao','horariodevolucao']],
+  ['din',    ['dataentrega','dataenterga','dataretirada','inicio','datainicio']],
+  ['dout',   ['datadevolucao','datafim','fim','datatermino']],
+  ['locret', ['localentrega','localretirada','retirada','origem']],
+  ['locdev', ['localdevolucao','devolucao','destino']],
+  ['dias',   ['diarias','diariascliente','qtddiarias','numerodiarias','dias']],
+  ['cat',    ['categoria','categoriacliente','veiculo','carro','modelo']],
+  ['cep',    ['cep','cepn','endereco','cepnumero','enderecocliente']],
+  ['cnhval', ['valcnh','validadecnh','vencimentocnh','cnhvalidade']],
+  ['cnh',    ['cnh','habilitacao','carteira','cnhcliente']],
+  ['nasc',   ['nascimento','datanascimento','nasccliente']],
+  ['email',  ['email','emailcliente','correio']],
+  ['tel',    ['telefone','celular','whatsapp','fone','telefonecliente']],
+  ['cpf',    ['cpf','cpfcliente','documento']],
+  ['res',    ['reserva','numeroreserva','codigoreserva']],
+  ['nome',   ['nomecliente','nomecompleto','nomelocatario','cliente','nome']]
+];
+
+/* tira acento, maiúscula, _ , - e espaço — sobra só a palavra */
+function _dsNorm(t){
+  return String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .toLowerCase().replace(/[^a-z0-9]/g,'');
+}
+/* Qual campo nosso este rótulo do modelo quer? */
+function dsAdivinharCampo(rotulo){
+  var n=_dsNorm(rotulo);
+  if(!n) return '';
+  for(var i=0;i<DS_SINONIMOS.length;i++){
+    var campo=DS_SINONIMOS[i][0], chaves=DS_SINONIMOS[i][1];
+    for(var k=0;k<chaves.length;k++){ if(n===chaves[k]) return campo; }
+  }
+  /* Segunda passada: o rótulo CONTÉM a palavra. Aqui não vale "o primeiro
+     que casar vence" — "CPF do Cliente" contém tanto "cpf" quanto
+     "cliente", e a ordem da lista faria ele virar campo de NOME. Então
+     pontua todos os candidatos e fica com o melhor:
+       · palavra mais longa vale mais (mais específica);
+       · palavra no COMEÇO do rótulo vale muito mais — é o assunto do
+         campo, e não um complemento ("cpf do cliente" é CPF, não nome). */
+  var melhor='', nota=-1;
+  for(var i2=0;i2<DS_SINONIMOS.length;i2++){
+    var campo2=DS_SINONIMOS[i2][0], chaves2=DS_SINONIMOS[i2][1];
+    for(var k2=0;k2<chaves2.length;k2++){
+      var ch=chaves2[k2];
+      if(ch.length<3) continue;
+      var pos=n.indexOf(ch);
+      if(pos<0) continue;
+      var pontos=ch.length + (pos===0?100:0);
+      if(pontos>nota){ nota=pontos; melhor=campo2; }
+    }
+  }
+  return melhor;
+}
+
+/* Pergunta à função quais são os rótulos de verdade do modelo */
+async function dsLerRotulos(){
+  var d=(typeof _CFG!=='undefined'&&_CFG.docusign)?_CFG.docusign:{};
+  var api=(d.apiUrl||'').trim();
+  if(!api) return {erro:'sem-funcao'};
+  try{
+    var u=api+(api.indexOf('?')>=0?'&':'?')+'rotulos=1';
+    var ctrl=new AbortController(); var t=setTimeout(function(){ ctrl.abort(); },15000);
+    var r=await fetch(u,{signal:ctrl.signal});
+    clearTimeout(t);
+    var j=await r.json().catch(function(){ return {}; });
+    if(!r.ok || !j.ok) return {erro:(j&&j.error)||('HTTP '+r.status)};
+    return j;
+  }catch(e){
+    return {erro:(e&&e.name==='AbortError')?'a função não respondeu em 15s':String(e&&e.message||e)};
+  }
+}
+
+/* Botão: lê o modelo e mostra o de-para */
+async function dsCompararModelo(){
+  var alvo=document.getElementById('dsdg-modelo');
+  if(alvo) alvo.innerHTML='<p class="dsdg-p">⏳ Perguntando ao DocuSign quais são os rótulos do modelo…</p>';
+  var res=await dsLerRotulos();
+  if(!alvo) return;
+
+  if(res.erro==='sem-funcao'){
+    alvo.innerHTML='<div class="dsdg-erro"><b>A função do DocuSign ainda não está publicada.</b><br>'
+      +'Sem ela o app não tem como perguntar os rótulos ao DocuSign — só o navegador do cliente fala com eles, '
+      +'e as credenciais não podem morar dentro deste arquivo.<br><br>'
+      +'O passo a passo está em <code>supabase/functions/docusign/LEIA-ME.md</code>. '
+      +'Publicada a função, cole o endereço dela em <b>Configurações → API DocuSign</b> e clique aqui de novo.</div>';
+    return;
+  }
+  if(res.erro){
+    alvo.innerHTML='<div class="dsdg-erro"><b>Não consegui ler o modelo:</b> '+String(res.erro).replace(/</g,'&lt;')+'<br><br>'
+      +'Se aparecer <code>consent_required</code>, é a autorização de primeira vez do DocuSign — '
+      +'está explicada no topo de <code>supabase/functions/docusign/index.ts</code>.</div>';
+    return;
+  }
+
+  var mapa=dsMapaCampos();
+  var mandados={}; mapa.forEach(function(m){ mandados[m.rotulo]=m.campo; });
+  var esc=function(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+
+  var bate=0, novos=0, bloqueados=0;
+  var linhas=(res.tabs||[]).map(function(t){
+    var jaTem = Object.prototype.hasOwnProperty.call(mandados, t.rotulo);
+    var palpite = dsAdivinharCampo(t.rotulo);
+    var impede = t.travado || t.somenteLeitura || /formula/i.test(t.tipo||'');
+    var sit, cor;
+    if(impede){ sit=(/formula/i.test(t.tipo||'')?'fórmula — o DocuSign calcula':'travado — não aceita valor'); cor='#F2BA52'; bloqueados++; }
+    else if(jaTem){ sit='o app já preenche'; cor='#1AFF9D'; bate++; }
+    else if(palpite){ sit='dá para preencher (→ '+palpite+')'; cor='#3B9EFF'; novos++; }
+    else { sit='não reconheci'; cor='rgba(255,255,255,.35)'; }
+    return '<tr><td style="font-family:\'DM Mono\',monospace;color:var(--chalk)">'+esc(t.rotulo)+'</td>'
+      +'<td style="color:var(--chalk3)">'+esc(t.tipo)+' · '+esc(t.papel)+'</td>'
+      +'<td style="color:'+cor+'">'+sit+'</td></tr>';
+  }).join('');
+
+  var sumidos=mapa.filter(function(m){
+    return !(res.tabs||[]).some(function(t){ return t.rotulo===m.rotulo; });
+  });
+
+  window.__dsTabsModelo=res.tabs||[];
+
+  alvo.innerHTML=''
+    +'<div class="dsdg-res" style="margin-top:10px">'
+    +'<div><b style="color:var(--chalk)">'+(res.total||0)+'</b><span>campos no modelo</span></div>'
+    +'<div><b style="color:#1AFF9D">'+bate+'</b><span>já batem com o app</span></div>'
+    +'<div><b style="color:#3B9EFF">'+novos+'</b><span>dá para ligar</span></div>'
+    +'<div><b style="color:'+(sumidos.length?'#F20505':'var(--chalk)')+'">'+sumidos.length+'</b><span>o app manda e não existem</span></div>'
+    +'</div>'
+    +(sumidos.length
+      ? '<div class="dsdg-erro"><b>Achei o problema.</b> O app está mandando <b>'+sumidos.length+'</b> rótulo(s) que '
+        +'não existem mais no modelo — o DocuSign recebe e joga fora sem avisar. '
+        +'São eles: <code>'+sumidos.slice(0,8).map(function(m){return esc(m.rotulo);}).join('</code>, <code>')+'</code>'
+        +(sumidos.length>8?(' e mais '+(sumidos.length-8)):'')+'.</div>'
+      : '<p class="dsdg-p" style="color:#1AFF9D">Todos os rótulos que o app manda existem no modelo. '
+        +'Se ainda assim chega em branco, olhe os campos marcados em amarelo abaixo — travado e fórmula não recebem valor.</p>')
+    +(bloqueados?'<p class="dsdg-p">⚠ <b>'+bloqueados+'</b> campo(s) do modelo estão travados ou são fórmula. '
+        +'Esses não recebem valor por nenhum caminho — nem PowerForm, nem API. Destrave no DocuSign se precisar que venham preenchidos.</p>':'')
+    +'<div class="dsdg-tabwrap" style="margin-top:10px"><table class="dsdg-tab"><thead><tr>'
+    +'<th>Rótulo no modelo</th><th>Tipo · papel</th><th>Situação</th></tr></thead><tbody>'+linhas+'</tbody></table></div>'
+    +'<div class="dsdg-btns"><button class="form-btn" onclick="dsAplicarMapa()">✅ CORRIGIR O MAPEAMENTO PELO MODELO</button></div>';
+}
+
+/* Reescreve o mapeamento a partir do que o modelo tem de verdade */
+function dsAplicarMapa(){
+  var tabs=window.__dsTabsModelo||[];
+  if(!tabs.length){ if(typeof toast==='function') toast('Leia o modelo primeiro','orange'); return; }
+  var mapaAtual=dsMapaCampos();
+  var porRotulo={}; mapaAtual.forEach(function(m){ porRotulo[m.rotulo]=m.campo; });
+
+  var linhas=[], usados={}, descartados=[];
+  tabs.forEach(function(t){
+    if(t.travado || t.somenteLeitura || /formula/i.test(t.tipo||'')){
+      descartados.push(t.rotulo+' ('+(/formula/i.test(t.tipo||'')?'fórmula':'travado')+')');
+      return;
+    }
+    /* o que já estava mapeado e continua existindo tem prioridade sobre o palpite */
+    var campo=porRotulo[t.rotulo]||dsAdivinharCampo(t.rotulo);
+    if(!campo) return;
+    if(usados[campo]) return;            /* dois rótulos para o mesmo campo: fica o primeiro */
+    usados[campo]=1;
+    linhas.push(t.rotulo+' = '+campo);
+  });
+
+  if(!linhas.length){ alert('Não consegui reconhecer nenhum campo do modelo. Nada foi alterado.'); return; }
+
+  var msg='Novo mapeamento: '+linhas.length+' campo(s).\n\n'+linhas.slice(0,12).join('\n')
+    +(linhas.length>12?('\n… e mais '+(linhas.length-12)):'')
+    +(descartados.length?('\n\nDescartados por serem travados ou fórmula ('+descartados.length+'):\n'
+      +descartados.slice(0,6).join('\n')):'')
+    +'\n\nO mapeamento antigo tinha '+mapaAtual.length+' linha(s). Substituir?';
+  if(!confirm(msg)) return;
+
+  try{
+    if(!_CFG.docusign) _CFG.docusign={};
+    _CFG.docusign.campos=linhas.join('\n');
+    localStorage.setItem(CFG_KEY, JSON.stringify(_CFG));
+    /* Sem isto a correção durava até o próximo cfgLoad: a migração v3
+       reaplicava o mapeamento de fábrica por cima. */
+    if(typeof dsTravarMapa==='function') dsTravarMapa();
+    else try{ localStorage.__proto__.setItem.call(localStorage,'gs_ds_mapa_travado','1'); }catch(_){}
+    var el=document.getElementById('cfg-ds-campos'); if(el) el.value=_CFG.docusign.campos;
+  }catch(e){ alert('Não consegui salvar: '+(e&&e.message||e)); return; }
+
+  if(typeof toast==='function') toast('✅ Mapeamento corrigido — '+linhas.length+' campo(s)');
+  dsDiagnostico();                        /* redesenha já com o mapa novo */
+}
+window.dsCompararModelo=dsCompararModelo;
+window.dsAplicarMapa=dsAplicarMapa;
+window.dsAdivinharCampo=dsAdivinharCampo;
+
 
 
 // ── Voucher próprio da Magiway (A4, fonte grande): só cliente + logística + valor + observações + QR ──
@@ -19965,6 +20206,13 @@ function cfgLoad(){
     // Mapeamento dos campos do modelo: preenche o padrão só se ainda estiver vazio
     // (nunca sobrescreve um mapeamento que o usuário já ajustou à mão).
     if(!String(_CFG.docusign.campos||'').trim())_CFG.docusign.campos=DS_DEF.campos;
+    /* Marca que o mapeamento é do usuário, para nenhuma migração futura
+       passar por cima — ver o comentário na migração v3. */
+    if(typeof window.dsTravarMapa!=='function'){
+      window.dsTravarMapa=function(){
+        try{ localStorage.__proto__.setItem.call(localStorage,'gs_ds_mapa_travado','1'); }catch(_){}
+      };
+    }
     // Conserto: em algum momento o link do CONTRATO foi salvo com o userId da conta
     // (947128e1-…) no lugar do PowerFormId — esse GUID é o ID do usuário, não de um PowerForm.
     // Migração: o contrato antigo (aafe6992-…) foi substituído pelo novo modelo (23b3f84d-…).
@@ -19992,7 +20240,13 @@ function cfgLoad(){
          morto. Reaplica o mapeamento padrão de Data Labels do modelo atual. */
       try{
         if(!_CFG.docusign) _CFG.docusign={};
-        _CFG.docusign.campos=DS_CAMPOS_PADRAO;
+        /* Só reaplica o mapeamento de fábrica se ninguém tiver ajustado o
+           dele. Sem esta trava, quem corrigisse os rótulos — à mão em
+           Configurações ou pelo botão que lê o modelo — via a correção
+           sumir sozinha: esta migração roda no primeiro cfgLoad da sessão,
+           que costuma acontecer DEPOIS do ajuste. */
+        var _travado=false; try{ _travado=_rawGet('gs_ds_mapa_travado')==='1'; }catch(_){}
+        if(!_travado) _CFG.docusign.campos=DS_CAMPOS_PADRAO;
         _CFG.docusign.contratoUrl='https://na4.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=075ae2f7-5b6d-4c08-a992-9f47c2ba8afb&env=na4&acct=db09479d-3111-493a-ad4c-3b2588ef4580&v=2';
       }catch(_){}
       if(Array.isArray(_CFG.cats)){
@@ -20384,6 +20638,9 @@ function cfgSaveDocusign(){
   if(!_CFG.assinatura)_CFG.assinatura={};
   _CFG.assinatura.plataforma=(pl==='off')?'off':'docusign';
   cfgSave();
+  /* Quem salvou aqui ajustou os rótulos de propósito — nenhuma migração
+     pode reaplicar o mapeamento de fábrica por cima depois. */
+  try{ localStorage.__proto__.setItem.call(localStorage,'gs_ds_mapa_travado','1'); }catch(_){}
   const ok=document.getElementById('cfg-ds-ok');if(ok){ok.style.display='inline';setTimeout(()=>ok.style.display='none',2500);}
   toast('✓ DocuSign salvo · plataforma: '+_CFG.assinatura.plataforma);
 }
@@ -26038,6 +26295,9 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0
 .dsdg-ol b{color:var(--chalk)}
 .dsdg-ol code,.dsdg-p code{font-family:'DM Mono',monospace;font-size:.74rem;color:var(--ice);
   background:rgba(255,255,255,.05);padding:1px 5px}
+.dsdg-erro{margin:12px 0;padding:12px 14px;background:rgba(242,5,5,.09);border-left:3px solid var(--p-verm);
+  font-size:.82rem;line-height:1.75;color:var(--chalk2)}
+.dsdg-erro b{color:#FF9A9A}
 .dsdg-saida{margin-top:16px;padding:13px 15px;background:rgba(26,255,157,.06);border-left:3px solid #1AFF9D}
 .dsdg-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 @media(max-width:640px){ .dsdg-tab{font-size:.66rem} .dsdg-corpo{padding:13px 13px} }

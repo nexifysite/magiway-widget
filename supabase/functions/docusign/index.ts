@@ -13,8 +13,13 @@
 
    Dois caminhos:
      POST /docusign  → cria o envelope e devolve { url }
-     GET  /docusign?e=<envelopeId>&r=<recipientId>&s=<assinatura>
+     GET  /docusign?e=<envelopeId>&c=<clientUserId>&s=<assinatura>
                      → gera uma sessão nova de assinatura e redireciona
+     GET  /docusign?rotulos=1
+                     → devolve os Data Labels de verdade do modelo, para
+                       o app consertar o mapeamento sozinho
+     GET  /docusign?ping
+                     → só responde que está de pé
 
    O GET existe porque a URL de assinatura do DocuSign expira em poucos
    minutos e só serve uma vez — não dá para mandar no WhatsApp. A cada
@@ -212,6 +217,63 @@ async function criarEnvelope(body: any) {
   return json({ url: url.toString(), envelopeId: j.envelopeId, campos: tabs.length });
 }
 
+/* ── GET ?rotulos=1: os Data Labels DE VERDADE do modelo ──
+   Existe por um motivo concreto: quando o modelo é reeditado no DocuSign
+   ou o PDF é trocado, os campos são renomeados sozinhos (Text 12, Text
+   13…) e TODO rótulo antigo deixa de existir. O app continua mandando os
+   nomes velhos, o DocuSign descarta em silêncio, e o contrato chega em
+   branco sem nenhuma mensagem de erro.
+
+   Em vez de alguém abrir o modelo e copiar rótulo por rótulo na mão, o
+   app pergunta aqui quais são os nomes atuais e conserta o mapeamento
+   sozinho.
+
+   Devolve também `travado` e `somenteLeitura`: campo bloqueado não recebe
+   valor nem pela API, então é melhor o app dizer isso na cara do que
+   deixar o campo sair vazio de novo.
+
+   Não exige assinatura: o que sai daqui são NOMES DE CAMPO do modelo —
+   não há dado de cliente nenhum nesta resposta. */
+async function lerRotulos() {
+  const token = await accessToken();
+  const tid = env("DOCUSIGN_TEMPLATE_ID");
+  const r = await fetch(`${api()}/templates/${tid}/recipients?include_tabs=true`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const j = await r.json();
+  if (!r.ok) return json({ error: `DocuSign: ${j.message || j.errorCode || r.status}` }, 502);
+
+  const achados: Array<Record<string, unknown>> = [];
+  const varrer = (lista: any[], papel: string) => {
+    for (const grupo of Object.keys(lista ?? {})) {
+      const tabs = (lista as any)[grupo];
+      if (!Array.isArray(tabs)) continue;
+      for (const t of tabs) {
+        const label = t?.tabLabel ?? "";
+        if (!label) continue;
+        achados.push({
+          rotulo: label,
+          tipo: grupo.replace(/Tabs$/, ""),           /* text, formula, date, … */
+          papel,
+          travado: t?.locked === "true" || t?.locked === true,
+          somenteLeitura: t?.disableAutoSize === undefined ? false : (t?.editable === "false"),
+          obrigatorio: t?.required === "true" || t?.required === true,
+        });
+      }
+    }
+  };
+  for (const s of (j.signers ?? [])) varrer(s.tabs ?? {}, s.roleName ?? s.name ?? "");
+  for (const s of (j.inPersonSigners ?? [])) varrer(s.tabs ?? {}, s.roleName ?? "");
+
+  return json({
+    ok: true,
+    templateId: tid,
+    papelEsperado: env("DOCUSIGN_ROLE", false) || "",
+    total: achados.length,
+    tabs: achados,
+  });
+}
+
 /* ── GET: sessão nova de assinatura + redirecionamento ── */
 async function abrirAssinatura(u: URL) {
   const envelopeId = u.searchParams.get("e") ?? "";
@@ -261,6 +323,7 @@ Deno.serve(async (req) => {
     const u = new URL(req.url);
     if (req.method === "GET") {
       if (u.searchParams.get("ping") !== null) return json({ ok: true, servico: "docusign" });
+      if (u.searchParams.get("rotulos") !== null) return await lerRotulos();
       return await abrirAssinatura(u);
     }
     if (req.method === "POST") {

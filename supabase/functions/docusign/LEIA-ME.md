@@ -121,6 +121,51 @@ Vale quantas vezes ele clicar, até assinar — a sessão do DocuSign expira em
 minutos, por isso a função gera uma nova a cada clique em vez de mandar a
 sessão no link.
 
+## O jeito rápido: um script faz quase tudo
+
+```bash
+bash supabase/functions/docusign/publicar.sh
+```
+
+Ele instala a CLI se faltar, faz login, pede cada segredo explicando de onde
+vem, gera o `ASSINATURA_SEGREDO` sozinho, publica a função, testa o `ping` e os
+rótulos, e — se cair em `consent_required` — monta o endereço de autorização já
+pronto para você abrir.
+
+O que ele não faz, porque é na tela do DocuSign: criar o app de integração e
+gerar a chave RSA. Isso é o passo 1 acima.
+
+---
+
+## Consertar o contrato que chega em branco
+
+O sintoma clássico: o PDF gerado no app sai preenchido e o mesmo contrato
+aberto pelo link do DocuSign chega vazio, **menos** o nome e o e-mail.
+
+A causa quase sempre é a mesma: quando o modelo é reeditado ou o PDF trocado,
+o DocuSign renomeia os campos sozinho (`Text 12`, `Text 13`…) e todo Data Label
+antigo deixa de existir. O app continua mandando os nomes velhos, e o DocuSign
+descarta valor de rótulo desconhecido **em silêncio** — sem erro nenhum. Nome e
+e-mail sobrevivem porque não dependem de Data Label: são `Cliente_UserName` e
+`Cliente_Email`, do próprio PowerForm.
+
+Com a função publicada, o app resolve isso sozinho:
+
+1. **Configurações → DocuSign → 🔎 CONFERIR O QUE VAI PREENCHIDO**
+2. **🔄 LER OS RÓTULOS DO MODELO** — a função pergunta ao DocuSign quais são os
+   nomes de verdade (`GET ?rotulos=1`)
+3. A tela mostra quantos batem, quantos dá para ligar e **quantos o app manda e
+   não existem mais**
+4. **✅ CORRIGIR O MAPEAMENTO PELO MODELO** — reescreve tudo, casando por
+   significado (`CPF do Cliente`, `CPF_Cliente` e `CPFCli` caem todos em `cpf`)
+
+Campo **travado**, **só-leitura** ou de **fórmula** é descartado do mapeamento e
+listado à parte: ele não recebe valor por caminho nenhum — nem PowerForm, nem
+API. Se você precisa que venha preenchido, destrave no DocuSign.
+
+Depois de corrigir, o mapeamento fica **travado** (`gs_ds_mapa_travado`) e
+nenhuma migração do app reaplica o mapeamento de fábrica por cima.
+
 ## Se der errado
 
 | Resposta | O que é |
@@ -131,6 +176,7 @@ sessão no link.
 | `DocuSign: ... role ...` | `DOCUSIGN_ROLE` não bate com o papel do modelo (é `Cliente`) |
 | `link inválido` | `ASSINATURA_SEGREDO` mudou depois que o link foi gerado |
 | o app avisa que a função falhou | ele já caiu no PowerForm sozinho — ninguém fica sem assinar |
+| `?rotulos=1` devolve tabs vazias | o modelo não tem campos com Data Label, ou estão em outro papel que não o `DOCUSIGN_ROLE` |
 
 ## O que foi testado aqui e o que não foi
 
@@ -139,7 +185,13 @@ validações de nome, e-mail, link incompleto e método errado; e a assinatura
 JWT com uma chave RSA de verdade, conferida por fora com `openssl dgst -verify`
 (`Verified OK`).
 
-**Não testado:** as chamadas à API do DocuSign — criar envelope e gerar a sessão
-de assinatura. Isso exige as credenciais reais e acesso à rede do DocuSign, que
-não existem no ambiente onde a função foi escrita. **Teste com uma reserva de
-mentira antes de usar com cliente de verdade.**
+**Não testado:** as chamadas à API do DocuSign — criar envelope, ler os rótulos
+do modelo e gerar a sessão de assinatura. Isso exige as credenciais reais e
+acesso à rede do DocuSign, que não existem no ambiente onde a função foi
+escrita. **Teste com uma reserva de mentira antes de usar com cliente de
+verdade.**
+
+O lado do app foi testado: o de-para, a leitura dos rótulos, o descarte de campo
+travado e de fórmula, e a trava contra a migração foram exercitados com uma
+função simulada devolvendo um modelo reeditado (metade dos rótulos virada em
+`Text N`). 17 asserções, todas passando.
