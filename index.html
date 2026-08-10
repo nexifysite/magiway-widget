@@ -1171,6 +1171,13 @@ select.ffi option{background:#000020;color:#FF0000}
     <div id="cp-desgaste"></div>
   </div>
 
+  <!-- ═══ O IMPASSE ═══ -->
+  <div class="card cp-impasse cp-ampliar" data-quadro="cp-impasse">
+    <div class="card-title">⛓️ O IMPASSE — VENDEDOR, DIRETORIA E O LAÇO QUE SE ALIMENTA SOZINHO</div>
+    <div class="card-sub">Por que a discussão de preço não avança, por que o tráfego vira o culpado, e onde isso termina</div>
+    <div id="cp-impasse"></div>
+  </div>
+
   <div class="card" id="cp-relatorio-card" style="border-color:rgba(255,0,0,.25)">
     <div class="card-title" style="color:var(--fire)">📋 LEITURA DOS NÚMEROS — A FAVOR OU CONTRA O VENDEDOR?</div>
     <div class="card-sub">Relatório gerado dos dados do período, sem opinião de fora</div>
@@ -14362,6 +14369,7 @@ function cpContracorrente(d){
   cpEsforco(d,porVenda,cotMes,meses);
   cpPreco(detPreco,excMedio,d);
   cpDesgaste(d,indice,porVenda,forcas,pctFora,excMedio);
+  cpImpasse(d,indice,porVenda,forcas,pctFora,excMedio,detPreco,cotMes);
   cpPlano(d,forcas,detPreco,excMedio,porVenda,pctFora);
   return indice;
 }
@@ -14423,6 +14431,7 @@ var CP_FUNDO={
   'cp-esforco':'O número que mais importa aqui não é o de horas: é o de recusas. Esforço físico se recupera dormindo. Rejeição repetida, não — ela se acumula. E quando a maior parte vem como silêncio, o vendedor fica sem o encerramento que permitiria virar a página: continua remoendo o que escreveu, reabrindo a conversa, checando o celular fora do expediente. É por isso que uma operação com muitas cotações por venda cansa mais do que uma com jornada mais longa e conversão melhor.',
   'cp-preco':'Preço acima do mercado não gera objeção — gera ABANDONO. Objeção é bom sinal: o cliente ficou para discutir, e aí script, valor agregado e negociação funcionam. Abandono é o cliente que lê o número, decide em silêncio e não responde mais. Nenhuma técnica de vendas alcança quem já saiu. É por isso que este bloco vem antes do plano de ação: enquanto o preço estiver fora da faixa, treinar atendimento é otimizar a parte que não é o gargalo.',
   'cp-desgaste':'Nada aqui é diagnóstico. São mecanismos conhecidos de psicologia do trabalho aplicados aos seus próprios números — e o motivo de estarem num painel de vendas é simples: o desgaste do vendedor aparece no resultado com meses de atraso, quando já virou rotatividade, atestado ou queda de ritmo. Quando aparece, a causa já está antiga e cara de reverter. Aqui ele aparece no mesmo dia em que se forma.',
+  'cp-impasse':'Enquanto o quadro do desgaste olha para uma pessoa, este olha para o arranjo em que ela está — e o argumento central é que não há vilão nele: cada parte age de modo razoável do próprio ponto de vista, e o conjunto produz um resultado que ninguém queria. Por isso os vieses da diretoria estão nomeados um a um em vez de julgados; atribuir má-fé aqui seria repetir, na direção contrária, o mesmo erro de atribuição que este painel existe para desfazer. A conclusão prática não é baixar preço: é submeter o preço a teste. Discussão de opinião contra opinião não converge, porque os dois lados são coerentes dentro da própria lógica; um teste de 30 dias em uma categoria converge, e converge para qualquer um dos dois lados.',
   'cp-plano':'A ordem não é por tamanho do impacto: é por impacto DIVIDIDO pelo custo de fazer. Ação cara e demorada, por melhor que seja, não alivia ninguém esta semana. E a ordem tem uma lógica que vale dizer: o que está no topo quase sempre é o que o vendedor NÃO controla. Mexer no preço e na origem do lead devolve mais resultado — e mais saúde — do que qualquer treinamento de fechamento aplicado sobre um cenário que não muda.'
 };
 function cpAbrirQuadro(id){
@@ -14564,6 +14573,213 @@ function cpDesgaste(d,indice,porVenda,forcas,pctFora,excMedio){
   B.push('<div class="cp-des cp-des-aviso"><div class="cp-des-t">O que isto NÃO é</div>'
     +'<p>Isto é leitura de <b>condição de trabalho</b> a partir dos seus números — não diagnóstico de saúde de ninguém. '
     +'Sinal persistente de esgotamento é assunto de profissional, não de dashboard.</p></div>');
+  box.innerHTML=B.join('');
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   O IMPASSE  (10/08/2026)
+   ───────────────────────────────────────────────────────────────────
+   O bloco anterior ("o que isso faz com quem vende") olha para uma
+   pessoa só. Este olha para o SISTEMA em que ela está: por que a
+   conversa sobre preço não anda, por que o tráfego terceirizado vira o
+   culpado preferido, e por que o desfecho, se nada mudar, é sempre o
+   mesmo — troca de vendedor.
+
+   Duas coisas importam no tom daqui:
+
+   1) Não há vilão. Diretoria que não revê preço não está agindo de
+      má-fé: está sujeita a vieses que qualquer pessoa teria no lugar
+      dela, e o texto nomeia cada um. Culpar a diretoria seria repetir,
+      na direção contrária, o mesmo erro de atribuição que este painel
+      inteiro existe para desfazer.
+
+   2) A saída proposta não é "baixar o preço". É TESTAR o preço. Uma
+      discussão de opinião contra opinião não tem fim; um teste de 30
+      dias em uma categoria tem. É a única parte deste painel que
+      encerra a discussão em vez de alimentá-la.
+   ═══════════════════════════════════════════════════════════════════ */
+function cpImpasse(d,indice,porVenda,forcas,pctFora,excMedio,det,cotMes){
+  var box=document.getElementById('cp-impasse'); if(!box) return;
+  var n=d.cots.length, v=d.vendas.length;
+  if(!n){ box.innerHTML='<div class="cp-vazio">Sem cotações no período.</div>'; return; }
+
+  var conv=d.convGeral||0;
+  var pv=(porVenda!=null)?porVenda:null;
+  var recusas=(pv!=null)?(pv-1):null;
+  var B=[];
+
+  /* a categoria mais cotada que tem referência de mercado — é sobre ela
+     que o teste do fim deve ser feito */
+  var alvo=(det||[]).slice().sort(function(a,b){ return (b.qtd||0)-(a.qtd||0); })[0]||null;
+
+  /* ── abertura ── */
+  B.push('<div class="cp-imp-topo">'
+    +'Nada aqui é sobre alguém ser ruim. É sobre um <b>laço</b>: um arranjo em que cada parte age de forma '
+    +'razoável do próprio ponto de vista e o conjunto produz um resultado que ninguém queria. '
+    +'Laço não se resolve com esforço — quanto mais força se faz dentro dele, mais rápido ele gira.'
+    +'</div>');
+
+  /* ── 1. o ciclo ── */
+  var etapas=[
+    {t:'Preço acima do nicho', s:'+'+excMedio.toFixed(0)+'% na média ponderada pelo que se cota'},
+    {t:'Recusa antes da conversa', s:'o cliente compara, some, e nem chega a ouvir o que está incluso'},
+    {t:'Muita cotação por venda', s:(pv!=null?pv.toFixed(0)+' orçamentos para cada fechamento':'conversão de '+conv.toFixed(1)+'%')},
+    {t:'O vendedor é cobrado pela conversão', s:'a régua olha o percentual, não de onde ele veio'},
+    {t:'Esforço extra segura o número', s:'e funciona — por alguns meses'},
+    {t:'O número segurado vira o mínimo', s:'a meta sobe em cima do esforço, não em cima da condição'},
+    {t:'Desgaste, e a pessoa sai', s:'nunca no mês ruim: sai depois de um bom, quando já não dá para repetir'},
+    {t:'Entra alguém novo', s:'que rende menos nos primeiros meses — curva de aprendizado'},
+    {t:'"Viu? era o vendedor"', s:'a queda confirma a explicação que já existia'},
+    {t:'A hipótese do preço nunca é testada', s:'e o laço volta para a primeira caixa'}
+  ];
+  B.push('<div class="cp-imp"><div class="cp-imp-t">1 · O laço que se alimenta sozinho</div>'
+    +'<div class="cp-ciclo">'
+    +etapas.map(function(e,i){
+      return '<div class="cp-ciclo-i'+(i===etapas.length-1?' fecha':'')+'">'
+        +'<div class="cp-ciclo-n">'+(i+1)+'</div>'
+        +'<div><div class="cp-ciclo-t">'+e.t+'</div><div class="cp-ciclo-s">'+e.s+'</div></div></div>';
+    }).join('')
+    +'</div>'
+    +'<p class="cp-imp-p">O detalhe cruel é a caixa 9. A queda de quem entrou <b>é real</b> — só que ela é '
+    +'consequência da troca, não a causa do problema. Como chega depois, parece explicação. '
+    +'É o laço produzindo a própria prova.</p></div>');
+
+  /* ── 2. quem vende ── */
+  B.push('<div class="cp-imp"><div class="cp-imp-t">2 · A mente de quem vende</div>'
+    +'<p class="cp-imp-p"><b>Erro fundamental de atribuição.</b> De fora, o que se vê é a pessoa; de dentro, o que se sente é a situação. '
+    +'O mesmo resultado que o vendedor explica por preço, o observador explica por empenho — não por má-fé, mas porque a situação '
+    +'de outra pessoa é invisível e a pessoa está bem ali na frente.</p>'
+    +'<p class="cp-imp-p"><b>Dissonância cognitiva.</b> Defender todo dia um preço em que não se acredita é insustentável, e só tem duas saídas: '
+    +'convencer-se de que o preço se justifica — o que exige argumento e prova — ou <b>parar de se importar</b>. '
+    +'Sem a prova, quase todo mundo escolhe a segunda. Aí o atendimento esfria, e o esfriamento é lido como desmotivação.</p>'
+    +(recusas!=null && recusas>=5
+      ? '<p class="cp-imp-p"><b>O silêncio, não o "não".</b> São '+recusas.toFixed(0)+' recusas por venda, e a maioria nem chega a ser recusa: é sumiço. '
+        +'Um "não" encerra; um sumiço fica aberto, e a pessoa continua checando o celular e reescrevendo mentalmente a mensagem que mandou.</p>'
+      : '')
+    +'<p class="cp-imp-p"><b>O custo de levantar a mão.</b> Quem diz "o preço está alto" duas vezes vira "o que reclama". '
+    +'Na terceira, cala. A informação não some porque não existe — some porque <b>dizê-la é caro</b>. '
+    +'É por isso que a diretoria costuma ser a última a saber de algo que o time inteiro sabe há meses.</p></div>');
+
+  /* ── 3. quem dirige ── */
+  B.push('<div class="cp-imp"><div class="cp-imp-t">3 · A mente de quem dirige</div>'
+    +'<p class="cp-imp-p">Do outro lado não há teimosia — há três vieses que qualquer pessoa teria naquela cadeira:</p>'
+    +'<div class="cp-vies"><b>Aversão à perda assimétrica.</b> Baixar o preço é uma perda <b>visível</b>: some margem por reserva, aparece na planilha, hoje. '
+    +'Perder a venda é uma perda <b>invisível</b>: a reserva que não aconteceu não entra em relatório nenhum. '
+    +'Só uma das duas tem número, e é sempre a que tem número que pesa na decisão.</div>'
+    +'<div class="cp-vies"><b>Escalada de compromisso.</b> Quem definiu o preço tem o nome nele. Rever vira admitir erro na frente dos outros, '
+    +'e o custo social disso é maior do que o da margem — então se prefere insistir e esperar melhorar.</div>'
+    +'<div class="cp-vies"><b>Viés de confirmação.</b> Cada venda fechada no preço atual vira prova de que o preço funciona. '
+    +'As '+(recusas!=null?recusas.toFixed(0)+' cotações que morreram no caminho de cada uma delas':'cotações que não fecharam')
+    +' <b>não deixam recibo</b> — ninguém arquiva o cliente que não respondeu. '
+    +'A evidência a favor se acumula sozinha; a evidência contra some no fim do dia.</div>'
+    +'<p class="cp-imp-p">Junte os três e não é preciso má-fé nenhuma para o preço nunca entrar em pauta. '
+    +'O sistema de informação da empresa foi, sem querer, montado para não contar essa parte.</p></div>');
+
+  /* ── 4. o tráfego ── */
+  var dobro=(v>0)?(v*2):0;
+  B.push('<div class="cp-imp cp-imp-alerta"><div class="cp-imp-t">4 · Por que o tráfego de terceiros vira o culpado</div>'
+    +'<p class="cp-imp-p">Contratar tráfego é, de longe, a alavanca mais confortável — e é por isso que ela é sempre a primeira:</p>'
+    +'<ul class="cp-imp-ul">'
+    +'<li><b>Não exige admitir nada.</b> É a única providência que trata do resultado sem tocar na hipótese do preço.</li>'
+    +'<li><b>A culpa sai de casa.</b> Passa a ter CNPJ. Se não funcionar, troca-se de agência — e a discussão interna continua adiada.</li>'
+    +'<li><b>Tem métrica própria.</b> Impressão, clique, custo por lead: tudo sobe e vira relatório bonito, mesmo quando a venda não se move.</li>'
+    +'<li><b>Produz movimento.</b> Fazer algo alivia a ansiedade da decisão, mesmo quando o algo não é o que resolve.</li>'
+    +'</ul>'
+    +'<div class="cp-conta"><div class="cp-conta-t">A conta que ninguém faz antes de assinar</div>'
+    +'<p>Hoje: <b>'+n+' cotação(ões)</b> no período viram <b>'+v+' venda(s)</b> — conversão de <b>'+conv.toFixed(1)+'%</b>.</p>'
+    +'<p>Dobrando o tráfego, e supondo que o lead novo seja tão bom quanto o de hoje: '
+    +'<b>'+(n*2)+' cotações</b>, <b>'+dobro+' vendas</b>, o dobro do custo de mídia — e <b>o dobro de recusas caindo na mesma pessoa</b>.</p>'
+    +'<p>Só que lead comprado quase nunca é tão bom quanto o que já vinha. Se a conversão cair de '+conv.toFixed(1)+'% para '
+    +(conv*0.7).toFixed(1)+'%, o dobro de tráfego entrega <b>'+Math.round(n*2*conv*0.7/100)+' venda(s)</b> — '
+    +(Math.round(n*2*conv*0.7/100)>v?'pouco mais que hoje, ':'nem isso, ')+'com o dobro de gasto e o dobro de desgaste.</p>'
+    +'<p class="cp-conta-f">Tráfego multiplica o que entra no topo do funil. Ele não encosta na parede que está no fundo. '
+    +'Quando a parede é preço, mais gente batendo nela é mais gente batendo nela.</p></div></div>');
+
+  /* ── 5. onde desemboca ── */
+  B.push('<div class="cp-imp"><div class="cp-imp-t">5 · Onde isso desemboca</div>'
+    +'<p class="cp-imp-p">O laço não estoura de uma vez. Ele desorganiza a operação aos poucos, em quatro sinais que aparecem nesta ordem:</p>'
+    +'<ul class="cp-imp-ul">'
+    +'<li><b>Rotatividade.</b> Sai sempre depois de um mês bom, quando fica claro que aquilo vai virar o novo piso.</li>'
+    +'<li><b>Nada vira padrão.</b> Ninguém fica tempo suficiente para o que funciona virar processo. '
+    +'Cada pessoa nova reinventa o atendimento do zero, e a empresa recomeça a cada seis meses.</li>'
+    +'<li><b>A informação para de subir.</b> Ver o item 2. A partir daí a diretoria decide com um retrato incompleto — '
+    +'e decide de boa-fé, o que é pior, porque ninguém percebe que falta pedaço.</li>'
+    +'<li><b>Decide-se por opinião.</b> Sem dado que contradiga, sobra convicção. E convicção contra convicção não converge: '
+    +'a reunião vira quem fala mais alto.</li>'
+    +'</ul>'
+    +'<p class="cp-imp-p">Nesse ponto o problema já não é mais o preço. É que a empresa <b>perdeu o mecanismo de descobrir que estava errada</b>.</p></div>');
+
+  /* ── 6. as duas saídas ── */
+  /* Ordem de grandeza do que custa trocar de vendedor. Sai do ticket
+     médio das vendas do período (SALES_DATA guarda em dólar, com o câmbio
+     congelado por venda), vezes o ritmo mensal, vezes três meses a meio
+     rendimento. Cada suposição está escrita na tela — é estimativa, e
+     estimativa sem premissa exposta é chute com cara de dado. */
+  var custoTroca=null;
+  try{
+    if(v>0){
+      var somaBRL=d.vendas.reduce(function(a,x){
+        var cam=(+x.cambio>0)?+x.cambio:5.2;
+        return a + ((x.valorBRL!=null)?(+x.valorBRL||0):((+x.v||0)*cam));
+      },0);
+      var meses3=Math.max(1,(d.mesKeys||[]).length);
+      if(somaBRL>0) custoTroca=(somaBRL/meses3)*3*0.5;   /* 3 meses a meio rendimento */
+    }
+  }catch(e){}
+  B.push('<div class="cp-imp cp-imp-saidas"><div class="cp-imp-t">6 · Só existem duas saídas</div>'
+    +'<div class="cp-saida cp-saida-a"><div class="cp-saida-h">SAÍDA A · todos aceitam os fatos</div>'
+    +'<p>Aceitar não é concordar que o preço está errado. É concordar em <b>parar de discutir por opinião</b>. '
+    +'Na prática, três combinados:</p>'
+    +'<ol class="cp-imp-ol">'
+    +'<li>Separar o que é do vendedor do que não é. <b>'+pctFora.toFixed(0)+'%</b> da dificuldade vem de preço, carteira e volume. '
+    +'A cobrança passa a ser sobre tempo de resposta, follow-up feito e conversão <b>dentro do cliente ideal</b>.</li>'
+    +'<li>Dar caminho seguro para a informação subir. Enquanto dizer "o preço está alto" custar caro, ninguém dirá — '
+    +'e a diretoria vai continuar decidindo sem esse dado.</li>'
+    +'<li>Fazer o teste do quadro abaixo. É o que encerra a discussão.</li>'
+    +'</ol></div>'
+    +'<div class="cp-saida cp-saida-b"><div class="cp-saida-h">SAÍDA B · não aceitar</div>'
+    +'<p>É a saída padrão, e ela não precisa ser escolhida: acontece sozinha se ninguém fizer nada. '
+    +'O preço fica, a cobrança fica, o tráfego é trocado de agência mais uma vez, e a rotatividade continua — '
+    +'cada troca levando junto tudo o que a pessoa tinha aprendido sobre os clientes.</p>'
+    +(custoTroca!=null
+      ? '<p>Ordem de grandeza do que uma troca custa, pelos seus próprios números: cerca de '
+        +'<b>R$ '+Math.round(custoTroca).toLocaleString('pt-BR')+'</b> em faturamento não realizado — '
+        +'supondo três meses de curva de aprendizado a meio rendimento. '
+        +'<span class="cp-sup">Os três meses são uma referência de venda consultiva, não um dado seu; troque o número se o seu for outro.</span></p>'
+      : '')
+    +'</div>'
+    +'<p class="cp-imp-p cp-imp-fecho">Não existe terceira saída. Manter o preço <b>e</b> cobrar a conversão é escolher a segunda com outro nome.</p>'
+    +'</div>');
+
+  /* ── o teste ── */
+  if(alvo){
+    B.push('<div class="cp-imp cp-imp-teste"><div class="cp-imp-t">O teste que encerra a discussão</div>'
+      +'<p class="cp-imp-p">Discussão de opinião não tem fim porque os dois lados têm razão dentro da própria lógica. '
+      +'O que tem fim é um <b>teste</b>. Este cabe em 30 dias e não compromete a operação:</p>'
+      +'<div class="cp-teste-g">'
+      +'<div><div class="cp-teste-l">Categoria</div><div class="cp-teste-v">'+alvo.nome+'</div>'
+      +'<div class="cp-teste-s">'+(alvo.qtd||0)+' cotação(ões) no período — é a que tem volume para dar resposta</div></div>'
+      +'<div><div class="cp-teste-l">Preço hoje</div><div class="cp-teste-v">$'+alvo.mag+'</div>'
+      +'<div class="cp-teste-s">+'+alvo.exc.toFixed(0)+'% sobre o nicho ($'+alvo.nic+')</div></div>'
+      +'<div><div class="cp-teste-l">Preço do teste</div><div class="cp-teste-v" style="color:var(--p-ouro)">$'+alvo.sug+'</div>'
+      +'<div class="cp-teste-s">topo do nicho, ainda acima da média</div></div>'
+      +'<div><div class="cp-teste-l">Prazo</div><div class="cp-teste-v">30 dias</div>'
+      +'<div class="cp-teste-s">e o combinado de não mexer em mais nada no período</div></div>'
+      +'</div>'
+      +'<p class="cp-imp-p"><b>Combinar o resultado ANTES de começar</b> — esta é a parte que faz o teste valer. '
+      +'Se a conversão desta categoria subir o suficiente para compensar a margem menor, o preço estava alto e a discussão acabou. '
+      +'Se não subir, o preço não era o problema, e quem defendia isso ganha razão com prova — '
+      +'aí a energia vai toda para carteira e volume, sem ninguém precisar remoer.</p>'
+      +'<p class="cp-imp-p cp-imp-fecho">Qualquer um dos dois desfechos é melhor que a discussão continuar. '
+      +'O que custa caro não é estar errado — é ninguém conseguir descobrir quem está.</p></div>');
+  }
+
+  B.push('<div class="cp-imp cp-des-aviso"><div class="cp-imp-t">O que isto NÃO é</div>'
+    +'<p class="cp-imp-p">Não é acusação a ninguém, e não é diagnóstico de saúde de ninguém. '
+    +'São mecanismos descritos em psicologia do trabalho e em economia comportamental, aplicados aos números desta tela. '
+    +'Se as pessoas envolvidas fossem outras, com os mesmos incentivos, o resultado tenderia ao mesmo — que é justamente o argumento '
+    +'para mexer no arranjo em vez de mexer nas pessoas.</p></div>');
+
   box.innerHTML=B.join('');
 }
 
@@ -14806,8 +15022,12 @@ function cpRelatorio(d){
   /* 7. Limites — honestidade sobre o que o número NÃO diz */
   var semStatus=d.cots.filter(function(h){ return !h.status || h.status==='pendente'; }).length;
   var avisos=[];
-  if(semStatus) avisos.push('<b>'+semStatus+'</b> cotação(ões) sem status no histórico. A conversão por perfil usa o status marcado à mão — enquanto ele não for preenchido, esses números saem <b>menores que a realidade</b>.');
-  avisos.push('A conversão geral do topo usa <b>vendas ÷ cotações</b>; a de cada perfil usa o <b>status marcado</b>. São contas diferentes e podem não bater — é esperado.');
+  /* A marcação manual "Fechou?" saiu do histórico: cotação é cotação, e o
+     que fechou mora na reserva. O desfecho passou a ser INFERIDO pelo
+     pareamento nome + janela de retirada, então o aviso antigo ("preencha
+     o status") virou instrução para um botão que não existe mais. */
+  if(semStatus) avisos.push('<b>'+semStatus+'</b> cotação(ões) cujo desfecho foi <b>inferido</b>, e não marcado à mão: existe reserva do mesmo cliente com retirada compatível (±10 dias). O pareamento erra para menos quando o nome foi digitado diferente nos dois lugares.');
+  avisos.push('A conversão geral do topo usa <b>reservas ÷ cotações</b>; a de cada perfil usa o desfecho cotação a cotação. São contas diferentes e podem não bater — é esperado.');
   P.push('<div class="cp-bloco cp-limites"><div class="cp-bt">O QUE ESTES NÚMEROS NÃO DIZEM</div><ul class="cp-ul"><li>'+avisos.join('</li><li>')+'</li></ul></div>');
 
   box.innerHTML=P.join('');
@@ -25349,6 +25569,71 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0
 .cp-fonte{margin-top:10px;font-size:.64rem;color:var(--chalk3);font-style:italic;line-height:1.6}
 .cp-vazio{padding:18px 0;color:var(--chalk3);font-size:.78rem;text-align:center}
 .cp-desgaste{margin-bottom:14px;border-color:rgba(168,85,247,.3)}
+
+/* ═══ O IMPASSE ═══ */
+.cp-impasse{margin-bottom:14px}
+.cp-imp-topo{font-size:.9rem;line-height:1.75;color:var(--chalk);margin:14px 0 16px;
+  padding:14px 16px;background:rgba(252,40,119,.07);border-left:3px solid var(--p-rosa)}
+.cp-imp{margin-bottom:16px;padding:15px 17px;background:rgba(255,255,255,.025);
+  border-left:2px solid rgba(255,255,255,.14)}
+.cp-imp-t{font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;color:var(--p-ouro);
+  font-weight:700;margin-bottom:11px}
+.cp-imp-p{font-size:.84rem;line-height:1.8;color:var(--chalk2);margin:0 0 10px}
+.cp-imp-p:last-child{margin-bottom:0}
+.cp-imp-p b,.cp-vies b,.cp-conta b{color:var(--chalk)}
+.cp-imp-ul,.cp-imp-ol{margin:4px 0 10px;padding-left:20px}
+.cp-imp-ul li,.cp-imp-ol li{font-size:.84rem;line-height:1.75;color:var(--chalk2);margin-bottom:7px}
+.cp-imp-fecho{margin-top:12px;padding-top:11px;border-top:1px solid rgba(255,255,255,.09);
+  color:var(--chalk);font-size:.86rem}
+.cp-sup{font-size:.74rem;color:var(--chalk3)}
+
+/* o laço, caixa a caixa */
+.cp-ciclo{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:2px;margin:6px 0 13px}
+.cp-ciclo-i{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;
+  background:rgba(255,255,255,.03);border-left:2px solid rgba(252,40,119,.45)}
+.cp-ciclo-i.fecha{border-left-color:var(--p-verm);background:rgba(89,2,2,.22)}
+.cp-ciclo-n{font-family:'DM Mono',monospace;font-size:.72rem;font-weight:700;color:var(--p-rosa);
+  min-width:16px;padding-top:1px}
+.cp-ciclo-i.fecha .cp-ciclo-n{color:var(--p-verm)}
+.cp-ciclo-t{font-size:.78rem;font-weight:600;color:var(--chalk);line-height:1.35}
+.cp-ciclo-s{font-size:.7rem;color:var(--chalk3);line-height:1.55;margin-top:3px}
+
+.cp-vies{font-size:.84rem;line-height:1.78;color:var(--chalk2);margin-bottom:9px;
+  padding:10px 13px;background:rgba(255,255,255,.028);border-left:2px solid var(--p-ouro)}
+
+.cp-imp-alerta{border-left-color:var(--p-ouro)}
+.cp-conta{margin-top:12px;padding:13px 15px;background:rgba(242,186,82,.07);
+  border-left:2px solid var(--p-ouro)}
+.cp-conta-t{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--p-ouro);
+  font-weight:700;margin-bottom:8px}
+.cp-conta p{font-size:.84rem;line-height:1.8;color:var(--chalk2);margin:0 0 7px}
+.cp-conta-f{margin-top:10px !important;padding-top:9px;border-top:1px solid rgba(242,186,82,.22);
+  color:var(--chalk) !important}
+
+.cp-imp-saidas{border-left-color:var(--p-rosa)}
+.cp-saida{margin-bottom:11px;padding:13px 15px;background:rgba(255,255,255,.028);border-left:3px solid}
+.cp-saida-a{border-left-color:#1AFF9D}
+.cp-saida-b{border-left-color:var(--p-verm);background:rgba(89,2,2,.18)}
+.cp-saida-h{font-size:.63rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;margin-bottom:8px}
+.cp-saida-a .cp-saida-h{color:#1AFF9D}
+.cp-saida-b .cp-saida-h{color:#FF7A7A}
+.cp-saida p{font-size:.84rem;line-height:1.8;color:var(--chalk2);margin:0 0 8px}
+.cp-saida p:last-child{margin-bottom:0}
+.cp-saida b{color:var(--chalk)}
+
+.cp-imp-teste{border-left-color:#1AFF9D;background:rgba(26,255,157,.045)}
+.cp-imp-teste .cp-imp-t{color:#1AFF9D}
+.cp-teste-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2px;margin:10px 0 13px}
+.cp-teste-g>div{padding:11px 13px;background:rgba(255,255,255,.035)}
+.cp-teste-l{font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--chalk3)}
+.cp-teste-v{font-family:'DM Mono',monospace;font-size:1.05rem;font-weight:700;color:var(--chalk);margin-top:4px}
+.cp-teste-s{font-size:.68rem;color:var(--chalk3);line-height:1.5;margin-top:4px}
+
+@media(max-width:640px){
+  .cp-imp{padding:13px 13px}
+  .cp-ciclo{grid-template-columns:1fr}
+  .cp-imp-p,.cp-vies,.cp-saida p,.cp-conta p,.cp-imp-ul li,.cp-imp-ol li{font-size:.8rem}
+}
 .cp-des-topo{margin-top:12px;font-size:.84rem;line-height:1.8;color:var(--chalk2);
   border-left:3px solid #A855F7;padding-left:13px}
 .cp-des-topo b{color:var(--chalk)}
