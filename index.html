@@ -8416,6 +8416,23 @@ loadHist();
 .corrida-fat{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:.02em;color:#3B9EFF;line-height:1}
 .corrida-lbl{font-size:.64rem;font-family:'DM Mono',monospace;letter-spacing:.13em;text-transform:uppercase;color:var(--chalk3)}
 .corrida-prox{text-align:right;font-size:.74rem;font-family:'DM Mono',monospace;color:var(--chalk2);line-height:1.7}
+.mgtr{position:relative;margin:0 2px}
+.mgtr canvas{width:100%;height:172px;display:block}
+.mgtr-marcos{position:relative;height:52px;margin-top:-4px}
+.mgtr-m{position:absolute;top:0;transform:translateX(-50%);width:104px;text-align:center;
+  transition:opacity .4s}
+.mgtr-m-i{font-size:1.05rem;line-height:1;filter:grayscale(1) opacity(.35);transition:filter .5s}
+.mgtr-m.ok .mgtr-m-i{filter:none;text-shadow:0 0 14px var(--md)}
+.mgtr-m-n{font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.36);margin-top:4px}
+.mgtr-m.ok .mgtr-m-n{color:var(--md)}
+.mgtr-m-v{font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(255,255,255,.26);margin-top:2px}
+.mgtr-m.ok .mgtr-m-v{color:rgba(255,255,255,.55)}
+@media(max-width:620px){
+  .mgtr canvas{height:132px}
+  .mgtr-m{width:74px}
+  .mgtr-m-n{font-size:.53rem;letter-spacing:.08em}
+  .mgtr-m-v{font-size:.52rem}
+}
 .pista{position:relative;height:96px;margin:0 6px}
 .pista-asfalto{position:absolute;left:0;right:0;top:46px;height:16px;border-radius:8px;background:linear-gradient(180deg,#1a2333,#0d1420);border:1px solid rgba(255,255,255,.07)}
 .pista-faixa{position:absolute;left:8px;right:8px;top:53px;height:2px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.28) 0 12px,transparent 12px 26px)}
@@ -12507,9 +12524,214 @@ function initMetasCharts(){
   metasInterval=setInterval(renderMetas,60000); // refresh every minute
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   TRILHA DA META  (10/08/2026)
+   ───────────────────────────────────────────────────────────────────
+   Substitui o carrinho de emoji correndo numa pista de asfalto. O
+   problema do anterior não era a ideia, era o material: um 🏎️ é um
+   glifo de fonte, então ele muda de cara em cada aparelho, não aceita
+   cor, não recebe luz e não tem como deixar rastro. Tudo o que dava
+   para fazer com ele era mexer de lado e tremer.
+
+   Aqui o trajeto é desenhado — mesma linguagem da esfera da saúde, que
+   já é canvas: um cometa sobe uma crista luminosa, deixando rastro de
+   partículas, e acende quatro marcos ao passar. Depois que chega, a
+   trilha não congela: pulsos de luz continuam percorrendo o trecho já
+   conquistado, do mesmo jeito que os impulsos correm na esfera.
+
+   Formas quadradas de propósito: partícula, marco e pulso são pequenos
+   quadrados, para casar com a identidade reta do resto do app.
+   ═══════════════════════════════════════════════════════════════════ */
+var MGTR={ cv:null, ctx:null, raf:null, timer:null, dados:null };
+
+/* A crista. t vai de 0 a 1 da esquerda para a direita; a altura sobe num
+   S suave (smoothstep) com uma respiração de 2px para não ficar morta. */
+function mgtrPonto(t, W, H, tempo){
+  var pad=W*0.06;
+  var x=pad + t*(W-2*pad);
+  var base=H*0.88, subida=H*0.70;
+  var s=t*t*(3-2*t);                                   /* smoothstep */
+  var y=base - subida*s + 2.2*Math.sin(t*5.5 + tempo*0.8);
+  return {x:x, y:y};
+}
+
+function mgtrDesenhar(){
+  var cv=MGTR.cv, d=MGTR.dados; if(!cv||!d) return;
+  var ctx=MGTR.ctx, W=cv.width/d.dpr, H=cv.height/d.dpr;
+  ctx.setTransform(d.dpr,0,0,d.dpr,0,0);
+  ctx.clearRect(0,0,W,H);
+
+  var tempo=d.fase;
+
+  /* ── horizonte: linhas de fundo que dão profundidade sem competir ── */
+  ctx.strokeStyle='rgba(255,255,255,.035)'; ctx.lineWidth=1;
+  for(var i=1;i<=3;i++){
+    var yy=Math.round(H*0.88 - H*0.22*i)+0.5;
+    ctx.beginPath(); ctx.moveTo(W*0.04,yy); ctx.lineTo(W*0.96,yy); ctx.stroke();
+  }
+
+  /* ── o trilho inteiro, apagado: mostra o quanto ainda falta ── */
+  var N=140, k, pt;
+  ctx.beginPath();
+  for(k=0;k<=N;k++){ pt=mgtrPonto(k/N,W,H,tempo); if(k===0) ctx.moveTo(pt.x,pt.y); else ctx.lineTo(pt.x,pt.y); }
+  ctx.strokeStyle='rgba(255,255,255,.09)'; ctx.lineWidth=2; ctx.stroke();
+
+  /* ── o trecho conquistado, aceso ── */
+  var p=Math.max(0,Math.min(1,d.p));
+  if(p>0.002){
+    var a=mgtrPonto(0,W,H,tempo), b=mgtrPonto(p,W,H,tempo);
+    var grad=ctx.createLinearGradient(a.x,a.y,b.x,b.y);
+    grad.addColorStop(0,'rgba(0,70,87,.85)');
+    grad.addColorStop(0.55,'rgba(252,40,119,.95)');
+    grad.addColorStop(1,d.cor);
+    ctx.beginPath();
+    var M=Math.max(2,Math.round(N*p));
+    for(k=0;k<=M;k++){ pt=mgtrPonto(p*k/M,W,H,tempo); if(k===0) ctx.moveTo(pt.x,pt.y); else ctx.lineTo(pt.x,pt.y); }
+    ctx.strokeStyle=grad; ctx.lineWidth=3.4;
+    ctx.shadowColor=d.cor; ctx.shadowBlur=18;
+    ctx.stroke();
+    ctx.shadowBlur=0;
+
+    /* véu embaixo do trilho — dá corpo sem escurecer o texto */
+    ctx.lineTo(b.x,H); ctx.lineTo(a.x,H); ctx.closePath();
+    var g2=ctx.createLinearGradient(0,H*0.25,0,H);
+    g2.addColorStop(0,'rgba(252,40,119,.13)');
+    g2.addColorStop(1,'rgba(252,40,119,0)');
+    ctx.fillStyle=g2; ctx.fill();
+  }
+
+  /* ── pulsos: só existem no trecho já conquistado ── */
+  d.pulsos.forEach(function(u){
+    if(u.t>p) return;
+    var q=mgtrPonto(u.t,W,H,tempo);
+    ctx.fillStyle='rgba(255,255,255,'+(0.75*u.vida).toFixed(3)+')';
+    ctx.shadowColor=d.cor; ctx.shadowBlur=10;
+    ctx.fillRect(q.x-2,q.y-2,4,4);
+    ctx.shadowBlur=0;
+  });
+
+  /* ── marcos ── */
+  d.marcos.forEach(function(m){
+    var q=mgtrPonto(m.t,W,H,tempo);
+    var lig=m.aceso;
+    var s=7+(m.pulso*6);
+    ctx.strokeStyle=lig?m.cor:'rgba(255,255,255,.22)';
+    ctx.lineWidth=lig?2:1;
+    if(lig){ ctx.shadowColor=m.cor; ctx.shadowBlur=16*(0.5+m.pulso); ctx.fillStyle=m.cor;
+             ctx.globalAlpha=.28; ctx.fillRect(q.x-s/2,q.y-s/2,s,s); ctx.globalAlpha=1; }
+    ctx.strokeRect(q.x-s/2,q.y-s/2,s,s);
+    ctx.shadowBlur=0;
+    /* haste até a base, ligando o marco ao rótulo lá embaixo */
+    ctx.beginPath(); ctx.moveTo(q.x,q.y+s/2); ctx.lineTo(q.x,H-2);
+    ctx.strokeStyle=lig?'rgba(255,255,255,.16)':'rgba(255,255,255,.07)';
+    ctx.lineWidth=1; ctx.stroke();
+  });
+
+  /* ── partículas do rastro ── */
+  d.parts.forEach(function(o){
+    var al=o.vida*0.7;
+    ctx.fillStyle='rgba(255,255,255,'+al.toFixed(3)+')';
+    var t=1.5+2.5*o.vida;
+    ctx.fillRect(o.x-t/2,o.y-t/2,t,t);
+  });
+
+  /* ── o cometa ── */
+  var c=mgtrPonto(p,W,H,tempo);
+  var respira=1+0.14*Math.sin(tempo*2.4);
+  var halo=ctx.createRadialGradient(c.x,c.y,0,c.x,c.y,17*respira);
+  halo.addColorStop(0,d.cor); halo.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.globalAlpha=.55; ctx.fillStyle=halo;
+  ctx.fillRect(c.x-20,c.y-20,40,40); ctx.globalAlpha=1;
+  ctx.fillStyle='#fff'; ctx.shadowColor=d.cor; ctx.shadowBlur=18;
+  var lado=6*respira;
+  ctx.fillRect(c.x-lado/2,c.y-lado/2,lado,lado);
+  ctx.shadowBlur=0;
+}
+
+function mgtrPasso(dt){
+  var d=MGTR.dados; if(!d) return;
+  d.fase+=dt;
+
+  /* subida: sai do zero toda vez que a aba abre — é o trajeto que conta
+     a história do mês, e ele precisa ser visto acontecendo */
+  if(!d.chegou){
+    var t=Math.min(1,(d.fase-d.t0)/d.dur);
+    d.p=d.alvo*(1-Math.pow(1-t,3));                    /* desacelera no fim */
+    d.andando=t<1;
+    /* Fecha no valor EXATO. Antes o laço parava quando p chegava perto do
+       alvo e o contador congelava em 91.890 no lugar de 92.000 — o último
+       centésimo do trajeto nunca era percorrido. */
+    if(t>=1){ d.p=d.alvo; d.chegou=true; if(d.elFat) d.elFat.textContent=d.fmt(d.valor); }
+  }
+
+  /* rastro: sai enquanto sobe, e um fiapo depois que chega */
+  var cv=MGTR.cv, W=cv.width/d.dpr, H=cv.height/d.dpr;
+  var c=mgtrPonto(d.p,W,H,d.fase);
+  var quantas=d.andando?3:(Math.random()<0.25?1:0);
+  for(var i=0;i<quantas;i++){
+    d.parts.push({x:c.x+(Math.random()-0.5)*4, y:c.y+(Math.random()-0.5)*4,
+                  vx:-(18+Math.random()*40), vy:(Math.random()-0.35)*26, vida:1});
+  }
+  for(var j=d.parts.length-1;j>=0;j--){
+    var o=d.parts[j];
+    o.x+=o.vx*dt; o.y+=o.vy*dt; o.vy+=14*dt;
+    o.vida-=dt*1.7;
+    if(o.vida<=0) d.parts.splice(j,1);
+  }
+  if(d.parts.length>150) d.parts.splice(0,d.parts.length-150);
+
+  /* marcos acendem quando o cometa passa por eles */
+  d.marcos.forEach(function(m){
+    if(!m.aceso && m.conquistado && d.p+0.004>=m.t){ m.aceso=true; m.pulso=1; if(m.el) m.el.classList.add('ok'); }
+    if(m.pulso>0) m.pulso=Math.max(0,m.pulso-dt*1.6);
+  });
+
+  /* pulsos percorrendo o trecho conquistado */
+  if(d.p>0.05 && Math.random()<dt*2.2) d.pulsos.push({t:0, vida:1});
+  for(var q=d.pulsos.length-1;q>=0;q--){
+    var u=d.pulsos[q];
+    u.t+=dt*0.42;
+    u.vida=Math.min(1, (d.p-u.t)*6);                   /* apaga ao alcançar a ponta */
+    if(u.t>d.p || u.vida<=0) d.pulsos.splice(q,1);
+  }
+
+  /* o faturamento sobe junto com o cometa; depois de chegar fica quieto
+     no valor exato, senão o arredondamento o faria tremer para sempre */
+  if(!d.chegou && d.elFat) d.elFat.textContent=d.fmt(d.valor*(d.alvo>0?(d.p/d.alvo):1));
+}
+
+function mgtrAnimar(){
+  if(MGTR.raf) cancelAnimationFrame(MGTR.raf);
+  if(MGTR.timer) clearInterval(MGTR.timer);
+  var ultimo=0;
+  (function laco(t){
+    MGTR.raf=requestAnimationFrame(laco);
+    if(!MGTR.dados||!MGTR.cv||!document.body.contains(MGTR.cv)){
+      cancelAnimationFrame(MGTR.raf); MGTR.raf=null; return;
+    }
+    if(!ultimo){ ultimo=t; return; }
+    var dt=Math.min(0.05,(t-ultimo)/1000); ultimo=t;
+    mgtrPasso(dt); mgtrDesenhar();
+  })(0);
+  /* mesma rede de segurança da esfera: navegador que engasga o rAF
+     (aba em segundo plano, aparelho fraco) não deixa a trilha parada */
+  MGTR.timer=setInterval(function(){
+    if(document.hidden||!MGTR.dados) return;
+    if(performance.now()-ultimo>240){ mgtrPasso(0.12); mgtrDesenhar(); }
+  },140);
+}
+
+function mgtrMedir(){
+  var cv=MGTR.cv, d=MGTR.dados; if(!cv||!d) return;
+  var r=cv.getBoundingClientRect();
+  d.dpr=Math.min(2, window.devicePixelRatio||1);
+  cv.width =Math.max(320, Math.round(r.width *d.dpr));
+  cv.height=Math.round((r.height||170)*d.dpr);
+}
+
 /* ═══ CORRIDA ATÉ O DIAMANTE ═══
-   Pista com as 4 medalhas. Cada meta ocupa 1/4 do trajeto e, dentro do trecho,
-   o carrinho avança proporcionalmente — assim ele nunca "pula" uma medalha. */
+   Cada meta ocupa 1/4 do trajeto e, dentro do trecho, o cometa avança
+   proporcionalmente — assim ele nunca "pula" um marco. */
 function renderCorridaMetas(vendido, cfg){
   const box=document.getElementById('metas-corrida');
   if(!box) return;
@@ -12531,21 +12753,14 @@ function renderCorridaMetas(vendido, cfg){
     return 100;
   })();
 
-  // próxima medalha ainda não batida
   let prox=-1;
   for(let i=0;i<metas.length;i++){ if(vendido<metas[i]){ prox=i; break; } }
   const seg=100/metas.length;
 
-  const medalhas=metas.map((m,i)=>{
-    const ok=vendido>=m;
-    const left=(i+1)*seg;
-    return `<div class="medalha${ok?' ok':''}" style="--md:${MED[i].cor};left:${left}%">
-      <div class="medalha-ico">${MED[i].emoji}</div>
-      <div class="medalha-poste"></div>
-      <div class="medalha-nome">${MED[i].nome}</div>
-      <div class="medalha-val">${fR0(m)}</div>
-    </div>`;
-  }).join('');
+  /* a cor do cometa é a do último degrau conquistado — quem está longe
+     sobe em rosa, quem chegou ao fim sobe em turquesa */
+  const nivel=metas.filter(m=>vendido>=m).length;
+  const corAtual = nivel>0 ? MED[Math.min(nivel,MED.length)-1].cor : '#FC2877';
 
   const topo=`<div class="corrida-top">
     <div>
@@ -12560,76 +12775,47 @@ function renderCorridaMetas(vendido, cfg){
     }</div>
   </div>`;
 
-  const posR=Math.round(pos*100)/100;               // evita 36.71670999999999% no HTML
+  /* rótulos em HTML e não no canvas: texto de canvas não fica nítido em
+     tela de alta densidade e não herda a fonte do app */
+  const marcosHTML=metas.map((m,i)=>{
+    const ok=vendido>=m, t=(i+1)/metas.length;
+    const esq=6 + t*88;                                /* mesma margem do mgtrPonto */
+    return `<div class="mgtr-m${ok?' ok':''}" data-i="${i}" style="--md:${MED[i].cor};left:${esq.toFixed(2)}%">
+      <div class="mgtr-m-i">${MED[i].emoji}</div>
+      <div class="mgtr-m-n">${MED[i].nome}</div>
+      <div class="mgtr-m-v">${fR0(m)}</div>
+    </div>`;
+  }).join('');
+
   box.innerHTML=`<div class="corrida">${topo}
-    <div class="pista">
-      <div class="pista-asfalto"></div>
-      <div class="pista-feito" id="pista-feito" style="width:0%"></div>
-      <div class="pista-faixa"></div>
-      ${medalhas}
-      <div class="carrinho-poeira" id="carrinho-poeira" style="left:0%">💨</div>
-      <div class="carrinho" id="carrinho" style="left:0%" title="${fR(vendido)} — ${pos.toFixed(1)}% do caminho até o Diamante">🏎️</div>
+    <div class="mgtr" title="${fR(vendido)} — ${pos.toFixed(1)}% do caminho até o Diamante">
+      <canvas id="mgtr-cv"></canvas>
+      <div class="mgtr-marcos">${marcosHTML}</div>
     </div>
   </div>`;
 
-  /* ── A CORRIDA ──
-     Sai do zero e anda até o faturamento de hoje, TODA vez que a aba abre.
-     Feita em JS de propósito: transition de CSS é ignorada quando o sistema
-     está com "reduzir movimento", e era por isso que o carrinho aparecia
-     parado já na posição final. */
-  if(CORRIDA_TIMER){ clearInterval(CORRIDA_TIMER); CORRIDA_TIMER=null; }
+  const cv=document.getElementById('mgtr-cv');
+  if(!cv) return;
+  MGTR.cv=cv; MGTR.ctx=cv.getContext('2d');
+  const els=[].slice.call(box.querySelectorAll('.mgtr-m'));
+  els.forEach(el=>el.classList.remove('ok'));          /* nascem apagados e acendem na passagem */
 
-  const car=document.getElementById('carrinho');
-  const po =document.getElementById('carrinho-poeira');
-  const fe =document.getElementById('pista-feito');
-  const fat=box.querySelector('.corrida-fat');
-
-  /* as medalhas nascem apagadas e acendem quando ele passa por elas */
-  const meds=[].slice.call(box.querySelectorAll('.medalha')).map(function(el){
-    var alvo=parseFloat(el.style.left)||0;
-    var conquistada=el.classList.contains('ok');
-    el.classList.remove('ok');
-    return {el:el, alvo:alvo, conquistada:conquistada, acesa:false};
-  });
-
-  const agora=function(){ return (window.performance&&performance.now)?performance.now():Date.now(); };
-  const easeOut=function(t){ return 1-Math.pow(1-t,3); };
-  /* quanto mais longe o mês foi, mais tempo de estrada (1,6s a 3,0s) */
-  const DUR=1600+Math.min(1400, posR*14);
-  const t0=agora();
-
-  if(car){ car.classList.remove('parado','freando'); car.classList.add('correndo'); car.style.left='0%'; }
-  if(po){ po.classList.add('correndo'); po.style.left='0%'; }
-  if(fe) fe.style.width='0%';
-
-  const passo=function(){
-    const t=Math.min(1,(agora()-t0)/DUR);
-    const e=easeOut(t);
-    const p=e*posR;                               // onde ele está agora, em %
-    if(car) car.style.left=p.toFixed(2)+'%';
-    if(po)  po.style.left=Math.max(0,p-3.2).toFixed(2)+'%';
-    if(fe)  fe.style.width=p.toFixed(2)+'%';
-    if(fat) fat.textContent=fR(vendido*e);        // o faturamento sobe junto
-    meds.forEach(function(m){
-      if(m.acesa || !m.conquistada || p+0.4<m.alvo) return;
-      m.acesa=true; m.el.classList.add('ok');
-      var ico=m.el.querySelector('.medalha-ico'); if(ico) ico.classList.add('acendeu');
-    });
-    if(t>=1){
-      clearInterval(CORRIDA_TIMER); CORRIDA_TIMER=null;
-      if(fat) fat.textContent=fR(vendido);        // fecha no valor exato, sem arredondar
-      if(po) po.classList.remove('correndo');
-      if(car){
-        car.classList.remove('correndo');
-        car.classList.add('freando');
-        setTimeout(function(){ car.classList.remove('freando'); car.classList.add('parado'); }, 450);
-      }
-    }
+  MGTR.dados={
+    dpr:1, p:0, alvo:Math.max(0,Math.min(1,pos/100)), fase:0, t0:0, chegou:false,
+    dur:1.7+Math.min(1.5, pos/100*1.5),                /* mês que foi longe, estrada mais longa */
+    cor:corAtual, andando:true, parts:[], pulsos:[],
+    valor:vendido, fmt:fR, elFat:box.querySelector('.corrida-fat'),
+    marcos:metas.map((m,i)=>({t:(i+1)/metas.length, cor:MED[i].cor,
+                              conquistado:vendido>=m, aceso:false, pulso:0, el:els[i]}))
   };
-  CORRIDA_TIMER=setInterval(passo, 16);
-  passo();                                        // primeiro quadro já no zero
+  mgtrMedir();
+  if(!MGTR._resize){
+    MGTR._resize=function(){ mgtrMedir(); mgtrDesenhar(); };
+    window.addEventListener('resize', MGTR._resize);
+  }
+  mgtrAnimar();
 }
-/* handle do trajeto: se a aba for reaberta no meio, o anterior é cancelado */
+/* mantido para quem ainda limpa o temporizador antigo em outro ponto */
 var CORRIDA_TIMER=null;
 
 function renderMetas(){
@@ -25367,7 +25553,9 @@ input,select,textarea,button,
 .frota-tab,.rl-btn,.form-btn,.tbtn,.emia-btn,.lg-btn,.cp-tab,.dinp,.cam-inp,
 .gbusca-inp,.hrec,.hrec-ok,.mgwz-exp,.mgwz-x,.fx-card,.fx-lock,.cblock,
 .fx-tag-nat,.fx-badge,.fx-cat,.au-selo,.mgcal-manutbtn,.mgag-flagbtn,
-.mgiss-editbtn,.mgiss-delbtn,.cal-mode-btn,.cal-mes-sel{
+.mgiss-editbtn,.mgiss-delbtn,.cal-mode-btn,.cal-mes-sel,
+.meta-block,.corrida,.meta-prog-bar,.meta-prog-fill,.sem-wrap,.days-tag,
+.mgtr-m,.receber-card,.kpi-grid>*{
   border-radius:0 !important;
 }
 /* caixinha de marcar continua sendo caixinha, e não uma pastilha */
@@ -25480,14 +25668,15 @@ button:disabled,.cbtn:disabled,.fx-btn:disabled,.emia-btn:disabled{
 /* ── 5. Superfícies de seção ──────────────────────────────────────────
    Mesma receita do Dashboard: véu claro, sem moldura pesada, e um traço
    rosa de 34px no canto superior esquerdo marcando onde a seção começa. */
-.card,.form-card,.fx-card,.fr-card,.cblock,.fx-lock,.hrec,.mgwz-exp{
+.card,.form-card,.fx-card,.fr-card,.cblock,.fx-lock,.hrec,.mgwz-exp,
+.meta-block,.corrida,.sem-wrap{
   background:rgba(255,255,255,.028) !important;
   border:none !important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.06) !important;
   border-radius:0 !important;
   position:relative;
 }
-.fx-card::before,.fr-card::before{
+.fx-card::before,.fr-card::before,.meta-block::before{
   content:'';position:absolute;left:0;top:0;width:34px;height:2px;background:var(--p-rosa);
 }
 /* O cabeçalho do bloco de cotação tinha fundo próprio e virava uma faixa
