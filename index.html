@@ -5622,6 +5622,22 @@ select.ffi option{background:#000020;color:#FF0000}
   <span id="cal-label-dc" style="font-size:.65rem;font-family:'DM Mono',monospace;color:var(--ice);margin-left:4px">Julho 2026</span>
   <button class="tbtn tbtn-o" onclick="gerarRelatorioCotacoes()" style="margin-left:auto">📊 EMITIR RELATÓRIO</button>
 </div>
+<!-- ═══ DIFICULDADE DE VENDER — esfera vermelha ═══ -->
+<div class="mgs-wrap mgd-wrap">
+  <div class="mgs-esfera">
+    <canvas id="mgd-canvas"></canvas>
+    <div class="mgs-centro">
+      <div class="mgs-num" id="mgd-num">—</div>
+      <div class="mgs-lbl mgd-lbl">DIFICULDADE DE VENDER</div>
+      <div class="mgs-sub" id="mgd-sub">calculando…</div>
+    </div>
+  </div>
+  <div class="mgs-kpis mgd-kpis" id="mgd-kpis"></div>
+</div>
+<div class="mgd-aviso">
+  Atenção à escala: aqui <b>número alto é ruim</b> — ao contrário da esfera verde do Dashboard.
+  0 significa que o cenário vende sozinho; 100, que tudo está contra. Passe o mouse em cada fator para ver o que ele quer dizer.
+</div>
 <!-- KPI rows -->
 <div class="kpi-grid" id="dc-kpis" style="margin-bottom:10px">
     <div class="kpi kpi-o"><div class="kg"></div><div class="kpi-tag">Total Cotado</div><div class="kpi-val">$224059</div><div class="kpi-sub">185 cotações</div><div class="kpi-bar"></div></div>
@@ -11392,8 +11408,12 @@ function mgsCriarPontos(n){
    A vizinhança é recalculada de vez em quando, não todo quadro: os pontos
    derivam devagar, e refazer 140×140 a 60 quadros por segundo seria queimar
    processador para nada. */
-function mgsVizinhos(){
-  var P=MGS.pontos, LIM=0.5, viz=[];
+/* As três funções abaixo passaram a receber o ESTADO em vez de mexer direto
+   na MGS: a mesma física serve agora a duas esferas (a da saúde, no
+   Dashboard, e a da dificuldade, no Dash de Cotações). O comportamento da
+   primeira não mudou — ela só passou a chamar a versão genérica. */
+function _esfVizinhos(S){
+  var P=S.pontos, LIM=0.5, viz=[];
   for(var i=0;i<P.length;i++) viz.push([]);
   for(var i=0;i<P.length;i++){
     for(var j=i+1;j<P.length;j++){
@@ -11401,22 +11421,23 @@ function mgsVizinhos(){
       if(dx*dx+dy*dy+dz*dz < LIM*LIM){ viz[i].push(j); viz[j].push(i); }
     }
   }
-  MGS.viz=viz; MGS.vizQuadro=0;
+  S.viz=viz; S.vizQuadro=0;
 }
-function mgsImpulso(){
-  var P=MGS.pontos;
+function mgsVizinhos(){ _esfVizinhos(MGS); }
+function _esfImpulso(S, taxa){
+  var P=S.pontos;
   if(!P.length) return;
-  if(!MGS.viz || (++MGS.vizQuadro)>90) mgsVizinhos();
+  if(!S.viz || (++S.vizQuadro)>90) _esfVizinhos(S);
 
   /* dispara um ponto novo de vez em quando — vários impulsos convivem */
-  if(Math.random()<0.055){
+  if(Math.random()<(taxa||0.055)){
     P[(Math.random()*P.length)|0].carga=1;
   }
   /* propaga: o vizinho recebe uma fração do que o ponto tem agora */
   var novo=new Array(P.length);
   for(var i=0;i<P.length;i++){
     var c=P[i].carga*0.90;                 /* decaimento */
-    var v=MGS.viz[i];
+    var v=S.viz[i];
     for(var k=0;k<v.length;k++){
       var q=P[v[k]].carga*0.11;
       if(q>c) c=q;                          /* pega o maior, não soma: senão
@@ -11426,10 +11447,11 @@ function mgsImpulso(){
   }
   for(var i=0;i<P.length;i++) P[i].carga=novo[i];
 }
+function mgsImpulso(){ _esfImpulso(MGS, 0.055); }
 
 /* Move os pontos e recalcula onde caem na esfera. */
-function mgsMover(){
-  var P=MGS.pontos, LIM=1.44;
+function _esfMover(S, taxa){
+  var P=S.pontos, LIM=1.44;
   for(var i=0;i<P.length;i++){
     var p=P[i];
     p.lat+=p.vlat; p.lon+=p.vlon; p.fase+=p.vel;
@@ -11443,8 +11465,9 @@ function mgsMover(){
     p.y=Math.sin(p.lat);
     p.z=cl*Math.sin(p.lon);
   }
-  mgsImpulso();
+  _esfImpulso(S, taxa);
 }
+function mgsMover(){ _esfMover(MGS, 0.055); }
 
 function mgsDesenhar(){
   var cv=document.getElementById('mgs-canvas'); if(!cv) return;
@@ -11826,6 +11849,288 @@ function mgsRender(){
 }
 window.mgsRender=mgsRender;
 window.mgsCalcularSaude=mgsCalcularSaude;
+
+/* ═══════════════════════════════════════════════════════════════════
+   ESFERA DA DIFICULDADE — Dash de Cotações  (10/08/2026)
+   ───────────────────────────────────────────────────────────────────
+   A irmã vermelha da esfera da saúde. Mesma física (os pontos respiram
+   e o impulso atravessa a malha), paleta invertida no significado:
+
+     · a MALHA é vermelha, em vários tons — do bordô ao vermelho vivo,
+       escurecendo conforme a dificuldade sobe;
+     · o IMPULSO é AZUL. É esse contraste que faz o sinal aparecer:
+       linha azul cortando malha vermelha se lê à distância, coisa que
+       vermelho sobre vermelho não faria.
+
+   O que ela mede não é saúde, é ESFORÇO: quanta força é preciso fazer
+   para vender com as condições do período filtrado. 0 = vende sozinho.
+   100 = tudo contra.
+
+   Aviso importante sobre a leitura: aqui número ALTO é RUIM, o oposto
+   da esfera do Dashboard. Por isso a cor e o rótulo são diferentes —
+   duas bolas iguais com escalas invertidas seria a pior armadilha
+   possível de painel.
+   ═══════════════════════════════════════════════════════════════════ */
+var MGD={pontos:[], raf:null, timer:null, viz:null, vizQuadro:0, ang:0,
+         cor:'#F20505', corMalha:'#8B0A0A', nivel:0};
+
+function mgdDesenhar(){
+  var cv=document.getElementById('mgd-canvas'); if(!cv) return;
+  var ctx=cv.getContext('2d');
+  var dpr=Math.min(2,window.devicePixelRatio||1);
+  var L=cv.clientWidth||300;
+  if(cv.width!==L*dpr){ cv.width=L*dpr; cv.height=L*dpr; }
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,L,L);
+
+  var cx=L/2, cy=L/2, R=L*0.36, FOC=2.6;
+  var inc=-0.32, ci=Math.cos(inc), si=Math.sin(inc);
+  var ca=Math.cos(MGD.ang), sa=Math.sin(MGD.ang);
+
+  var proj=MGD.pontos.map(function(p){
+    var rr=p.rad;
+    var px=p.x*rr, py=p.y*rr, pz=p.z*rr;
+    var x=px*ca - pz*sa, z0=px*sa + pz*ca;
+    var y=py*ci - z0*si, z=py*si + z0*ci;
+    var esc=FOC/(FOC-z);
+    return {sx:cx+x*R*esc, sy:cy+y*R*esc, z:z, esc:esc};
+  });
+
+  /* Três tons de vermelho na malha, escolhidos pela profundidade: o que
+     está atrás puxa para o bordô, o que está na frente para o vermelho
+     vivo. É o que dá volume sem precisar de sombra. */
+  var LIM=0.46;
+  for(var i=0;i<MGD.pontos.length;i++){
+    for(var j=i+1;j<MGD.pontos.length;j++){
+      var a=MGD.pontos[i], b=MGD.pontos[j];
+      var dx=a.x-b.x, dy=a.y-b.y, dz=a.z-b.z;
+      var d=Math.sqrt(dx*dx+dy*dy+dz*dz);
+      if(d>LIM) continue;
+      var A=proj[i], B=proj[j];
+      var prof=(A.z+B.z)/2, f=(prof+1)/2;
+      var op=(0.07+0.34*f)*(1-d/LIM);
+      var carga=Math.max(a.carga,b.carga);
+      if(carga>0.03){
+        /* AQUI está o contraste: o impulso vira linha azul.
+            A opacidade NÃO parte da opacidade da malha — parte da carga.
+            Com a soma, o impulso que passava no fundo da esfera saía tão
+            apagado quanto a linha vermelha em volta e não se via nada. */
+        ctx.lineWidth=1.0+2.6*carga;
+        ctx.strokeStyle='rgba(96,196,255,'+Math.min(1,0.30+0.70*carga).toFixed(3)+')';
+      }else{
+        ctx.lineWidth=0.7;
+        var rr=Math.round(120+120*f), gg=Math.round(10+26*f), bb=Math.round(24+34*f);
+        ctx.strokeStyle='rgba('+rr+','+gg+','+bb+','+Math.min(1,op*2.1).toFixed(3)+')';
+      }
+      ctx.beginPath(); ctx.moveTo(A.sx,A.sy); ctx.lineTo(B.sx,B.sy); ctx.stroke();
+    }
+  }
+
+  proj.map(function(o,i){ o.carga=MGD.pontos[i].carga; return o; })
+      .sort(function(a,b){return a.z-b.z;})
+      .forEach(function(p){
+    var f=(p.z+1)/2, c=p.carga;
+    var r=(0.7+1.9*f)*(1+1.5*c);
+    ctx.beginPath(); ctx.arc(p.sx,p.sy,r,0,6.2832);
+    if(c>0.03){
+      ctx.fillStyle='rgba(170,225,255,'+Math.min(1,0.4+0.6*c).toFixed(3)+')';
+    }else{
+      var rr=Math.round(180+70*f), gg=Math.round(26+40*f), bb=Math.round(40+50*f);
+      ctx.fillStyle='rgba('+rr+','+gg+','+bb+','+(0.30+0.68*f).toFixed(3)+')';
+    }
+    ctx.fill();
+    var halo = c>0.06 ? 0.34*c : (f>0.86 ? 0.15 : 0);
+    if(halo>0){
+      ctx.beginPath(); ctx.arc(p.sx,p.sy,r*(c>0.06?3.8:2.4),0,6.2832);
+      ctx.fillStyle = c>0.06 ? 'rgba(80,175,255,'+halo.toFixed(3)+')'
+                             : 'rgba(242,5,5,.17)';
+      ctx.fill();
+    }
+  });
+}
+
+function mgdAnimar(){
+  if(MGD.raf) cancelAnimationFrame(MGD.raf);
+  if(MGD.timer) clearInterval(MGD.timer);
+  if(!MGD.pontos.length) MGD.pontos=mgsCriarPontos(140);
+  _esfVizinhos(MGD);
+  var ultimo=0;
+  (function laco(t){
+    MGD.raf=requestAnimationFrame(laco);
+    var cv=document.getElementById('mgd-canvas');
+    if(!cv || !document.body.contains(cv)){ cancelAnimationFrame(MGD.raf); MGD.raf=null; return; }
+    if(t-ultimo<16) return;
+    ultimo=t;
+    /* gira ao contrário da esfera da saúde — as duas lado a lado girando
+       para o mesmo lado pareceriam a mesma coisa duplicada */
+    MGD.ang-=0.0014;
+    /* quanto mais difícil, mais impulso: a bola fica visivelmente mais
+       agitada quando o cenário aperta */
+    _esfMover(MGD, 0.03+0.05*(MGD.nivel/100));
+    mgdDesenhar();
+  })(0);
+  MGD.timer=setInterval(function(){
+    if(document.hidden) return;
+    if(performance.now()-ultimo>240){
+      MGD.ang-=0.005; _esfMover(MGD, 0.03+0.05*(MGD.nivel/100)); mgdDesenhar();
+    }
+  },120);
+}
+
+/* ── Os oito fatores da dificuldade ──
+   Todos no mesmo sentido: 0 = a favor, 100 = contra. O índice é a média
+   ponderada. Cada peso está escrito no cartão, para ninguém precisar
+   adivinhar de onde saiu o número. */
+function mgdCalcular(cots, reservas){
+  var F=[];
+  var n=(cots||[]).length, nR=(reservas||[]).length;
+  var faixa=function(v, bom, ruim){
+    if(v==null||!isFinite(v)) return 50;
+    var t=(v-bom)/(ruim-bom);
+    return Math.max(0,Math.min(100,t*100));
+  };
+  var pct=function(q){ return n?(q/n*100):0; };
+
+  var ehMini=function(c){ try{ return cpEhMinivan(c); }catch(e){ return /minivan/i.test(String(c||'')); } };
+  var ehOrl =function(x){ try{ return cpEhOrlando(x); }catch(e){ return /orlando|sanford|mco/i.test(String(x||'')); } };
+
+  /* 1 · preço acima do nicho — a única força que age antes do atendimento */
+  var exc=null;
+  try{
+    if(window.CP_PRECOS && CP_PRECOS.cats){
+      var sp=0, se=0;
+      CP_PRECOS.cats.forEach(function(c){
+        if(c.nicho==null) return;
+        var q=cots.filter(function(h){
+          var ref=(typeof cpPrecoDaCategoria==='function')?cpPrecoDaCategoria(h.cat):null;
+          return ref && ref.chave===c.chave;
+        }).length;
+        var e=(c.magiway/c.nicho-1)*100;
+        if(q>0){ sp+=q; se+=e*q; }
+      });
+      if(sp>0) exc=se/sp;
+      else{
+        var comRef=CP_PRECOS.cats.filter(function(c){ return c.nicho!=null; });
+        if(comRef.length) exc=comRef.reduce(function(a,c){ return a+(c.magiway/c.nicho-1)*100; },0)/comRef.length;
+      }
+    }
+  }catch(e){}
+  F.push({t:'Preço acima do nicho', peso:.22,
+          v:(exc==null?50:faixa(exc,0,50)),
+          d:(exc==null?'sem referência de mercado carregada':'+'+exc.toFixed(0)+'% sobre a faixa do nicho'),
+          txt:'A única força que age ANTES do atendimento. Preço fora da faixa faz a recusa acontecer sem o vendedor abrir a boca.'});
+
+  /* 2 · carteira: quanto do que chega NÃO é cliente ideal */
+  var nIdeal=0;
+  try{ if(typeof cpClassificar==='function') nIdeal=cots.filter(function(h){ return cpClassificar(h).ideal; }).length; }catch(e){}
+  var pctIdeal=pct(nIdeal);
+  F.push({t:'Carteira difícil', peso:.18, v:faixa(pctIdeal,40,0),
+          d:pctIdeal.toFixed(0)+'% dentro do perfil ideal (alvo: 40%)',
+          txt:'Cotação de quem nunca ia fechar consome o mesmo tempo de uma que fecharia — e ainda entrega uma recusa no fim.'});
+
+  /* 3 · conversão */
+  var conv=n?(nR/n*100):0;
+  F.push({t:'Conversão baixa', peso:.16, v:faixa(conv,30,3),
+          d:conv.toFixed(1)+'% viram reserva',
+          txt:'O resultado de tudo o que vem antes. Sozinha ela não diz de quem é a culpa — por isso as outras sete existem.'});
+
+  /* 4 · esforço por venda */
+  var pv=nR>0?(n/nR):null;
+  F.push({t:'Cotações por venda', peso:.14, v:(pv==null?100:faixa(pv,4,30)),
+          d:(pv==null?'nenhuma reserva no período':pv.toFixed(1)+' orçamentos para cada fechamento'),
+          txt:'Cada unidade aqui é uma recusa a mais que a mesma pessoa absorve. É o fator que mais pesa no desgaste.'});
+
+  /* 5 · fora da praça */
+  var fora=cots.filter(function(h){ return !ehOrl(h.locRet); }).length;
+  F.push({t:'Fora de Orlando', peso:.08, v:faixa(pct(fora),10,60),
+          d:pct(fora).toFixed(0)+'% pedem retirada fora da praça',
+          txt:'Fora de Orlando o custo sobe e a logística deixa de ser rotina. O preço fica menos competitivo sem ninguém mexer nele.'});
+
+  /* 6 · locação curta */
+  var curtas=cots.filter(function(h){ return (+h.dias||0)<=10; }).length;
+  F.push({t:'Locação curta', peso:.08, v:faixa(pct(curtas),30,85),
+          d:pct(curtas).toFixed(0)+'% pedem 10 diárias ou menos',
+          txt:'Diária curta rende menos por carro e é onde a diferença de preço para o concorrente mais aparece na conta do cliente.'});
+
+  /* 7 · pouca antecedência */
+  var diaDe=function(v){ var m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})/);
+    return m?Date.UTC(+m[1],+m[2]-1,+m[3])/86400000:null; };
+  var apert=cots.filter(function(h){
+    var a=diaDe(h.dtISO), b=diaDe(h.din);
+    return a!=null && b!=null && (b-a)<15;
+  }).length;
+  F.push({t:'Retirada apertada', peso:.07, v:faixa(pct(apert),20,70),
+          d:pct(apert).toFixed(0)+'% cotam a menos de 15 dias da retirada',
+          txt:'Quem cota em cima da hora já pesquisou em outro lugar e chega com um número na cabeça. Sobra pouco espaço para conversa.'});
+
+  /* 8 · volume */
+  var mesesSet={};
+  cots.forEach(function(h){ var k=String(h.dtISO||'').slice(0,7); if(k) mesesSet[k]=1; });
+  var meses=Math.max(1,Object.keys(mesesSet).length);
+  var cotMes=n/meses;
+  F.push({t:'Volume baixo', peso:.07, v:faixa(cotMes,120,20),
+          d:cotMes.toFixed(0)+' cotações por mês',
+          txt:'Com pouco pedido entrando, uma venda a mais ou a menos vira uma variação enorme no percentual — e a pessoa é cobrada por ruído.'});
+
+  var indice=Math.round(F.reduce(function(a,f){ return a+f.v*f.peso; },0));
+  /* quanto do índice vem do que o vendedor NÃO decide */
+  var foraDele=F.filter(function(f){
+    return /Preço|Carteira|Fora de Orlando|Locação curta|Volume/.test(f.t);
+  }).reduce(function(a,f){ return a+f.v*f.peso; },0);
+  var pctFora=indice>0?(foraDele/indice*100):0;
+
+  return {fatores:F, indice:indice, pctFora:pctFora, n:n, nR:nR};
+}
+
+function mgdRender(cots, reservas, rotulo){
+  var box=document.getElementById('mgd-kpis'); if(!box) return;
+  var r=mgdCalcular(cots||[], reservas||[]);
+  MGD.nivel=r.indice;
+
+  /* Vários tons de vermelho, escolhidos pelo nível: rosa quando dá para
+     trabalhar, vermelho quando aperta, bordô quando está no osso. */
+  MGD.cor = r.indice>=70?'#F20505' : (r.indice>=45?'#FC2877' : '#F2BA52');
+  mgdAnimar();
+
+  var num=document.getElementById('mgd-num');
+  if(num){
+    num.style.color=MGD.cor;
+    var t0=performance.now();
+    (function tick(now){
+      var p=Math.min(1,(now-t0)/1100), e=1-Math.pow(1-p,3);
+      num.textContent=Math.round(r.indice*e);
+      if(p<1) requestAnimationFrame(tick);
+    })(t0);
+  }
+  /* Texto curto de propósito: o de antes tinha três linhas e escorria
+     por cima da malha, ficando ilegível justamente onde a bola é mais
+     densa. O detalhe completo fica nos cartões ao lado. */
+  var sub=document.getElementById('mgd-sub');
+  if(sub) sub.innerHTML=(r.indice>=70?'correnteza forte' : r.indice>=45?'correnteza contra'
+                       : r.indice>=25?'puxando um pouco' : 'água a favor')
+    +'<br><b style="color:#FF8A8A">'+r.pctFora.toFixed(0)+'%</b> fora do alcance do vendedor'
+    +(rotulo?('<br><span style="opacity:.65">'+rotulo+'</span>'):'');
+
+  box.innerHTML=r.fatores.slice()
+    .sort(function(a,b){ return (b.v*b.peso)-(a.v*a.peso); })
+    .map(function(f){
+      var cor=f.v>=70?'#F20505':(f.v>=45?'#FC2877':'#F2BA52');
+      return '<div class="mgs-kpi mgd-kpi" title="'+String(f.txt).replace(/"/g,'')+'">'
+        +'<div class="mgs-k-t">'+f.t+'</div>'
+        +'<div class="mgs-k-v" style="color:'+cor+'">'+Math.round(f.v)+'</div>'
+        +'<div class="mgs-k-r">'+f.d+' · peso '+Math.round(f.peso*100)+'%</div>'
+        +'<div class="mgs-k-bar"><i data-p="'+Math.max(2,Math.min(100,f.v)).toFixed(0)+'" '
+        +'style="background:'+cor+'"></i></div>'
+        +'</div>';
+    }).join('');
+  setTimeout(function(){
+    box.querySelectorAll('.mgs-k-bar i').forEach(function(b){ b.style.width=(b.dataset.p||'0')+'%'; });
+  },40);
+  return r;
+}
+window.mgdRender=mgdRender;
+window.mgdCalcular=mgdCalcular;
+
 
 /* ═══════════════════════════════════════════════════════════════════
    AMPLIAR GRÁFICO + EXPLICAÇÃO  (08/08/2026)
@@ -13939,6 +14244,17 @@ function renderDashCot(){
   rb('dc-conv','doughnut',
     {labels:['Fechadas (reservas)','Cotações sem fechamento'],datasets:[{data:[nFech,Math.max(0,data.length-nFech)],backgroundColor:['rgba(26,255,157,.85)','rgba(255,209,26,.7)'],borderWidth:2,borderColor:'rgba(4,8,15,.8)',hoverOffset:8}]},
     {responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:true,position:'bottom',labels:{color:'#9AB4CC',font:{size:11},padding:12,boxWidth:10}},tooltip:{...CT.plugins.tooltip}}});
+
+  /* a esfera vermelha lê as MESMAS cotações e reservas já recortadas pelo
+     período — se ela puxasse os dados sozinha, trocar o mês mudaria os
+     gráficos e não mudaria a bola */
+  try{
+    if(typeof mgdRender==='function'){
+      var _el=document.getElementById('cal-label-dc');
+      var _rot=_el?(_el.textContent||'').trim():'';
+      mgdRender(data, reservas, _rot||((from||to)?((from||'…')+' a '+(to||'…')):''));
+    }
+  }catch(e){ console.warn('[dificuldade]',e); }
 
   /* nenhum cartão fica com a grade nua: onde a série é toda zero, entra o
      aviso explicando de onde viria o dado */
@@ -25569,6 +25885,19 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0
 .cp-fonte{margin-top:10px;font-size:.64rem;color:var(--chalk3);font-style:italic;line-height:1.6}
 .cp-vazio{padding:18px 0;color:var(--chalk3);font-size:.78rem;text-align:center}
 .cp-desgaste{margin-bottom:14px;border-color:rgba(168,85,247,.3)}
+
+/* ═══ ESFERA DA DIFICULDADE (Dash de Cotações) ═══
+   Reaproveita o esqueleto da esfera da saúde e troca só o que carrega
+   significado: a moldura em vermelho e o aviso da escala invertida. */
+.mgd-wrap{box-shadow:inset 0 1px 0 rgba(242,5,5,.20) !important;
+  background:linear-gradient(180deg,rgba(89,2,2,.20),rgba(255,255,255,.02)) !important}
+.mgd-lbl{color:var(--p-verm) !important}
+.mgd-kpi{background:rgba(89,2,2,.14) !important;border-left:3px solid rgba(242,5,5,.5) !important}
+.mgd-kpi:hover{background:rgba(89,2,2,.26) !important}
+.mgd-wrap .mgs-sub{max-width:74%;margin-left:auto;margin-right:auto;line-height:1.6}
+.mgd-aviso{font-size:.7rem;line-height:1.7;color:var(--chalk3);margin:-10px 0 16px;
+  padding:9px 13px;background:rgba(242,5,5,.06);border-left:2px solid var(--p-verm)}
+.mgd-aviso b{color:#FF8A8A}
 
 /* ═══ O IMPASSE ═══ */
 .cp-impasse{margin-bottom:14px}
