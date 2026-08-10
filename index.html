@@ -11533,95 +11533,226 @@ function mgsAnimar(){
   },120);
 }
 
-/* ── Os KPIs que compõem a saúde ──
-   Cada um vale 1 ponto. A saúde é o percentual de verdes. Os cortes
-   foram definidos com o Luciano em 09/08/2026. */
+/* ── Os KPIs que compõem a saúde ──────────────────────────────────
+   Dez indicadores. Cada um vale 1 ponto; a saúde é o percentual de
+   verdes. Os cortes de 09/08/2026 foram revisados em 10/08/2026.
+
+   Duas correções de fundo em relação à versão anterior:
+
+   1) PERÍODO. A esfera somava o histórico inteiro — todas as cotações
+      que já existiram contra todas as vendas que já existiram, sem
+      recorte nenhum. Um mês ruim não aparecia, porque ficava diluído
+      em tudo o que veio antes, e o número da esfera nunca batia com o
+      do Dash de Cotações. Agora tudo aqui é do ciclo em exibição
+      (dia 13 ao dia 12), igual ao resto do app.
+
+   2) FONTE. A conversão dividia SALES_DATA (a planilha) por HIST_COT
+      (as cotações do app): dois universos que nem começaram na mesma
+      data. Agora o que fechou vem das RESERVAS, que é onde o
+      fechamento realmente mora — sem marcação manual.
+
+   O que saiu e por quê:
+     · Percentual de orçamentos — media preenchimento, não saúde.
+     · Fechamento de minivan, cotações para Orlando e cotações de +10
+       dias — eram três pontos medindo o mesmo assunto (o mix), então
+       um mês de mix ruim afundava a nota três vezes. Viraram um só.
+     · Alcance da meta — é meta de comissão, e por ser acumulativa
+       nascia em 0% todo dia 13, deixando a esfera vermelha sem motivo.
+*/
 function mgsCalcularSaude(){
   var K=[];
-  var num=function(v){ return isFinite(v)?v:0; };
-  var cotsL=(typeof HIST_COT!=='undefined')?HIST_COT:[];
-  var vendL=(typeof SALES_DATA!=='undefined')?SALES_DATA:[];
-  var nC=cotsL.length, nV=vendL.length;
+  var DIA=86400000;
+
+  /* ── o recorte: o ciclo em exibição ── */
+  var C=window.MGW_CICLO, cic=null;
+  try{ if(C&&C.cicloAtivo) cic=C.cicloAtivo(); }catch(e){}
+  var isoDe=function(d){
+    return d?(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')):'';
+  };
+  var iniISO=cic?isoDe(cic.ini):'', fimISO=cic?isoDe(cic.fim):'';
+  var iniT=cic?cic.ini.getTime():0;
+  var fimT=cic?(cic.fim.getTime()+DIA):0;          /* dia 12 inteiro conta */
+  var rotulo=cic?cic.periodo:'todo o histórico';
+
+  /* cotações do ciclo — pela data em que a cotação foi feita */
+  var cots=((typeof HIST_COT!=='undefined')?HIST_COT:[]).filter(function(h){
+    var d=String(h.dtISO||'').slice(0,10);
+    if(!d)   return !iniISO;                       /* sem data: só sem recorte */
+    return (!iniISO||d>=iniISO) && (!fimISO||d<=fimISO);
+  });
+
+  /* reservas do ciclo — pela data de fechamento */
+  var resv=[];
+  try{
+    if(C&&C.reservasDoCiclo)                       resv=C.reservasDoCiclo(cic)||[];
+    else if(typeof mgwReservasNoPeriodo==='function') resv=mgwReservasNoPeriodo(iniISO,fimISO)||[];
+  }catch(e){}
+
+  /* todas as reservas, de qualquer época — a ocupação e a reincidência
+     precisam olhar para fora do ciclo */
+  var todas=[]; try{ if(window.MGW_RESV&&MGW_RESV.dados) todas=MGW_RESV.dados()||[]; }catch(e){}
+
+  var nC=cots.length, nR=resv.length;
   var pctC=function(q){ return nC?(q/nC*100):0; };
+  var pctR=function(q){ return nR?(q/nR*100):0; };
 
-  /* ── 1) taxa de conversão ── */
-  var conv1=nC?(nV/nC*100):0;
-  K.push({t:'Taxa de conversão', v:conv1.toFixed(1)+'%', alvo:'≥ 15%',
-          bom:conv1>=15, pct:Math.min(100,conv1/15*100),
-          txt:nV+' venda(s) para '+nC+' cotação(ões).'});
+  var cam=5.2; try{ if(typeof _cambioCfg==='function'&&+_cambioCfg()>0) cam=+_cambioCfg(); }catch(e){}
+  var fBRL=function(v){ return 'R$ '+Math.round(+v||0).toLocaleString('pt-BR'); };
 
-  /* ── 2) percentual de orçamentos que saíram (cotação virou orçamento
-         formal, i.e. tem valor calculado) ── */
-  var comValor=cotsL.filter(function(h){ return (+h.total||0)>0; }).length;
-  var pctOrc=pctC(comValor);
-  K.push({t:'Percentual de orçamentos', v:pctOrc.toFixed(0)+'%', alvo:'≥ 80%',
-          bom:pctOrc>=80, pct:Math.min(100,pctOrc/80*100),
-          txt:comValor+' de '+nC+' cotações chegaram a virar orçamento com valor.'});
+  /* diárias de uma reserva (descarta lixo: negativo ou mais de um ano) */
+  var diarias=function(r){
+    if(!r||!r.entrega||!r.devolucao) return 0;
+    var n=Math.round((r.devolucao-r.entrega)/DIA);
+    return (n>0&&n<400)?n:0;
+  };
+  var fatBRL=resv.reduce(function(a,r){ return a+(+r.valor||0); },0);
+  var somaDiarias=resv.reduce(function(a,r){ return a+diarias(r); },0);
 
-  /* ── 3) quantidade de clientes ideais ── */
+  var ehMini=function(c){ try{ return cpEhMinivan(c); }catch(e){ return /minivan/i.test(String(c||'')); } };
+  var ehOrl =function(x){ try{ return cpEhOrlando(x); }catch(e){ return /orlando|sanford|mco/i.test(String(x||'')); } };
+  var chave =function(r){ try{ return _mgwNomeChave(r.cliente); }catch(e){ return String(r.cliente||'').toUpperCase().trim(); } };
+
+  /* ═════ OS QUATRO QUE FICARAM ═════ */
+
+  /* ── 1) taxa de conversão — reservas ÷ cotações, mesmo período ── */
+  var conv=nC?(nR/nC*100):0;
+  K.push({t:'Taxa de conversão', v:(nC?conv.toFixed(1)+'%':'—'), alvo:'≥ 15%',
+          bom:nC>0&&conv>=15, pct:Math.min(100,conv/15*100),
+          txt:nR+' reserva(s) fechada(s) para '+nC+' cotação(ões) em '+rotulo+'. '
+             +'É o indicador mais honesto que existe aqui: mede se o preço e o atendimento fecham.'});
+
+  /* ── 2) ticket médio — em dólar, para o corte continuar sendo o de sempre ── */
+  var tkUSD=nR?(fatBRL/nR/cam):0;
+  K.push({t:'Ticket médio', v:(nR?'$'+tkUSD.toFixed(0):'—'), alvo:'> $1.000',
+          bom:tkUSD>1000, pct:Math.min(100,tkUSD/1000*100),
+          txt:fBRL(fatBRL)+' em '+nR+' reserva(s) no ciclo, ao câmbio de '+cam.toFixed(2)+'. '
+             +'Sobe sozinho quando entra locação longa — leia junto com a receita por diária.'});
+
+  /* ── 3) frota parada — QUANTO MAIS, PIOR (carro parado é prejuízo) ── */
+  var nCarros=0, livresHoje=null, parada=null;
+  try{
+    if(window.MGW_FROTA&&MGW_FROTA.carros){
+      nCarros=MGW_FROTA.carros().length;
+      var hoje=new Date();
+      var ocupHoje=todas.filter(function(r){
+        return r.entrega&&r.devolucao&&r.entrega<=hoje&&r.devolucao>=hoje; }).length;
+      if(nCarros){ livresHoje=Math.max(0,nCarros-ocupHoje); parada=livresHoje/nCarros*100; }
+    }
+  }catch(e){}
+  K.push({t:'Frota parada', v:(parada==null?'—':parada.toFixed(0)+'%'), alvo:'≤ 40%',
+          bom:(parada!=null&&parada<=40), pct:(parada==null?0:Math.max(0,100-parada)),
+          txt:(nCarros?(livresHoje+' de '+nCarros+' carros sem cliente agora. '):'Frota não cadastrada. ')
+             +'Foto de hoje — um domingo derruba, uma segunda salva. Para o mês, olhe a ocupação.'});
+
+  /* ── 4) clientes ideais ── */
   var nIdeal=0;
-  try{ if(typeof cpClassificar==='function')
-    nIdeal=cotsL.filter(function(h){ return cpClassificar(h).ideal; }).length; }catch(e){}
+  try{ if(typeof cpClassificar==='function') nIdeal=cots.filter(function(h){ return cpClassificar(h).ideal; }).length; }catch(e){}
   var pctIdeal=pctC(nIdeal);
   K.push({t:'Clientes ideais', v:nIdeal+' ('+pctIdeal.toFixed(1)+'%)', alvo:'≥ 8%',
           bom:pctIdeal>=8, pct:Math.min(100,pctIdeal/8*100),
-          txt:'Minivan · mais de 10 diárias · Orlando→Orlando · retirada em até 3 meses.'});
+          txt:'Minivan · mais de 10 diárias · Orlando→Orlando · retirada em até 3 meses. '
+             +'Diz se o funil está atraindo a pessoa certa, não só muita gente.'});
 
-  /* ── 4) taxa de fechamento de minivan ── */
-  var ehMini=function(c){ try{ return cpEhMinivan(c); }catch(e){ return /minivan/i.test(String(c||'')); } };
-  var miniC=cotsL.filter(function(h){ return ehMini(h.cat); }).length;
-  var miniV=vendL.filter(function(s){ return ehMini(s.cat||s.modelo); }).length;
-  var miniPct=miniC?(miniV/miniC*100):0;
-  K.push({t:'Fechamento de minivan', v:miniPct.toFixed(1)+'%', alvo:'≥ 20%',
-          bom:miniC>0&&miniPct>=20, pct:Math.min(100,miniPct/20*100),
-          txt:miniV+' minivan(s) fechada(s) de '+miniC+' cotada(s).'});
+  /* ═════ OS SEIS NOVOS ═════ */
 
-  /* ── 5) alcance da meta (Bronze R$ 40.000) ── */
-  var fat=0; try{ if(typeof totalVendidoBRL==='function') fat=num(totalVendidoBRL()); }catch(e){}
-  var pctMeta=fat/40000*100;
-  K.push({t:'Alcance da meta', v:pctMeta.toFixed(0)+'%', alvo:'≥ 100%',
-          bom:pctMeta>=100, pct:Math.min(100,pctMeta),
-          txt:'R$ '+fat.toLocaleString('pt-BR',{maximumFractionDigits:0})+' da meta Bronze de R$ 40.000.'});
-
-  /* ── 6) frota disponível — QUANTO MAIS, PIOR (carro parado é prejuízo) ── */
-  var disp=null;
+  /* ── 5) ocupação da frota no ciclo (dias-carro) ──
+     Locadora não vive de venda, vive de ocupação: o custo do veículo
+     corre todo dia, alugado ou não. Conta a interseção de cada locação
+     com o ciclo, então uma reserva de fevereiro que atravessa março
+     entra nos dois — que é exatamente como o carro fica ocupado. */
+  var ocupPct=null, diasAlug=0, diasCarro=0;
   try{
-    if(window.MGW_FROTA&&window.MGW_RESV&&MGW_RESV.dados){
-      var carros=MGW_FROTA.carros().length;
-      var hoje=new Date();
-      var ocup=MGW_RESV.dados().filter(function(r){
-        return r.entrega&&r.devolucao&&r.entrega<=hoje&&r.devolucao>=hoje; }).length;
-      if(carros) disp=Math.max(0,(carros-ocup)/carros*100);
+    if(nCarros && cic){
+      diasCarro=nCarros*Math.round((fimT-iniT)/DIA);
+      todas.forEach(function(r){
+        if(!r.entrega||!r.devolucao) return;
+        var a=Math.max(r.entrega.getTime(), iniT), b=Math.min(r.devolucao.getTime(), fimT);
+        if(b>a) diasAlug+=Math.round((b-a)/DIA);
+      });
+      if(diasCarro) ocupPct=Math.min(100, diasAlug/diasCarro*100);
     }
   }catch(e){}
-  K.push({t:'Frota parada', v:(disp==null?'—':disp.toFixed(0)+'%'), alvo:'≤ 40%',
-          bom:(disp!=null&&disp<=40), pct:(disp==null?0:Math.max(0,100-disp)),
-          txt:'Quanto mais carro livre, pior: veículo parado não paga a si mesmo.'});
+  K.push({t:'Ocupação da frota', v:(ocupPct==null?'—':ocupPct.toFixed(0)+'%'), alvo:'≥ 60%',
+          bom:(ocupPct!=null&&ocupPct>=60), pct:(ocupPct==null?0:Math.min(100,ocupPct/60*100)),
+          txt:(diasCarro?(diasAlug.toLocaleString('pt-BR')+' de '+diasCarro.toLocaleString('pt-BR')+' dias-carro no ciclo. '):'Depende da frota cadastrada. ')
+             +'É o que mais pesa no negócio: o carro cobra o dia dele alugado ou parado.'});
 
-  /* ── 7) cotações para Orlando ── */
-  var ehOrl=function(x){ try{ return cpEhOrlando(x); }catch(e){ return /orlando|sanford|mco/i.test(String(x||'')); } };
-  var orl=cotsL.filter(function(h){ return ehOrl(h.locRet); }).length;
-  var pctOrl=pctC(orl);
-  K.push({t:'Cotações para Orlando', v:orl+' ('+pctOrl.toFixed(0)+'%)', alvo:'≥ 60%',
-          bom:pctOrl>=60, pct:Math.min(100,pctOrl/60*100),
-          txt:'Orlando é onde a operação está montada — fora dela o custo sobe.'});
+  /* ── 6) receita por diária ──
+     O ticket médio engorda com prazo; este não. Separa "vendi mais
+     dias" de "vendi mais caro". */
+  var rpdUSD=somaDiarias?(fatBRL/somaDiarias/cam):0;
+  K.push({t:'Receita por diária', v:(somaDiarias?'$'+rpdUSD.toFixed(0):'—'), alvo:'≥ $90',
+          bom:rpdUSD>=90, pct:Math.min(100,rpdUSD/90*100),
+          txt:somaDiarias+' diária(s) vendida(s) no ciclo. '
+             +'Preço puro: não sobe só porque a locação foi longa. Caindo com o ticket estável, houve desconto.'});
 
-  /* ── 8) cotações com mais de 10 dias ── */
-  var longas=cotsL.filter(function(h){ return (+h.dias||0)>10; }).length;
-  var pctLongas=pctC(longas);
-  K.push({t:'Cotações de +10 dias', v:longas+' ('+pctLongas.toFixed(0)+'%)', alvo:'≥ 40%',
-          bom:pctLongas>=40, pct:Math.min(100,pctLongas/40*100),
-          txt:'Locação longa rende mais por carro e ocupa menos vezes o balcão.'});
+  /* ── 7) mix rentável ──
+     Substitui os três indicadores antigos que mediam o mesmo assunto
+     por ângulos diferentes (minivan, Orlando, +10 dias). Basta um dos
+     três para a reserva contar: são as três formas de a operação
+     ganhar dinheiro no formato em que ela está montada. */
+  var nMix=resv.filter(function(r){
+    return ehMini(r.cat||r.modelo)
+        || diarias(r)>=10
+        || (ehOrl(r.localEnt) && ehOrl(r.localDev||r.localEnt));
+  }).length;
+  var pctMix=pctR(nMix);
+  K.push({t:'Mix rentável', v:nMix+' ('+pctMix.toFixed(0)+'%)', alvo:'≥ 70%',
+          bom:nR>0&&pctMix>=70, pct:Math.min(100,pctMix/70*100),
+          txt:'Reservas que são minivan, ou de 10 diárias para cima, ou Orlando→Orlando. '
+             +'Fora desses três formatos o custo sobe e a margem some.'});
 
-  /* ── 9) ticket médio ── */
-  var somaV=vendL.reduce(function(a,s){ return a+(+s.v||0); },0);
-  var tk=nV?(somaV/nV):0;
-  K.push({t:'Ticket médio', v:'$'+tk.toFixed(0), alvo:'> $1.000',
-          bom:tk>1000, pct:Math.min(100,tk/1000*100),
-          txt:'Média por reserva fechada no período.'});
+  /* ── 8) antecedência média ──
+     Indicador antecedente: quando cai, a receita ainda não caiu — mas
+     vai cair. Nenhum outro aqui avisa antes do fato. */
+  var ants=resv.map(function(r){
+    if(!r.dataFech||!r.entrega) return null;
+    var n=Math.round((r.entrega-r.dataFech)/DIA);
+    return (n>=0&&n<730)?n:null;
+  }).filter(function(x){ return x!=null; });
+  var antMed=ants.length?(ants.reduce(function(a,b){ return a+b; },0)/ants.length):0;
+  K.push({t:'Antecedência média', v:(ants.length?antMed.toFixed(0)+' dias':'—'), alvo:'≥ 30 dias',
+          bom:ants.length>0&&antMed>=30, pct:Math.min(100,antMed/30*100),
+          txt:'Dias entre o fechamento e a retirada, em '+ants.length+' reserva(s). '
+             +'Encolhendo mês a mês, a demanda está esfriando — aparece semanas antes da receita cair.'});
 
-  var bons=K.filter(function(k){return k.bom;}).length;
-  return {kpis:K, bons:bons, total:K.length, saude:Math.round(bons/K.length*100)};
+  /* ── 9) cotações paradas — QUANTO MAIS, PIOR ──
+     Cotação que passa de sete dias sem virar reserva praticamente não
+     vira mais. Mede a operação, não o mercado: é follow-up. */
+  var diaDe=function(v){
+    var m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})/);
+    return m?Math.floor(Date.UTC(+m[1],+m[2]-1,+m[3])/DIA):null;
+  };
+  var hojeD=Math.floor(Date.now()/DIA);
+  var paradas=cots.filter(function(h){
+    var ganhou=false; try{ ganhou=(typeof mgwGanhou==='function')&&mgwGanhou(h); }catch(e){}
+    if(ganhou) return false;
+    var d=diaDe(h.dtISO);
+    return d!=null && (hojeD-d)>7;
+  }).length;
+  var pctParadas=pctC(paradas);
+  K.push({t:'Cotações paradas', v:(nC?paradas+' ('+pctParadas.toFixed(0)+'%)':'—'), alvo:'≤ 30%',
+          bom:nC>0&&pctParadas<=30, pct:Math.max(0,100-pctParadas),
+          txt:paradas+' cotação(ões) com mais de 7 dias e sem reserva. '
+             +'Depois de uma semana a chance de fechar despenca — aqui o remédio é ligar, não baixar preço.'});
+
+  /* ── 10) clientes que voltaram ──
+     O único da lista que mede se o SERVIÇO prestou. Todos os outros
+     medem se o preço fechou. Cliente que volta não custa marketing. */
+  var veteranos={};
+  todas.forEach(function(r){
+    var t=r.dataFech?r.dataFech.getTime():(r.entrega?r.entrega.getTime():0);
+    if(t && iniT && t<iniT){ var k=chave(r); if(k) veteranos[k]=true; }
+  });
+  var volta=resv.filter(function(r){ var k=chave(r); return k&&veteranos[k]; }).length;
+  var pctVolta=pctR(volta);
+  K.push({t:'Clientes que voltaram', v:(nR?volta+' ('+pctVolta.toFixed(0)+'%)':'—'), alvo:'≥ 15%',
+          bom:nR>0&&pctVolta>=15, pct:Math.min(100,pctVolta/15*100),
+          txt:volta+' das '+nR+' reservas do ciclo são de quem já alugou antes. '
+             +'Reincidência é a única prova de que a experiência valeu — e é a venda mais barata que existe.'});
+
+  var bons=K.filter(function(k){ return k.bom; }).length;
+  return {kpis:K, bons:bons, total:K.length, saude:Math.round(bons/K.length*100), ciclo:rotulo};
 }
 
 function mgsRender(){
@@ -11646,7 +11777,10 @@ function mgsRender(){
     }
   }
   var sub=document.getElementById('mgs-sub');
-  if(sub) sub.textContent=r.bons+' de '+r.total+' indicadores no verde';
+  /* Diz também de QUANDO é a conta. Sem isso ninguém sabe se o 70% é do
+     mês ou de sempre — e antes era de sempre, sem avisar. */
+  if(sub) sub.textContent=r.bons+' de '+r.total+' indicadores no verde'
+                        + (r.ciclo?(' · '+r.ciclo):'');
 
   box.innerHTML=r.kpis.map(function(k,i){
     return '<div class="mgs-kpi '+(k.bom?'bom':'ruim')+'" title="'+String(k.txt).replace(/"/g,'')+'">'
@@ -11667,6 +11801,7 @@ function mgsRender(){
   return r;
 }
 window.mgsRender=mgsRender;
+window.mgsCalcularSaude=mgsCalcularSaude;
 
 /* ═══════════════════════════════════════════════════════════════════
    AMPLIAR GRÁFICO + EXPLICAÇÃO  (08/08/2026)
@@ -24819,7 +24954,10 @@ html,body,body *,body *::before,body *::after{ cursor:var(--mgw-cursor),auto !im
   line-height:1;letter-spacing:-.03em;color:#fff}
 .mgs-lbl{font-size:.56rem;letter-spacing:.28em;color:var(--p-ouro);margin-top:8px;font-weight:700}
 .mgs-sub{font-size:.66rem;color:rgba(255,255,255,.5);margin-top:5px}
-.mgs-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:2px}
+/* Duas colunas fixas: com 10 indicadores, o auto-fit fazia 3+3+3+1 e
+   deixava um cartão órfão na última linha. 2×5 fecha o retângulo e
+   ainda acompanha melhor a altura da esfera. */
+.mgs-kpis{display:grid;grid-template-columns:1fr 1fr;gap:2px}
 .mgs-kpi{padding:11px 13px;background:rgba(255,255,255,.03);cursor:pointer;
   border-left:3px solid transparent;transition:background .15s}
 .mgs-kpi:hover{background:rgba(255,255,255,.07)}
@@ -24835,6 +24973,7 @@ html,body,body *,body *::before,body *::after{ cursor:var(--mgw-cursor),auto !im
 .mgs-kpi.bom .mgs-k-bar i{background:var(--p-ouro)}
 .mgs-kpi.ruim .mgs-k-bar i{background:var(--p-verm)}
 @media(max-width:820px){.mgs-wrap{grid-template-columns:1fr}}
+@media(max-width:520px){.mgs-kpis{grid-template-columns:1fr}}   /* no celular, um embaixo do outro */
 @media(prefers-reduced-motion:reduce){.mgs-k-bar i{transition:none}}
 
 /* ═══════════════════════════════════════════════════════════════════
