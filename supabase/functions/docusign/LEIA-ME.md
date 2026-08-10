@@ -137,6 +137,39 @@ gerar a chave RSA. Isso é o passo 1 acima.
 
 ---
 
+## Por que chegava em branco — resolvido em 10/08/2026
+
+O script antigo da planilha (Apps Script) preenchia o contrato certo por meses.
+Comparando o que ele mandava com o que o app mandava, a diferença apareceu na
+primeira linha:
+
+```
+script (funcionava)   &Cliente_NomeCliente=…  &Cliente_CpfCliente=…  &Cliente_ValorTotal=…
+app    (em branco)    &Nome_Cliente=…         &CPF_Cliente=…         &Valor_Moeda=…
+```
+
+Todo rótulo do script começa com o nome do **papel** do signatário. É a
+convenção do PowerForm para preencher campo de documento:
+`<Papel>_<DataLabel>`. Sem o prefixo o DocuSign trata como parâmetro
+desconhecido e descarta — sem erro, sem aviso.
+
+E é isso que explicava o sintoma exato: **nome e e-mail chegavam, o resto não.**
+Os dois únicos que funcionavam já nascem prefixados por construção —
+`Cliente_UserName` e `Cliente_Email`.
+
+O app passou a usar o conjunto do script. As catorze linhas que o script
+mandava estão lá letra por letra; os campos que ele não tinha (condutores
+adicionais, CNH, horários, voo) seguem a mesma convenção, mas são plausíveis e
+não comprovados — o botão de ler os rótulos confirma contra o modelo.
+
+Se o modelo reeditado usar os rótulos **sem** prefixo, há um botão que troca de
+volta num clique. E, quando cabe na URL (teto de 1700 caracteres), o app manda
+**as duas formas de uma vez** — parâmetro que o DocuSign não conhece ele ignora,
+então mandar os dois não custa nada além de tamanho. O script fazia isso com o
+CPF, que ia como `Cliente_CpfCliente` e como `Cpf_Cliente`.
+
+Valores passam pela mesma limpeza do script: `<`, `>` e `&` são removidos.
+
 ## Consertar o contrato que chega em branco
 
 O sintoma clássico: o PDF gerado no app sai preenchido e o mesmo contrato

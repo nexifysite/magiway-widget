@@ -30,8 +30,11 @@
      DOCUSIGN_INTEGRATION_KEY   Integration Key (Client ID) do app
      DOCUSIGN_USER_ID           GUID do usuário que assina pela API
      DOCUSIGN_ACCOUNT_ID        API Account ID
-     DOCUSIGN_PRIVATE_KEY       chave RSA privada (PKCS#8, com as linhas
-                                -----BEGIN PRIVATE KEY----- ...)
+     DOCUSIGN_PRIVATE_KEY       chave RSA privada, inteira, com as linhas
+                                BEGIN/END. Serve nos DOIS formatos: o que o
+                                DocuSign dá de fábrica (BEGIN RSA PRIVATE
+                                KEY, PKCS#1) e o convertido (BEGIN PRIVATE
+                                KEY, PKCS#8) — a função converte sozinha.
      DOCUSIGN_TEMPLATE_ID       ID do modelo CONTRATO DE LOCAÇÃO MAGIWAY
      DOCUSIGN_BASE_URI          https://na4.docusign.net  (produção)
                                 https://demo.docusign.net (sandbox)
@@ -84,17 +87,54 @@ async function hmac(texto: string): Promise<string> {
 }
 
 /* ── JWT Grant: troca uma asserção assinada por um access token ── */
+
+/* Comprimento no formato DER: até 127 cabe num byte; acima disso, um byte
+   dizendo quantos bytes vêm, e depois eles. */
+function derTamanho(n: number): number[] {
+  if (n < 0x80) return [n];
+  const b: number[] = [];
+  let x = n;
+  while (x > 0) { b.unshift(x & 0xff); x >>= 8; }
+  return [0x80 | b.length, ...b];
+}
+
+/* PKCS#1 → PKCS#8.
+   O DocuSign entrega a chave como "BEGIN RSA PRIVATE KEY" (PKCS#1), e a
+   WebCrypto só importa PKCS#8 ("BEGIN PRIVATE KEY"). Antes a saída era
+   pedir para a pessoa rodar `openssl pkcs8 -topk8` antes de configurar —
+   um passo a mais que, esquecido, dá um erro de importação que não diz o
+   que fazer. Envelopar é barato: PKCS#8 é a chave PKCS#1 dentro de um
+   OCTET STRING, precedida da versão e do identificador do algoritmo RSA.
+
+     SEQUENCE {
+       INTEGER 0                                   ← versão
+       SEQUENCE { OID rsaEncryption, NULL }        ← algoritmo
+       OCTET STRING { <a chave PKCS#1 inteira> }
+     } */
+function pkcs1ParaPkcs8(der: Uint8Array): Uint8Array {
+  const ALG = [0x30,0x0d,0x06,0x09,0x2a,0x86,0x48,0x86,0xf7,0x0d,0x01,0x01,0x01,0x05,0x00];
+  const VERSAO = [0x02,0x01,0x00];
+  const octeto = [0x04, ...derTamanho(der.length), ...der];
+  const corpo = [...VERSAO, ...ALG, ...octeto];
+  return new Uint8Array([0x30, ...derTamanho(corpo.length), ...corpo]);
+}
+
 function pemParaBytes(pem: string): ArrayBuffer {
   const limpo = pem
-    .replace(/-----BEGIN [A-Z ]+-----/g, "")
-    .replace(/-----END [A-Z ]+-----/g, "")
+    .replace(/-----BEGIN [A-Z0-9 ]+-----/g, "")
+    .replace(/-----END [A-Z0-9 ]+-----/g, "")
     .replace(/\s+/g, "");
   const bin = atob(limpo);
+  let bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+
+  /* Aceita os dois formatos: o que o DocuSign dá de fábrica e o convertido. */
+  if (/BEGIN RSA PRIVATE KEY/.test(pem)) bytes = pkcs1ParaPkcs8(bytes);
+
   /* ArrayBuffer alocado na mão: importKey() exige BufferSource sobre
      ArrayBuffer, e um Uint8Array solto pode estar sobre SharedArrayBuffer. */
-  const ab = new ArrayBuffer(bin.length);
-  const buf = new Uint8Array(ab);
-  for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+  const ab = new ArrayBuffer(bytes.length);
+  new Uint8Array(ab).set(bytes);
   return ab;
 }
 
@@ -124,13 +164,24 @@ async function accessToken(): Promise<string> {
     scope: "signature impersonation",
   }));
 
-  const chave = await crypto.subtle.importKey(
-    "pkcs8",
-    pemParaBytes(env("DOCUSIGN_PRIVATE_KEY")),
-    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
-    false,
-    ["sign"],
-  );
+  let chave: CryptoKey;
+  try {
+    chave = await crypto.subtle.importKey(
+      "pkcs8",
+      pemParaBytes(env("DOCUSIGN_PRIVATE_KEY")),
+      { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+      false,
+      ["sign"],
+    );
+  } catch (_e) {
+    /* O erro cru da WebCrypto aqui é só "DataError", que não ajuda ninguém. */
+    throw new Error(
+      "não consegui ler a DOCUSIGN_PRIVATE_KEY. Confira se o segredo tem a chave INTEIRA, " +
+      "incluindo as linhas -----BEGIN ...----- e -----END ...-----, e se não veio com " +
+      "espaços no lugar das quebras de linha. Os dois formatos do DocuSign são aceitos " +
+      "(BEGIN RSA PRIVATE KEY e BEGIN PRIVATE KEY).",
+    );
+  }
   const assinatura = await crypto.subtle.sign(
     "RSASSA-PKCS1-v1_5",
     chave,
