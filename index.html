@@ -1369,6 +1369,7 @@ select.ffi option{background:#000020;color:#FF0000}
       <button class="form-btn" style="background:linear-gradient(135deg,var(--ink3),var(--ink2));box-shadow:0 0 0 1px var(--edge)" onclick="dsCopyMsg()">📋 Copiar mensagem</button>
       <button class="form-btn" style="background:linear-gradient(135deg,var(--ink3),var(--ink2));box-shadow:0 0 0 1px var(--edge)" onclick="dsCopyLink()">🔗 Copiar link</button>
       <button id="ds-btn-pdf" class="form-btn" style="display:none;background:linear-gradient(135deg,var(--ink3),var(--ink2));box-shadow:0 0 0 1px var(--edge)" onclick="dsVerPdf()">📄 Ver PDF</button>
+      <button class="form-btn" style="background:linear-gradient(135deg,var(--ink3),var(--ink2));box-shadow:0 0 0 1px var(--edge)" onclick="dsDiagnostico()">🔎 Veio em branco?</button>
       <button class="form-btn" style="background:linear-gradient(135deg,var(--ink3),var(--ink2));box-shadow:0 0 0 1px var(--edge)" onclick="dsClose()">Fechar</button>
     </div>
   </div>
@@ -5935,7 +5936,10 @@ Data de retirada = din"></textarea>
               <code>Data_Enterga</code> está escrito assim nos dois lados e <strong>funciona</strong>: "corrigir" aqui sozinho faz o campo parar de preencher, sem dar erro.</span></div>
             </div>
           </div>
-          <button class="form-btn" style="margin-top:14px" onclick="cfgSaveDocusign()">SALVAR DOCUSIGN</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+            <button class="form-btn" onclick="cfgSaveDocusign()">SALVAR DOCUSIGN</button>
+            <button class="form-btn" onclick="dsDiagnostico()">🔎 CONFERIR O QUE VAI PREENCHIDO</button>
+          </div>
           <span id="cfg-ds-ok" style="display:none;color:var(--green);font-size:.75rem;font-family:'DM Mono',monospace;margin-left:10px">✓ Salvo</span>
         </div>
 
@@ -18394,6 +18398,126 @@ function dsWhatsApp(){
   window.open(url,'_blank');
 }
 function dsClose(){ const box=document.getElementById('ds-modal'); if(box) box.style.display='none'; }
+/* ═══════════════════════════════════════════════════════════════════
+   POR QUE O CONTRATO CHEGOU EM BRANCO NO DOCUSIGN  (10/08/2026)
+   ───────────────────────────────────────────────────────────────────
+   Sintoma relatado: o PDF gerado aqui sai preenchido, e o mesmo contrato
+   aberto pelo link do DocuSign chega vazio.
+
+   Medido no app: o link SAI com os campos. Com um contrato de titular +
+   1 condutor, a URL do PowerForm leva 27 pares rótulo=valor e 1069
+   caracteres — dentro do limite. Ou seja, o dado sai daqui; o que não
+   acontece é o DocuSign aceitar.
+
+   Isso só se resolve olhando o modelo do lado de lá, e quem tem acesso é
+   o Luciano. Então em vez de adivinhar, esta tela mostra exatamente o
+   que está sendo enviado, rótulo por rótulo, para ele comparar com os
+   Data Labels do modelo — e lista as causas conhecidas na ordem em que
+   valem a pena ser checadas.
+
+   Um detalhe já visível daqui: "numeroPorExtenso()" não parece um Data
+   Label, parece uma FÓRMULA do DocuSign. Campo de fórmula é calculado
+   pelo próprio DocuSign e não aceita valor de fora — e parêntese em nome
+   de parâmetro de URL é, por si só, motivo de o valor ser descartado.
+   ═══════════════════════════════════════════════════════════════════ */
+function dsDiagnostico(){
+  var mapa=(typeof dsMapaCampos==='function')?dsMapaCampos():[];
+  var c   =(typeof dsCamposContrato==='function')?dsCamposContrato():{};
+  var link=(typeof dsMontarLink==='function')?dsMontarLink('contrato'):'';
+  var esc=function(v){ return String(v==null?'':v)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); };
+
+  var comValor=0, semValor=0, suspeitos=0;
+  var linhas=mapa.map(function(m){
+    var v=c[m.campo];
+    /* rótulo que o DocuSign dificilmente aceita como Data Label */
+    var estranho = /[()]/.test(m.rotulo) || /\s/.test(m.rotulo)
+                || /[À-ÿ]/.test(m.rotulo) || /[^\w.\-]/.test(m.rotulo.replace(/[À-ÿ]/g,'x'));
+    var sit, cor;
+    if(estranho){ sit='rótulo suspeito'; cor='#F2BA52'; suspeitos++; }
+    else if(v){   sit='vai preenchido';  cor='#1AFF9D'; comValor++; }
+    else{         sit='vazio na tela';   cor='rgba(255,255,255,.35)'; semValor++; }
+    return '<tr>'
+      +'<td style="font-family:\'DM Mono\',monospace;color:var(--chalk)">'+esc(m.rotulo)+'</td>'
+      +'<td style="color:var(--chalk2)">'+(v?esc(v):'<i style="opacity:.4">—</i>')+'</td>'
+      +'<td style="color:'+cor+';white-space:nowrap">'+sit+'</td></tr>';
+  }).join('');
+
+  var pct=Math.round(link.length/2048*100);
+  var rotulos=mapa.map(function(m){ return m.rotulo; }).join('\n');
+
+  var html=''
+   +'<div class="dsdg-t">O QUE O APP ESTÁ MANDANDO</div>'
+   +'<div class="dsdg-res">'
+   +'<div><b style="color:#1AFF9D">'+comValor+'</b><span>campos com valor</span></div>'
+   +'<div><b style="color:rgba(255,255,255,.5)">'+semValor+'</b><span>vazios na tela</span></div>'
+   +'<div><b style="color:#F2BA52">'+suspeitos+'</b><span>rótulos suspeitos</span></div>'
+   +'<div><b style="color:'+(pct>88?'#F20505':'var(--chalk)')+'">'+link.length+'</b><span>caracteres · '+pct+'% de 2048</span></div>'
+   +'</div>'
+   +'<p class="dsdg-p">Se esta lista está preenchida e o contrato chega em branco, <b>o dado saiu daqui</b> — '
+   +'o que falta é o DocuSign aceitar. Compare a coluna da esquerda com o <b>Data Label</b> de cada campo do modelo.</p>'
+   +'<div class="dsdg-tabwrap"><table class="dsdg-tab"><thead><tr>'
+   +'<th>Rótulo enviado (Data Label)</th><th>Valor</th><th>Situação</th></tr></thead>'
+   +'<tbody>'+(linhas||'<tr><td colspan="3">Nenhum campo mapeado. Configurações → DocuSign → Campos.</td></tr>')+'</tbody></table></div>'
+
+   +'<div class="dsdg-t" style="margin-top:18px">O QUE CHECAR NO DOCUSIGN, NESTA ORDEM</div>'
+   +'<ol class="dsdg-ol">'
+   +'<li><b>O rótulo bate letra por letra?</b> Abra o modelo, clique em cada campo e veja o <b>Data Label</b>. '
+   +'Quando o modelo é reeditado ou o PDF é trocado, o DocuSign renomeia os campos sozinho para <i>Text 12</i>, '
+   +'<i>Text 13</i>… e o rótulo antigo deixa de existir. Isso derruba <b>todos</b> os campos de uma vez — que é exatamente o sintoma.</li>'
+   +'<li><b>O campo está atribuído ao papel <code>Cliente</code>?</b> Campo de outro destinatário, ou sem destinatário, '
+   +'não é alcançado pelo preenchimento do PowerForm.</li>'
+   +'<li><b>O campo está travado ou só-leitura?</b> Campo bloqueado não recebe valor pela URL — o DocuSign descarta em silêncio, sem erro.</li>'
+   +'<li><b>Campo de fórmula não aceita valor de fora.</b> '+(suspeitos?'Há <b>'+suspeitos+'</b> rótulo(s) marcado(s) em amarelo acima — ':'')
+   +'<code>numeroPorExtenso()</code> tem cara de fórmula, não de Data Label. Fórmula é calculada pelo DocuSign; '
+   +'se for esse o caso, tire a linha do mapeamento.</li>'
+   +'<li><b>O PowerForm foi gerado DEPOIS da última edição do modelo?</b> PowerForm antigo aponta para a versão antiga. '
+   +'Se mexeu no modelo, gere o PowerForm de novo e cole a URL nova em Configurações.</li>'
+   +'<li><b>A conta permite preenchimento por URL?</b> Em algumas contas essa opção vem desligada, e aí só nome e e-mail passam — '
+   +'que é o que costuma continuar funcionando quando todo o resto some.</li>'
+   +'</ol>'
+
+   +'<div class="dsdg-saida"><div class="dsdg-t" style="color:#1AFF9D;margin:0 0 8px">O CAMINHO QUE NÃO DEPENDE DISSO TUDO</div>'
+   +'<p class="dsdg-p" style="margin:0">A função do DocuSign já está pronta no projeto, em <code>supabase/functions/docusign</code>. '
+   +'Por ela o envelope é criado pela API com os campos já dentro (<code>textTabs</code>), sem passar por PowerForm: '
+   +'não há regra de preenchimento por URL para atrapalhar, não há limite de 2.048 caracteres, e o link que vai para o cliente fica curto. '
+   +'Falta publicar a função no Supabase, pôr os segredos e colar o endereço dela em <b>Configurações → API DocuSign</b>. '
+   +'O passo a passo está em <code>supabase/functions/docusign/LEIA-ME.md</code>.</p></div>'
+
+   +'<div class="dsdg-btns">'
+   +'<button class="form-btn" onclick="dsCopiarRotulos()">📋 Copiar os rótulos</button>'
+   +'<button class="form-btn" onclick="dsCopiarDiag()">📋 Copiar rótulo + valor</button>'
+   +'<button class="form-btn" onclick="dsFecharDiag()">Fechar</button>'
+   +'</div>';
+
+  window.__dsDiagRotulos=rotulos;
+  window.__dsDiagTexto=mapa.map(function(m){ return m.rotulo+' = '+(c[m.campo]||'(vazio)'); }).join('\n');
+
+  var box=document.getElementById('ds-diag');
+  if(!box){
+    box=document.createElement('div');
+    box.id='ds-diag';
+    document.body.appendChild(box);
+  }
+  box.innerHTML='<div class="dsdg-cx"><div class="dsdg-hd">'
+    +'<span>🔎 POR QUE O DOCUSIGN VEIO EM BRANCO</span>'
+    +'<button onclick="dsFecharDiag()">✕</button></div>'
+    +'<div class="dsdg-corpo">'+html+'</div></div>';
+  box.style.display='flex';
+}
+function dsFecharDiag(){ var b=document.getElementById('ds-diag'); if(b) b.style.display='none'; }
+function dsCopiarRotulos(){
+  var t=window.__dsDiagRotulos||'';
+  if(navigator.clipboard) try{ navigator.clipboard.writeText(t); }catch(e){}
+  if(typeof toast==='function') toast('✅ Rótulos copiados — cole ao lado do modelo no DocuSign');
+}
+function dsCopiarDiag(){
+  var t=window.__dsDiagTexto||'';
+  if(navigator.clipboard) try{ navigator.clipboard.writeText(t); }catch(e){}
+  if(typeof toast==='function') toast('✅ Lista copiada');
+}
+window.dsDiagnostico=dsDiagnostico;
+
 
 // ── Voucher próprio da Magiway (A4, fonte grande): só cliente + logística + valor + observações + QR ──
 var LINK_GUIA_CLIENTE_VOUCHER='https://magenta-phoenix-34bff6.netlify.app/';
@@ -25885,6 +26009,38 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0
 .cp-fonte{margin-top:10px;font-size:.64rem;color:var(--chalk3);font-style:italic;line-height:1.6}
 .cp-vazio{padding:18px 0;color:var(--chalk3);font-size:.78rem;text-align:center}
 .cp-desgaste{margin-bottom:14px;border-color:rgba(168,85,247,.3)}
+
+/* ═══ DIAGNÓSTICO DO DOCUSIGN ═══ */
+#ds-diag{display:none;position:fixed;inset:0;z-index:900;background:rgba(4,8,15,.92);
+  backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:1rem}
+.dsdg-cx{background:var(--ink2);width:100%;max-width:860px;max-height:88vh;display:flex;flex-direction:column;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.dsdg-hd{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;
+  border-bottom:1px solid rgba(255,255,255,.08);font-size:.7rem;letter-spacing:.13em;
+  color:var(--p-ouro);font-weight:700}
+.dsdg-hd button{background:none;border:none;color:var(--chalk3);font-size:1.1rem;cursor:pointer;line-height:1}
+.dsdg-corpo{padding:16px 18px;overflow:auto}
+.dsdg-t{font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--p-ouro);
+  font-weight:700;margin-bottom:10px}
+.dsdg-res{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:2px;margin-bottom:12px}
+.dsdg-res>div{padding:11px 13px;background:rgba(255,255,255,.035)}
+.dsdg-res b{display:block;font-family:'DM Mono',monospace;font-size:1.25rem}
+.dsdg-res span{display:block;font-size:.62rem;color:var(--chalk3);margin-top:3px;line-height:1.4}
+.dsdg-p{font-size:.82rem;line-height:1.75;color:var(--chalk2);margin:0 0 12px}
+.dsdg-p b{color:var(--chalk)}
+.dsdg-tabwrap{max-height:280px;overflow:auto;background:rgba(255,255,255,.02)}
+.dsdg-tab{width:100%;border-collapse:collapse;font-size:.72rem}
+.dsdg-tab th{position:sticky;top:0;background:#070f1a;text-align:left;padding:8px 10px;
+  font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--chalk3)}
+.dsdg-tab td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top}
+.dsdg-ol{margin:0;padding-left:20px}
+.dsdg-ol li{font-size:.82rem;line-height:1.75;color:var(--chalk2);margin-bottom:9px}
+.dsdg-ol b{color:var(--chalk)}
+.dsdg-ol code,.dsdg-p code{font-family:'DM Mono',monospace;font-size:.74rem;color:var(--ice);
+  background:rgba(255,255,255,.05);padding:1px 5px}
+.dsdg-saida{margin-top:16px;padding:13px 15px;background:rgba(26,255,157,.06);border-left:3px solid #1AFF9D}
+.dsdg-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+@media(max-width:640px){ .dsdg-tab{font-size:.66rem} .dsdg-corpo{padding:13px 13px} }
 
 /* ═══ ESFERA DA DIFICULDADE (Dash de Cotações) ═══
    Reaproveita o esqueleto da esfera da saúde e troca só o que carrega
