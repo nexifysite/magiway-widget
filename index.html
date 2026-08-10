@@ -25335,5 +25335,198 @@ table tbody tr:hover{ background:rgba(255,255,255,.035); }
   .card:hover,.form-btn:hover{ transform:none !important; }
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   MAGIWAY · IDENTIDADE v5 (10/08/2026) — CAMPOS E BOTÕES
+   ───────────────────────────────────────────────────────────────────
+   A v4 quadrou os cartões do Dashboard, mas parou aí. Medindo o app:
+   .card ainda saía com 14px de canto (a camada de tipografia da skin v2
+   vem DEPOIS da v4 no arquivo e reintroduzia o arredondado), campo de
+   texto com 9px, botão com 8-10px. Resultado: o Dashboard era reto e o
+   resto do app era redondo.
+
+   Este bloco vai no FIM da folha de propósito — é o último a falar, e
+   por isso é o que vale. Ele leva a identidade para toda seção de
+   preenchimento e de escolha:
+
+     · extremidade reta em tudo que se clica ou se preenche;
+     · superfície transparente em vez de caixa sólida;
+     · a cor identifica, não pinta: gradiente saturado vira véu de 12%
+       com uma barra da cor na lateral. O texto volta a ser branco sobre
+       fundo escuro em vez de branco sobre verde-limão;
+     · foco visível — barra rosa embaixo e véu rosa no fundo. Antes o
+       campo focado era igual ao campo vazio.
+
+   O que NÃO muda: nenhuma estrutura, nenhum JS, nenhuma cor de dado
+   (verde é entrada, vermelho é saída, ouro é meta). Só o acabamento.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Extremidade reta, sem exceção ─────────────────────────────── */
+.card,.form-card,.kpi,
+input,select,textarea,button,
+.cbtn,.cbtn-new,.mgw-btn,.mgw-input,.fx-btn,.fr-b,.fr-tab,.fr-card,.frota-btn,
+.frota-tab,.rl-btn,.form-btn,.tbtn,.emia-btn,.lg-btn,.cp-tab,.dinp,.cam-inp,
+.gbusca-inp,.hrec,.hrec-ok,.mgwz-exp,.mgwz-x,.fx-card,.fx-lock,.cblock,
+.fx-tag-nat,.fx-badge,.fx-cat,.au-selo,.mgcal-manutbtn,.mgag-flagbtn,
+.mgiss-editbtn,.mgiss-delbtn,.cal-mode-btn,.cal-mes-sel{
+  border-radius:0 !important;
+}
+/* caixinha de marcar continua sendo caixinha, e não uma pastilha */
+input[type=checkbox],input[type=radio]{ border-radius:0 !important; accent-color:var(--p-rosa) }
+input[type=radio]{ border-radius:50% !important }
+
+/* ── 2. Campos de preenchimento ───────────────────────────────────── */
+input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),
+select,textarea{
+  /* background-COLOR, e não o atalho `background`: o atalho zera
+     background-repeat e background-position, e a setinha do select
+     (que é uma imagem de fundo) virava azulejo repetido no campo todo. */
+  background-color:rgba(255,255,255,.045) !important;
+  border:1px solid rgba(255,255,255,.10) !important;
+  border-bottom:2px solid rgba(255,255,255,.16) !important;
+  color:var(--chalk) !important;
+  outline:none !important;
+  box-shadow:none !important;
+  transition:background .16s, border-color .16s !important;
+}
+input:hover:not([type=checkbox]):not([type=radio]):not(:focus),
+select:hover:not(:focus),textarea:hover:not(:focus){
+  background-color:rgba(255,255,255,.07) !important;
+  border-bottom-color:rgba(255,255,255,.28) !important;
+}
+/* Foco: dá para ver de longe em qual campo se está digitando. */
+input:focus:not([type=checkbox]):not([type=radio]),select:focus,textarea:focus{
+  background-color:rgba(252,40,119,.09) !important;
+  border-color:rgba(252,40,119,.34) !important;
+  border-bottom:2px solid var(--p-rosa) !important;
+}
+/* Dica de preenchimento legível — era claro demais para ler, e escuro
+   demais confundiria com texto digitado. */
+::placeholder{ color:rgba(255,255,255,.38) !important; opacity:1 !important }
+/* A lista aberta do select é desenhada pelo sistema: sem isto ela vem
+   branca no Windows e cega quem está no escuro. */
+select option{ background:#08111c !important; color:#e9eef5 !important }
+/* Calendário e relógio nativos em tema escuro */
+input[type=date],input[type=time],input[type=datetime-local],input[type=month]{ color-scheme:dark }
+
+/* ── 3. Botões ────────────────────────────────────────────────────────
+   Base comum: véu claro, moldura fina, barra de cor na esquerda. Cada
+   botão mantém a COR que já tinha — ela só deixa de ser fundo e passa a
+   ser sinal. */
+button,.cbtn,.mgw-btn,.fx-btn,.rl-btn,.form-btn,.emia-btn,.frota-btn,.fr-b,.tbtn{
+  background:rgba(255,255,255,.055) !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  border-left:2px solid var(--p-rosa) !important;
+  color:var(--chalk) !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  transition:background .16s, border-color .16s !important;
+}
+button:hover,.cbtn:hover,.mgw-btn:hover,.fx-btn:hover,.rl-btn:hover,
+.form-btn:hover,.emia-btn:hover,.frota-btn:hover,.fr-b:hover,.tbtn:hover{
+  background:rgba(252,40,119,.16) !important;
+  border-color:rgba(252,40,119,.45) !important;
+  transform:none !important;
+}
+button:disabled,.cbtn:disabled,.fx-btn:disabled,.emia-btn:disabled{
+  opacity:.42 !important; border-left-color:rgba(255,255,255,.2) !important;
+}
+/* As cores que carregam significado. Véu da própria cor + barra sólida:
+   continua dando para saber qual é o do WhatsApp sem ler o rótulo. */
+.cbtn-wpp  { background:rgba(34,197,94,.14)  !important; border-left-color:#22c55e !important; color:#8AF0B4 !important }
+.cbtn-wpp:hover  { background:rgba(34,197,94,.24)  !important }
+.cbtn-det  { background:rgba(31,169,166,.16) !important; border-left-color:var(--ice) !important; color:#8FE9E4 !important }
+.cbtn-det:hover  { background:rgba(31,169,166,.27) !important }
+.cbtn-parc { background:rgba(168,85,247,.16)  !important; border-left-color:#a855f7 !important; color:#D5B4FB !important }
+.cbtn-parc:hover { background:rgba(168,85,247,.27) !important }
+.cbtn-png  { background:rgba(242,5,5,.15)     !important; border-left-color:var(--p-verm) !important; color:#FF9A9A !important }
+.cbtn-png:hover  { background:rgba(242,5,5,.26)   !important }
+.cbtn-new  { background:rgba(255,255,255,.03) !important; border-left-color:rgba(255,255,255,.18) !important;
+             color:var(--chalk3) !important }
+.emia-btn  { background:rgba(59,158,255,.14)  !important; border-left-color:#3B9EFF !important; color:#A9D4FF !important }
+.emia-btn:hover  { background:rgba(59,158,255,.25) !important }
+.emia-btn.ghost{ background:rgba(255,255,255,.04) !important; border-left-color:rgba(255,255,255,.18) !important;
+                 color:var(--chalk2) !important }
+/* Entrar: é o único botão da tela de login, então pode puxar a atenção —
+   mas reto e sem o halo vermelho que borrava a letra. */
+.lg-btn{
+  background:rgba(242,5,5,.20) !important; border:1px solid rgba(242,5,5,.55) !important;
+  border-left:3px solid var(--p-verm) !important; color:#fff !important;
+  box-shadow:none !important; border-radius:0 !important;
+}
+.lg-btn:hover{ background:rgba(242,5,5,.32) !important; transform:none !important; box-shadow:none !important }
+.lg-btn::after{ display:none !important }
+
+/* ── 4. Abas e alternadores (escolha) ─────────────────────────────── */
+.fr-tab,.frota-tab,.cp-tab,.cal-mode-btn,.fx-tabs button{
+  background:rgba(255,255,255,.035) !important;
+  border:1px solid rgba(255,255,255,.10) !important;
+  border-bottom:2px solid transparent !important;
+  border-left:1px solid rgba(255,255,255,.10) !important;
+  color:var(--chalk2) !important;
+  border-radius:0 !important;
+}
+.fr-tab:hover,.frota-tab:hover,.cp-tab:hover,.cal-mode-btn:hover,.fx-tabs button:hover{
+  background:rgba(255,255,255,.075) !important; color:var(--chalk) !important;
+}
+/* A aba ativa é a única com a barra de ouro embaixo — some a dúvida de
+   qual está selecionada, que com o véu sozinho ficava sutil demais. */
+.fr-tab.on,.frota-tab.on,.cp-tab.on,.cal-mode-btn.active,.fx-tabs button.on,
+.fr-tab.active,.cp-tab.active{
+  background:rgba(242,186,82,.12) !important;
+  border-bottom:2px solid var(--p-ouro) !important;
+  color:#fff !important; font-weight:700 !important;
+}
+
+/* ── 5. Superfícies de seção ──────────────────────────────────────────
+   Mesma receita do Dashboard: véu claro, sem moldura pesada, e um traço
+   rosa de 34px no canto superior esquerdo marcando onde a seção começa. */
+.card,.form-card,.fx-card,.fr-card,.cblock,.fx-lock,.hrec,.mgwz-exp{
+  background:rgba(255,255,255,.028) !important;
+  border:none !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06) !important;
+  border-radius:0 !important;
+  position:relative;
+}
+.fx-card::before,.fr-card::before{
+  content:'';position:absolute;left:0;top:0;width:34px;height:2px;background:var(--p-rosa);
+}
+/* O cabeçalho do bloco de cotação tinha fundo próprio e virava uma faixa
+   dentro de outra faixa. Fica só o texto e a linha embaixo. */
+.cblock-hd{ background:transparent !important; border-bottom:1px solid rgba(255,255,255,.07) !important }
+.cbl{ background:var(--p-rosa) !important }
+
+/* ── 6. Rótulos ───────────────────────────────────────────────────── */
+/* O valor escolhido num select saía em #FF0000 puro sobre #000020. É a
+   combinação que mais cansa a vista que existe no app — vermelho saturado
+   sobre azul quase preto vibra na borda das letras — e ainda por cima
+   vermelho, no resto da tela, quer dizer erro. O valor volta a ser texto
+   normal; quem sinaliza que ali se escolhe é a seta, agora rosa. */
+select.fi,select.ffi{
+  background-color:rgba(255,255,255,.045) !important;
+  color:var(--chalk) !important;
+  font-weight:500 !important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23FC2877'/%3E%3C/svg%3E") !important;
+  background-repeat:no-repeat !important;
+  background-position:right .68rem center !important;
+}
+select.fi:focus,select.ffi:focus{ background-color:rgba(252,40,119,.09) !important }
+select.fi option,select.ffi option{ background:#08111c !important; color:#e9eef5 !important }
+select.fi optgroup,select.ffi optgroup{ background:#0d1a2a !important; color:var(--p-ouro) !important }
+
+.fl,.fx-f label,.f .fl,.lf{
+  color:rgba(255,255,255,.5) !important; letter-spacing:.09em !important; text-transform:uppercase !important;
+}
+
+/* ── 7. Correções de contraste que a transparência exige ──────────── */
+/* Texto escuro sobre botão claro não existe mais — todo botão é escuro. */
+.cbtn-det,.tbtn-o{ text-shadow:none !important }
+/* Tabela: cabeçalho fixo precisa de fundo opaco, senão a linha passa por
+   trás e o título fica ilegível na rolagem. */
+thead th,.mgdisp-tab thead th,.mgrsv-table thead th{ background:#070f1a !important }
+
+@media (prefers-reduced-motion:reduce){
+  input,select,textarea,button{ transition:none !important }
+}
+
 </style><!--/mgw-skin-v2-->
 </body></html>
