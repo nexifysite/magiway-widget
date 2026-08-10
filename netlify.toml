@@ -31,6 +31,14 @@
   [headers.values]
     Cache-Control = "public, max-age=604800"
 
+# A pasta supabase/ é código de servidor: SQL do banco e a Edge Function.
+# Não faz parte do site e não tem por que ficar baixável — o publish é "."
+# e sem esta regra ela ia junto para o ar.
+[[redirects]]
+  from = "/supabase/*"
+  to = "/index.html"
+  status = 404
+
 # A raiz serve o app.
 # O Netlify entrega arquivos que existem de verdade ANTES de aplicar este
 # rewrite, então /sw.js, /manifest.webmanifest e os ícones não caem aqui.
