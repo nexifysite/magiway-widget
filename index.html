@@ -1418,77 +1418,110 @@ var esc=function(v){ return String(v==null?'':v)
 var n0=function(v){ return Math.round(+v||0).toLocaleString('pt-BR'); };
 var n1=function(v){ return (+v||0).toFixed(1).replace('.',','); };
 
-/* ═══ 1. A CAPA — canvas do laço que gira sozinho ═══
-   Não é enfeite: é a figura do argumento. Nós presos num anel, ligados
-   por linhas que se acendem em sequência — o ciclo se alimentando. O
-   nó vermelho é o ponto onde a decisão trava (o preço); os outros
-   giram em torno dele sem conseguir sair. */
-function cpxCapaAnimar(){
-  var cv=document.getElementById('cpx-capa-cv'); if(!cv) return;
-  CPX.cv=cv;
-  var ctx=cv.getContext('2d');
-  if(!CPX.pontos.length){
-    var N=9;
-    for(var i=0;i<N;i++) CPX.pontos.push({ ang:i/N*Math.PI*2, carga:0, trava:(i===0) });
+/* ═══ 1. A CAPA — a esfera da dificuldade ═══
+   O anel de nós que estava aqui não funcionou: lido de longe parecia um
+   diagrama qualquer, e o movimento circular sugeria "processo rodando",
+   que é o contrário do que o relatório diz. Vira a mesma esfera de
+   pontos das outras telas — que já é a linguagem visual do app — girando
+   devagar, com o número da dificuldade no meio.
+
+   A diferença para a esfera do Dash de Cotações é o nono fator: as
+   FUNÇÕES ACUMULADAS. Vender acumulando oito papéis não é o mesmo
+   trabalho que vender só vendendo, e a bola precisa dizer isso. */
+var ESF={pontos:[], viz:null, vizQuadro:0, ang:0, raf:null, timer:null, nivel:0, cor:'#FC2877'};
+
+function cpxNivel(o){
+  /* Reaproveita os oito fatores da esfera do Dash de Cotações e soma o
+     nono. O peso de 0,12 sai dos outros proporcionalmente — o que muda é
+     a ênfase, não a escala. */
+  var base=null;
+  try{
+    if(typeof mgdCalcular==='function'){
+      var d=(typeof _cpUltimo!=='undefined'&&_cpUltimo)?_cpUltimo:null;
+      var resv=[];
+      try{ if(window.MGW_CICLO) resv=MGW_CICLO.reservasDoCiclo()||[]; }catch(e){}
+      base=mgdCalcular(d?d.cots:[], resv);
+    }
+  }catch(e){}
+  var fatores=base?base.fatores.slice():[];
+  /* nono fator: quanto do tempo NÃO é venda, e quantos papéis se acumula.
+     Um papel além de vender já pesa; oito é outra profissão. */
+  var papeis=o.cfg.papeis||1, foraVenda=100-(o.cfg.horasVenda||100);
+  var vFun=Math.max(0,Math.min(100, (Math.min(papeis,10)/10*60) + (foraVenda/100*40) ));
+  fatores.forEach(function(f){ f.peso=f.peso*0.88; });
+  fatores.push({t:'Funções acumuladas', peso:.12, v:vFun,
+    d:papeis+' papéis · '+foraVenda+'% do tempo fora da venda',
+    txt:'Vender acumulando função não é o mesmo trabalho que vender. Cada papel a mais consome '
+       +'atenção, decisão e o tempo que iria para o follow-up.'});
+  var idx=Math.round(fatores.reduce(function(a,f){ return a+f.v*f.peso; },0));
+  return {indice:Math.max(0,Math.min(100,idx)), fatores:fatores};
+}
+
+function cpxEsferaAnimar(){
+  var cv=document.getElementById('cpx-esfera-cv'); if(!cv) return;
+  if(!ESF.pontos.length){
+    try{ ESF.pontos=mgsCriarPontos(120); }catch(e){ return; }
   }
-  if(CPX.raf) cancelAnimationFrame(CPX.raf);
-  var ultimo=0, quem=0, prox=0;
-  (function laco(t){
-    CPX.raf=requestAnimationFrame(laco);
-    if(!document.body.contains(cv)){ cancelAnimationFrame(CPX.raf); CPX.raf=null; return; }
-    if(t-ultimo<16) return;
-    var dt=Math.min(0.05,(t-ultimo)/1000); ultimo=t;
-    CPX.fase+=dt*0.22;
+  try{ _esfVizinhos(ESF); }catch(e){ return; }
+  if(ESF.raf) cancelAnimationFrame(ESF.raf);
+  if(ESF.timer) clearInterval(ESF.timer);
+  var ctx=cv.getContext('2d'), ultimo=0;
 
-    /* o pulso caminha de nó em nó, sempre no mesmo sentido: é um ciclo,
-       não um sorteio */
-    prox-=dt;
-    if(prox<=0){ prox=0.62; quem=(quem+1)%CPX.pontos.length; CPX.pontos[quem].carga=1; }
-    CPX.pontos.forEach(function(o){ o.carga=Math.max(0,o.carga-dt*1.5); });
-
+  var desenhar=function(){
     var dpr=Math.min(2,window.devicePixelRatio||1);
-    var L=cv.clientWidth||300, H=cv.clientHeight||230;
+    var L=cv.clientWidth||260, H=cv.clientHeight||260;
     if(cv.width!==L*dpr||cv.height!==H*dpr){ cv.width=L*dpr; cv.height=H*dpr; }
     ctx.setTransform(dpr,0,0,dpr,0,0);
     ctx.clearRect(0,0,L,H);
-
-    var cx=L/2, cy=H/2, R=Math.min(L,H)*0.32;
-    var pos=CPX.pontos.map(function(o){
-      var a=o.ang+CPX.fase;
-      return {x:cx+Math.cos(a)*R, y:cy+Math.sin(a)*R*0.78, o:o};
+    var cx=L/2, cy=H/2, R=Math.min(L,H)*0.36, FOC=2.6;
+    var inc=-0.30, ci=Math.cos(inc), si=Math.sin(inc);
+    var ca=Math.cos(ESF.ang), sa=Math.sin(ESF.ang);
+    var proj=ESF.pontos.map(function(p){
+      var rr=p.rad, px=p.x*rr, py=p.y*rr, pz=p.z*rr;
+      var x=px*ca-pz*sa, z0=px*sa+pz*ca;
+      var y=py*ci-z0*si, z=py*si+z0*ci;
+      var e=FOC/(FOC-z);
+      return {sx:cx+x*R*e, sy:cy+y*R*e, z:z, carga:p.carga};
     });
-    /* o anel */
-    for(var i=0;i<pos.length;i++){
-      var A=pos[i], B=pos[(i+1)%pos.length];
-      var c=Math.max(A.o.carga,B.o.carga);
-      ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y);
-      ctx.lineWidth=1+2.2*c;
-      ctx.strokeStyle=c>0.04 ? 'rgba(252,40,119,'+Math.min(1,0.3+0.7*c).toFixed(3)+')'
-                             : 'rgba(255,255,255,.10)';
-      ctx.stroke();
-    }
-    /* os nós */
-    pos.forEach(function(P){
-      var c=P.o.carga, trava=P.o.trava;
-      var r=(trava?5.5:3.4)*(1+0.9*c);
-      if(c>0.05||trava){
-        ctx.beginPath(); ctx.arc(P.x,P.y,r*3.2,0,6.2832);
-        ctx.fillStyle=trava?'rgba(242,5,5,.16)':'rgba(252,40,119,'+(0.22*c).toFixed(3)+')';
-        ctx.fill();
+    var LIM=0.46;
+    for(var i=0;i<ESF.pontos.length;i++){
+      for(var j=i+1;j<ESF.pontos.length;j++){
+        var A=ESF.pontos[i], B=ESF.pontos[j];
+        var dx=A.x-B.x, dy=A.y-B.y, dz=A.z-B.z;
+        var dd=Math.sqrt(dx*dx+dy*dy+dz*dz);
+        if(dd>LIM) continue;
+        var P=proj[i], Q=proj[j];
+        var f=((P.z+Q.z)/2+1)/2;
+        var op=(0.10+0.40*f)*(1-dd/LIM);
+        var c=Math.max(A.carga,B.carga);
+        if(c>0.03){ ctx.lineWidth=1+2.2*c; ctx.strokeStyle='rgba(120,200,255,'+Math.min(1,0.34+0.66*c).toFixed(3)+')'; }
+        else{ ctx.lineWidth=0.8; ctx.strokeStyle='rgba(252,40,119,'+op.toFixed(3)+')'; }
+        ctx.beginPath(); ctx.moveTo(P.sx,P.sy); ctx.lineTo(Q.sx,Q.sy); ctx.stroke();
       }
-      ctx.beginPath(); ctx.arc(P.x,P.y,r,0,6.2832);
-      ctx.fillStyle=trava?'#F20505':(c>0.05?'#fff':'rgba(255,255,255,.5)');
-      ctx.shadowColor=trava?'#F20505':'#FC2877'; ctx.shadowBlur=trava?16:(c>0.05?12:0);
+    }
+    proj.slice().sort(function(a,b){ return a.z-b.z; }).forEach(function(P){
+      var f=(P.z+1)/2, c=P.carga, r=(0.9+2.1*f)*(1+1.3*c);
+      ctx.beginPath(); ctx.arc(P.sx,P.sy,r,0,6.2832);
+      ctx.fillStyle=c>0.03?'rgba(180,225,255,'+Math.min(1,.45+.55*c).toFixed(3)+')'
+                          :'rgba(255,'+Math.round(120+90*f)+','+Math.round(160+70*f)+','+(0.35+0.6*f).toFixed(3)+')';
+      ctx.shadowColor=c>0.03?'#78C8FF':ESF.cor; ctx.shadowBlur=c>0.03?12:(f>0.85?10:0);
       ctx.fill(); ctx.shadowBlur=0;
     });
-    /* rótulo do nó travado */
-    var T=pos.find(function(P){ return P.o.trava; });
-    if(T){
-      ctx.font='600 10px "DM Mono", monospace';
-      ctx.fillStyle='rgba(255,154,154,.9)'; ctx.textAlign='center';
-      ctx.fillText('PREÇO', T.x, T.y-14);
-    }
+  };
+
+  (function laco(t){
+    ESF.raf=requestAnimationFrame(laco);
+    if(!document.body.contains(cv)){ cancelAnimationFrame(ESF.raf); ESF.raf=null; return; }
+    if(t-ultimo<16) return;
+    ultimo=t;
+    ESF.ang+=0.0011;                       /* devagar: ~95 s por volta */
+    try{ _esfMover(ESF, 0.03+0.05*(ESF.nivel/100)); }catch(e){}
+    desenhar();
   })(0);
+  ESF.timer=setInterval(function(){
+    if(document.hidden) return;
+    if(performance.now()-ultimo>240){ ESF.ang+=0.004; try{ _esfMover(ESF,0.04); }catch(e){} desenhar(); }
+  },140);
 }
 
 /* ── contador que sobe ── */
@@ -1553,7 +1586,15 @@ function cpxDados(){
   try{
     var carros=(window.MGW_FROTA&&MGW_FROTA.carros)?MGW_FROTA.carros():[];
     o.frota.total=carros.length;
-    carros.forEach(function(c){ var k=c.cat||'Outros'; o.frota.porCat[k]=(o.frota.porCat[k]||0)+1; });
+    /* Passa pela mesma canonização das cotações. Sem isto, "Minivan" da
+       frota e "Minivan 7L" das cotações viravam duas categorias e o
+       gráfico de frota × demanda comparava coisa com ela mesma dividida
+       em duas. São a mesma categoria. */
+    carros.forEach(function(c){
+      var k='Outros';
+      try{ k=cpCatCanon(c.cat||c.modelo)||'Outros'; }catch(e){ k=c.cat||'Outros'; }
+      o.frota.porCat[k]=(o.frota.porCat[k]||0)+1;
+    });
     var mv=carros.filter(function(c){ return cpEhMinivan(c.cat)||cpEhMinivan(c.modelo); }).length;
     o.frota.minivanPct=o.frota.total?(mv/o.frota.total*100):0;
     o.frota.minivan=mv;
@@ -1668,7 +1709,10 @@ function cpxCapa(o){
   var fonteMeta=(o.meta.diasAte!=null)?'medido no ciclo atual':'declarado';
   return ''
   +'<div class="cpx-sec cpx-capa cpx-rv">'
-  +  '<canvas id="cpx-capa-cv"></canvas>'
+  +  '<div class="cpx-esf"><canvas id="cpx-esfera-cv"></canvas>'
+  +    '<div class="cpx-esf-c"><div class="cpx-esf-n" id="cpx-esf-n">—</div>'
+  +      '<div class="cpx-esf-l">DIFICULDADE DE VENDER</div>'
+  +      '<div class="cpx-esf-s">com '+o.cfg.papeis+' papéis acumulados</div></div></div>'
   +  '<div class="cpx-capa-txt">'
   +    '<div class="cpx-eyebrow">RELATÓRIO EXECUTIVO · SEM RODEIOS</div>'
   +    '<div class="cpx-tit">O problema não é <span>quem vende</span>.<br>É o que foi entregue <span>para vender</span>.</div>'
@@ -1844,6 +1888,147 @@ function cpxCulpa(o){
    +'</div>';
 }
 
+/* ═══ 8b. O QUE A GESTÃO PRECISA ASSUMIR ═══
+   O § 7 diz de quem é cada decisão. Este diz o que acontece quando ela
+   não é assumida — porque "responsabilidade" sem consequência escrita é
+   só uma palavra bonita no organograma. */
+function cpxAssumir(o){
+  var A=[
+   ['Assumir que o preço está fora da faixa',
+    'Enquanto a hipótese não for testada, todo mês repete o mesmo resultado e a explicação recai sobre quem atende. '
+   +'Testar custa 30 dias em uma categoria. Não testar custa a diferença, todo mês, para sempre.'],
+   ['Assumir que a frota foi comprada sem casar com a demanda',
+    'Frota concentrada não é azar de mercado: é decisão de compra. Quem decidiu comprar responde pelo mix, '
+   +'não quem tenta vender o que existe.'],
+   ['Assumir que não há investimento em marca',
+    'Sem marca, todo lead entra frio e o custo por venda sobe com o tempo. Cobrar conversão de lead frio é '
+   +'cobrar de terceiro o efeito de uma verba que nunca foi aprovada.'],
+   ['Assumir o risco de reputação do sublocado',
+    'Vender sublocado ao preço da frota própria é antecipar receita contra a reputação futura. É uma decisão '
+   +'legítima de negócio — desde que quem a toma assuma a conta quando ela chegar.'],
+   ['Assumir que não existe plano de negócio',
+    'Sem plano, não há restrição declarada; sem restrição declarada, o esforço vai para o que é fácil medir. '
+   +'É por isso que se aperta a venda: é a parte visível do sistema, não a que trava.'],
+   ['Assumir que a régua de cobrança está errada',
+    'Cobrar conversão total de quem não decide preço, mix nem verba é erro de desenho. Manter a régua depois '
+   +'de saber disso deixa de ser erro e passa a ser escolha.'],
+   ['Assumir que o intelecto da equipe está sendo usado para tapar buraco',
+    'Usar quem tem visão de negócio para cobrir caixa é gastar capital caro em tarefa barata. O custo não '
+   +'aparece na folha: aparece no que deixou de ser construído enquanto isso.'],
+   ['Assumir que a data de pagamento foi mudada por conveniência de quem paga',
+    'Mudar unilateralmente o dia do pagamento transloca custo de capital de giro para quem recebe. Pode ser '
+   +'necessário — mas é uma transferência de custo, e chamar isso de "ajuste operacional" não muda o que é.']
+  ];
+  return '<div class="cpx-sec grave cpx-rv">'
+   +'<span class="cpx-num">§ 8</span>'
+   +'<div class="cpx-h">O que a gestão precisa assumir — e o que custa não assumir</div>'
+   +'<div class="cpx-sub">Assumir não é pedir desculpa. É registrar de quem é a decisão, para que a próxima '
+   +'seja tomada com a conta na mesa.</div>'
+   + A.map(function(x,i){
+       return '<div class="cpx-assum"><div class="cpx-assum-n">'+(i+1)+'</div>'
+        +'<div><div class="cpx-assum-t">'+x[0]+'</div><p>'+x[1]+'</p></div></div>';
+     }).join('')
+   +'<div class="cpx-golpe">Nada disto exige admitir incompetência. Exige admitir <b>autoria</b>.'
+   +'<small>A diferença entre as duas é o que separa uma empresa que corrige de uma que repete. '
+   +'Decisão sem dono não é revista, porque não há a quem perguntar por que ela continua de pé.</small></div>'
+   +'</div>';
+}
+
+/* ═══ 8c. CAPITAL INTELECTUAL ═══
+   O ponto mais delicado do documento, e por isso o mais cuidadoso: aqui
+   se afirma que uma pessoa específica é excepcional. Afirmação assim só
+   se sustenta com critério — senão é elogio, e elogio não entra em ata.
+   Por isso cada parágrafo se prende ou a um número desta tela, ou a um
+   fato datado, ou a um dado declarado que aparece marcado como tal. */
+function cpxCapital(o){
+  var diasMeta=(o.meta.diasAte!=null)?o.meta.diasAte:o.cfg.diasMeta;
+  var totalDias=o.meta.totalDias||30;
+  return '<div class="cpx-sec luz cpx-rv">'
+   +'<span class="cpx-num">§ 9</span>'
+   +'<div class="cpx-h">Capital intelectual não se gasta tapando buraco</div>'
+   +'<div class="cpx-sub">O que se está usando, para quê, e o que isso custa.</div>'
+
+   +'<p class="cpx-p"><b>Um vendedor não move o orçamento de uma empresa.</b> Ele move a conversão dentro do '
+   +'que lhe foi entregue. Quando a empresa passa a depender do vendedor para compensar preço fora de faixa, '
+   +'frota mal casada e ausência de marketing, ela não está extraindo desempenho: está <b>consumindo um ativo '
+   +'que não recompõe</b>. Em contabilidade isso teria nome — despesa lançada como se fosse receita.</p>'
+
+   +'<p class="cpx-p"><b>O que está sendo consumido tem perfil raro.</b> Capacidade declarada de <b>QI 141</b>, '
+   +'execução simultânea de <b>'+o.cfg.papeis+' frentes</b>, e facilidade alta de aprender e de ensinar — que é '
+   +'a característica que mais importa aqui, porque quem ensina multiplica e quem só executa soma. '
+   +'<span class="cpx-decl">declarado</span></p>'
+
+   +'<p class="cpx-p">Vender assim não é dom de conversa. É <b>cognição social aplicada em tempo real</b>: ler '
+   +'a pessoa nos primeiros segundos, prever a objeção antes dela ser dita, escolher o argumento certo entre '
+   +'vários e reordenar a conversa no meio dela. Exige aptidão, previsibilidade e velocidade de raciocínio '
+   +'acima da média — e, principalmente, <b>conhecimento profundo do mercado</b>, que não se contrata pronto '
+   +'e não se ensina em treinamento de duas semanas.</p>'
+
+   +'<div class="cpx-golpe verde">Luciano não é a régua. É a exceção.'
+   +'<small>E aqui está um erro estatístico que a gestão comete sem perceber: usar o resultado de um outlier '
+   +'como padrão para todos. O outlier define o <b>teto</b> do que é possível naquele cenário — nunca a '
+   +'linha de base do que é esperado. Quem transforma exceção em meta padrão garante duas coisas: que todo o '
+   +'resto da equipe falhe permanentemente, e que a própria exceção seja cobrada por não se superar '
+   +'indefinidamente. É a receita conhecida para perder os dois.</small></div>'
+
+   +'<p class="cpx-p">A meta Diamante saiu em <b>'+diasMeta+' dias</b> de um ciclo de '+totalDias+' — enquanto '
+   +'se resolvia operação, aplicativo, tráfego, indicadores e pesquisa de mercado. O feito não prova que a '
+   +'condição é boa. Prova o contrário: <b>mostra o tamanho do que está sendo desperdiçado ao manter a '
+   +'condição ruim.</b> Se esse desempenho aparece com tudo contra, a pergunta que interessa é quanto '
+   +'apareceria com o preço na faixa e a frota casada com a demanda.</p>'
+   +'</div>';
+}
+
+/* ═══ 8d. BONIFICAÇÃO ═══ */
+function cpxBonus(o){
+  return '<div class="cpx-sec grave cpx-rv">'
+   +'<span class="cpx-num">§ 10</span>'
+   +'<div class="cpx-h">Bonificação: onde está o erro de cálculo</div>'
+   +'<div class="cpx-sub">Três teorias clássicas, e as três apontam para o mesmo ponto.</div>'
+
+   +'<p class="cpx-p"><b>O argumento que se ouve:</b> "ele já tem salário fixo maior e comissão maior, então '
+   +'não precisa de bônus por bater a meta". Traduzido, isso diz: <em>por ser bom demais, já tem o que precisa; '
+   +'logo, não merece mais.</em></p>'
+
+   +'<p class="cpx-p"><b>Onde o cálculo quebra:</b> confunde <b>nível de remuneração</b> com <b>recompensa '
+   +'marginal</b>. O salário paga o cargo. O bônus paga o resultado <em>extra</em> daquele ciclo. São contas '
+   +'diferentes, e usar a primeira para anular a segunda é dizer que o esforço adicional vale zero — que é '
+   +'exatamente o que a pessoa vai calcular no ciclo seguinte.</p>'
+
+   +'<div class="cpx-tri">'
+   +'<div><div class="cpx-tri-t">Expectância (Vroom)</div><p>O esforço depende de acreditar que ele leva ao '
+   +'resultado, e que o resultado leva à recompensa. Quebrar o segundo elo zera a equação inteira — não '
+   +'importa o quanto o primeiro esteja intacto.</p></div>'
+   +'<div><div class="cpx-tri-t">Equidade (Adams)</div><p>As pessoas comparam a razão esforço/retorno com a '
+   +'dos outros. Entregar muito acima e receber o mesmo reconhecimento produz percepção de injustiça — que é '
+   +'o preditor mais direto de saída, antes de qualquer queda de esforço aparecer no número.</p></div>'
+   +'<div><div class="cpx-tri-t">Higiene × motivação (Herzberg)</div><p>Salário é fator de higiene: quando '
+   +'falta, desmotiva; quando está lá, não motiva. Reconhecimento e conquista são fatores de motivação. '
+   +'Salário alto <b>não substitui</b> reconhecimento — atuam em dimensões diferentes.</p></div>'
+   +'</div>'
+
+   +'<p class="cpx-p"><b>E há o custo de não parabenizar, que é separado do dinheiro.</b> Reconhecimento '
+   +'público custa zero e é o único item desta lista que não sai do caixa. Deixar de dar quando o feito é '
+   +'inédito não economiza nada — apenas informa à equipe inteira que desempenho excepcional passa em branco.</p>'
+
+   +'<p class="cpx-p"><b>Sobre "o nível dos outros":</b> quando um entrega muito acima e o resto não acompanha, '
+   +'a leitura correta não é rebaixar o teto — é perguntar por que a base não sobe. Nivelar pela média nunca '
+   +'puxou ninguém para cima; só empurra quem está acima para fora.</p>'
+
+   +'<p class="cpx-p"><b>Sobre a data de pagamento.</b> Mover o pagamento para o intervalo do dia 5 ao 10 '
+   +'transfere custo de capital de giro de quem paga para quem recebe: as contas do recebedor não mudaram de '
+   +'data. Pode ser necessário para o caixa — mas é uma <b>transferência de custo</b>, e é assim que precisa '
+   +'ser chamada. Quando uma decisão que beneficia um lado é apresentada como conveniência neutra, o que se '
+   +'perde não é o dinheiro: é a confiança de que as próximas serão negociadas de boa-fé.</p>'
+
+   +'<div class="cpx-golpe">Quem quer vendedor estimulado bonifica e parabeniza. Não é filosofia: é o desenho '
+   +'do incentivo.'
+   +'<small>Vendedor trabalha por dinheiro e por reconhecimento, nessa ordem e nos dois. Quem retira os dois '
+   +'de quem mais entrega está, na prática, escolhendo qual pessoa vai embora primeiro — e será a que tem mais '
+   +'opções fora, que é sempre a melhor.</small></div>'
+   +'</div>';
+}
+
 /* ═══ 9. O QUE OS NÚMEROS DIZEM SOBRE QUEM VENDE ═══ */
 function cpxVendedor(o){
   var diasMeta=(o.meta.diasAte!=null)?o.meta.diasAte:o.cfg.diasMeta;
@@ -1855,7 +2040,7 @@ function cpxVendedor(o){
       : (cv<100?'distribuição moderadamente irregular'
         :'distribuição concentrada em poucos dias'));
   return '<div class="cpx-sec luz cpx-rv">'
-   +'<span class="cpx-num">§ 8</span>'
+   +'<span class="cpx-num">§ 11</span>'
    +'<div class="cpx-h">O que os números dizem sobre quem vende</div>'
    +'<div class="cpx-sub">Sem adjetivo. Só o que dá para medir.</div>'
    +'<div class="cpx-nums" style="margin-bottom:14px">'
@@ -1893,7 +2078,7 @@ function cpxVendedor(o){
 /* ═══ 10. AS TRÊS PERGUNTAS ═══ */
 function cpxPerguntas(o){
   return '<div class="cpx-sec cpx-rv">'
-   +'<span class="cpx-num">§ 9</span>'
+   +'<span class="cpx-num">§ 12</span>'
    +'<div class="cpx-h">Três perguntas, e o critério para respondê-las</div>'
    +'<div class="cpx-sub">Não são retóricas. Cada uma tem um critério objetivo embaixo.</div>'
    +'<div class="cpx-perg">'
@@ -2216,6 +2401,24 @@ function cpxDesenhar(o){
       options:opt});
   })();
 
+  /* Gráfico sem série não fica com a grade nua: ou ganha o aviso dizendo
+     de onde viria o dado, ou some da tela. Grade vazia num relatório que
+     vai para reunião passa a impressão de que o app está quebrado. */
+  setTimeout(function(){
+    try{ if(typeof mgwMarcarVazios==='function')
+      mgwMarcarVazios(['cpx-g-frota','cpx-g-preco','cpx-g-ritmo','cpx-g-const','cpx-g-funil','cpx-g-carga']);
+    }catch(e){}
+    ['cpx-g-frota','cpx-g-preco','cpx-g-ritmo','cpx-g-const','cpx-g-funil'].forEach(function(id){
+      var el=document.getElementById(id); if(!el) return;
+      var ch=CPX.charts[id];
+      var vazio=!ch || !(ch.data&&ch.data.datasets||[]).some(function(ds){
+        return (ds.data||[]).some(function(v){ return (+v||0)>0; }); });
+      var caixa=el.closest?el.closest('.cpx-graf > div'):null;
+      if(vazio && caixa) caixa.style.display='none';
+      else if(caixa) caixa.style.display='';
+    });
+  },260);
+
   /* 6 — carga: quanto do tempo é venda de verdade. Declarado. */
   (function(){
     var venda=o.cfg.horasVenda, resto=100-venda;
@@ -2293,13 +2496,24 @@ function cpxRender(soRedesenhar){
     + cpxEconomia(o)
     + cpxPsicologia(o)
     + cpxCulpa(o)
+    + cpxAssumir(o)
+    + cpxCapital(o)
+    + cpxBonus(o)
     + cpxVendedor(o)
     + cpxPerguntas(o);
 
   /* desenhar depois do HTML existir, senão o canvas ainda não tem tamanho */
   setTimeout(function(){
     try{ cpxDesenhar(o); }catch(e){ console.warn('[cpx graficos]',e); }
-    try{ cpxCapaAnimar(); }catch(e){ console.warn('[cpx capa]',e); }
+    try{
+      var nv=cpxNivel(o);
+      ESF.nivel=nv.indice;
+      ESF.cor = nv.indice>=70?'#F20505' : (nv.indice>=45?'#FC2877' : '#F2BA52');
+      var el=document.getElementById('cpx-esf-n');
+      if(el){ el.style.color=ESF.cor; cpxContar(el, nv.indice, '', 0); }
+      cpxEsferaAnimar();
+      CPX.nivel=nv;
+    }catch(e){ console.warn('[cpx esfera]',e); }
     try{ cpxObservar(); }catch(e){}
   }, 60);
 }
@@ -2326,7 +2540,7 @@ window.MGW_CPX_RENDER=cpxRender;
   }
 })();
 
-window.MGW_CPX={ cfg:cpxCfg, salvar:cpxSalvar, capa:cpxCapaAnimar, contar:cpxContar,
+window.MGW_CPX={ cfg:cpxCfg, salvar:cpxSalvar, capa:cpxEsferaAnimar, nivel:cpxNivel, contar:cpxContar,
                  observar:cpxObservar, est:CPX, esc:esc, n0:n0, n1:n1 };
 })();
 </script>
@@ -13145,6 +13359,12 @@ function mgwFmtNum(v,sufixo){
 var _mgwPareCache=null, _mgwPareSelo='';
 
 function _mgwNomeChave(s){
+  /* Mesma regra tolerante da mesclagem de reservas: primeiro nome +
+     último sobrenome, sem acento e sem as iniciais soltas do meio.
+     Comparando o texto inteiro, "JOAO SILVA" na cotação e "Joao S.
+     Silva" na reserva não pareavam — a cotação contava como perdida e a
+     conversão do painel saía menor que a realidade. */
+  try{ if(typeof nomeChaveTol==='function') return nomeChaveTol(s); }catch(e){}
   return String(s==null?'':s).toUpperCase().normalize('NFD')
     .replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9 ]/g,' ')
     .replace(/\s+/g,' ').trim();
@@ -15367,9 +15587,18 @@ function renderComparativo(){
   var VERDE='rgba(26,255,157,.8)', VERM='rgba(255,71,87,.8)', AMAR='rgba(255,209,26,.8)';
   var EIXO={grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7B93B5',font:{size:10,family:'DM Mono'},precision:0}};
   var BASE={responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{labels:{color:'#9AB4CC',font:{size:11},boxWidth:11,padding:12}},
-      tooltip:{backgroundColor:'rgba(4,8,15,.97)',borderColor:'rgba(255,0,0,.3)',borderWidth:1,
-        titleColor:'#F5FBFF',bodyColor:'#9AB4CC',padding:10,cornerRadius:8}},
+    /* Barra de valor 1 ou 2 tem dois pixels de altura e era impossível de
+       acertar com o mouse. Duas providências:
+         · interaction por ÍNDICE: passar em qualquer altura da coluna já
+           mostra o valor — não precisa acertar a barrinha;
+         · minBarLength: a barra nunca desenha com menos de 6px, então
+           ela existe na tela mesmo valendo 1. */
+    interaction:{mode:'index', intersect:false, axis:'x'},
+    datasets:{bar:{minBarLength:6}},
+    plugins:{legend:{labels:{color:'#C4D6E8',font:{size:12},boxWidth:12,padding:14}},
+      tooltip:{backgroundColor:'rgba(4,8,15,.97)',borderColor:'rgba(252,40,119,.45)',borderWidth:1,
+        titleColor:'#F5FBFF',bodyColor:'#C4D6E8',padding:12,cornerRadius:0,
+        titleFont:{size:12},bodyFont:{size:12}}},
     scales:{x:EIXO,y:EIXO}};
 
   /* ── pareado por categoria ── */
@@ -19724,10 +19953,13 @@ function dsAplicarMapa(){
    alguém reescreva 43 linhas. */
 function dsTrocarConjunto(){
   var atual=String((_CFG.docusign&&_CFG.docusign.campos)||'').trim();
-  var usandoNovo = atual.indexOf('Cliente_NomeCliente')>=0;
-  var alvo = usandoNovo ? DS_CAMPOS_ANTIGOS : DS_CAMPOS_PADRAO;
-  var nome = usandoNovo ? 'sem prefixo (Nome_Cliente, CPF_Cliente…)'
-                        : 'com prefixo do papel (Cliente_NomeCliente…) — o do script da planilha';
+  /* Detecta pelo conjunto COM prefixo, que é o alternativo. A versão
+     anterior testava pelo padrão e, quando o padrão virou a lista sem
+     prefixo, o botão passou a trocar de um conjunto para ele mesmo. */
+  var usandoPrefixo = atual.indexOf('Cliente_NomeCliente')>=0;
+  var alvo = usandoPrefixo ? DS_CAMPOS_PADRAO : DS_CAMPOS_ANTIGOS;
+  var nome = usandoPrefixo ? 'confirmado do modelo (Nome_Cliente, CPF_Cliente…)'
+                           : 'com prefixo do papel (Cliente_NomeCliente…) — o do script antigo da planilha';
   if(!confirm('Trocar para o conjunto '+nome+'?\n\nNada mais muda: só os rótulos que vão na URL.')) return;
   try{
     _CFG.docusign.campos=alvo;
@@ -20434,89 +20666,86 @@ ${obsTxt?`<div class="sec-title">▸ OBSERVAÇÕES</div><div style="background-c
 // ═══ CONFIG ENGINE ═══
 const CFG_KEY='gs_cfg_v1';
 /* ═══════════════════════════════════════════════════════════════════
-   OS RÓTULOS DO DOCUSIGN  (revisto em 10/08/2026)
+   OS RÓTULOS DO DOCUSIGN  (confirmados pelo Luciano em 11/08/2026)
    ───────────────────────────────────────────────────────────────────
-   Vinham errados, e o contrato chegava em branco por causa disso.
+   Esta lista veio do modelo, campo por campo, na ordem em que os campos
+   aparecem no documento. Não é mais palpite nem inferência: é o que
+   está lá.
 
-   O que estava aqui antes era um palpite: Nome_Cliente, CPF_Cliente,
-   Data_Enterga… Só que o script antigo da planilha — que preenchia o
-   contrato certo, por meses — mandava com OUTRA cara:
+   A investigação de 10/08 tinha levado ao conjunto com prefixo de papel
+   (Cliente_NomeCliente…), por analogia com o script antigo da planilha.
+   Era uma boa hipótese e estava errada: o modelo REEDITADO usa os
+   rótulos sem prefixo. O conjunto com prefixo continua guardado abaixo
+   e o botão de trocar segue funcionando, porque o custo de manter é uma
+   constante e o custo de precisar dele e não ter é um contrato em branco.
 
-       &Cliente_NomeCliente=…  &Cliente_CpfCliente=…
-       &Cliente_LocalRetirada=…  &Cliente_ValorTotal=…
-
-   Todo rótulo começa com o nome do PAPEL do signatário. É a convenção
-   do PowerForm para preencher campo de documento: <Papel>_<DataLabel>.
-   Sem o prefixo o DocuSign trata como parâmetro desconhecido e joga
-   fora — sem erro, sem aviso, sem nada.
-
-   E é exatamente isso que explicava o sintoma: nome e e-mail chegavam,
-   todo o resto não. Os dois únicos que funcionavam já nasciam
-   prefixados por construção — Cliente_UserName e Cliente_Email.
-
-   As catorze primeiras linhas abaixo são as do script, letra por letra:
-   têm prova de que preenchem. As de baixo são os campos que o script
-   não mandava (condutores, CNH, horários, voo) escritas na MESMA
-   convenção — plausíveis, não comprovadas. O botão "LER OS RÓTULOS DO
-   MODELO", em Configurações → DocuSign, confere isso contra o modelo de
-   verdade quando a Edge Function estiver publicada.
-
-   Cpf_Cliente aparece duas vezes de propósito: o script mandava o CPF
-   nas duas formas, e manter as duas custa 20 caracteres de URL. */
+   Sobre numeroPorExtenso(): fica na lista porque está no modelo. Se um
+   dia ele vier vazio no contrato assinado enquanto o resto vem cheio, é
+   porque é campo de FÓRMULA — o DocuSign calcula sozinho e recusa valor
+   de fora. Nesse caso é só apagar esta linha em Configurações. */
 const DS_CAMPOS_PADRAO=[
-  /* ── comprovados no script da planilha ── */
-  'Cliente_NomeCliente = nome',
-  'Cliente_CpfCliente = cpf',
-  'Cpf_Cliente = cpf',
-  'Cliente_CategoriaVeiculo = cat',
-  'Cliente_NumDiarias = dias',
-  'Cliente_LocalRetirada = locret',
-  'Cliente_DataRetirada = din',
-  'Cliente_LocalDevolucao = locdev',
-  'Cliente_DataDevolucao = dout',
-  'Cliente_ValorTotal = valor',
-  'Cliente_ValorExtenso = extenso',
-  'Cliente_DataPagamento = pgdata',
-  'Cliente_DataEnvio = dataass',
-  'Data_Fechamento = dataass',
-  /* ── mesma convenção, ainda sem prova ── */
-  'Cliente_Telefone = tel',
-  'Cliente_EmailCliente = email',
-  'Cliente_Nascimento = nasc',
-  'Cliente_Cnh = cnh',
-  'Cliente_ValidadeCnh = cnhval',
-  'Cliente_Cep = cep',
-  'Cliente_HoraRetirada = hc',
-  'Cliente_HoraDevolucao = hd',
-  'Cliente_CiaEntrega = caent',
-  'Cliente_CiaDevolucao = cadev',
-  'Cliente_FormaPagamento = forma',
-  'Cliente_Reserva = res',
-  'Cliente_NomeAdd1 = ad1nome','Cliente_CpfAdd1 = ad1cpf','Cliente_NascimentoAdd1 = ad1nasc',
-  'Cliente_CnhAdd1 = ad1cnh','Cliente_ValidadeCnhAdd1 = ad1cnhval',
-  'Cliente_NomeAdd2 = ad2nome','Cliente_CpfAdd2 = ad2cpf','Cliente_NascimentoAdd2 = ad2nasc',
-  'Cliente_CnhAdd2 = ad2cnh','Cliente_ValidadeCnhAdd2 = ad2cnhval',
-  'Cliente_NomeAdd3 = ad3nome','Cliente_CpfAdd3 = ad3cpf','Cliente_NascimentoAdd3 = ad3nasc',
-  'Cliente_CnhAdd3 = ad3cnh','Cliente_ValidadeCnhAdd3 = ad3cnhval',
-  'Cliente_NomeAdd4 = ad4nome','Cliente_CpfAdd4 = ad4cpf','Cliente_NascimentoAdd4 = ad4nasc',
-  'Cliente_CnhAdd4 = ad4cnh','Cliente_ValidadeCnhAdd4 = ad4cnhval'
+  'Nome_Cliente = nome',
+  'CPF_Cliente = cpf',
+  'Telefone_Cliente = tel',
+  'email_Cliente = email',
+  'Nascimento_Cliente = nasc',
+  'CNH_Cliente = cnh',
+  'ValCNH_Cliente = cnhval',
+  'CEP_N_Cliente = cep',
+  'Categoria_Cliente = cat',
+  'Diarias_Cliente = dias',
+  'Local_Entrega = locret',
+  'Local_Devolucao = locdev',
+  'Data_Enterga = din',
+  'Data_Devolucao = dout',
+  'Hora_Entrega = hc',
+  'Hora_Devolucao = hd',
+  'CA_Entrega = caent',
+  'CA_Devolucao = cadev',
+  'Valor_Moeda = valor',
+  'numeroPorExtenso() = extenso',
+  'Modp_Pagamento = forma',
+  'Data_Pagamento = pgdata',
+  'Nome_ADD1 = ad1nome',
+  'CPF_ADD1 = ad1cpf',
+  'Nascimento_ADD1 = ad1nasc',
+  'CNH_ADD1 = ad1cnh',
+  'ValCNH_ADD1 = ad1cnhval',
+  'Nome_ADD2 = ad2nome',
+  'CPF_ADD2 = ad2cpf',
+  'Nascimento_ADD2 = ad2nasc',
+  'CNH_ADD2 = ad2cnh',
+  'ValCNH_ADD2 = ad2cnhval',
+  'Nome_ADD3 = ad3nome',
+  'CPF_ADD3 = ad3cpf',
+  'Nascimento_ADD3 = ad3nasc',
+  'CNH_ADD3 = ad3cnh',
+  'ValCNH_ADD3 = ad3cnhval',
+  'Nome_ADD4 = ad4nome',
+  'CPF_ADD4 = ad4cpf',
+  'Nascimento_ADD4 = ad4nasc',
+  'CNH_ADD4 = ad4cnh',
+  'ValCNH_ADD4 = ad4cnhval',
+  'Data_ASS = dataass'
 ].join('\n');
 
-/* O mapeamento que estava aqui até 10/08/2026, guardado para a migração
-   saber distinguir "de fábrica" de "o Luciano ajustou" — e para dar para
-   voltar num clique se o modelo for mesmo o dos rótulos sem prefixo. */
+/* Conjunto alternativo: a convenção <Papel>_<DataLabel>, que era a do
+   script antigo da planilha. Fica para o botão de troca em Configurações
+   → DocuSign, caso o modelo volte a ser refeito nesse formato. */
 const DS_CAMPOS_ANTIGOS=[
-  'Nome_Cliente = nome','CPF_Cliente = cpf','Telefone_Cliente = tel','email_Cliente = email',
-  'Nascimento_Cliente = nasc','CNH_Cliente = cnh','ValCNH_Cliente = cnhval','CEP_N_Cliente = cep',
-  'Categoria_Cliente = cat','Diarias_Cliente = dias','Local_Entrega = locret','Local_Devolucao = locdev',
-  'Data_Enterga = din','Data_Devolucao = dout','Hora_Entrega = hc','Hora_Devolucao = hd',
-  'CA_Entrega = caent','CA_Devolucao = cadev','Valor_Moeda = valor','numeroPorExtenso() = extenso',
-  'Modp_Pagamento = forma','Data_Pagamento = pgdata',
-  'Nome_ADD1 = ad1nome','CPF_ADD1 = ad1cpf','Nascimento_ADD1 = ad1nasc','CNH_ADD1 = ad1cnh','ValCNH_ADD1 = ad1cnhval',
-  'Nome_ADD2 = ad2nome','CPF_ADD2 = ad2cpf','Nascimento_ADD2 = ad2nasc','CNH_ADD2 = ad2cnh','ValCNH_ADD2 = ad2cnhval',
-  'Nome_ADD3 = ad3nome','CPF_ADD3 = ad3cpf','Nascimento_ADD3 = ad3nasc','CNH_ADD3 = ad3cnh','ValCNH_ADD3 = ad3cnhval',
-  'Nome_ADD4 = ad4nome','CPF_ADD4 = ad4cpf','Nascimento_ADD4 = ad4nasc','CNH_ADD4 = ad4cnh','ValCNH_ADD4 = ad4cnhval',
-  'Data_ASS = dataass'
+  'Cliente_NomeCliente = nome','Cliente_CpfCliente = cpf','Cpf_Cliente = cpf',
+  'Cliente_CategoriaVeiculo = cat','Cliente_NumDiarias = dias',
+  'Cliente_LocalRetirada = locret','Cliente_DataRetirada = din',
+  'Cliente_LocalDevolucao = locdev','Cliente_DataDevolucao = dout',
+  'Cliente_ValorTotal = valor','Cliente_ValorExtenso = extenso',
+  'Cliente_DataPagamento = pgdata','Cliente_DataEnvio = dataass','Data_Fechamento = dataass',
+  'Cliente_Telefone = tel','Cliente_EmailCliente = email','Cliente_Nascimento = nasc',
+  'Cliente_Cnh = cnh','Cliente_ValidadeCnh = cnhval','Cliente_Cep = cep',
+  'Cliente_HoraRetirada = hc','Cliente_HoraDevolucao = hd',
+  'Cliente_CiaEntrega = caent','Cliente_CiaDevolucao = cadev',
+  'Cliente_FormaPagamento = forma','Cliente_Reserva = res',
+  'Cliente_NomeAdd1 = ad1nome','Cliente_CpfAdd1 = ad1cpf','Cliente_NascimentoAdd1 = ad1nasc',
+  'Cliente_CnhAdd1 = ad1cnh','Cliente_ValidadeCnhAdd1 = ad1cnhval'
 ].join('\n');
 let _CFG={
   cambio:5.2,comissao:MGW_COMISSAO_DEFAULT,ajuda:1700,dias:30,descPad:75,
@@ -21305,7 +21534,7 @@ function cfgLoad(){
   try{
     const _rawGet=localStorage.__proto__.getItem.bind(localStorage);
     const _rawSet=localStorage.__proto__.setItem.bind(localStorage);
-    const _MIGVER=4;
+    const _MIGVER=5;
     let _cur=0; try{_cur=parseInt(_rawGet('gs_cfg_migver')||'0',10)||0;}catch(_){}
     if(_cur<_MIGVER){
       /* v3 (2026-08): o modelo do contrato foi reeditado no DocuSign, o que gerou
@@ -21326,10 +21555,13 @@ function cfgLoad(){
            alguma vez (a trava existe para proteger ajuste de verdade, não
            para congelar um mapeamento que nunca preencheu nada). Quem
            editou os rótulos à mão não é tocado. */
-        var _atual=String(_CFG.docusign.campos||'').trim();
-        var _eraDeFabrica=(!_atual || _atual===String(DS_CAMPOS_ANTIGOS).trim());
-        var _travado=false; try{ _travado=_rawGet('gs_ds_mapa_travado')==='1'; }catch(_){}
-        if(_eraDeFabrica || !_travado) _CFG.docusign.campos=DS_CAMPOS_PADRAO;
+        /* v5 (11/08): a lista de rótulos veio do modelo, campo por campo.
+           Ela substitui QUALQUER mapeamento anterior — inclusive um que
+           tenha sido travado, porque tudo o que existia antes era palpite
+           e nenhum deles preenchia o contrato. É a única migração deste
+           arquivo que passa por cima da trava, e passa de propósito. */
+        _CFG.docusign.campos=DS_CAMPOS_PADRAO;
+        try{ _rawSet('gs_ds_mapa_travado','1'); }catch(_){}
         _CFG.docusign.contratoUrl='https://na4.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=075ae2f7-5b6d-4c08-a992-9f47c2ba8afb&env=na4&acct=db09479d-3111-493a-ad4c-3b2588ef4580&v=2';
       }catch(_){}
       if(Array.isArray(_CFG.cats)){
@@ -23858,7 +24090,32 @@ function loadTab(cands,isHist){
    A data de devolução NÃO entra: quando o cliente paga fragmentado ou adiciona
    diárias, a planilha ganha outra linha com devolução/valor diferentes — e as
    duas linhas são a mesma reserva, não duas. */
-function dedupeKey(r){ return r.tel+'|'+(r.entrega?r.entrega.getTime():0)+'|'+norm(r.cliente); }
+/* Chave de nome TOLERANTE a variação de digitação.
+   O nome do mesmo cliente chega escrito de jeitos diferentes na planilha
+   e no app — "JOAO SILVA", "Joao S. Silva", "joão  silva". Comparando o
+   texto inteiro, isso virava duas reservas: o carro aparecia duplicado no
+   calendário e o faturamento contava dobrado.
+
+   A regra é primeiro nome + último sobrenome, sem acento e sem as
+   iniciais soltas do meio. É previsível e conservadora:
+     JOAO SILVA  ·  Joao S. Silva  ·  JOÃO DA SILVA   → joao|silva  (mesma)
+     JOAO SILVA  ·  JOAO SANTOS                        → nomes diferentes
+   Homônimo de verdade continua separado, porque a chave carrega também o
+   telefone e a data de retirada — dois "João Silva" só colidem se forem o
+   mesmo telefone no mesmo dia, e aí é a mesma pessoa mesmo. */
+function nomeChaveTol(nome){
+  var t=norm(nome).replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(Boolean);
+  if(!t.length) return norm(nome);
+  /* PRIMEIRO e ÚLTIMO token, sem filtrar por tamanho. Filtrar as
+     palavras de uma letra parecia bom (tirava a inicial do meio) e
+     juntava gente diferente: "Cliente A" e "Cliente C" viravam os dois
+     "cliente". Pegando as pontas, a inicial do meio some sozinha —
+     "Joao S. Silva" e "JOAO SILVA" dão joao|silva — e o sobrenome de uma
+     letra continua distinguindo. */
+  return t.length===1 ? t[0] : (t[0]+'|'+t[t.length-1]);
+}
+function dedupeKey(r){ return r.tel+'|'+(r.entrega?r.entrega.getTime():0)+'|'+nomeChaveTol(r.cliente); }
+window.nomeChaveTol=nomeChaveTol;   /* usado pelos testes e pelo pareamento cotação↔reserva */
 
 /* Assinatura da LINHA (tudo que importa). Duas linhas com a mesma assinatura são
    cópia literal — o caso de "copiei de FECHAMENTOS e colei no HISTÓRICO". */
@@ -24096,8 +24353,23 @@ function mesclarReservas(rows){
         || (r.devolucao && a.devolucao && r.devolucao>a.devolucao)
         || ((+r.valor||0) > 0 && (+a.valor||0) > 0 && (+r.valor||0) < (+a.valor||0)*0.5);
     if(a._src===r._src && pareceAlteracao){
-      /* mesma aba + cara de alteração → soma os valores numa reserva só */
-      a.valor=(a.valor||0)+(r.valor||0);
+      /* Mesma aba + cara de alteração → é reserva fragmentada em partes.
+         O valor da reserva passa a ser a SOMA DO QUE FOI PAGO em cada
+         parte — e só isso. Duas travas para não inflar:
+           · parte que repete um valor já contado é pagamento relançado,
+             não dinheiro novo;
+           · a soma nunca passa do valor integral do contrato, quando ele
+             é conhecido. Parte que viesse com o total cheio dobrava a
+             reserva no faturamento. */
+      var vNovo=(+r.valor||0);
+      a._partesVal=a._partesVal||[(+a.valor||0)];
+      var repetido=a._partesVal.some(function(x){ return Math.abs(x-vNovo)<0.01; });
+      var teto=(+a.valorIntegral||0);
+      if(vNovo>0 && !repetido){
+        var soma=(a.valor||0)+vNovo;
+        a.valor=(teto>0 && soma>teto+0.01) ? teto : soma;
+        a._partesVal.push(vNovo);
+      }
       if(r.devolucao && (!a.devolucao || r.devolucao>a.devolucao)){ a.devolucao=r.devolucao; a.hDev=r.hDev||a.hDev; }
       if(r.dataFech && (!a.dataFech || r.dataFech<a.dataFech)) a.dataFech=r.dataFech;   /* fechamento = o original */
       ['cadeirinha','aerea','localDev','obs','voucher','formaPag','parc','qualidade'].forEach(function(c){ if(!a[c] && r[c]) a[c]=r[c]; });
@@ -25433,6 +25705,7 @@ window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, rend
   toggleManut:toggleManut, carregarManutencao:loadManut, carregarFlags:loadFlags,
   carregarRemanejamentos:loadOverrides, disponibilidade:disponibilidadePeriodo,
   dispQuadro:renderDisponibilidade, dispDetalhe:dispDetalhe,
+  processar:processarReservas,   /* exposto para teste do pipeline de mesclagem */
   cortarPlanilha:cortarPlanilha, religarPlanilha:religarPlanilha,
   importarDaPlanilha:importarDaPlanilha, planilhaLigada:planilhaLigada,
   estadoPlanilha:function(){ loadPlan(); return JSON.parse(JSON.stringify(PLAN)); },
@@ -27861,13 +28134,25 @@ thead th,.mgdisp-tab thead th,.mgrsv-table thead th{ background:#070f1a !importa
 /* abertura */
 .cpx-capa{padding:0;overflow:hidden;position:relative;min-height:230px;display:grid;
   grid-template-columns:minmax(240px,320px) 1fr;gap:0;align-items:stretch}
-.cpx-capa canvas{width:100%;height:100%;display:block}
+.cpx-esf{position:relative;min-height:250px}
+.cpx-esf canvas{width:100%;height:100%;position:absolute;inset:0;display:block}
+.cpx-esf-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;pointer-events:none;text-align:center}
+/* véu escuro atrás do texto: a malha passa por trás do número e comia a
+   leitura justamente no meio, onde os pontos são mais densos */
+.cpx-esf-c::before{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:62%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,rgba(5,10,18,.88) 38%,rgba(5,10,18,0) 72%)}
+.cpx-esf-n,.cpx-esf-l,.cpx-esf-s{position:relative}
+.cpx-esf-n{font-family:'DM Mono',monospace;font-size:3.1rem;font-weight:800;color:var(--p-rosa);line-height:1}
+.cpx-esf-l{font-size:.56rem;letter-spacing:.24em;color:var(--p-ouro);font-weight:700;margin-top:7px}
+.cpx-esf-s{font-size:.66rem;color:var(--chalk2);margin-top:5px}
 .cpx-capa-txt{padding:24px 26px;display:flex;flex-direction:column;justify-content:center}
 .cpx-eyebrow{font-size:.58rem;letter-spacing:.28em;color:var(--p-verm);font-weight:700;margin-bottom:10px}
 .cpx-tit{font-size:clamp(1.2rem,2.6vw,1.9rem);font-weight:800;color:#fff;line-height:1.14;letter-spacing:-.01em}
 .cpx-tit span{color:var(--p-rosa)}
 .cpx-lead{font-size:.88rem;line-height:1.75;color:var(--chalk2);margin-top:12px;max-width:62ch}
-@media(max-width:820px){ .cpx-capa{grid-template-columns:1fr} .cpx-capa canvas{height:180px} }
+@media(max-width:820px){ .cpx-capa{grid-template-columns:1fr} .cpx-esf{min-height:210px} }
 
 /* contadores */
 .cpx-nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px;margin:14px 0 0}
@@ -27949,6 +28234,90 @@ thead th,.mgdisp-tab thead th,.mgrsv-table thead th{ background:#070f1a !importa
   .cpx-p,.cpx-verb-c p{font-size:.81rem}
   .cpx-erros,.cpx-graf{grid-template-columns:1fr}
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   COMPARATIVO — MAIS CLARO E MAIOR  (11/08/2026)
+   O painel estava escuro demais para ser lido em reunião, e a fonte,
+   pequena demais para projeção. Este bloco vale SÓ dentro do
+   Comparativo: o resto do app continua como está.
+   ═══════════════════════════════════════════════════════════════════ */
+#panel-comparativo{ --c-sup:rgba(255,255,255,.062); --c-sup2:rgba(255,255,255,.085); }
+#panel-comparativo .card,
+#panel-comparativo .cpx-sec{
+  background:var(--c-sup) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.11) !important;
+  padding:24px 26px !important;
+}
+#panel-comparativo .kpi{ background:var(--c-sup) !important; padding:16px 18px !important }
+#panel-comparativo .card-title{ font-size:16px !important; color:#F2F7FC !important }
+#panel-comparativo .card-sub{ font-size:.78rem !important; color:#A9C0D6 !important; line-height:1.6 }
+/* o texto corrido sobe dois pontos e clareia — é documento para ler */
+#panel-comparativo .cpx-p,
+#panel-comparativo .cpx-verb-c p,
+#panel-comparativo .cpx-saida p,
+#panel-comparativo .cpx-imp-p,
+#panel-comparativo .cpx-erro p,
+#panel-comparativo .cp-des p,
+#panel-comparativo .cp-vies{ font-size:.94rem !important; line-height:1.85 !important; color:#C7D8E8 !important }
+#panel-comparativo .cpx-p b,
+#panel-comparativo .cpx-verb-c b,
+#panel-comparativo .cpx-erro p b{ color:#FFFFFF !important }
+#panel-comparativo .cpx-h{ font-size:1.2rem !important; color:#FFFFFF !important }
+#panel-comparativo .cpx-sub{ font-size:.8rem !important; color:#A9C0D6 !important }
+#panel-comparativo .cpx-erro{ background:rgba(120,10,10,.28) !important; padding:20px 22px !important }
+#panel-comparativo .cpx-erro-t{ font-size:1rem !important; color:#FFB4B4 !important }
+#panel-comparativo .cpx-erro-l{ font-size:.6rem !important; color:#93AABF !important }
+#panel-comparativo .cpx-erro .prova{ font-size:.86rem !important; color:#FFD98A !important }
+#panel-comparativo .cpx-erro .fazer{ color:#B6F7D6 !important }
+#panel-comparativo .cpx-verb summary{ font-size:.95rem !important; padding:15px 18px !important }
+#panel-comparativo .cpx-verb{ background:rgba(255,255,255,.05) !important }
+#panel-comparativo .cpx-verb-c{ padding:2px 18px 18px 18px !important }
+#panel-comparativo .cpx-n{ background:rgba(255,255,255,.075) !important; padding:18px 20px !important }
+#panel-comparativo .cpx-n-v{ font-size:2rem !important }
+#panel-comparativo .cpx-n-t{ font-size:.63rem !important; color:#A9C0D6 !important }
+#panel-comparativo .cpx-n-s{ font-size:.73rem !important; color:#93AABF !important }
+#panel-comparativo .cpx-tab{ font-size:.88rem !important }
+#panel-comparativo .cpx-tab td{ padding:12px 13px !important; color:#C7D8E8 !important }
+#panel-comparativo .cpx-tab th{ font-size:.62rem !important; color:#A9C0D6 !important;
+  background:rgba(255,255,255,.075) !important }
+#panel-comparativo .cpx-golpe{ font-size:1.08rem !important; padding:22px 24px !important }
+#panel-comparativo .cpx-golpe small{ font-size:.84rem !important; color:#C7D8E8 !important }
+#panel-comparativo .cpx-graf>div{ background:rgba(255,255,255,.05) !important; padding:18px 20px !important }
+#panel-comparativo .cpx-graf .gt{ font-size:.84rem !important; color:#F2F7FC !important }
+#panel-comparativo .cpx-graf .gs{ font-size:.72rem !important; color:#A9C0D6 !important }
+#panel-comparativo .cpx-graf .cx{ height:270px }
+#panel-comparativo .cpx-perg>div{ background:rgba(255,255,255,.075) !important; padding:22px 20px !important }
+#panel-comparativo .cpx-perg .q{ font-size:1.06rem !important }
+#panel-comparativo .cpx-perg .a{ font-size:.87rem !important; color:#C7D8E8 !important }
+#panel-comparativo .cp-hero-t,#panel-comparativo .cp-def,
+#panel-comparativo .cp-corr-txt,#panel-comparativo .cp-forca-s{ font-size:.9rem !important; color:#C7D8E8 !important }
+#panel-comparativo .cpx-ctrl{ background:rgba(255,255,255,.06) !important; padding:16px 18px !important }
+#panel-comparativo .cpx-ctrl label{ font-size:.63rem !important; color:#A9C0D6 !important }
+#panel-comparativo .cpx-ctrl .val{ font-size:1.05rem !important }
+/* aviso de gráfico sem dado fica legível também */
+#panel-comparativo .mgw-vazio{ font-size:.86rem !important; color:#A9C0D6 !important }
+@media(max-width:640px){
+  #panel-comparativo .card,#panel-comparativo .cpx-sec{ padding:16px 15px !important }
+  #panel-comparativo .cpx-p,#panel-comparativo .cpx-verb-c p{ font-size:.87rem !important }
+}
+
+/* blocos novos do relatorio */
+.cpx-assum{display:flex;gap:14px;align-items:flex-start;padding:13px 15px;margin-bottom:2px;
+  background:rgba(89,2,2,.18);border-left:2px solid var(--p-verm)}
+.cpx-assum-n{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:800;color:rgba(242,5,5,.55);
+  min-width:22px;line-height:1.3}
+.cpx-assum-t{font-size:.92rem;font-weight:700;color:#FFB4B4;margin-bottom:5px;line-height:1.3}
+.cpx-assum p{font-size:.86rem;line-height:1.78;color:var(--chalk2);margin:0}
+.cpx-decl{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--p-ouro);
+  border:1px solid rgba(242,186,82,.4);padding:1px 6px;margin-left:5px;white-space:nowrap}
+.cpx-tri{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px;margin:12px 0}
+.cpx-tri>div{padding:14px 16px;background:rgba(255,255,255,.04);border-top:2px solid var(--p-ouro)}
+.cpx-tri-t{font-size:.8rem;font-weight:700;color:var(--p-ouro);margin-bottom:7px}
+.cpx-tri p{font-size:.83rem;line-height:1.75;color:var(--chalk2);margin:0}
+#panel-comparativo .cpx-assum{background:rgba(120,10,10,.28) !important;padding:17px 19px !important}
+#panel-comparativo .cpx-assum p,#panel-comparativo .cpx-tri p{font-size:.92rem !important;color:#C7D8E8 !important}
+#panel-comparativo .cpx-assum-t{font-size:1rem !important}
+#panel-comparativo .cpx-tri>div{background:rgba(255,255,255,.07) !important;padding:18px 20px !important}
 
 </style><!--/mgw-skin-v2-->
 </body></html>
