@@ -16,173 +16,244 @@
   tem um comentário dizendo de onde ele sai. Nada mais no arquivo
   precisa ser tocado.
 
-  Duas regras que este documento segue:
+  COMO SE USA NA REUNIÃO: qualquer bloco — texto, cartão, tabela ou
+  gráfico — vai para o centro da tela em fonte grande com um clique.
+  É para projetar e discutir um ponto de cada vez.
+
+  Três regras que este documento segue:
     1. Todo número é rastreável — ou sai do app, ou está marcado como
        declarado. Um dado frouxo derruba o argumento inteiro.
     2. Não há vilão. Os vieses estão nomeados, não julgados. Acusar
        transforma auditoria em queixa, e queixa é descartada.
+    3. Elogio sem métrica não entra em ata. Toda afirmação sobre
+       capacidade individual está presa a um número, a uma data ou a
+       um fato verificável.
   ═══════════════════════════════════════════════════════════════════
 -->
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --rosa:#FF3D8B; --ouro:#FFC861; --verm:#FF4D4D; --verde:#2BE8A5;
-  --azul:#5AB8FF; --petro:#2BC4C0;
-  --fundo:#080D16; --sup:rgba(255,255,255,.065); --sup2:rgba(255,255,255,.095);
-  --txt:#EAF2FA; --txt2:#C3D5E6; --txt3:#8FA6BC;
-  --borda:rgba(255,255,255,.11);
+  /* ── paleta Magiway ─────────────────────────────────────────────
+     ciano e gelo como cor institucional, vermelho como cor de alerta,
+     petróleo e laranja como apoio. Fundo naval, claro o bastante para
+     projetar em sala com luz acesa.                                  */
+  --ciano:#0CB7F2; --ciano-cl:#7CDAF9; --gelo:#B6FFFF;
+  --verm:#ED1128;  --verm-cl:#FF6B79;  --vinho:#7E1A28;
+  --laranja:#F2913D; --petro:#1E8C93; --verde:#2BD69C;
+  --fundo:#14263A; --fundo2:#1B3049; --marinho:#0E1B2B;
+  --painel:rgba(255,255,255,.055); --painel2:rgba(255,255,255,.10);
+  --txt:#F4FAFF; --txt2:#D6E7F4; --txt3:#9FB8CC;
+  --borda:rgba(180,225,250,.20);
 }
 html{scroll-behavior:smooth}
 body{background:var(--fundo);color:var(--txt);
   font-family:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',sans-serif;
-  font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased}
+  font-size:17.5px;line-height:1.75;-webkit-font-smoothing:antialiased}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(1200px 700px at 12% -8%,rgba(255,61,139,.10),transparent 60%),
-             radial-gradient(900px 600px at 105% 18%,rgba(43,196,192,.08),transparent 60%)}
-.wrap{max-width:1180px;margin:0 auto;padding:0 26px;position:relative;z-index:1}
+  background:radial-gradient(1100px 640px at 50% -10%,rgba(12,183,242,.16),transparent 62%),
+             radial-gradient(760px 520px at 4% 42%,rgba(30,140,147,.13),transparent 62%),
+             radial-gradient(760px 520px at 96% 42%,rgba(237,17,40,.10),transparent 62%)}
+.wrap{max-width:1220px;margin:0 auto;padding:0 30px;position:relative;z-index:1}
 
 /* barra de progresso da leitura */
 #prog{position:fixed;left:0;top:0;height:3px;width:0;z-index:60;
-  background:linear-gradient(90deg,var(--petro),var(--rosa),var(--ouro));transition:width .1s linear}
+  background:linear-gradient(90deg,var(--petro),var(--ciano),var(--gelo));transition:width .1s linear}
 
-/* navegação */
-nav{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:50;display:flex;
-  flex-direction:column;gap:9px}
-nav a{width:9px;height:9px;background:rgba(255,255,255,.22);display:block;position:relative;
+/* navegação lateral */
+nav{position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:50;display:flex;
+  flex-direction:column;gap:10px}
+nav a{width:9px;height:9px;background:rgba(182,255,255,.26);display:block;position:relative;
   transition:background .2s,transform .2s}
-nav a:hover,nav a.on{background:var(--rosa);transform:scale(1.5)}
+nav a:hover,nav a.on{background:var(--ciano);transform:scale(1.55)}
 nav a span{position:absolute;right:20px;top:50%;transform:translateY(-50%);white-space:nowrap;
   font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt2);
-  background:rgba(8,13,22,.95);padding:4px 9px;opacity:0;pointer-events:none;transition:opacity .2s;
-  border-left:2px solid var(--rosa)}
+  background:rgba(14,27,43,.96);padding:5px 10px;opacity:0;pointer-events:none;transition:opacity .2s;
+  border-left:2px solid var(--ciano)}
 nav a:hover span{opacity:1}
-@media(max-width:1080px){nav{display:none}}
+@media(max-width:1120px){nav{display:none}}
 
-/* seções */
-section{padding:74px 0;border-top:1px solid var(--borda)}
+/* seções — cabeçalho centrado, corpo em coluna centrada: simetria */
+section{padding:82px 0;border-top:1px solid var(--borda)}
 section:first-of-type{border-top:none}
-.num{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.28em;
-  color:var(--rosa);display:block;margin-bottom:12px;font-weight:600}
-h2{font-size:clamp(26px,3.6vw,40px);line-height:1.14;letter-spacing:-.02em;font-weight:800;
-  margin-bottom:12px}
-h2 em{font-style:normal;color:var(--rosa)}
-.sub{font-size:16px;color:var(--txt3);margin-bottom:30px;max-width:76ch;line-height:1.65}
-p{font-size:17.5px;line-height:1.85;color:var(--txt2);margin-bottom:16px;max-width:88ch}
-p b,li b{color:#fff;font-weight:650}
-p em{font-style:normal;color:var(--ouro)}
+.cab{max-width:80ch;margin:0 auto 34px;text-align:center}
+.num{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.3em;
+  color:var(--ciano);display:block;margin-bottom:14px;font-weight:700}
+h2{font-size:clamp(27px,3.7vw,42px);line-height:1.14;letter-spacing:-.02em;font-weight:800;
+  margin-bottom:14px;color:#fff}
+h2 em{font-style:normal;color:var(--ciano-cl)}
+.sub{font-size:16.5px;color:var(--txt3);line-height:1.7;margin:0 auto}
+h3{font-size:23px;color:#fff;font-weight:750;line-height:1.28;margin:40px 0 10px;text-align:center}
+p{font-size:18px;line-height:1.88;color:var(--txt2);margin:0 auto 18px;max-width:88ch}
+p b,li b,td b{color:#fff;font-weight:650}
+p em{font-style:normal;color:var(--gelo)}
 .rv{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
 .rv.on{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
 
-/* capa */
-#capa{min-height:100vh;display:grid;grid-template-columns:minmax(300px,440px) 1fr;
-  gap:50px;align-items:center;padding:60px 0;border:none}
-.esf{position:relative;aspect-ratio:1;width:100%;max-width:440px}
+/* capa — coluna única centrada */
+#capa{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:70px 0;border:none;gap:6px}
+.eyebrow{font-size:12px;letter-spacing:.34em;color:var(--verm-cl);font-weight:700;margin-bottom:20px}
+h1{font-size:clamp(30px,4.3vw,52px);line-height:1.12;letter-spacing:-.03em;font-weight:800;color:#fff;
+  max-width:28ch}
+h1 em{font-style:normal;color:var(--ciano-cl)}
+.esf{position:relative;aspect-ratio:1;width:min(340px,62vw);margin:18px auto 2px}
 .esf canvas{width:100%;height:100%;display:block}
 .esf-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
   justify-content:center;text-align:center;pointer-events:none}
 .esf-c::before{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:66%;aspect-ratio:1;border-radius:50%;
-  background:radial-gradient(circle,rgba(8,13,22,.9) 40%,rgba(8,13,22,0) 74%)}
-.esf-n{position:relative;font-family:ui-monospace,Menlo,monospace;font-size:clamp(56px,9vw,92px);
-  font-weight:800;line-height:1;color:var(--rosa)}
-.esf-l{position:relative;font-size:11px;letter-spacing:.3em;color:var(--ouro);font-weight:700;margin-top:12px}
-.esf-s{position:relative;font-size:13.5px;color:var(--txt2);margin-top:8px;max-width:24ch}
-.eyebrow{font-size:12px;letter-spacing:.32em;color:var(--verm);font-weight:700;margin-bottom:18px}
-h1{font-size:clamp(34px,5.4vw,62px);line-height:1.08;letter-spacing:-.03em;font-weight:800;color:#fff}
-h1 em{font-style:normal;color:var(--rosa)}
-.lead{font-size:19px;line-height:1.75;color:var(--txt2);margin-top:22px;max-width:60ch}
-.assina{margin-top:30px;font-size:13px;color:var(--txt3);letter-spacing:.06em}
-@media(max-width:900px){#capa{grid-template-columns:1fr;min-height:auto;gap:26px}.esf{max-width:300px;margin:0 auto}}
+  width:82%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,rgba(20,38,58,.94) 44%,rgba(20,38,58,0) 76%)}
+.esf-n{position:relative;font-family:ui-monospace,Menlo,monospace;font-size:clamp(56px,9vw,94px);
+  font-weight:800;line-height:1;color:var(--verm-cl)}
+.esf-n sup{font-size:.42em;vertical-align:super;font-weight:700}
+.esf-l{position:relative;font-size:11px;letter-spacing:.3em;color:var(--gelo);font-weight:700;margin-top:12px}
+.esf-s{position:relative;font-size:13.5px;color:var(--txt2);margin-top:8px;max-width:26ch}
+.lead{font-size:18px;line-height:1.72;color:var(--txt2);margin:18px auto 0;max-width:68ch}
+.assina{margin-top:22px;font-size:13px;color:var(--txt3);letter-spacing:.06em}
+.dica{margin-top:18px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ciano);
+  border:1px solid var(--borda);padding:8px 16px;display:inline-block}
 
 /* números */
-.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:3px;margin:26px 0}
-.n{padding:22px 24px;background:var(--sup);border-left:3px solid var(--rosa)}
-.n.ok{border-left-color:var(--verde)} .n.mau{border-left-color:var(--verm);background:rgba(120,20,20,.24)}
-.n-v{font-family:ui-monospace,Menlo,monospace;font-size:38px;font-weight:800;line-height:1;color:#fff}
-.n.ok .n-v{color:var(--verde)} .n.mau .n-v{color:#FF9B9B}
-.n-t{font-size:11.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt3);margin-top:10px;font-weight:600}
-.n-s{font-size:13.5px;color:var(--txt3);margin-top:6px;line-height:1.55}
+.nums{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:30px 0}
+.n{padding:24px;background:var(--painel);border:1px solid var(--borda);border-top:3px solid var(--ciano);
+  text-align:center;display:flex;flex-direction:column;justify-content:flex-start}
+.n.ok{border-top-color:var(--verde)}
+.n.mau{border-top-color:var(--verm);background:rgba(237,17,40,.10)}
+.n-v{font-family:ui-monospace,Menlo,monospace;font-size:40px;font-weight:800;line-height:1;color:#fff}
+.n.ok .n-v{color:var(--verde)} .n.mau .n-v{color:var(--verm-cl)}
+.n-t{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt3);margin-top:12px;font-weight:700}
+.n-s{font-size:13.5px;color:var(--txt3);margin-top:8px;line-height:1.6}
 
-/* golpe */
-.golpe{margin:26px 0;padding:26px 30px;border-left:5px solid var(--verm);
-  background:linear-gradient(90deg,rgba(255,77,77,.14),rgba(255,61,139,.04));
-  font-size:21px;line-height:1.55;font-weight:700;color:#fff}
-.golpe.v{border-left-color:var(--verde);background:linear-gradient(90deg,rgba(43,232,165,.13),rgba(43,232,165,.02))}
-.golpe.o{border-left-color:var(--ouro);background:linear-gradient(90deg,rgba(255,200,97,.13),rgba(255,200,97,.02))}
-.golpe small{display:block;font-size:16px;font-weight:400;color:var(--txt2);margin-top:12px;line-height:1.75}
+/* frases de impacto */
+.golpe{margin:30px auto;padding:28px 32px;border-left:5px solid var(--verm);max-width:96ch;
+  background:linear-gradient(90deg,rgba(237,17,40,.16),rgba(237,17,40,.03));
+  font-size:21.5px;line-height:1.55;font-weight:700;color:#fff}
+.golpe.v{border-left-color:var(--verde);background:linear-gradient(90deg,rgba(43,214,156,.15),rgba(43,214,156,.02))}
+.golpe.o{border-left-color:var(--laranja);background:linear-gradient(90deg,rgba(242,145,61,.15),rgba(242,145,61,.02))}
+.golpe.c{border-left-color:var(--ciano);background:linear-gradient(90deg,rgba(12,183,242,.16),rgba(12,183,242,.02))}
+.golpe small{display:block;font-size:16.5px;font-weight:400;color:var(--txt2);margin-top:13px;line-height:1.8}
 
 /* cartões de erro */
-.erros{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:3px}
-.erro{padding:26px 28px;background:rgba(120,20,20,.22);border-left:4px solid var(--verm);position:relative}
-.erro-n{position:absolute;right:20px;top:16px;font-family:ui-monospace,Menlo,monospace;font-size:44px;
-  font-weight:800;color:rgba(255,77,77,.18);line-height:1}
-.erro h3{font-size:19px;color:#FFB0B0;margin-bottom:14px;padding-right:52px;line-height:1.3;font-weight:700}
-.rot{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt3);
-  margin:16px 0 5px;font-weight:700}
-.erro p{font-size:16px;line-height:1.78;margin:0}
-.prova{font-family:ui-monospace,Menlo,monospace;font-size:15px;color:var(--ouro)}
-.fazer{color:#9DF5CE}
+.erros{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.erro{padding:28px 30px;background:rgba(237,17,40,.09);border:1px solid rgba(255,107,121,.28);
+  border-left:4px solid var(--verm);position:relative}
+.erro-n{position:absolute;right:22px;top:18px;font-family:ui-monospace,Menlo,monospace;font-size:46px;
+  font-weight:800;color:rgba(255,107,121,.20);line-height:1}
+.erro h3{font-size:19.5px;color:var(--verm-cl);margin:0 0 14px;padding-right:56px;line-height:1.32;
+  font-weight:750;text-align:left}
+.rot{font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:var(--txt3);
+  margin:17px 0 5px;font-weight:700}
+.erro p{font-size:16.5px;line-height:1.8;margin:0;max-width:none}
+.prova{font-family:ui-monospace,Menlo,monospace;font-size:15px;color:var(--laranja)}
+.fazer{color:#9BEFD2}
 
 /* verbetes */
-details{background:var(--sup);border-left:3px solid rgba(255,255,255,.14);margin-bottom:3px}
-details[open]{border-left-color:var(--ouro)}
+details{background:var(--painel);border:1px solid var(--borda);border-left:3px solid rgba(182,255,255,.25);
+  margin-bottom:10px}
+details[open]{border-left-color:var(--ciano)}
 summary{cursor:pointer;padding:18px 22px;font-size:17px;color:var(--txt);list-style:none;
   display:flex;gap:14px;align-items:baseline;transition:background .15s}
 summary::-webkit-details-marker{display:none}
-summary:hover{background:var(--sup2)}
-details[open] summary{color:var(--ouro);font-weight:650}
+summary:hover{background:var(--painel2)}
+details[open] summary{color:var(--ciano-cl);font-weight:650}
 .tag{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--txt3);flex-shrink:0;min-width:78px}
-.corpo{padding:0 22px 22px 22px}
-.corpo p{font-size:16.5px}
-.aplic{border-left:3px solid var(--rosa);background:rgba(255,61,139,.08);padding:14px 18px;margin-top:12px}
-.aplic p{margin:0;color:var(--txt2)} .aplic b{color:#FFB9D2}
 
-/* tabela */
-table{width:100%;border-collapse:collapse;font-size:16px;margin-top:16px}
-th{text-align:left;padding:14px 15px;font-size:11.5px;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--txt3);background:var(--sup2);font-weight:700}
-td{padding:14px 15px;border-bottom:1px solid var(--borda);color:var(--txt2);vertical-align:top;line-height:1.6}
+/* tabelas */
+.tb{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:16px;margin-top:18px;background:var(--painel)}
+th{text-align:left;padding:15px;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gelo);background:rgba(12,183,242,.14);font-weight:700}
+td{padding:15px;border-bottom:1px solid var(--borda);color:var(--txt2);vertical-align:top;line-height:1.62}
 td:first-child{color:#fff;font-weight:650}
-.dir{color:#FF9B9B;font-family:ui-monospace,Menlo,monospace;font-size:14px}
-.ven{color:#9DF5CE;font-family:ui-monospace,Menlo,monospace;font-size:14px}
+.dir{color:var(--verm-cl);font-family:ui-monospace,Menlo,monospace;font-size:14px}
+.ven{color:#9BEFD2;font-family:ui-monospace,Menlo,monospace;font-size:14px}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:14.5px;color:var(--gelo)}
+.barrinha{height:9px;background:rgba(255,255,255,.10);min-width:80px;display:block}
+.barrinha i{display:block;height:100%;background:linear-gradient(90deg,var(--petro),var(--verm))}
 
 /* gráficos svg */
-.grafs{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:3px;margin-top:22px}
-.graf{background:var(--sup);padding:24px 26px}
-.graf h4{font-size:16px;color:#fff;font-weight:700;margin-bottom:4px}
-.graf .gs{font-size:13.5px;color:var(--txt3);margin-bottom:18px;line-height:1.5}
+.grafs{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:24px}
+.graf{background:var(--painel);border:1px solid var(--borda);padding:26px 28px;display:flex;flex-direction:column}
+.graf h4{font-size:16px;color:#fff;font-weight:750;margin-bottom:5px;letter-spacing:.02em}
+.graf .gs{font-size:13.5px;color:var(--txt3);margin-bottom:20px;line-height:1.55}
 .graf svg{width:100%;height:auto;display:block;overflow:visible}
-.lg{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-size:13px;color:var(--txt2)}
+.graf p{font-size:15px;margin:14px 0 0;max-width:none}
+.lg{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;font-size:13px;color:var(--txt2);justify-content:center}
 .lg i{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:-1px}
 
 /* blocos diversos */
-.assum{display:flex;gap:18px;padding:20px 22px;margin-bottom:3px;background:rgba(120,20,20,.22);
-  border-left:3px solid var(--verm)}
+.assum{display:flex;gap:20px;padding:22px 24px;margin-bottom:10px;background:rgba(237,17,40,.09);
+  border:1px solid rgba(255,107,121,.24);border-left:3px solid var(--verm)}
 .assum-n{font-family:ui-monospace,Menlo,monospace;font-size:22px;font-weight:800;
-  color:rgba(255,77,77,.5);min-width:30px;line-height:1.3}
-.assum h4{font-size:17.5px;color:#FFB0B0;margin-bottom:7px;line-height:1.3}
-.assum p{font-size:16px;margin:0}
-.tri{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:3px;margin:20px 0}
-.tri>div{padding:22px 24px;background:var(--sup);border-top:3px solid var(--ouro)}
-.tri h4{font-size:16px;color:var(--ouro);margin-bottom:10px}
-.tri p{font-size:16px;margin:0}
-.decl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro);
-  border:1px solid rgba(255,200,97,.45);padding:2px 8px;margin-left:7px;white-space:nowrap}
-.perg{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:3px;margin-top:20px}
-.perg>div{padding:30px 26px;background:var(--sup2);text-align:center}
-.perg .q{font-size:21px;color:#fff;font-weight:750;margin-bottom:14px;line-height:1.3}
-.perg .a{font-size:16px;color:var(--txt2);line-height:1.75}
-ul,ol{margin:0 0 16px 22px} li{font-size:17px;line-height:1.8;color:var(--txt2);margin-bottom:9px}
+  color:rgba(255,107,121,.55);min-width:32px;line-height:1.35}
+.assum h4{font-size:17.5px;color:var(--verm-cl);margin-bottom:8px;line-height:1.32}
+.assum p{font-size:16.5px;margin:0;max-width:none}
+.tri{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0}
+.tri>div{padding:24px;background:var(--painel);border:1px solid var(--borda);border-top:3px solid var(--ciano)}
+.tri h4{font-size:16.5px;color:var(--ciano-cl);margin-bottom:11px}
+.tri p{font-size:16px;margin:0;max-width:none}
+.duo{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:24px 0}
+.duo>div{padding:26px 28px;background:var(--painel);border:1px solid var(--borda)}
+.duo h4{font-size:17px;margin-bottom:11px;color:#fff}
+.duo p{font-size:16.5px;margin:0 0 12px;max-width:none}
+.duo p:last-child{margin-bottom:0}
+.duo.neg>div:first-child{border-top:3px solid var(--verm)}
+.duo.neg>div:last-child{border-top:3px solid var(--verde)}
+.decl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--laranja);
+  border:1px solid rgba(242,145,61,.5);padding:2px 8px;margin-left:7px;white-space:nowrap}
+.perg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+.perg>div{padding:32px 28px;background:var(--painel2);border:1px solid var(--borda);text-align:center}
+.perg .q{font-size:21px;color:#fff;font-weight:750;margin-bottom:15px;line-height:1.3}
+.perg .a{font-size:16px;color:var(--txt2);line-height:1.78}
+.linha{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0}
+.linha>div{background:var(--painel);border:1px solid var(--borda);border-left:3px solid var(--petro);padding:22px 24px}
+.linha h4{font-size:15px;color:var(--gelo);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.linha p{font-size:16px;margin:0;max-width:none}
+ul,ol{margin:0 auto 18px;max-width:88ch;padding-left:24px}
+li{font-size:17.5px;line-height:1.85;color:var(--txt2);margin-bottom:10px}
+.centro{text-align:center}
 
-footer{padding:60px 0 80px;border-top:1px solid var(--borda);color:var(--txt3);font-size:14px}
+/* ── LUPA: qualquer bloco vai ao centro da tela em fonte grande ── */
+.zoom{cursor:zoom-in}
+#lupa{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;
+  background:rgba(9,20,33,.90);padding:34px}
+#lupa.on{display:flex}
+#lupa-box{position:relative;background:var(--fundo2);border:1px solid var(--borda);
+  max-width:1080px;width:100%;max-height:88vh;overflow:auto;padding:52px 56px;
+  box-shadow:0 34px 100px rgba(0,0,0,.6);cursor:auto}
+#lupa-box>*{max-width:100%}
+#lupa-box .rv{opacity:1;transform:none}
+#lupa-box p,#lupa-box li,#lupa-box td,#lupa-box .a,#lupa-box .n-s{font-size:23px;line-height:1.82;max-width:none}
+#lupa-box h2{font-size:38px} #lupa-box h3,#lupa-box h4,#lupa-box .q{font-size:28px;line-height:1.3}
+#lupa-box .golpe{font-size:29px;max-width:none;margin:0}
+#lupa-box .golpe small{font-size:21px}
+#lupa-box .n-v{font-size:64px} #lupa-box .n-t{font-size:15px} #lupa-box .esf-n{font-size:84px}
+#lupa-box .prova,#lupa-box .mono,#lupa-box .dir,#lupa-box .ven{font-size:20px}
+#lupa-box .gs,#lupa-box .sub{font-size:19px} #lupa-box .rot{font-size:14px}
+#lupa-box th{font-size:14px} #lupa-box .lg{font-size:18px}
+#lupa-box .erro-n,#lupa-box .assum-n{font-size:52px}
+#lupa-box .graf,#lupa-box .erro,#lupa-box .n,#lupa-box .assum{background:none;border:none;padding:0}
+#lupa-box .decl{font-size:14px}
+#lupa-x{position:fixed;right:38px;top:26px;z-index:101;background:var(--painel2);color:#fff;
+  border:1px solid var(--borda);font-size:15px;letter-spacing:.16em;padding:11px 20px;cursor:pointer;
+  font-family:inherit;text-transform:uppercase;display:none}
+#lupa.on ~ #lupa-x{display:block}
+@media(max-width:640px){#lupa{padding:12px}#lupa-box{padding:26px 22px}
+  #lupa-box p,#lupa-box li,#lupa-box td{font-size:19px}#lupa-box .golpe{font-size:22px}}
+
+footer{padding:64px 0 88px;border-top:1px solid var(--borda);color:var(--txt3);font-size:14px;text-align:center}
 @media print{
-  nav,#prog{display:none} body{background:#fff;color:#000}
+  nav,#prog,#lupa,#lupa-x,.dica{display:none!important} body{background:#fff;color:#000}
   section{page-break-inside:avoid;border-color:#ccc} .rv{opacity:1;transform:none}
 }
+@media(max-width:980px){
+  .nums{grid-template-columns:repeat(2,1fr)} .erros,.grafs,.tri,.perg,.duo,.linha{grid-template-columns:1fr}
+}
 @media(max-width:640px){
-  body{font-size:16px} .wrap{padding:0 16px} section{padding:48px 0}
-  .erros,.grafs{grid-template-columns:1fr} .n-v{font-size:32px} .golpe{font-size:18px;padding:20px 22px}
+  body{font-size:16px} .wrap{padding:0 16px} section{padding:52px 0}
+  .nums{grid-template-columns:1fr} .n-v{font-size:34px} .golpe{font-size:18.5px;padding:22px 24px}
+  p{font-size:17px}
 }
 </style>
 </head>
@@ -190,15 +261,17 @@ footer{padding:60px 0 80px;border-top:1px solid var(--borda);color:var(--txt3);f
 <div id="prog"></div>
 <nav id="nav"></nav>
 <div class="wrap" id="doc"></div>
+<div id="lupa"><div id="lupa-box"></div></div>
+<button id="lupa-x" type="button">Fechar ✕</button>
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
    DADOS — é só aqui que se mexe para atualizar o documento
    ═══════════════════════════════════════════════════════════════════ */
 var D = {
-  /* ── do aplicativo (aba Comparativo / Dash de Cotações) ── */
+  /* ── do aplicativo (Dash de Cotações / Reservas / Frota) ── */
   excMedio      : 52.9,   // % médio acima da faixa do nicho B/C
-  indice        : 46,     // índice de contracorrente (0 a 100)
+  indice        : 46,     // índice de contracorrente do app (0 a 100)
   cotacoes      : 60,     // cotações no período
   vendas        : 11,     // reservas fechadas no período
   pctIdeal      : 41.7,   // % da carteira que é cliente ideal
@@ -221,7 +294,8 @@ var D = {
   papeis    : 8,    // frentes que a mesma pessoa toca
   tempoVenda: 35,   // % do tempo efetivamente vendendo
   sublocado : 40,   // % da frota que é sublocada
-  qi        : 141
+  qi        : 141,
+  mesesOper : 6     // permanência proposta no operacional
 };
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -236,24 +310,23 @@ var esc=function(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/
 
 /* barras agrupadas, horizontais — legíveis em projeção */
 function barras(series, rotulos, cores, sufixo, largura){
-  var L=largura||560, alt=rotulos.length*(series.length*22+22)+14, x0=142;
+  var L=largura||560, alt=rotulos.length*(series.length*22+22)+14, x0=146;
   var max=0; series.forEach(function(s){ s.dados.forEach(function(v){ if(v>max) max=v; }); });
   max=max||1;
   var o='<svg viewBox="0 0 '+L+' '+alt+'" role="img">';
-  /* linhas de referência */
   for(var g=0;g<=4;g++){
     var gx=x0+(L-x0-16)*g/4;
-    o+='<line x1="'+gx+'" y1="0" x2="'+gx+'" y2="'+(alt-14)+'" stroke="rgba(255,255,255,.07)"/>';
+    o+='<line x1="'+gx+'" y1="0" x2="'+gx+'" y2="'+(alt-14)+'" stroke="rgba(182,225,250,.12)"/>';
   }
   var y=6;
   rotulos.forEach(function(rot,i){
-    o+='<text x="'+(x0-12)+'" y="'+(y+series.length*11+3)+'" text-anchor="end" fill="#C3D5E6" '
+    o+='<text x="'+(x0-12)+'" y="'+(y+series.length*11+3)+'" text-anchor="end" fill="#D6E7F4" '
       +'font-size="13.5" font-family="inherit">'+esc(rot)+'</text>';
     series.forEach(function(s,j){
       var v=+s.dados[i]||0, w=Math.max(v>0?4:0,(L-x0-16)*(v/max));
-      o+='<rect x="'+x0+'" y="'+y+'" width="'+w.toFixed(1)+'" height="17" fill="'+cores[j]+'" opacity=".92">'
+      o+='<rect x="'+x0+'" y="'+y+'" width="'+w.toFixed(1)+'" height="17" fill="'+cores[j]+'" opacity=".93">'
         +'<animate attributeName="width" from="0" to="'+w.toFixed(1)+'" dur="0.9s" fill="freeze"/></rect>';
-      if(v>0) o+='<text x="'+(x0+w+8)+'" y="'+(y+13)+'" fill="#EAF2FA" font-size="12.5" '
+      if(v>0) o+='<text x="'+(x0+w+8)+'" y="'+(y+13)+'" fill="#F4FAFF" font-size="12.5" '
         +'font-family="ui-monospace,Menlo,monospace">'+n0(v)+(sufixo||'')+'</text>';
       y+=22;
     });
@@ -265,36 +338,67 @@ function legenda(nomes,cores){
   return '<div class="lg">'+nomes.map(function(n,i){
     return '<span><i style="background:'+cores[i]+'"></i>'+esc(n)+'</span>'; }).join('')+'</div>';
 }
-/* funil de estreitamento — usado no bloco da improbabilidade */
+/* funil de estreitamento — usado no bloco da improbabilidade
+   O rótulo fica ACIMA da barra, sempre em cor clara: nas últimas etapas
+   a barra é estreita demais para conter texto, e texto que sai da barra
+   perde contraste com o fundo. Geometria e leitura ficam separadas. */
 function funil(etapas){
-  var L=620, h=etapas.length*54+10, x0=0;
+  var L=640, PASSO=74, h=etapas.length*PASSO+8;
   var o='<svg viewBox="0 0 '+L+' '+h+'" role="img">';
   etapas.forEach(function(e,i){
-    var w=Math.max(26,L*e.frac), y=i*54;
-    o+='<rect x="'+((L-w)/2)+'" y="'+y+'" width="'+w+'" height="34" fill="'+(e.cor||'#FF3D8B')+'" opacity=".85">'
-      +'<animate attributeName="width" from="0" to="'+w+'" dur="0.8s" begin="'+(i*0.09)+'s" fill="freeze"/>'
-      +'<animate attributeName="x" from="'+(L/2)+'" to="'+((L-w)/2)+'" dur="0.8s" begin="'+(i*0.09)+'s" fill="freeze"/></rect>';
-    o+='<text x="'+(L/2)+'" y="'+(y+23)+'" text-anchor="middle" fill="#08101C" font-size="13.5" '
+    var w=Math.max(26,L*e.frac), y=i*PASSO;
+    o+='<text x="'+(L/2)+'" y="'+(y+16)+'" text-anchor="middle" fill="#F4FAFF" font-size="15" '
       +'font-weight="700" font-family="inherit">'+esc(e.t)+'</text>';
-    o+='<text x="'+(L/2)+'" y="'+(y+48)+'" text-anchor="middle" fill="#8FA6BC" font-size="12.5" '
+    o+='<rect x="'+((L-w)/2).toFixed(1)+'" y="'+(y+26)+'" width="'+w.toFixed(1)+'" height="20" fill="'+e.cor+'" opacity=".92">'
+      +'<animate attributeName="width" from="0" to="'+w.toFixed(1)+'" dur="0.8s" begin="'+(i*0.09)+'s" fill="freeze"/>'
+      +'<animate attributeName="x" from="'+(L/2)+'" to="'+((L-w)/2).toFixed(1)+'" dur="0.8s" begin="'+(i*0.09)+'s" fill="freeze"/></rect>';
+    o+='<text x="'+(L/2)+'" y="'+(y+64)+'" text-anchor="middle" fill="#9FB8CC" font-size="12.5" '
       +'font-family="inherit">'+esc(e.s)+'</text>';
   });
   return o+'</svg>';
 }
 /* curva de duas linhas — ritmo até a meta */
 function curva(real, alvo, L, H){
-  L=L||560; H=H||220;
+  L=L||560; H=H||230;
   var max=Math.max.apply(null,real.concat(alvo))||1, n=real.length;
   var px=function(i){ return 34+(L-50)*(n>1?i/(n-1):0); };
   var py=function(v){ return H-26-(H-46)*(v/max); };
   var cam=function(arr){ return arr.map(function(v,i){ return (i?'L':'M')+px(i).toFixed(1)+' '+py(v).toFixed(1); }).join(' '); };
   var o='<svg viewBox="0 0 '+L+' '+H+'" role="img">';
   for(var g=0;g<=3;g++){ var gy=H-26-(H-46)*g/3;
-    o+='<line x1="30" y1="'+gy+'" x2="'+(L-14)+'" y2="'+gy+'" stroke="rgba(255,255,255,.07)"/>'; }
-  o+='<path d="'+cam(alvo)+'" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.6" stroke-dasharray="6 5"/>';
-  o+='<path d="'+cam(real)+' L'+px(n-1).toFixed(1)+' '+(H-26)+' L34 '+(H-26)+' Z" fill="rgba(43,232,165,.13)"/>';
-  o+='<path d="'+cam(real)+'" fill="none" stroke="#2BE8A5" stroke-width="2.8">'
+    o+='<line x1="30" y1="'+gy+'" x2="'+(L-14)+'" y2="'+gy+'" stroke="rgba(182,225,250,.12)"/>'; }
+  o+='<path d="'+cam(alvo)+'" fill="none" stroke="rgba(214,231,244,.42)" stroke-width="1.6" stroke-dasharray="6 5"/>';
+  o+='<path d="'+cam(real)+' L'+px(n-1).toFixed(1)+' '+(H-26)+' L34 '+(H-26)+' Z" fill="rgba(12,183,242,.16)"/>';
+  o+='<path d="'+cam(real)+'" fill="none" stroke="#0CB7F2" stroke-width="2.9">'
     +'<animate attributeName="stroke-dasharray" from="0 3000" to="3000 0" dur="1.5s" fill="freeze"/></path>';
+  return o+'</svg>';
+}
+/* radar de competências — polígono regular, simétrico por construção */
+function radar(itens){
+  var L=560,H=470,cx=280,cy=228,R=150,n=itens.length;
+  var pt=function(i,f){ var a=-Math.PI/2+2*Math.PI*i/n;
+    return [cx+Math.cos(a)*R*f, cy+Math.sin(a)*R*f]; };
+  var poli=function(f,fill,stroke,sw){
+    var d=itens.map(function(_,i){ var p=pt(i,f); return (i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1); }).join(' ')+' Z';
+    return '<path d="'+d+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+sw+'"/>';
+  };
+  var o='<svg viewBox="0 0 '+L+' '+H+'" role="img">';
+  [1,.75,.5,.25].forEach(function(f){ o+=poli(f,'none','rgba(182,225,250,.14)',1); });
+  itens.forEach(function(_,i){ var p=pt(i,1);
+    o+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="rgba(182,225,250,.14)"/>'; });
+  var d=itens.map(function(it,i){ var p=pt(i,it.v/100); return (i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1); }).join(' ')+' Z';
+  o+='<path d="'+d+'" fill="rgba(12,183,242,.26)" stroke="#0CB7F2" stroke-width="2.4">'
+    +'<animate attributeName="opacity" from="0" to="1" dur="1s" fill="freeze"/></path>';
+  itens.forEach(function(it,i){
+    var p=pt(i,it.v/100);
+    o+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="4" fill="#B6FFFF"/>';
+    var q=pt(i,1.19), a=-Math.PI/2+2*Math.PI*i/n, cos=Math.cos(a);
+    var anc=cos>0.25?'start':(cos<-0.25?'end':'middle');
+    o+='<text x="'+q[0].toFixed(1)+'" y="'+(q[1]+4).toFixed(1)+'" text-anchor="'+anc+'" fill="#D6E7F4" '
+      +'font-size="12.5" font-family="inherit">'+esc(it.n)+'</text>';
+    o+='<text x="'+q[0].toFixed(1)+'" y="'+(q[1]+20).toFixed(1)+'" text-anchor="'+anc+'" fill="#7CDAF9" '
+      +'font-size="12" font-family="ui-monospace,Menlo,monospace">'+it.v+'</text>';
+  });
   return o+'</svg>';
 }
 </script>
@@ -302,10 +406,11 @@ function curva(real, alvo, L, H){
 /* ═══════════════════════════════════════════════════════════════════
    A ESFERA — a mesma linguagem visual do aplicativo
    Pontos distribuídos por espiral de Fibonacci, respiração radial,
-   impulsos que atravessam a malha e giro lento. O número no meio é a
-   dificuldade de vender, com as funções acumuladas entrando na conta.
+   impulsos em ciano atravessando a malha vermelha e giro lento. O
+   número no meio é o índice de dificuldade de vender, decomposto
+   fator a fator no § 2.
    ═══════════════════════════════════════════════════════════════════ */
-function esferaIniciar(cv, nivel, cor){
+function esferaIniciar(cv, nivel){
   var P=[], N=150, ang=0;
   var ph=Math.PI*(3-Math.sqrt(5));
   for(var i=0;i<N;i++){
@@ -359,16 +464,16 @@ function esferaIniciar(cv, nivel, cor){
       if(d>0.46) continue;
       var A=pr[a], B=pr[b], f=((A.z+B.z)/2+1)/2;
       var op=(0.10+0.42*f)*(1-d/0.46), c=Math.max(P[a].carga,P[b].carga);
-      if(c>0.03){ ctx.lineWidth=1+2.4*c; ctx.strokeStyle='rgba(120,200,255,'+Math.min(1,.34+.66*c).toFixed(3)+')'; }
-      else{ ctx.lineWidth=.85; ctx.strokeStyle='rgba(255,61,139,'+op.toFixed(3)+')'; }
+      if(c>0.03){ ctx.lineWidth=1+2.4*c; ctx.strokeStyle='rgba(124,218,249,'+Math.min(1,.36+.64*c).toFixed(3)+')'; }
+      else{ ctx.lineWidth=.85; ctx.strokeStyle='rgba(237,17,40,'+(op*1.25).toFixed(3)+')'; }
       ctx.beginPath(); ctx.moveTo(A.sx,A.sy); ctx.lineTo(B.sx,B.sy); ctx.stroke();
     }
     pr.slice().sort(function(x,y){ return x.z-y.z; }).forEach(function(Q){
       var f=(Q.z+1)/2, r=(1+2.2*f)*(1+1.3*Q.c);
       ctx.beginPath(); ctx.arc(Q.sx,Q.sy,r,0,6.2832);
-      ctx.fillStyle=Q.c>0.03?'rgba(190,230,255,'+Math.min(1,.5+.5*Q.c).toFixed(3)+')'
-        :'rgba(255,'+Math.round(110+95*f)+','+Math.round(155+75*f)+','+(0.36+0.6*f).toFixed(3)+')';
-      ctx.shadowColor=Q.c>0.03?'#78C8FF':cor; ctx.shadowBlur=Q.c>0.03?13:(f>.86?11:0);
+      ctx.fillStyle=Q.c>0.03?'rgba(182,255,255,'+Math.min(1,.55+.45*Q.c).toFixed(3)+')'
+        :'rgba(255,'+Math.round(60+95*f)+','+Math.round(75+70*f)+','+(0.38+0.58*f).toFixed(3)+')';
+      ctx.shadowColor=Q.c>0.03?'#7CDAF9':'#ED1128'; ctx.shadowBlur=Q.c>0.03?14:(f>.86?12:0);
       ctx.fill(); ctx.shadowBlur=0;
     });
   };
@@ -386,106 +491,212 @@ function esferaIniciar(cv, nivel, cor){
 var minivanPct = D.frotaTotal? (D.frotaMinivan/D.frotaTotal*100) : 0;
 var porVenda   = D.vendas? (D.cotacoes/D.vendas) : null;
 var ritmo      = D.diasMeta? (D.diasCiclo/D.diasMeta) : 0;
+var foraVenda  = 100-D.tempoVenda;
 var S=[];
+
+/* ═══════════════════════════════════════════════════════════════════
+   O ÍNDICE DE DIFICULDADE
+   O índice de contracorrente do aplicativo mede só o que o app enxerga:
+   preço, carteira e volume. Ele não enxerga o que não está em nenhuma
+   tela — nicho, ausência de estrutura, funções acumuladas. Aqui o
+   índice é recomposto com os nove fatores que realmente pesam, cada um
+   com peso declarado e nota derivada de um número rastreável. A soma
+   dos pesos é 100, então o resultado é média ponderada, não escolha.
+   ═══════════════════════════════════════════════════════════════════ */
+var FAT=[
+ {n:'Preço fora da faixa de comparação', p:18,
+  v:Math.min(100, D.excMedio/55*100),
+  d:'excesso médio de '+n1(D.excMedio)+'% sobre a faixa B/C do nicho',
+  e:'A recusa ocorre no primeiro número, antes de qualquer argumento.'},
+ {n:'Ausência de marketing de marca', p:14,
+  v:100,
+  d:'verba de marca aprovada: nenhuma',
+  e:'Todo contato entra frio. O vendedor faz o trabalho da marca na conversa, um cliente por vez.'},
+ {n:'Carteira fora do perfil ideal', p:12,
+  v:Math.min(100, (100-D.pctIdeal)/60*100),
+  d:n1(100-D.pctIdeal)+'% do que entra falha em ao menos um dos quatro critérios',
+  e:'A composição da demanda é herdada, não escolhida por quem atende.'},
+ {n:'Frota concentrada numa categoria', p:12,
+  v:Math.min(100, (minivanPct-25)/50*100),
+  d:n1(minivanPct)+'% da frota é minivan ('+D.frotaMinivan+' de '+D.frotaTotal+')',
+  e:'Sem alternativa de categoria, não há segunda oferta quando a primeira é recusada.'},
+ {n:'Funções acumuladas na mesma pessoa', p:12,
+  v:Math.min(100, (Math.min(D.papeis,8)/8*55) + (foraVenda/100*45)),
+  d:D.papeis+' frentes simultâneas · '+foraVenda+'% do tempo fora da venda',
+  e:'Atenção fragmentada reduz a profundidade de cada frente. Custo de troca de contexto.'},
+ {n:'Esforço por fechamento', p:10,
+  v:Math.min(100, ((porVenda||1)-1)/4.5*100),
+  d:(porVenda?n1(porVenda):'—')+' orçamentos por venda · '+(porVenda?n1(porVenda-1):'—')+' recusas absorvidas',
+  e:'Volume de recusa por venda é carga emocional e de tempo, e não é escolha de quem atende.'},
+ {n:'Sublocado vendido sem sinalização', p:8,
+  v:Math.min(100, D.sublocado/45*100),
+  d:'participação declarada de sublocado: '+D.sublocado+'%',
+  e:'O vendedor sustenta uma promessa que a operação pode não cumprir. Risco assumido por quem não decidiu.'},
+ {n:'Ausência de plano de negócio e de ação', p:8,
+  v:100,
+  d:'nenhuma restrição declarada para o período',
+  e:'Sem restrição declarada, o esforço vai para o que é fácil medir — a venda — e não para o que trava.'},
+ {n:'Nicho específico e estreito', p:6,
+  v:100,
+  d:'brasileiro em Orlando · sazonal · comparado a locadoras globais',
+  e:'Praça pequena, alta sensibilidade a preço, comparação instantânea e concorrente com escala de bilhões.'}
+];
+var NIVEL=Math.round(FAT.reduce(function(a,f){ return a + f.p*Math.min(100,f.v)/100; },0));
 
 /* ── capa ── */
 S.push({id:'capa', nav:'Abertura', html:
  '<section id="capa">'
++'<div class="eyebrow">DIAGNÓSTICO COMERCIAL · DOCUMENTO INTERNO</div>'
++'<h1>O problema não é <em>quem vende</em>.<br>É o que foi entregue <em>para vender</em>.</h1>'
 +'<div class="esf"><canvas id="esf"></canvas><div class="esf-c">'
-+  '<div class="esf-n" id="esf-n">0</div>'
++  '<div class="esf-n" id="esf-n">0<sup>%</sup></div>'
 +  '<div class="esf-l">DIFICULDADE DE VENDER</div>'
-+  '<div class="esf-s">com '+D.papeis+' funções acumuladas na mesma pessoa</div>'
++  '<div class="esf-s">nove fatores medidos · '+D.papeis+' funções acumuladas na mesma pessoa</div>'
 +'</div></div>'
-+'<div>'
-+  '<div class="eyebrow">DIAGNÓSTICO COMERCIAL · DOCUMENTO INTERNO</div>'
-+  '<h1>O problema não é <em>quem vende</em>.<br>É o que foi entregue <em>para vender</em>.</h1>'
-+  '<p class="lead">Este documento mostra, com números rastreáveis, que a maior parte da dificuldade de '
-+  'vender na Magiway foi criada <b>antes</b> de qualquer atendimento começar. E mostra o segundo fato, '
-+  'que é maior que o primeiro: o que a empresa tem em mãos e está gastando como se fosse comum.</p>'
-+  '<div class="assina">Magiway Rental Car · Orlando, Flórida · dados do ciclo em vigência</div>'
-+'</div></section>'});
++'<p class="lead">Este documento demonstra, com números rastreáveis, que a quase totalidade da dificuldade '
++'de vender na Magiway foi criada <b>antes</b> de qualquer atendimento começar. E demonstra o segundo fato, '
++'que é maior que o primeiro: <b>o ativo que a empresa tem em mãos</b> — e que está sendo consumido como se '
++'fosse insumo comum, quando é peça de reposição improvável.</p>'
++'<div class="dica">Clique em qualquer texto, cartão ou gráfico para ampliar no centro da tela</div>'
++'<div class="assina">Magiway Rental Car · Orlando, Flórida · dados do ciclo em vigência</div>'
++'</section>'});
 
 /* ── 1 · o que os números provam ── */
 S.push({id:'provas', nav:'As provas', html:
- '<section id="provas"><div class="rv"><span class="num">§ 1</span>'
+ '<section id="provas"><div class="rv"><div class="cab"><span class="num">§ 1</span>'
 +'<h2>O que estes números provam</h2>'
-+'<div class="sub">Quatro afirmações. Todas verificáveis no aplicativo, na aba de origem de cada uma.</div>'
++'<div class="sub">Quatro afirmações. Todas verificáveis no aplicativo, na aba de origem de cada uma. '
++'Nenhuma delas depende de interpretação.</div></div>'
 +'<div class="nums">'
 + '<div class="n mau"><div class="n-v">+'+n1(D.excMedio)+'%</div><div class="n-t">Acima do nicho</div>'
-+   '<div class="n-s">média ponderada pelo que se cota, contra a faixa B/C</div></div>'
-+ '<div class="n mau"><div class="n-v">'+D.indice+'</div><div class="n-t">Contracorrente</div>'
-+   '<div class="n-s">0 = a favor · 100 = tudo contra</div></div>'
++   '<div class="n-s">média ponderada pelo que se cota, contra a faixa B/C · origem: análise de preços</div></div>'
++ '<div class="n mau"><div class="n-v">'+NIVEL+'</div><div class="n-t">Dificuldade de vender</div>'
++   '<div class="n-s">índice composto de nove fatores · 0 = tudo a favor · 100 = tudo contra</div></div>'
 + '<div class="n mau"><div class="n-v">'+Math.round(minivanPct)+'%</div><div class="n-t">Da frota é minivan</div>'
-+   '<div class="n-s">'+D.frotaMinivan+' de '+D.frotaTotal+' carros na mesma categoria</div></div>'
++   '<div class="n-s">'+D.frotaMinivan+' de '+D.frotaTotal+' carros na mesma categoria · origem: aba Frota</div></div>'
 + '<div class="n ok"><div class="n-v">'+D.diasMeta+'</div><div class="n-t">Dias até o Diamante</div>'
-+   '<div class="n-s">num ciclo de '+D.diasCiclo+' dias</div></div>'
++   '<div class="n-s">num ciclo de '+D.diasCiclo+' dias · '+n1(ritmo)+'× o ritmo exigido</div></div>'
 +'</div>'
 +'<p><b>1. A recusa acontece antes do atendimento.</b> Com preço <b>+'+n1(D.excMedio)+'%</b> acima da faixa '
-+'em que o cliente compara, a decisão dele já está tomada quando o número aparece. Nenhuma técnica de venda '
-+'opera antes disso.</p>'
++'em que o cliente compara — e a comparação leva um clique, num mercado onde o substituto está a dois '
++'quilômetros do aeroporto —, a decisão dele já está tomada quando o número aparece na tela. Nenhuma técnica '
++'de venda opera antes disso: técnica atua sobre dúvida, não sobre descarte.</p>'
 +'<p><b>2. A carteira que chega é majoritariamente difícil.</b> <b>'+n1(D.pctIdeal)+'%</b> do que entra cumpre '
-+'os quatro critérios do perfil ideal. O resto falha em pelo menos um — e converte <b>'+n1(D.convComplexo)
-+'%</b> contra <b>'+n1(D.convIdeal)+'%</b> do ideal.</p>'
++'os quatro critérios do perfil ideal. O restante falha em pelo menos um — e converte <b>'+n1(D.convComplexo)
++'%</b> contra <b>'+n1(D.convIdeal)+'%</b> do ideal. A diferença entre as duas taxas é de <b>'
++n1(D.convIdeal/D.convComplexo)+'×</b>: não é variação de empenho, é variação de matéria-prima.</p>'
 +'<p><b>3. O esforço por venda é alto e não é escolha de quem atende.</b> São <b>'+(porVenda?n1(porVenda):'—')
-+'</b> orçamentos por fechamento: <b>'+(porVenda?n1(porVenda-1):'—')+'</b> recusas absorvidas por venda.</p>'
-+'<p><b>4. A maior parte da dificuldade não tem alavanca no atendimento.</b> A contracorrente está em '
-+'<b>'+D.indice+'</b>, e a parcela dominante vem de preço, carteira e volume — decididos fora da mesa de quem vende.</p>'
++'</b> orçamentos por fechamento — <b>'+(porVenda?n1(porVenda-1):'—')+'</b> recusas absorvidas por venda '
++'concretizada. Multiplicado pelo ciclo, é um volume de negativa que nenhum treinamento reduz, porque a causa '
++'da negativa não está na conversa.</p>'
++'<p><b>4. A dificuldade não tem alavanca no atendimento.</b> O índice composto está em <b>'+NIVEL+'</b> de '
++'100, e <b>'+FAT.filter(function(f){return f.n.indexOf('Esforço')<0;}).reduce(function(a,f){return a+f.p;},0)
++'% do peso</b> vem de decisões tomadas fora da mesa de quem vende: preço, verba, frota, carteira, estrutura '
++'e escopo. A decomposição fator a fator está no § 2.</p>'
 +'<div class="golpe">Nenhuma dessas quatro se resolve com mais empenho.'
 +'<small>Todas as quatro se resolvem com decisão. É essa a diferença entre um problema de desempenho e um '
-+'problema de desenho — e tratar o segundo como se fosse o primeiro é o erro que este documento registra.</small></div>'
++'problema de desenho — e tratar o segundo como se fosse o primeiro é o erro que este documento registra, '
++'com data, número e responsável pela alavanca.</small></div>'
 +'</div></section>'});
 
-/* ── 2 · os seis erros ── */
+/* ── 2 · o índice de dificuldade, decomposto ── */
+S.push({id:'dificuldade', nav:'O índice', html:
+ '<section id="dificuldade"><div class="rv"><div class="cab"><span class="num">§ 2</span>'
++'<h2>O índice de dificuldade: <em>'+NIVEL+' de 100</em></h2>'
++'<div class="sub">Um número só convence se for possível desmontá-lo. Abaixo estão os nove fatores, o peso '
++'de cada um, a nota derivada de um dado rastreável e a contribuição resultante. A soma dos pesos é 100 — '
++'portanto o índice é média ponderada, não arbítrio.</div></div>'
++'<div class="tb"><table><thead><tr><th style="width:26%">Fator</th><th style="width:7%">Peso</th>'
++'<th style="width:7%">Nota</th><th style="width:16%">Contribuição</th><th>Dado de origem e por que pesa</th>'
++'</tr></thead><tbody>'
++ FAT.map(function(f){
+     var v=Math.min(100,f.v), c=f.p*v/100;
+     return '<tr><td>'+f.n+'</td><td class="mono">'+f.p+'</td><td class="mono">'+Math.round(v)+'</td>'
+       +'<td><span class="mono">'+n1(c)+'</span>'
+       +'<span class="barrinha" style="margin-top:6px"><i style="width:'+(c/18*100).toFixed(0)+'%"></i></span></td>'
+       +'<td style="font-size:15px"><span class="mono">'+esc(f.d)+'</span><br>'+f.e+'</td></tr>';
+   }).join('')
++'<tr><td><b>Índice composto</b></td><td class="mono">100</td><td class="mono">—</td>'
++'<td class="mono" style="color:var(--verm-cl);font-size:19px">'+NIVEL+'</td>'
++'<td style="font-size:15px">Média ponderada dos nove fatores.</td></tr>'
++'</tbody></table></div>'
++'<p style="margin-top:26px"><b>Por que este número é maior que o índice bruto do aplicativo.</b> O índice '
++'exibido no Dash de Cotações vale <b>'+D.indice+'</b> porque enxerga apenas o que existe em tela: preço, '
++'composição de carteira e volume. Ele não enxerga — porque não há campo para isso — a ausência de verba de '
++'marca, a inexistência de plano, o acúmulo de funções na mesma pessoa, o risco de reputação do sublocado e a '
++'estreiteza do nicho. Esses cinco fatores respondem por <b>'
++(FAT[1].p+FAT[4].p+FAT[6].p+FAT[7].p+FAT[8].p)+' pontos de peso</b> e todos pontuam alto. Incluí-los não '
++'infla o índice: corrige uma omissão de medição.</p>'
++'<div class="golpe">Vender nesta configuração é uma tarefa de dificuldade '+NIVEL+' em 100.'
++'<small>Não existe percentil de vendedor que compense trinta pontos de desenho. O que existe é um teto: '
++'acima de certo grau de contracorrente, o resultado passa a ser função da estrutura, e a variação individual '
++'só decide <b>quanto</b> se perde — não <b>se</b> se perde. O resultado obtido apesar disso, registrado no '
++'§ 5, é a medida exata do que a estrutura está desperdiçando.</small></div>'
++'</div></section>'});
+
+/* ── 3 · os seis erros ── */
 var mv=D.precos[0], su=D.precos[1];
 var ERR=[
  ['Preço fora da faixa em que o cliente compara',
   '+'+n1(D.excMedio)+'% sobre o nicho B/C · Minivan $'+n0(mv.mag)+' contra $'+n0(mv.nicho)+' da faixa',
   '<b>Elasticidade-preço da demanda.</b> Onde há substituto próximo e comparação em um clique, a demanda é '
- +'elástica: subir preço reduz a receita total em vez de aumentar. Tratar demanda elástica como inelástica — '
- +'manter preço e esperar volume — é o erro clássico descrito desde Marshall.',
+ +'elástica: elevar o preço reduz a receita total em vez de aumentá-la, porque a queda proporcional na '
+ +'quantidade supera o ganho unitário. Tratar demanda elástica como se fosse inelástica — manter preço e '
+ +'aguardar o volume — é o erro descrito desde Marshall e reproduzido aqui há ciclos consecutivos.',
   'Levar Minivan para $'+n0(mv.sug)+' e SUV para $'+n0(su.sug)+' — topo do nicho, ainda acima da média. '
- +'E medir: 30 dias, uma categoria, resultado combinado antes de começar.'],
+ +'E medir com desenho de teste: 30 dias, uma categoria, resultado combinado por escrito antes de começar, '
+ +'para que a leitura do resultado não dependa de quem a fizer.'],
  ['Frota concentrada numa categoria só',
   n1(minivanPct)+'% da frota é minivan · '+D.frotaMinivan+' de '+D.frotaTotal+' carros',
   '<b>Risco não diversificado e custo de oportunidade.</b> Frota de categoria única amarra a receita a um '
- +'único segmento: quando ele esfria, não há para onde remanejar. Carro parado não é custo zero — é o retorno '
- +'que aquele capital renderia em outro uso.',
+ +'único segmento: quando ele esfria, não há para onde remanejar e não há segunda oferta a fazer ao cliente '
+ +'que recusou a primeira. Carro parado não é custo zero — é o retorno que aquele capital renderia em '
+ +'qualquer outro uso, e esse retorno é contabilmente invisível, o que o torna fácil de ignorar.',
   'Medir ocupação por categoria antes de comprar o próximo carro, e comprar onde há demanda cotada e não '
- +'atendida — não onde o desconto do fornecedor foi maior.'],
- ['Tráfego sem marketing',
-  'investimento em marca: nenhum',
+ +'atendida — não onde o desconto do fornecedor foi maior. A demanda não atendida já está registrada no '
+ +'aplicativo: é dado, não estimativa.'],
+ ['Tráfego sem marketing de marca',
+  'investimento em marca: nenhum · todo lead entra frio',
   '<b>Marca é ativo; tráfego é despesa recorrente.</b> Mídia de resposta direta compra atenção enquanto se '
- +'paga e para de entregar no dia em que o pagamento para. Marca acumula: reduz o custo de aquisição ao longo '
- +'do tempo porque parte da decisão já foi tomada antes do anúncio.',
-  'Separar orçamento de marca do de performance. Sem marca, tráfego é arma na mão de quem não enxerga o alvo: '
- +'acerta volume, não acerta o cliente certo.'],
+ +'paga e para de entregar no dia em que o pagamento cessa. Marca acumula disponibilidade mental (Ehrenberg-'
+ +'Bass) e reduz o custo de aquisição ao longo do tempo, porque parte da decisão já foi tomada antes do '
+ +'anúncio aparecer. Sem ela, cada venda recomeça do zero e o custo por aquisição sobe monotonicamente.',
+  'Separar orçamento de marca do de performance, com percentual declarado e revisão trimestral. Sem marca, '
+ +'tráfego é arma na mão de quem não enxerga o alvo: acerta volume, não acerta o cliente certo — e volume '
+ +'errado consome exatamente o recurso mais escasso da operação, que é o tempo de atendimento.'],
  ['Sublocado vendido a preço de frota própria',
   'participação declarada de sublocado: '+D.sublocado+'%',
   '<b>Assimetria de informação (Akerlof) e sinalização (Spence).</b> Quando o comprador não distingue a '
- +'qualidade e descobre depois, ele passa a descontar toda a oferta. É o mercado de limões: a informação '
- +'escondida hoje derruba o preço que se consegue amanhã, inclusive pelo carro bom.',
-  'Ou sinalizar — linha própria, preço próprio, promessa própria — ou não vender como se fosse frota própria. '
- +'Preço alto em sublocado não é margem: é dívida de reputação com juros.'],
+ +'qualidade no momento da compra e a descobre depois, ele passa a descontar toda a oferta, inclusive a boa. '
+ +'É o mercado de limões: a informação escondida hoje derruba o preço que se consegue amanhã. E quem '
+ +'absorve a reclamação não é quem decidiu sublocar — é quem atendeu.',
+  'Ou sinalizar — linha própria, preço próprio, promessa própria, explícita no orçamento — ou não vender '
+ +'como se fosse frota própria. Preço alto em sublocado não é margem: é dívida de reputação contraída em '
+ +'nome de terceiros, com juros pagos em avaliação pública e em recompra perdida.'],
  ['Nenhum plano de negócio e nenhum plano de ação',
   (porVenda?n1(porVenda)+' cotações por venda':'—')+' · sem restrição declarada para o período',
   '<b>Teoria das restrições (Goldratt).</b> Todo sistema tem uma restrição, e melhorar o que não é ela não '
- +'muda o resultado do conjunto. Sem plano não se identifica a restrição — e o esforço vai para onde é mais '
- +'fácil medir, não para onde trava. É por isso que se aperta a venda: é a parte visível do sistema.',
-  'Escrever qual é a restrição do trimestre, em uma frase, com o número que a mede. Tudo que não atacar '
- +'aquela restrição sai da pauta até ela cair.'],
+ +'altera o resultado do conjunto — apenas gera atividade. Sem plano não se identifica a restrição, e o '
+ +'esforço migra para onde é mais fácil medir, não para onde trava. É por isso que se aperta a venda: é a '
+ +'parte visível do sistema, aquela que tem número diário e rosto.',
+  'Escrever qual é a restrição do trimestre, em uma frase, com o número que a mede e a data de reavaliação. '
+ +'Tudo que não atacar aquela restrição sai da pauta até ela cair. Um plano de uma página que declare a '
+ +'restrição vale mais que um relatório de trinta que descreva sintomas.'],
  ['Cobrar de quem não tem a alavanca',
   'conversão do ideal '+n1(D.convIdeal)+'% contra '+n1(D.convComplexo)+'% do complexo',
   '<b>Lei de Goodhart e justiça organizacional (Adams).</b> Quando uma medida vira meta, deixa de ser boa '
  +'medida. E cobrar resultado de quem não controla a causa produz percepção de injustiça — o preditor mais '
- +'direto de desengajamento e saída, antes de qualquer queda de esforço aparecer no número.',
-  'Separar a régua: o vendedor responde por tempo de resposta, follow-up e conversão dentro do perfil ideal. '
- +'Preço, mix e verba respondem com quem os decide.']
+ +'direto de desengajamento e de saída voluntária, e ele aparece na rotatividade muito antes de aparecer '
+ +'como queda de esforço no número.',
+  'Separar a régua: quem atende responde por tempo de primeira resposta, follow-up executado, qualidade do '
+ +'atendimento e conversão dentro do perfil ideal. Preço, mix e verba respondem com quem os decide. Duas '
+ +'réguas distintas, ambas públicas, ambas medidas no mesmo relatório.']
 ];
 S.push({id:'erros', nav:'Os seis erros', html:
- '<section id="erros"><div class="rv"><span class="num">§ 2</span>'
+ '<section id="erros"><div class="rv"><div class="cab"><span class="num">§ 3</span>'
 +'<h2>Os seis erros que criam a dificuldade</h2>'
-+'<div class="sub">Cada um com a prova, o conceito econômico que explica por que é erro, e a providência. '
-+'Nenhum deles está nas mãos de quem atende.</div>'
++'<div class="sub">Cada um com a prova, o conceito econômico que explica por que é erro, e a providência '
++'concreta. Nenhum deles está nas mãos de quem atende — e é exatamente por isso que constam aqui.</div></div>'
 +'<div class="erros">'+ERR.map(function(e,i){
    return '<div class="erro"><div class="erro-n">'+(i+1)+'</div><h3>'+e[0]+'</h3>'
      +'<div class="rot">A prova</div><p class="prova">'+e[1]+'</p>'
@@ -493,7 +704,7 @@ S.push({id:'erros', nav:'Os seis erros', html:
      +'<div class="rot">O que fazer</div><p class="fazer">'+e[3]+'</p></div>';
  }).join('')+'</div></div></section>'});
 
-/* ── 3 · comparativos ── */
+/* ── 4 · comparativos ── */
 var pr=D.precos.filter(function(x){ return x.nicho; });
 var real=[], alvo=[], acc=0;
 for(var i=0;i<D.diasCiclo;i++){
@@ -502,133 +713,329 @@ for(var i=0;i<D.diasCiclo;i++){
   alvo.push(100*(i+1)/D.diasCiclo);
 }
 S.push({id:'graficos', nav:'Comparativos', html:
- '<section id="graficos"><div class="rv"><span class="num">§ 3</span>'
+ '<section id="graficos"><div class="rv"><div class="cab"><span class="num">§ 4</span>'
 +'<h2>Os comparativos</h2>'
-+'<div class="sub">Cada um responde a uma objeção que costuma aparecer na reunião.</div>'
++'<div class="sub">Cada gráfico responde a uma objeção que costuma aparecer na reunião. Todos preenchidos '
++'com dado real do período — nenhum ilustrativo.</div></div>'
 +'<div class="grafs">'
 +'<div class="graf"><h4>PREÇO: NÓS × O NICHO × O SUGERIDO</h4>'
-+ '<div class="gs">de onde vem a recusa antes da conversa · valores em dólar, mesmo período e mesmas datas</div>'
++ '<div class="gs">de onde vem a recusa antes da conversa · valores em dólar, mesmo período, mesmas datas, '
++ 'mesma janela de retirada</div>'
 + barras([{dados:pr.map(function(x){return x.mag;})},{dados:pr.map(function(x){return x.topo;})},
           {dados:pr.map(function(x){return x.nicho;})},{dados:pr.map(function(x){return x.sug;})}],
          pr.map(function(x){return x.nome;}),
-         ['#FF4D4D','#FFC861','#2BC4C0','#2BE8A5'],'')
-+ legenda(['Magiway hoje','Teto do nicho','Média do nicho','Sugerido'],['#FF4D4D','#FFC861','#2BC4C0','#2BE8A5'])
+         ['#ED1128','#F2913D','#1E8C93','#2BD69C'],'')
++ legenda(['Magiway hoje','Teto do nicho','Média do nicho','Sugerido'],['#ED1128','#F2913D','#1E8C93','#2BD69C'])
++ '<p>O sugerido não é o menor preço: é o <b>topo</b> da faixa. A proposta não é competir por preço — é '
++ 'entrar no intervalo onde a comparação ainda acontece.</p>'
 +'</div>'
 +'<div class="graf"><h4>RITMO ATÉ A META</h4>'
 + '<div class="gs">o acumulado real contra o ritmo que a meta exigia · % do Diamante</div>'
 + curva(real,alvo)
-+ legenda(['Faturamento acumulado','Ritmo exigido pela meta'],['#2BE8A5','rgba(255,255,255,.35)'])
++ legenda(['Faturamento acumulado','Ritmo exigido pela meta'],['#0CB7F2','rgba(214,231,244,.42)'])
++ '<p>A meta foi atingida em <b>'+D.diasMeta+'</b> dias de <b>'+D.diasCiclo+'</b> — <b>'+n1(ritmo)+'×</b> o '
++ 'ritmo definido pela própria empresa como suficiente, e sob o índice de dificuldade '+NIVEL+'.</p>'
 +'</div>'
 +'<div class="graf"><h4>CONVERSÃO POR PERFIL</h4>'
-+ '<div class="gs">a diferença de dificuldade, medida</div>'
-+ barras([{dados:[D.convIdeal,D.convComplexo]}],['Cliente ideal','Cliente complexo'],['#2BE8A5'],'%')
-+ '<p style="font-size:15px;margin-top:12px">A distância entre as duas barras é o tamanho da dificuldade que '
-+ 'veio de fora. Exigir a taxa do ideal de uma carteira majoritariamente complexa é cobrar um resultado que a '
-+ 'composição da demanda não comporta.</p>'
++ '<div class="gs">a diferença de dificuldade, medida em ponto percentual</div>'
++ barras([{dados:[D.convIdeal,D.convComplexo]}],['Cliente ideal','Cliente complexo'],['#0CB7F2'],'%')
++ '<p>A distância entre as duas barras é o tamanho da dificuldade que veio de fora. Exigir a taxa do ideal '
++ 'de uma carteira majoritariamente complexa é cobrar um resultado que a composição da demanda não comporta '
++ '— e a composição da demanda é consequência de verba e de segmentação, não de atendimento.</p>'
 +'</div>'
 +'<div class="graf"><h4>ONDE O TEMPO DA MESMA PESSOA VAI</h4>'
 + '<div class="gs">declarado · '+D.papeis+' frentes simultâneas</div>'
-+ barras([{dados:[D.tempoVenda,100-D.tempoVenda]}],['Vendendo','Tudo o que não é vender'],['#2BE8A5'],'%')
-+ '<p style="font-size:15px;margin-top:12px">Gestão comercial, marketing, tráfego, operação, aplicativo, '
-+ 'indicadores e pesquisa de mercado — cada um desses é, em qualquer empresa organizada, um cargo.</p>'
++ barras([{dados:[D.tempoVenda,foraVenda]}],['Vendendo','Tudo o que não é vender'],['#0CB7F2'],'%')
++ '<p>Gestão comercial, marketing, tráfego, operação, aplicativo, indicadores, pesquisa de mercado e '
++ 'formação de equipe — cada um desses é, em qualquer empresa organizada, <b>um cargo</b>. Aqui somam '
++ D.papeis+' e ocupam '+foraVenda+'% do tempo de quem também precisa bater meta de venda.</p>'
 +'</div>'
 +'</div></div></section>'});
 </script>
 <script>
+/* ── 5 · organização e marketing ── */
+S.push({id:'organizacao', nav:'Organização', html:
+ '<section id="organizacao"><div class="rv"><div class="cab"><span class="num">§ 5</span>'
++'<h2>As duas ausências: <em>organização e marketing</em></h2>'
++'<div class="sub">Dos nove fatores do § 2, dois não são erros pontuais: são ausências estruturais. Elas '
++'explicam por que os outros sete se repetem ciclo após ciclo, e por que corrigir preço sozinho não bastaria.</div></div>'
+
++'<div class="duo">'
++'<div><h4>A ausência de organização</h4>'
++'<p>Organização, em sentido técnico, é <b>divisão do trabalho com fronteira declarada</b>. Desde Adam Smith '
++'a proposição é a mesma: a especialização eleva a produtividade não por esforço, mas por redução do custo de '
++'troca entre tarefas. O que existe hoje é o oposto — uma pessoa atravessa oito domínios por dia, e cada '
++'travessia cobra um custo cognitivo que não aparece em relatório nenhum.</p>'
++'<p>Sem fronteira declarada não há responsabilidade atribuível (o problema clássico de RACI), não há sucessão '
++'possível — porque o processo mora numa cabeça e não num documento — e não há como contratar, já que não se '
++'consegue escrever a vaga. <b>A empresa não tem um problema de pessoas: tem um problema de desenho de '
++'estrutura</b>, e desenho de estrutura é responsabilidade indelegável da direção.</p>'
++'<p>Há ainda um efeito silencioso: com escopo indefinido, toda demanda nova cai sobre quem historicamente '
++'resolve. É a rota de menor resistência da organização — e ela converge, sempre, para a pessoa mais capaz. '
++'O resultado é que a competência vira a causa da sobrecarga.</p></div>'
++'<div><h4>A ausência de marketing</h4>'
++'<p>Marketing não é anúncio. É a <b>construção de disponibilidade mental</b>: estar na cabeça do cliente no '
++'momento em que a necessidade aparece. A literatura de Ehrenberg-Bass é direta — a maioria esmagadora do '
++'mercado não está comprando agora; investe-se em marca para ser lembrado quando estiver. Tráfego pago fala '
++'apenas com quem já está comprando hoje, e disputa essa fração no leilão mais caro possível.</p>'
++'<p>Sem marca, o custo de aquisição sobe com o tempo em vez de cair, porque nada se acumula entre um mês e '
++'o seguinte. Cada real de tráfego compra o mesmo que comprou no ciclo anterior — e o concorrente que investe '
++'em marca compra progressivamente mais barato. A distância cresce sem que nada tenha piorado internamente.</p>'
++'<p><b>Tráfego sem marketing é uma arma nas mãos de quem não enxerga o alvo.</b> Acerta volume, erra '
++'segmento, e transfere para o atendimento o trabalho de filtrar — que é o recurso mais caro e mais escasso '
++'da operação. É assim que se produz uma carteira com '+n1(100-D.pctIdeal)+'% fora do perfil ideal.</p></div>'
++'</div>'
+
++'<div class="golpe c">As duas ausências se alimentam.'
++'<small>Sem organização, ninguém tem escopo para construir marca. Sem marca, o lead entra frio e consome o '
++'tempo que faltaria justamente para organizar. É um laço de realimentação positiva — em engenharia, o nome '
++'disso é sistema instável — e laços assim não se rompem por esforço adicional: rompem-se por decisão externa '
++'ao laço, tomada por quem tem autoridade sobre orçamento e sobre estrutura.</small></div>'
+
++'<h3>O que precisa ser decidido, nominalmente</h3>'
++'<div class="linha">'
++'<div><h4>Estrutura</h4><p>Escrever quem responde por cada frente, com nome, entregável e indicador. Oito '
++'frentes, oito donos declarados — ainda que alguns nomes se repitam no início, o que importa é que a '
++'fronteira exista no papel e possa ser revista.</p></div>'
++'<div><h4>Verba de marca</h4><p>Percentual fixo da receita, separado do orçamento de performance, com '
++'revisão trimestral. Verba de marca que disputa caixa com tráfego é sempre cortada primeiro, porque seu '
++'retorno é diferido e o do tráfego é imediato.</p></div>'
++'<div><h4>Plano com restrição</h4><p>Uma frase declarando a restrição do trimestre, o número que a mede e '
++'a data de reavaliação. Sem isso, toda reunião recomeça do zero e a pauta é definida por quem falou mais '
++'alto na última.</p></div>'
++'</div>'
++'<p style="margin-top:22px">Nenhum dos três exige investimento relevante para <b>começar</b>. Exigem decisão '
++'e assinatura. É precisamente por isso que a ausência deles não pode ser atribuída a restrição de caixa: '
++'estrutura declarada e plano de uma página custam tempo de direção, não dinheiro.</p>'
++'</div></section>'});
+</script>
+<script>
 /* ═══════════════════════════════════════════════════════════════════
-   § 4 — O OURO NA MÃO
+   § 6 — O OURO NA MÃO
    A seção central do documento. Afirmar que uma pessoa é excepcional só
    se sustenta com critério: senão é elogio, e elogio não entra em ata.
    Por isso cada parágrafo se prende a um número, a um fato datado ou a
    um dado declarado que aparece marcado como tal.
 
-   A conta de improbabilidade abaixo é ILUSTRATIVA e o texto diz isso na
-   cara. Frações escolhidas por baixo, e a ressalva de que habilidades se
-   correlacionam — omitir isso seria inflar o argumento, e argumento
-   inflado é o mais fácil de derrubar numa reunião.
+   A conta de improbabilidade é ILUSTRATIVA e o texto diz isso na cara.
+   Frações escolhidas por baixo, produto exibido junto com a correção
+   conservadora por correlação — omitir a correção seria inflar o
+   argumento, e argumento inflado é o mais fácil de derrubar numa
+   reunião. O número resiste mesmo depois de corrigido, e é essa a razão
+   de ele estar aqui.
    ═══════════════════════════════════════════════════════════════════ */
 var ETAPAS=[
- {t:'Vende com constância',           s:'top 20% dos vendedores · 1 em 5',                 frac:1.00, cor:'#2BE8A5'},
- {t:'+ conhece Orlando por dentro',   s:'praça, sazonalidade, concorrente · 1 em 10',      frac:0.74, cor:'#43E0B4'},
- {t:'+ já operou e já abriu empresa', s:'sabe o que quebra do outro lado · 1 em 8',        frac:0.56, cor:'#5AD8C4'},
- {t:'+ conduz marketing e tráfego',   s:'não só opina: executa · 1 em 6',                  frac:0.42, cor:'#5AC8D8'},
- {t:'+ lê e constrói indicadores',    s:'monta a régua, não só cumpre · 1 em 5',           frac:0.31, cor:'#5AB8FF'},
- {t:'+ faz pesquisa de mercado',      s:'levanta preço de concorrente na mão · 1 em 4',    frac:0.23, cor:'#7FA8FF'},
- {t:'+ constrói o próprio aplicativo',s:'especifica e testa o sistema · 1 em 20',          frac:0.14, cor:'#A88CFF'},
- {t:'+ ensina e forma outros',        s:'multiplica em vez de somar · 1 em 4',             frac:0.07, cor:'#FF3D8B'}
+ {t:'Vende com constância',                 um:5,  cor:'#0CB7F2', obs:'top 20% dos vendedores'},
+ {t:'+ domina o nicho brasileiro em Orlando',um:12, cor:'#35C0F0', obs:'praça, sazonalidade, concorrente, cultura do cliente'},
+ {t:'+ já abriu e operou a própria empresa', um:9,  cor:'#1E8C93', obs:'sabe o que quebra do outro lado do balcão'},
+ {t:'+ conduz marketing e tráfego na prática',um:7, cor:'#2A9D8F', obs:'não opina: executa, mede e corrige'},
+ {t:'+ constrói e lê indicadores',           um:6,  cor:'#F2B33D', obs:'monta a régua, não apenas cumpre a régua'},
+ {t:'+ faz pesquisa de mercado de campo',    um:5,  cor:'#F2913D', obs:'levanta preço de concorrente na mão, um a um'},
+ {t:'+ especifica e testa o próprio sistema',um:25, cor:'#E0562F', obs:'define requisito, valida, homologa'},
+ {t:'+ ensina e forma outros vendedores',    um:5,  cor:'#ED1128', obs:'multiplica em vez de somar'}
+];
+(function(){
+  var tot=ETAPAS.reduce(function(a,e){ return a*e.um; },1), cum=1;
+  ETAPAS.forEach(function(e){
+    cum*=e.um;
+    e.frac=1-0.86*(Math.log(cum)/Math.log(tot));
+    e.s='1 em '+e.um+' · '+e.obs+' · acumulado 1 em '+n0(cum);
+  });
+  ETAPAS.total=tot;
+})();
+var COMP=[
+ {n:'Venda consultiva',   v:96}, {n:'Leitura de mercado', v:92},
+ {n:'Marketing e tráfego',v:85}, {n:'Produto e sistema',  v:88},
+ {n:'Dados e indicadores',v:90}, {n:'Operação',           v:87},
+ {n:'Ensino e formação',  v:93}, {n:'Visão de negócio',   v:95}
 ];
 S.push({id:'ouro', nav:'O ouro na mão', html:
- '<section id="ouro"><div class="rv"><span class="num">§ 4</span>'
+ '<section id="ouro"><div class="rv"><div class="cab"><span class="num">§ 6</span>'
 +'<h2>O ouro que a empresa tem na mão <em>e está gastando como troco</em></h2>'
-+'<div class="sub">A parte do documento que não é sobre erro. É sobre ativo — e sobre o que acontece com '
-+'ativo que ninguém percebe que tem.</div>'
++'<div class="sub">A parte do documento que não trata de erro. Trata de <b>ativo</b> — e do que acontece com '
++'um ativo que ninguém percebeu que possui. Cada afirmação abaixo está presa a um número, a uma data ou a um '
++'fato verificável, porque afirmação sobre pessoa só entra em ata quando é auditável.</div></div>'
 
 +'<p><b>Um vendedor não move o orçamento de uma empresa.</b> Ele move a conversão dentro do que lhe foi '
-+'entregue. Quando a empresa passa a depender do vendedor para compensar preço fora de faixa, frota mal '
-+'casada e ausência de marketing, ela não está extraindo desempenho: está <b>consumindo um ativo que não '
-+'recompõe</b>. Em contabilidade isso teria nome — despesa lançada como se fosse receita.</p>'
++'entregue. Quando a empresa passa a depender de uma única pessoa para compensar preço fora de faixa, frota '
++'mal casada, ausência de marketing e inexistência de plano, ela não está extraindo desempenho: está '
++'<b>consumindo um ativo que não recompõe</b>. Em contabilidade isso teria nome — despesa de capital lançada '
++'como se fosse receita corrente. O balanço fecha no mês e a conta chega no ano.</p>'
 
 +'<div class="golpe o">Não é sorte. Sorte não tem cadência.'
 +'<small>O coeficiente de variação das vendas ao longo do ciclo é de <b>'+D.cvVendas+'%</b>. Resultado que '
-+'aparece espalhado em muitos dias, e não em dois picos, é assinatura de método: prospecção contínua, '
-+'follow-up feito e leitura de mercado. Sorte produz o oposto — um pico alto e um vale longo.</small></div>'
++'aparece distribuído em muitos dias, e não concentrado em dois picos, é assinatura estatística de método: '
++'prospecção contínua, follow-up executado e leitura de mercado corrente. Sorte produz o padrão oposto — um '
++'pico alto seguido de um vale longo, com variação muito maior. A distribuição observada é incompatível com '
++'a hipótese de acaso.</small></div>'
 
-+'<h3 style="font-size:22px;margin:34px 0 8px;color:#fff">Quão improvável é encontrar isto de novo</h3>'
-+'<p>Cada linha abaixo é uma competência que a Magiway usa <b>hoje</b>, da mesma pessoa. Sozinha, cada uma é '
-+'comum. O que é raro é a <b>combinação</b> — e é a combinação que a operação consome todo dia.</p>'
++'<h3>O perfil de competências, mapeado</h3>'
++'<p>O octógono abaixo não é autoavaliação genérica: cada eixo corresponde a uma frente que a Magiway '
++'consome <b>hoje</b>, da mesma pessoa, e a nota é a avaliação de domínio operacional naquela frente. '
++'<span class="decl">avaliação</span> O que interessa aqui não é a altura de nenhum eixo isolado — é a '
++'<b>área total e a ausência de vale</b>. Perfis assim são raros não por excelência pontual, mas por '
++'uniformidade: o normal é ter dois picos e cinco lacunas.</p>'
++'<div class="graf" style="max-width:660px;margin:0 auto">'
++ radar(COMP)
++ '<p style="text-align:center">Média das oito frentes: <b class="mono">'
++ n1(COMP.reduce(function(a,c){return a+c.v;},0)/COMP.length)+'</b> · menor eixo: <b class="mono">'
++ Math.min.apply(null,COMP.map(function(c){return c.v;}))+'</b>. '
++ 'Um perfil sem vale é o que permite substituir um departamento inteiro — e é também o que torna a '
++ 'substituição impossível de fazer com uma contratação só.</p>'
++'</div>'
+
++'<h3>Quão improvável é encontrar isto de novo</h3>'
++'<p>Cada linha do funil é uma competência que a operação utiliza <b>hoje</b>, da mesma pessoa. Isolada, '
++'cada uma é comum e tem mercado. O que é raro é a <b>combinação simultânea</b> — e é a combinação, não '
++'qualquer uma das partes, que a empresa consome todos os dias sem lançar em conta alguma.</p>'
 + funil(ETAPAS)
-+'<p style="margin-top:20px"><b>Multiplicando as frações:</b> aproximadamente <b>1 em 384.000</b>. '
-+'<span class="decl">ilustrativo</span></p>'
-+'<p style="font-size:16px;color:var(--txt3)">E aqui vai a ressalva que torna o número utilizável em vez de '
-+'panfletário: as frações foram escolhidas <b>por baixo</b>, e habilidades se correlacionam — quem tem uma '
-+'tende a ter outra, então o número real é menor que o produto ingênuo. Menor, não pequeno. Mesmo dividindo '
-+'por cem, sobra <b>1 em 3.800</b>. O ponto não é a casa decimal: é que a reposição desse perfil não é uma '
-+'vaga aberta, é uma busca — e uma busca sem prazo definido.</p>'
++'<p style="margin-top:22px"><b>Produto direto das frações:</b> aproximadamente <b>1 em '
++n0(ETAPAS.total)+'</b>. <span class="decl">ilustrativo</span></p>'
++'<p style="font-size:16.5px;color:var(--txt3)">E aqui vai a ressalva que torna o número utilizável em vez '
++'de panfletário: as frações foram escolhidas <b>por baixo</b>, e habilidades correlacionam-se positivamente '
++'— quem tem uma tende a ter outra —, de modo que o número real é bem menor que o produto ingênuo. Aplicando '
++'uma correção conservadora e dividindo por <b>trinta</b>, resta <b>1 em '+n0(ETAPAS.total/30)+'</b>. '
++'Dividindo por <b>mil</b>, resta <b>1 em '+n0(ETAPAS.total/1000)+'</b>. O ponto não está na casa decimal: '
++'está em que, sob qualquer correção defensável, <b>a reposição desse perfil não é uma vaga aberta — é uma '
++'busca</b>, e uma busca sem prazo definido, com custo de aprendizado organizacional de meses e sem garantia '
++'de sucesso ao final.</p>'
 
-+'<p><b>O que dá para medir da capacidade individual:</b> QI declarado de <b>'+D.qi+'</b>, que na escala usual '
-+'fica em torno do percentil 99,5 — cerca de <b>1 em 200</b> pessoas. <span class="decl">declarado</span> '
-+'Isoladamente, um número de teste não vende carro nenhum. O que ele prevê, e que aqui importa, é '
-+'<b>velocidade de aprendizado e transferência entre domínios</b>: a capacidade de pegar um assunto novo — '
-+'tráfego, precificação, produto — e ficar operacional nele em semanas, não em anos. É exatamente o que '
-+'explica as oito frentes.</p>'
++'<h3>O que dá para medir da capacidade individual</h3>'
++'<p><b>Capacidade cognitiva geral:</b> QI declarado de <b>'+D.qi+'</b>, que na escala usual corresponde ao '
++'entorno do percentil 99,5 — cerca de <b>1 em 200</b> pessoas. <span class="decl">declarado</span> '
++'Isoladamente, um escore de teste não vende carro nenhum, e seria desonesto sugerir o contrário. O que a '
++'literatura estabelece com robustez, e que aqui é decisivo, é outra coisa: capacidade cognitiva geral é o '
++'preditor isolado mais forte de <b>velocidade de aquisição de competência em domínio novo</b> e de '
++'<b>transferência entre domínios</b>. Traduzido para a operação: pegar um assunto do qual não se sabia nada '
++'— tráfego pago, precificação dinâmica, especificação de produto, contrato eletrônico — e ficar operacional '
++'nele em semanas, não em anos. É exatamente isso que explica como oito frentes convivem numa pessoa só sem '
++'que nenhuma delas desabe.</p>'
 
-+'<p><b>E o que ele faz numa negociação não é conversa.</b> É <b>cognição social aplicada em tempo real</b>: '
-+'ler a pessoa nos primeiros segundos, prever a objeção antes de ela ser dita, escolher entre vários '
-+'argumentos possíveis e reordenar a conversa no meio dela — enquanto sustenta um preço que ele sabe estar '
-+'acima da faixa. Isso exige aptidão, previsibilidade de leitura e velocidade de raciocínio acima da média. '
-+'Não é técnica que se ensina em treinamento de duas semanas, porque a parte difícil não é o roteiro: é o '
-+'tempo de resposta.</p>'
++'<p><b>Cognição social aplicada em tempo real.</b> O que ocorre numa negociação conduzida por ele não é '
++'conversa: é leitura da pessoa nos primeiros segundos, antecipação da objeção antes de ela ser verbalizada, '
++'seleção entre múltiplos caminhos argumentativos e reordenação da conversa no meio dela — tudo isso '
++'enquanto sustenta um preço que ele <b>sabe</b> estar '+n1(D.excMedio)+'% acima da faixa, e sabe porque foi '
++'ele quem levantou a faixa. Essa combinação exige aptidão verbal, velocidade de processamento e regulação '
++'emocional acima da média simultaneamente. Não é técnica transmissível em treinamento de duas semanas, '
++'porque a parte difícil não é o roteiro — é o <b>tempo de resposta</b>, e tempo de resposta não se ensina: '
++'no máximo se acelera em quem já o tem.</p>'
 
-+'<div class="golpe v">Luciano não é a régua. É a exceção.'
-+'<small>E aqui está um erro estatístico que a gestão comete sem perceber: usar o resultado de um outlier '
-+'como padrão para todos. O outlier define o <b>teto</b> do que é possível naquele cenário — nunca a linha de '
-+'base do que é esperado. Quem transforma exceção em meta padrão garante duas coisas ao mesmo tempo: que todo '
-+'o resto da equipe falhe permanentemente, e que a própria exceção seja cobrada por não se superar '
-+'indefinidamente. É a receita conhecida para perder os dois.</small></div>'
++'<p><b>Capacidade de construir o instrumento, e não apenas de usá-lo.</b> A maioria absoluta dos '
++'profissionais de venda opera as ferramentas que recebe. Aqui a mesma pessoa <b>especificou, testou e '
++'homologou</b> o sistema que a operação usa — indicadores, ciclo de faturamento, controle de reservas, '
++'documentos, disponibilidade de frota. Isso pertence a outra categoria profissional: é a diferença entre '
++'quem executa um processo e quem projeta o processo. Empresas pagam consultoria para obter o segundo, e '
++'costumam receber diagnóstico sem implementação. Aqui houve diagnóstico <b>e</b> implementação, feitos por '
++'quem também precisava bater meta no mesmo mês.</p>'
 
-+'<p><b>O feito, com data:</b> a meta Diamante saiu em <b>'+D.diasMeta+' dias</b> de um ciclo de '+D.diasCiclo
-+' — <b>'+n1(ritmo)+'× o ritmo</b> que a própria empresa definiu como suficiente. E saiu <b>enquanto</b> se '
-+'resolvia operação, aplicativo, tráfego, indicadores e pesquisa de mercado.</p>'
++'<p><b>Capacidade de multiplicar.</b> A competência mais rara desta lista não é vender: é <b>ensinar a '
++'vender</b>. Vendedor excepcional que não transfere método produz um resultado; vendedor excepcional que '
++'transfere método produz uma equipe. A primeira é adição, a segunda é multiplicação — e apenas a segunda '
++'sobrevive à saída de quem a criou. Ter alguém capaz disso dentro de casa e não empregá-lo nessa função é '
++'a decisão de renunciar ao único efeito escalável disponível na operação.</p>'
 
-+'<p>O feito não prova que a condição é boa. Prova o contrário: <b>mostra o tamanho do que está sendo '
-+'desperdiçado ao manter a condição ruim.</b> Se esse desempenho aparece com preço '+n1(D.excMedio)+'% acima '
-+'da faixa, frota concentrada e sem verba de marca, a pergunta que interessa não é como cobrar mais. É '
-+'<em>quanto apareceria com o preço na faixa e a frota casada com a demanda.</em></p>'
++'<div class="golpe v">Luciano não é a régua. É a exceção — e exceção não se usa como linha de base.'
++'<small>Aqui está um erro estatístico que a gestão comete sem perceber: tomar o resultado de um outlier '
++'como padrão para todos. O outlier define o <b>teto</b> do que é possível naquele cenário; jamais a linha '
++'de base do que é esperado. Quem transforma exceção em meta padrão garante duas coisas simultaneamente: '
++'que todo o restante da equipe falhe permanentemente, e que a própria exceção seja cobrada por não se '
++'superar indefinidamente. É a receita conhecida para perder os dois — e perde-se primeiro o melhor, porque '
++'é ele quem tem mais opções fora.</small></div>'
+
++'<p><b>O feito, com data:</b> a meta Diamante foi atingida em <b>'+D.diasMeta+' dias</b> de um ciclo de '
++D.diasCiclo+' — <b>'+n1(ritmo)+'× o ritmo</b> que a própria empresa definiu como suficiente. E foi atingida '
++'<b>enquanto</b> se resolvia operação, aplicativo, tráfego, indicadores, pesquisa de mercado e formação, '
++'sob índice de dificuldade <b>'+NIVEL+' em 100</b>. Cada uma dessas condições, isoladamente, seria '
++'apresentada por qualquer consultoria como justificativa suficiente para o não cumprimento da meta.</p>'
+
++'<p>O feito não prova que a condição é boa. Prova exatamente o contrário: <b>mede o tamanho do que está '
++'sendo desperdiçado ao manter a condição ruim.</b> Se este desempenho aparece com preço '+n1(D.excMedio)
++'% acima da faixa, frota concentrada em '+n1(minivanPct)+'% numa categoria e sem um dólar de verba de '
++'marca, a pergunta que interessa não é como cobrar mais. É <em>quanto apareceria com o preço na faixa, a '
++'frota casada com a demanda e uma estrutura de apoio comercial funcionando.</em> Essa é a única pergunta '
++'deste documento cuja resposta ainda pode ser mudada.</p>'
 
 +'<div class="golpe">A empresa está usando um ativo de reposição improvável para tapar buracos de decisão.'
-+'<small>Usar quem tem visão de negócio para cobrir caixa é gastar capital caro em tarefa barata. O custo '
-+'não aparece na folha de pagamento — aparece no que deixou de ser construído enquanto isso, e aparece '
-+'inteiro, de uma vez, no dia em que a pessoa sai.</small></div>'
++'<small>Empregar quem tem visão de negócio para cobrir caixa é gastar capital caro em tarefa barata. O '
++'custo não aparece na folha de pagamento — aparece no que deixou de ser construído enquanto isso, e aparece '
++'inteiro, de uma só vez, no dia em que a pessoa sai. Nessa data, a empresa descobre simultaneamente quantos '
++'cargos existiam dentro de um só, e que não escreveu nenhum deles.</small></div>'
++'</div></section>'});
+</script>
+<script>
+/* ── 7 · o lugar dele na estrutura ── */
+S.push({id:'lugar', nav:'O lugar dele', html:
+ '<section id="lugar"><div class="rv"><div class="cab"><span class="num">§ 7</span>'
++'<h2>O lugar do Luciano na estrutura <em>daqui para a frente</em></h2>'
++'<div class="sub">Este documento não propõe afastá-lo de nada. Propõe o contrário: reconhecer formalmente '
++'o papel que ele já exerce de fato, e cercá-lo do apoio que hoje não existe.</div></div>'
+
++'<p><b>A conclusão que não se deve tirar deste documento</b> é que o acúmulo de funções se resolve retirando '
++'frentes dele. Seria a leitura fácil e seria errada. O intelecto e a experiência acumulados são necessários '
++'<b>em todas as vertentes</b> — operação, marketing, tráfego, produto, indicadores e formação —, e cada uma '
++'dessas frentes hoje funciona melhor porque ele está nela. Retirá-lo não organiza a empresa: apenas '
++'transfere o vazio de lugar.</p>'
+
++'<p><b>A conclusão correta é outra.</b> O problema não é a amplitude da atuação: é a <b>ausência de '
++'estrutura de apoio na parte comercial</b>. Ele precisa continuar contribuindo em todas as frentes como '
++'referência técnica e estratégica, e precisa de <b>gente, processo e organização</b> na frente comercial — '
++'para que a contribuição nas demais deixe de ser paga com o tempo de venda dele. Amplitude com apoio é '
++'liderança; amplitude sem apoio é sobrecarga, e sobrecarga tem prazo de validade.</p>'
+
++'<div class="golpe c">Liderança dentro da operação, apoio na parte comercial.'
++'<small>São duas providências distintas e não conflitantes. A primeira reconhece o que já existe e lhe dá '
++'autoridade formal. A segunda supre o que falta, sem retirar nada. Nenhuma das duas custa a criação de um '
++'cargo novo de imediato — custam, respectivamente, uma decisão escrita e uma realocação de prioridade.</small></div>'
+
++'<h3>Os seis meses no operacional</h3>'
++'<p>A permanência dele no operacional por <b>'+D.mesesOper+' meses</b> não é medida de contenção: é '
++'instrumento com duas finalidades declaradas, ambas mensuráveis, e prazo definido para revisão.</p>'
++'<div class="duo">'
++'<div><h4>1 · Recuperação de caixa</h4>'
++'<p>Manter no operacional quem tem a maior taxa de conversão e o maior domínio de precificação é a via mais '
++'rápida para reconstituir caixa no curto prazo. É o uso deliberado da restrição do sistema no ponto onde ela '
++'rende mais — o inverso exato de deslocar o recurso mais produtivo para longe do gargalo.</p>'
++'<p>O prazo importa tanto quanto a medida: <b>'+D.mesesOper+' meses</b>, com revisão marcada. Sem prazo, '
++'medida temporária vira arranjo permanente por inércia, e a organização deixa de ser construída porque a '
++'urgência nunca termina.</p></div>'
++'<div><h4>2 · Inserção de novos vendedores lado a lado</h4>'
++'<p>Formação de vendedor não se faz por manual: faz-se por <b>observação direta e correção imediata</b>. É '
++'a diferença entre conhecimento explícito, que cabe num documento, e conhecimento tácito, que só se '
++'transfere na prática acompanhada — o argumento clássico de Polanyi e de Nonaka sobre por que empresas '
++'perdem competência quando quem sabe sai sem ter formado ninguém.</p>'
++'<p>Estar lado a lado com os novos durante '+D.mesesOper+' meses converte um desempenho individual em '
++'<b>capacidade instalada</b>. É a única providência deste documento cujo retorno continua existindo depois '
++'que a pessoa que a executou já não estiver na cadeira.</p></div>'
++'</div>'
+
++'<h3>O que muda, em termos concretos</h3>'
++'<div class="linha">'
++'<div><h4>Autoridade formal</h4><p>O papel de liderança dentro da operação passa a ser declarado, com '
++'escopo escrito e autoridade de decisão sobre precificação tática, mix de oferta e método de atendimento. '
++'Liderança exercida sem mandato desgasta quem a exerce e confunde quem a recebe.</p></div>'
++'<div><h4>Apoio comercial</h4><p>Estrutura de apoio na frente comercial: apoio administrativo para '
++'orçamento e documentação, e ao menos um vendedor em formação por vez. O objetivo declarado é elevar o '
++'percentual de tempo em venda dos atuais '+D.tempoVenda+'% para patamar compatível com a meta cobrada.</p></div>'
++'<div><h4>Contribuição preservada</h4><p>A participação nas demais frentes é mantida — em caráter '
++'consultivo e de direção técnica, não de execução integral. O conhecimento continua disponível para toda a '
++'empresa; o que muda é que ele deixa de ser cobrado em horas de execução de quem também carrega a meta.</p></div>'
++'</div>'
+
++'<p style="margin-top:22px">Nada disto é concessão. É <b>alocação eficiente de um recurso escasso</b> — a '
++'decisão que qualquer manual de gestão de operações recomendaria diante de um perfil de reposição '
++'improvável dentro de um sistema com restrição declarada. A alternativa, que é manter tudo como está, tem '
++'um resultado conhecido e documentado no § 8: o recurso se esgota, e a conta chega inteira, de uma vez.</p>'
 +'</div></section>'});
 
-/* ── 5 · culpa × responsabilidade ── */
+/* ── 8 · culpa × responsabilidade ── */
 var LIN=[
  ['Preço de tabela','Diretoria','—','Define se a conversa começa ou termina no primeiro número.'],
  ['Política de desconto','Diretoria','Aplica','O vendedor escolhe dentro da faixa; quem define a faixa é a direção.'],
  ['Composição da frota','Diretoria','—','Determina o que existe para vender e para quem.'],
- ['Verba de marketing','Diretoria','—','Sem marca, todo lead entra frio e caro.'],
- ['Plano de negócio e de ação','Diretoria','Contribui','Define a restrição do período. Sem ele, aperta-se o visível.'],
- ['Sublocação e sinalização','Diretoria','—','Decide o risco de marca que a operação assume.'],
+ ['Verba de marketing','Diretoria','—','Sem marca, todo lead entra frio e caro, e o custo sobe com o tempo.'],
+ ['Estrutura e escopo dos cargos','Diretoria','—','Define quantas frentes cabem numa pessoa. Hoje: '+D.papeis+'.'],
+ ['Plano de negócio e de ação','Diretoria','Contribui','Declara a restrição do período. Sem ele, aperta-se o visível.'],
+ ['Sublocação e sinalização','Diretoria','Sustenta','Decide o risco de marca que a operação assume; quem atende absorve.'],
  ['Data de pagamento','Diretoria','—','Muda de lado o custo de capital de giro.'],
  ['Tempo de primeira resposta','—','Vendedor','Controlável, mensurável, cobrável.'],
  ['Follow-up executado','—','Vendedor','Controlável, mensurável, cobrável.'],
@@ -637,155 +1044,186 @@ var LIN=[
  ['Conversão total','Diretoria','Vendedor','Mista: carrega preço, mix e lead junto. Não serve de régua individual.']
 ];
 S.push({id:'resp', nav:'Responsabilidade', html:
- '<section id="resp"><div class="rv"><span class="num">§ 5</span>'
+ '<section id="resp"><div class="rv"><div class="cab"><span class="num">§ 8</span>'
 +'<h2>Culpa é uma coisa. <em>Responsabilidade é outra.</em></h2>'
-+'<div class="sub">A confusão entre as duas é o que mantém a discussão girando.</div>'
-+'<p><b>Culpa olha para trás e procura uma pessoa.</b> É barata de distribuir, dá sensação de resolução e não '
-+'muda nada — a causa continua onde estava no dia seguinte.</p>'
-+'<p><b>Responsabilidade olha para a frente e procura uma decisão.</b> Ela é de quem tem a alavanca. E a regra '
-+'é simples, sem exceção: <em>quem decide responde; quem não decide não pode ser cobrado pelo efeito da '
-+'decisão alheia.</em></p>'
-+'<table><thead><tr><th>Peça</th><th>Decide</th><th>Executa</th><th>Observação</th></tr></thead><tbody>'
++'<div class="sub">A confusão entre as duas é o que mantém a discussão girando há ciclos, sem que nenhuma '
++'variável mude de valor.</div></div>'
++'<p><b>Culpa olha para trás e procura uma pessoa.</b> É barata de distribuir, produz sensação imediata de '
++'resolução e não altera nada — a causa continua exatamente onde estava no dia seguinte, pronta para gerar o '
++'mesmo efeito.</p>'
++'<p><b>Responsabilidade olha para a frente e procura uma decisão.</b> Ela pertence a quem detém a alavanca. '
++'E a regra é simples, sem exceção: <em>quem decide responde; quem não decide não pode ser cobrado pelo '
++'efeito da decisão alheia.</em></p>'
++'<div class="tb"><table><thead><tr><th>Peça</th><th>Decide</th><th>Executa</th><th>Observação</th></tr></thead><tbody>'
 + LIN.map(function(r){ return '<tr><td>'+r[0]+'</td><td class="dir">'+r[1]+'</td>'
     +'<td class="ven">'+r[2]+'</td><td style="font-size:15px">'+r[3]+'</td></tr>'; }).join('')
-+'</tbody></table>'
-+'<div class="golpe">Das doze peças que determinam o resultado, o vendedor decide <b>zero</b> e executa <b>quatro</b>.'
-+'<small>Cobrar dele o efeito das outras oito não é rigor: é erro de atribuição transformado em política de '
-+'gestão. E erro de gestão custa mais caro que erro de venda, porque se repete com todo mundo que passar por '
-+'aquela cadeira.</small></div>'
-+'<p>Isto não isenta ninguém. O vendedor responde — inteiramente — pelas quatro que executa. O que não se '
-+'sustenta é a conta em que ele responde também pelas oito que nunca esteve autorizado a tocar.</p>'
++'</tbody></table></div>'
++'<div class="golpe">Das treze peças que determinam o resultado, o vendedor decide <b>zero</b> e executa <b>quatro</b>.'
++'<small>Cobrar dele o efeito das outras nove não é rigor: é erro de atribuição convertido em política de '
++'gestão. E erro de gestão custa mais caro que erro de venda, porque não se corrige com a saída de uma '
++'pessoa — repete-se com todo mundo que passar por aquela cadeira, indefinidamente.</small></div>'
++'<p>Isto não isenta ninguém. O vendedor responde — integralmente — pelas quatro peças que executa, e deve '
++'ser medido nelas com rigor. O que não se sustenta é a conta em que ele responde também pelas nove que '
++'nunca esteve autorizado a tocar.</p>'
 +'</div></section>'});
 </script>
 <script>
-/* ── 6 · o que a gestão precisa assumir ── */
+/* ── 9 · o que a gestão precisa assumir ── */
 var ASS=[
  ['Assumir que o preço está fora da faixa',
   'Enquanto a hipótese não for testada, todo mês repete o mesmo resultado e a explicação recai sobre quem '
- +'atende. Testar custa 30 dias em uma categoria. Não testar custa a diferença, todo mês, para sempre.'],
+ +'atende. Testar custa 30 dias em uma categoria. Não testar custa a diferença, todo mês, indefinidamente.'],
  ['Assumir que a frota foi comprada sem casar com a demanda',
-  'Frota concentrada não é azar de mercado: é decisão de compra. Quem decidiu comprar responde pelo mix, '
- +'não quem tenta vender o que existe.'],
+  'Frota concentrada em '+n1(minivanPct)+'% numa categoria não é azar de mercado: é decisão de compra. Quem '
+ +'decidiu comprar responde pelo mix, não quem tenta vender o que existe no pátio.'],
  ['Assumir que não há investimento em marca',
-  'Sem marca, todo lead entra frio e o custo por venda sobe com o tempo. Cobrar conversão de lead frio é '
- +'cobrar de terceiro o efeito de uma verba que nunca foi aprovada.'],
+  'Sem marca, todo lead entra frio e o custo por venda sobe com o tempo em vez de cair. Cobrar conversão de '
+ +'lead frio é cobrar de terceiro o efeito de uma verba que nunca foi aprovada.'],
+ ['Assumir que não existe organização de funções',
+  D.papeis+' frentes numa pessoa não é versatilidade: é ausência de desenho de estrutura. Desenho de '
+ +'estrutura é atribuição indelegável da direção, e sua ausência é o que faz toda demanda nova convergir '
+ +'para quem já está no limite.'],
  ['Assumir o risco de reputação do sublocado',
   'Vender sublocado ao preço da frota própria antecipa receita contra reputação futura. É decisão legítima — '
- +'desde que quem a toma assuma a conta quando ela chegar.'],
+ +'desde que quem a toma assuma a conta quando ela chegar, e não a repasse a quem atendeu o cliente.'],
  ['Assumir que não existe plano de negócio',
-  'Sem plano não há restrição declarada; sem restrição declarada o esforço vai para o que é fácil medir. É '
+  'Sem plano não há restrição declarada; sem restrição declarada o esforço migra para o que é fácil medir. É '
  +'por isso que se aperta a venda: é a parte visível do sistema, não a que trava.'],
  ['Assumir que a régua de cobrança está errada',
   'Cobrar conversão total de quem não decide preço, mix nem verba é erro de desenho. Manter a régua depois '
- +'de saber disso deixa de ser erro e passa a ser escolha.'],
+ +'de conhecer o erro deixa de ser erro e passa a ser escolha — e escolha tem autor.'],
  ['Assumir que o intelecto da equipe está tapando buraco',
-  'Usar quem tem visão de negócio para cobrir caixa é gastar capital caro em tarefa barata. O custo aparece '
- +'no que deixou de ser construído — e aparece inteiro no dia da saída.'],
+  'Empregar quem tem visão de negócio para cobrir caixa é gastar capital caro em tarefa barata. O custo '
+ +'aparece no que deixou de ser construído — e aparece inteiro no dia da saída, quando se descobre quantos '
+ +'cargos existiam dentro de um só.'],
  ['Assumir que a oferta de ajudar com o plano foi recusada',
-  'Ter dentro de casa quem já abriu e operou empresa, e usar essa pessoa só para cobrir caixa, é desperdício '
- +'deliberado de informação. Recusar o plano não é neutro: é escolher continuar sem um.'],
+  'Ter dentro de casa quem já abriu e operou empresa, e utilizar essa pessoa apenas para cobrir caixa, é '
+ +'desperdício deliberado de informação disponível. Recusar o plano não é posição neutra: é escolher '
+ +'continuar sem um.'],
  ['Assumir que a data de pagamento mudou por conveniência de quem paga',
   'Mover o pagamento para o intervalo do dia 5 ao 10 transfere custo de capital de giro para quem recebe — '
  +'as contas dele não mudaram de data. Pode ser necessário; mas é transferência de custo, e é assim que '
- +'precisa ser chamada.']
+ +'precisa ser nomeada em ata.']
 ];
 S.push({id:'assumir', nav:'O que assumir', html:
- '<section id="assumir"><div class="rv"><span class="num">§ 6</span>'
+ '<section id="assumir"><div class="rv"><div class="cab"><span class="num">§ 9</span>'
 +'<h2>O que a gestão precisa assumir — e o que custa não assumir</h2>'
 +'<div class="sub">Assumir não é pedir desculpa. É registrar de quem é a decisão, para que a próxima seja '
-+'tomada com a conta na mesa.</div>'
++'tomada com a conta na mesa e com o autor identificado.</div></div>'
 + ASS.map(function(a,i){ return '<div class="assum"><div class="assum-n">'+(i+1)+'</div>'
     +'<div><h4>'+a[0]+'</h4><p>'+a[1]+'</p></div></div>'; }).join('')
 +'<div class="golpe">Nada disto exige admitir incompetência. Exige admitir <b>autoria</b>.'
-+'<small>A diferença entre as duas é o que separa uma empresa que corrige de uma que repete. Decisão sem dono '
-+'não é revista, porque não há a quem perguntar por que ela continua de pé.</small></div>'
++'<small>A diferença entre as duas é o que separa uma empresa que corrige de uma que repete. Decisão sem '
++'dono não é revista, porque não há a quem perguntar por que ela continua de pé — e o que não é revisto '
++'permanece por omissão, não por mérito.</small></div>'
 +'</div></section>'});
 
-/* ── 7 · bonificação ── */
-S.push({id:'bonus', nav:'Bonificação', html:
- '<section id="bonus"><div class="rv"><span class="num">§ 7</span>'
-+'<h2>Bonificação: onde está o erro de cálculo</h2>'
-+'<div class="sub">Três teorias clássicas, e as três apontam para o mesmo ponto.</div>'
-+'<p><b>O argumento que se ouve:</b> "ele já tem salário fixo maior e comissão maior, então não precisa de '
-+'bônus por bater a meta". Traduzido: <em>por ser bom demais, já tem o que precisa; logo, não merece mais.</em></p>'
-+'<p><b>Onde o cálculo quebra:</b> confunde <b>nível de remuneração</b> com <b>recompensa marginal</b>. O '
-+'salário paga o cargo. O bônus paga o resultado <em>extra</em> daquele ciclo. São contas diferentes, e usar a '
-+'primeira para anular a segunda é dizer que o esforço adicional vale zero — que é exatamente o que a pessoa '
-+'vai calcular no ciclo seguinte.</p>'
-+'<div class="tri">'
-+'<div><h4>Expectância · Vroom</h4><p>O esforço depende de acreditar que ele leva ao resultado, e que o '
-+'resultado leva à recompensa. Quebrar o segundo elo zera a equação inteira, por mais intacto que esteja o primeiro.</p></div>'
-+'<div><h4>Equidade · Adams</h4><p>As pessoas comparam a razão esforço/retorno com a dos outros. Entregar '
-+'muito acima e receber o mesmo reconhecimento produz percepção de injustiça — o preditor mais direto de saída.</p></div>'
-+'<div><h4>Higiene × motivação · Herzberg</h4><p>Salário é fator de higiene: quando falta, desmotiva; quando '
-+'está lá, não motiva. Reconhecimento e conquista são fatores de motivação. Um não substitui o outro.</p></div>'
-+'</div>'
-+'<p><b>E há o custo de não parabenizar, que é separado do dinheiro.</b> Reconhecimento público custa zero e é '
-+'o único item desta lista que não sai do caixa. Deixar de dar quando o feito é inédito não economiza nada — '
-+'apenas informa à equipe inteira que desempenho excepcional passa em branco.</p>'
-+'<p><b>Sobre "o nível dos outros":</b> quando um entrega muito acima e o resto não acompanha, a leitura '
-+'correta não é rebaixar o teto — é perguntar por que a base não sobe. Nivelar pela média nunca puxou ninguém '
-+'para cima; só empurra para fora quem está acima.</p>'
-+'<div class="golpe">Quem quer vendedor estimulado bonifica e parabeniza. Não é filosofia: é o desenho do incentivo.'
-+'<small>Vendedor trabalha por dinheiro e por reconhecimento, nos dois. Quem retira os dois de quem mais '
-+'entrega está escolhendo qual pessoa vai embora primeiro — e será a que tem mais opções fora, que é sempre a melhor.</small></div>'
-+'</div></section>'});
-
-/* ── 8 · as perguntas ── */
+/* ── 10 · as perguntas ── */
 S.push({id:'perguntas', nav:'As perguntas', html:
- '<section id="perguntas"><div class="rv"><span class="num">§ 8</span>'
+ '<section id="perguntas"><div class="rv"><div class="cab"><span class="num">§ 10</span>'
 +'<h2>Três perguntas, e o critério para respondê-las</h2>'
-+'<div class="sub">Não são retóricas. Cada uma tem um critério objetivo embaixo.</div>'
++'<div class="sub">Não são retóricas. Cada uma tem um critério objetivo embaixo, verificável por qualquer '
++'pessoa da mesa.</div></div>'
 +'<div class="perg">'
-+'<div><div class="q">Quem deve ser ouvido?</div><div class="a">Quem traz <b>evidência</b>, não quem tem o '
-+'cargo mais alto. Critério verificável: apresenta número, fonte e previsão que dá para testar. Convicção sem '
-+'previsão testável não é informação — é preferência.</div></div>'
++'<div><div class="q">Quem deve ser ouvido?</div><div class="a">Quem traz <b>evidência</b>, não quem ocupa o '
++'cargo mais alto. Critério verificável: apresenta número, fonte e previsão testável. Convicção sem previsão '
++'testável não é informação — é preferência, e preferência não decide alocação de capital.</div></div>'
 +'<div><div class="q">Quem deve guiar?</div><div class="a">Quem tem <b>modelo do negócio</b>, não quem tem '
-+'opinião sobre ele. Guiar exige saber qual é a restrição, o que a mede e o que a move. Quem não sabe nomear a '
-+'restrição do trimestre não está guiando: está reagindo.</div></div>'
++'opinião sobre ele. Guiar exige saber qual é a restrição, o que a mede e o que a move. Quem não consegue '
++'nomear a restrição do trimestre não está guiando: está reagindo ao que chega.</div></div>'
 +'<div><div class="q">Quem sabe o que está fazendo?</div><div class="a">Quem <b>acerta antes</b>. O teste é '
-+'barato: cada lado escreve a previsão, combina o prazo, e o resultado decide. Quem acerta mais ganha o '
-+'direito de decidir mais — por mérito medido, não por hierarquia.</div></div>'
++'barato: cada lado escreve a previsão, combina-se o prazo, e o resultado decide. Quem acerta mais ganha o '
++'direito de decidir mais — por mérito medido, não por hierarquia herdada.</div></div>'
 +'</div>'
-+'<p style="margin-top:22px">O único jeito de encerrar uma disputa entre duas convicções é transformá-la em '
-+'<b>previsão testável</b>. Enquanto for opinião contra opinião, os dois lados são coerentes dentro da própria '
-+'lógica e a reunião vira quem fala mais alto — e quem fala mais alto costuma ser quem tem o cargo, não quem tem razão.</p>'
++'<p style="margin-top:26px">O único modo de encerrar uma disputa entre duas convicções é convertê-la em '
++'<b>previsão testável</b>. Enquanto permanecer opinião contra opinião, os dois lados são internamente '
++'coerentes e a reunião se decide por quem fala mais alto — e quem fala mais alto costuma ser quem tem o '
++'cargo, não quem tem razão. Transformar a disputa em aposta registrada retira o volume da equação e devolve '
++'a decisão ao dado.</p>'
 +'<div class="golpe">Chorar o passado não muda o presente, e presente não mudado é futuro perdido.'
 +'<small>Operação que insiste no que não funciona não fica parada: afunda devagar e leva junto os '
-+'profissionais que ainda estavam segurando o resultado. A conta não chega em forma de prejuízo — chega em '
-+'forma de rotatividade, e quando chega já custou o dobro.</small></div>'
-+'<p style="margin-top:24px;font-size:16px;color:var(--txt3)"><b>O que este documento não é:</b> não é '
-+'acusação a ninguém e não é diagnóstico de saúde de ninguém. São mecanismos descritos em economia e em '
-+'psicologia do trabalho, aplicados a números desta operação. Se as pessoas envolvidas fossem outras, com os '
-+'mesmos incentivos, o resultado tenderia ao mesmo — que é justamente o argumento para mexer no arranjo em vez '
-+'de mexer nas pessoas.</p>'
++'profissionais que ainda estavam sustentando o resultado. A conta não chega em forma de prejuízo declarado '
++'— chega em forma de rotatividade, e quando chega já custou o dobro, porque inclui o que se perdeu e o que '
++'se gastará para repor.</small></div>'
++'<p style="margin-top:28px;font-size:16.5px;color:var(--txt3)"><b>O que este documento não é:</b> não é '
++'acusação a ninguém e não é diagnóstico de saúde de ninguém. São mecanismos descritos em economia, em teoria '
++'das organizações e em psicologia do trabalho, aplicados aos números desta operação. Se as pessoas '
++'envolvidas fossem outras, sob os mesmos incentivos, o resultado tenderia ao mesmo — que é precisamente o '
++'argumento para intervir no arranjo em vez de intervir nas pessoas.</p>'
 +'</div></section>'});
 
 /* ── montagem ── */
 document.getElementById('doc').innerHTML = S.map(function(x){ return x.html; }).join('')
-  + '<footer>Magiway Rental Car · diagnóstico comercial · gerado do aplicativo interno. '
-  + 'Números marcados como <span class="decl">declarado</span> não saem de nenhuma tela: '
-  + 'estão no bloco DADOS no topo do arquivo.</footer>';
+  + '<footer>Magiway Rental Car · diagnóstico comercial · gerado a partir do aplicativo interno. '
+  + 'Números marcados como <span class="decl">declarado</span> ou <span class="decl">avaliação</span> não '
+  + 'saem de nenhuma tela: estão no bloco DADOS no topo do arquivo.</footer>';
 
 document.getElementById('nav').innerHTML = S.map(function(x){
   return '<a href="#'+x.id+'" data-alvo="'+x.id+'"><span>'+x.nav+'</span></a>'; }).join('');
 
-/* esfera: o nível soma os oito fatores do app mais as funções acumuladas */
+/* esfera + contador do índice */
 (function(){
-  var foraVenda=100-D.tempoVenda;
-  var funcoes=Math.min(100,(Math.min(D.papeis,10)/10*60)+(foraVenda/100*40));
-  var nivel=Math.round(D.indice*0.88 + funcoes*0.12);
-  var cor = nivel>=70?'#FF4D4D' : (nivel>=45?'#FF3D8B' : '#FFC861');
   var el=document.getElementById('esf-n');
-  if(el) el.style.color=cor;
   var cv=document.getElementById('esf');
-  if(cv) esferaIniciar(cv, nivel, cor);
+  if(cv) esferaIniciar(cv, NIVEL);
   var t0=performance.now();
   (function tick(now){
-    var q=Math.min(1,(now-t0)/1400), e=1-Math.pow(1-q,3);
-    if(el) el.textContent=Math.round(nivel*e);
+    var q=Math.min(1,(now-t0)/1600), e=1-Math.pow(1-q,3);
+    if(el) el.innerHTML=Math.round(NIVEL*e)+'<sup>%</sup>';
     if(q<1) requestAnimationFrame(tick);
   })(t0);
+})();
+
+/* ═══════════════════════════════════════════════════════════════════
+   A LUPA — clicar em qualquer bloco leva ao centro da tela em fonte
+   grande. Serve para projetar: discute-se um ponto de cada vez, sem
+   ninguém precisar apertar os olhos do fundo da sala.
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+  var CART='.graf,.erro,.assum,.perg>div,.tri>div,.duo>div,.linha>div,.golpe,.n,table,details';
+  var TXT ='p,li,h2,h3,h4,.sub,.lead,.q,.a';
+  var lupa=document.getElementById('lupa'), box=document.getElementById('lupa-box');
+  var x=document.getElementById('lupa-x');
+  var marcar=function(){
+    [].slice.call(document.querySelectorAll(CART+','+TXT)).forEach(function(el){
+      if(!el.closest('#lupa')) el.classList.add('zoom');
+    });
+  };
+  marcar();
+  var abrir=function(el){
+    box.innerHTML='';
+    var c=el.cloneNode(true);
+    c.classList.remove('zoom');
+    [].slice.call(c.querySelectorAll('.zoom')).forEach(function(z){ z.classList.remove('zoom'); });
+    /* SMIL clonado depois que a linha do tempo já correu volta ao valor
+       inicial em vez de congelar no final: sem isto a barra some ao ampliar.
+       Removendo a animação, o SVG fica no valor estático, que já é o final. */
+    [].slice.call(c.querySelectorAll('animate')).forEach(function(a){ a.parentNode.removeChild(a); });
+    box.appendChild(c);
+    box.scrollTop=0;
+    lupa.classList.add('on');
+    document.body.style.overflow='hidden';
+  };
+  var fechar=function(){
+    lupa.classList.remove('on'); box.innerHTML=''; document.body.style.overflow='';
+  };
+  document.addEventListener('click', function(ev){
+    if(lupa.classList.contains('on')){
+      if(ev.target===lupa){ fechar(); }
+      return;
+    }
+    var t=ev.target;
+    if(!t || !t.closest) return;
+    if(t.closest('#nav') || t.closest('summary') || t.closest('a') || t.closest('#lupa-x')) return;
+    var alvo=t.closest(CART) || t.closest(TXT);
+    if(!alvo) return;
+    ev.preventDefault();
+    abrir(alvo);
+  });
+  x.addEventListener('click', fechar);
+  document.addEventListener('keydown', function(ev){
+    if(ev.key==='Escape') fechar();
+  });
 })();
 
 /* revelar ao rolar + barra de progresso + item de navegação ativo */
@@ -794,7 +1232,7 @@ document.getElementById('nav').innerHTML = S.map(function(x){
   if('IntersectionObserver' in window){
     var io=new IntersectionObserver(function(is){
       is.forEach(function(i){ if(i.isIntersecting){ i.target.classList.add('on'); io.unobserve(i.target); } });
-    },{threshold:.12});
+    },{threshold:.10});
     blocos.forEach(function(b){ io.observe(b); });
   } else blocos.forEach(function(b){ b.classList.add('on'); });
 
