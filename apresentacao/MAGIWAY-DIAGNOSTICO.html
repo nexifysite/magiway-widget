@@ -243,6 +243,25 @@ li{font-size:17.5px;line-height:1.85;color:var(--txt2);margin-bottom:10px}
   #lupa-box p,#lupa-box li,#lupa-box td{font-size:19px}#lupa-box .golpe{font-size:22px}}
 
 footer{padding:64px 0 88px;border-top:1px solid var(--borda);color:var(--txt3);font-size:14px;text-align:center}
+
+/* ── receber os números do aplicativo ── */
+footer button,.dd-bts button{font-family:inherit;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+  background:var(--painel2);color:var(--ciano-cl);border:1px solid var(--borda);padding:9px 16px;cursor:pointer;
+  transition:background .15s,color .15s}
+footer button:hover,.dd-bts button:hover{background:rgba(12,183,242,.18);color:#fff}
+#dd-cx{position:fixed;inset:0;z-index:110;display:none;align-items:center;justify-content:center;
+  background:rgba(9,20,33,.90);padding:30px}
+#dd-cx.on{display:flex}
+#dd-box{background:var(--fundo2);border:1px solid var(--borda);max-width:720px;width:100%;padding:36px 38px;
+  text-align:left;box-shadow:0 30px 90px rgba(0,0,0,.6)}
+#dd-box h4{font-size:19px;color:#fff;margin-bottom:10px}
+#dd-box p{font-size:15px;color:var(--txt3);margin-bottom:16px;max-width:none;line-height:1.7}
+#dd-txt{width:100%;height:190px;background:rgba(0,0,0,.28);border:1px solid var(--borda);color:var(--txt);
+  font-family:ui-monospace,Menlo,monospace;font-size:13px;line-height:1.65;padding:14px;resize:vertical}
+#dd-txt:focus{outline:none;border-color:var(--ciano)}
+#dd-msg{font-size:14px;margin-top:12px;min-height:20px}
+#dd-msg.bom{color:var(--verde)} #dd-msg.ruim{color:var(--verm-cl)}
+.dd-bts{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
 @media print{
   nav,#prog,#lupa,#lupa-x,.dica{display:none!important} body{background:#fff;color:#000}
   section{page-break-inside:avoid;border-color:#ccc} .rv{opacity:1;transform:none}
@@ -306,6 +325,29 @@ var D = {
   qi        : 141,
   mesesOper : 6     // permanência proposta no operacional
 };
+
+/* ── números vindos direto do aplicativo ──────────────────────────
+   No app: Dash de Cotações → 📄 DADOS DO DIAGNÓSTICO → copiar. Aqui:
+   rodapé → atualizar números → colar. O que vier no JSON sobrescreve o
+   bloco acima; o que não vier continua valendo como está, porque não
+   sai de nenhuma tela. Fica guardado neste navegador, então o arquivo
+   pode ser reenviado sem carregar dado de ninguém junto. */
+var D_ORIGEM=null;
+(function(){
+  var bruto=null;
+  try{ bruto=localStorage.getItem('mgdiag_dados'); }catch(e){}
+  if(!bruto) return;
+  try{
+    var j=JSON.parse(bruto);
+    if(j && typeof j==='object'){
+      Object.keys(j).forEach(function(k){
+        if(k.charAt(0)==='_') return;
+        if(typeof j[k]==='number' && isFinite(j[k])) D[k]=j[k];
+      });
+      D_ORIGEM=j._gerado||'sim';
+    }
+  }catch(e){}
+})();
 
 /* ═══════════════════════════════════════════════════════════════════
    FERRAMENTAS DE DESENHO
@@ -515,6 +557,33 @@ var convIdeal     = cotIdeal    ? (D.vendasIdeal /cotIdeal   *100) : 0;
 var convComplexo  = cotComplexo ? (vendasComplexo/cotComplexo*100) : 0;
 var convGeral     = D.cotacoes  ? (D.vendas      /D.cotacoes *100) : 0;
 var razaoPerfil   = convComplexo? (convIdeal/convComplexo) : 0;
+
+/* A comparação entre os dois perfis muda de forma conforme o período:
+   o ideal pode converter melhor, igual, ou não fechar nenhuma. Frase
+   fixa quebraria em dois desses três casos — e um "0,0× melhor" numa
+   projeção derruba o documento inteiro. */
+var perfilFrase, perfilLeitura;
+if(convIdeal>convComplexo){
+  perfilFrase='o perfil ideal converte <b>'+n1(convIdeal)+'%</b> contra <b>'+n1(convComplexo)
+    +'%</b> do complexo — <b>'+n1(razaoPerfil)+'×</b> mais';
+  perfilLeitura='O perfil ideal converte <b>'+n1(razaoPerfil)+'×</b> melhor — e representa <b>'
+    +n1(D.pctIdeal)+'%</b> do que entra. É a inversão que resume o problema: <b>o que fecha bem é '
+    +'justamente o que quase não chega</b>.';
+}else if(convIdeal>0){
+  perfilFrase='o perfil ideal converte <b>'+n1(convIdeal)+'%</b> e o complexo <b>'+n1(convComplexo)+'%</b>';
+  perfilLeitura='O perfil ideal representa <b>'+n1(D.pctIdeal)+'%</b> do que entra e não converte acima do '
+    +'complexo. Quando o pedido bom fecha menos que o difícil, a causa costuma estar em preço e '
+    +'disponibilidade da própria categoria ideal — não no atendimento.';
+}else{
+  perfilFrase='nenhuma das <b>'+cotIdeal+'</b> cotações de perfil ideal fechou no período, contra <b>'
+    +n1(convComplexo)+'%</b> de conversão do complexo';
+  perfilLeitura='Das <b>'+cotIdeal+'</b> cotações de perfil ideal, nenhuma fechou. É o cenário mais grave '
+    +'dos três: o pouco que entra no perfil certo também está sendo perdido — o que aponta para preço e '
+    +'disponibilidade da categoria ideal, e não para volume de esforço.';
+}
+var tituloCarteira = D.pctIdeal<15 ? 'Quase nada do que chega é cliente ideal.'
+                   : D.pctIdeal<40 ? 'A maior parte do que chega está fora do perfil ideal.'
+                   : 'A carteira que chega cumpre o perfil na maior parte das vezes.';
 var S=[];
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -605,12 +674,11 @@ S.push({id:'provas', nav:'As provas', html:
 +'em que o cliente compara — e a comparação leva um clique, num mercado onde o substituto está a dois '
 +'quilômetros do aeroporto —, a decisão dele já está tomada quando o número aparece na tela. Nenhuma técnica '
 +'de venda opera antes disso: técnica atua sobre dúvida, não sobre descarte.</p>'
-+'<p><b>2. Quase nada do que chega é cliente ideal.</b> Das <b>'+D.cotacoes+'</b> cotações do período, apenas '
++'<p><b>2. '+tituloCarteira+'</b> Das <b>'+D.cotacoes+'</b> cotações do período, apenas '
 +'<b>'+cotIdeal+'</b> — <b>'+n1(D.pctIdeal)+'%</b> — cumprem os quatro critérios simultaneamente: mais de dez '
 +'diárias, Orlando→Orlando, minivan e retirada em até três meses. As outras <b>'+cotComplexo+'</b> falham em '
-+'pelo menos um. E o perfil ideal converte <b>'+n1(convIdeal)+'%</b> contra <b>'+n1(convComplexo)+'%</b> do '
-+'complexo — <b>'+n1(razaoPerfil)+'×</b> mais. Ou seja: o que fecha melhor é justamente o que quase não entra. '
-+'Dos <b>'+D.vendas+'</b> fechamentos do período, <b>'+D.vendasIdeal+'</b> veio de cotação de perfil ideal.</p>'
++'pelo menos um. E '+perfilFrase+'. Dos <b>'+D.vendas+'</b> fechamentos do período, <b>'+D.vendasIdeal
++'</b> vieram de cotação de perfil ideal — o resto nasceu fora do perfil que a operação diz querer.</p>'
 +'<p><b>3. O esforço por venda é alto e não é escolha de quem atende.</b> São <b>'+(porVenda?n1(porVenda):'—')
 +'</b> orçamentos por fechamento — <b>'+(porVenda?n1(porVenda-1):'—')+'</b> recusas absorvidas por venda '
 +'concretizada. Multiplicado pelo ciclo, é um volume de negativa que nenhum treinamento reduz, porque a causa '
@@ -768,10 +836,9 @@ S.push({id:'graficos', nav:'Comparativos', html:
 + 'delas virou venda</div>'
 + barras([{dados:[cotIdeal,cotComplexo]}],['Cotações ideais','Cotações complexas'],['#1E8C93'],'')
 + barras([{dados:[convIdeal,convComplexo]}],['Conversão do ideal','Conversão do complexo'],['#0CB7F2'],'%',null,1)
-+ '<p>O perfil ideal converte <b>'+n1(razaoPerfil)+'×</b> melhor — e representa <b>'+n1(D.pctIdeal)+'%</b> do '
-+ 'que entra. É a inversão que resume o problema: <b>o que fecha bem é justamente o que quase não chega</b>. '
-+ 'Isso não se corrige no atendimento, porque a composição do que entra é consequência de anúncio, verba e '
-+ 'segmentação — decididos antes da conversa. Conversão geral do período: <b>'+n1(convGeral)+'%</b>.</p>'
++ '<p>'+perfilLeitura+' Nos dois casos a alavanca é a mesma e está fora do atendimento: a composição do que '
++ 'entra é consequência de anúncio, verba e segmentação — decididos antes da conversa. Conversão geral do '
++ 'período: <b>'+n1(convGeral)+'%</b>.</p>'
 +'</div>'
 +'<div class="graf"><h4>ONDE O TEMPO DA MESMA PESSOA VAI</h4>'
 + '<div class="gs">declarado · '+D.papeis+' frentes simultâneas</div>'
@@ -1187,7 +1254,26 @@ S.push({id:'perguntas', nav:'As perguntas', html:
 document.getElementById('doc').innerHTML = S.map(function(x){ return x.html; }).join('')
   + '<footer>Magiway Rental Car · diagnóstico comercial · gerado a partir do aplicativo interno. '
   + 'Números marcados como <span class="decl">declarado</span> ou <span class="decl">avaliação</span> não '
-  + 'saem de nenhuma tela: estão no bloco DADOS no topo do arquivo.</footer>';
+  + 'saem de nenhuma tela: estão no bloco DADOS no topo do arquivo.'
+  + '<div style="margin-top:18px">'
+  +   (D_ORIGEM
+       ? '<span class="decl" style="color:var(--verde);border-color:rgba(43,214,156,.5)">números do aplicativo · '
+         +esc(D_ORIGEM)+'</span> '
+       : '')
+  +   '<button type="button" id="dd-abrir">atualizar números</button>'
+  + '</div></footer>'
+  + '<div id="dd-cx"><div id="dd-box">'
+  +   '<h4>Números vindos do aplicativo</h4>'
+  +   '<p>No aplicativo: <b>Dash de Cotações → 📄 DADOS DO DIAGNÓSTICO → COPIAR</b>. Cole aqui e aplique. '
+  +   'Vale para cotações, vendas, perfil de cliente, preço, frota, cadência e ciclo. O que não vier no '
+  +   'texto — preços do nicho, funções acumuladas, dias até a meta — continua como está, porque não sai '
+  +   'de nenhuma tela.</p>'
+  +   '<textarea id="dd-txt" placeholder="cole aqui o texto copiado do aplicativo"></textarea>'
+  +   '<div id="dd-msg"></div>'
+  +   '<div class="dd-bts"><button type="button" id="dd-ok">aplicar</button>'
+  +   '<button type="button" id="dd-limpar">voltar ao padrão</button>'
+  +   '<button type="button" id="dd-fechar">fechar</button></div>'
+  + '</div></div>';
 
 document.getElementById('nav').innerHTML = S.map(function(x){
   return '<a href="#'+x.id+'" data-alvo="'+x.id+'"><span>'+x.nav+'</span></a>'; }).join('');
@@ -1217,7 +1303,7 @@ document.getElementById('nav').innerHTML = S.map(function(x){
   var x=document.getElementById('lupa-x');
   var marcar=function(){
     [].slice.call(document.querySelectorAll(CART+','+TXT)).forEach(function(el){
-      if(!el.closest('#lupa')) el.classList.add('zoom');
+      if(!el.closest('#lupa') && !el.closest('#dd-cx') && !el.closest('footer')) el.classList.add('zoom');
     });
   };
   marcar();
@@ -1245,7 +1331,8 @@ document.getElementById('nav').innerHTML = S.map(function(x){
     }
     var t=ev.target;
     if(!t || !t.closest) return;
-    if(t.closest('#nav') || t.closest('summary') || t.closest('a') || t.closest('#lupa-x')) return;
+    if(t.closest('#nav') || t.closest('summary') || t.closest('a') || t.closest('button')
+       || t.closest('#lupa-x') || t.closest('#dd-cx') || t.closest('footer')) return;
     var alvo=t.closest(CART) || t.closest(TXT);
     if(!alvo) return;
     ev.preventDefault();
@@ -1254,6 +1341,38 @@ document.getElementById('nav').innerHTML = S.map(function(x){
   x.addEventListener('click', fechar);
   document.addEventListener('keydown', function(ev){
     if(ev.key==='Escape') fechar();
+  });
+})();
+
+/* ── receber os números do aplicativo ─────────────────────────────
+   Guarda no navegador e recarrega: o documento inteiro é montado a
+   partir do D, então recarregar é mais seguro do que tentar remendar
+   texto já renderizado — não sobra número velho em canto nenhum. */
+(function(){
+  var cx=document.getElementById('dd-cx');
+  var txt=document.getElementById('dd-txt');
+  var msg=document.getElementById('dd-msg');
+  if(!cx) return;
+  var abrir=function(){ cx.classList.add('on'); txt.value=''; msg.textContent=''; txt.focus(); };
+  var fechar=function(){ cx.classList.remove('on'); };
+  document.getElementById('dd-abrir').addEventListener('click',abrir);
+  document.getElementById('dd-fechar').addEventListener('click',fechar);
+  cx.addEventListener('click',function(e){ if(e.target===cx) fechar(); });
+  document.getElementById('dd-limpar').addEventListener('click',function(){
+    try{ localStorage.removeItem('mgdiag_dados'); }catch(e){}
+    location.reload();
+  });
+  document.getElementById('dd-ok').addEventListener('click',function(){
+    var j;
+    try{ j=JSON.parse(txt.value); }
+    catch(e){ msg.className='ruim'; msg.textContent='Não consegui ler esse texto. Copie o bloco inteiro, das chaves { até }.'; return; }
+    if(!j || typeof j!=='object'){ msg.className='ruim'; msg.textContent='O texto colado não tem números dentro.'; return; }
+    var n=Object.keys(j).filter(function(k){ return k.charAt(0)!=='_' && typeof j[k]==='number'; }).length;
+    if(!n){ msg.className='ruim'; msg.textContent='Nenhum número reconhecido no texto colado.'; return; }
+    try{ localStorage.setItem('mgdiag_dados', JSON.stringify(j)); }
+    catch(e){ msg.className='ruim'; msg.textContent='Este navegador não deixou guardar os números.'; return; }
+    msg.className='bom'; msg.textContent=n+' números aplicados. Recarregando…';
+    setTimeout(function(){ location.reload(); },500);
   });
 })();
 

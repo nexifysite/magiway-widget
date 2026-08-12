@@ -5518,6 +5518,7 @@ select.ffi option{background:#000020;color:#FF0000}
   </div>
   <span id="cal-label-dc" style="font-size:.65rem;font-family:'DM Mono',monospace;color:var(--ice);margin-left:4px">Julho 2026</span>
   <button class="tbtn tbtn-o" onclick="gerarRelatorioCotacoes()" style="margin-left:auto">📊 EMITIR RELATÓRIO</button>
+  <button class="tbtn" onclick="mgDiagAbrir()" title="Gera o bloco de números do documento de diagnóstico a partir desta tela e da de Vendas">📄 DADOS DO DIAGNÓSTICO</button>
 </div>
 <!-- ═══ DIFICULDADE DE VENDER — esfera vermelha ═══ -->
 <div class="mgs-wrap mgd-wrap">
@@ -12031,6 +12032,171 @@ function mgdRender(cots, reservas, rotulo){
 }
 window.mgdRender=mgdRender;
 window.mgdCalcular=mgdCalcular;
+
+/* ═══════════════════════════════════════════════════════════════════
+   DADOS DO DIAGNÓSTICO
+   ───────────────────────────────────────────────────────────────────
+   O documento apresentacao/MAGIWAY-DIAGNOSTICO.html vivia com os
+   números digitados na mão, e número digitado na mão envelhece sem
+   avisar. Isto lê o mesmo que os dashes de Vendas e de Cotações leem —
+   HIST_COT, SALES_DATA, MGW_FROTA, CP_PRECOS e o ciclo — e devolve o
+   bloco pronto para colar no documento.
+
+   Sobre a atribuição das vendas ao perfil, que é a única parte
+   delicada: o total de fechamentos vem da RESERVA (é venda de
+   verdade, entra sozinha). Já saber se a venda nasceu de uma cotação
+   de perfil ideal só é possível pelas cotações marcadas como ganhas.
+   Venda que não dá para rastrear até uma cotação ideal entra como
+   complexa. É o critério conservador: nunca infla o lado bom.
+   ═══════════════════════════════════════════════════════════════════ */
+function mgDiagCalcular(){
+  var r=(typeof calGetRange==='function')?calGetRange('dc'):{from:'',to:''};
+  var from=(r&&r.from)||'', to=(r&&r.to)||'';
+
+  var cots=(typeof HIST_COT!=='undefined'&&HIST_COT)?HIST_COT.slice():[];
+  if(from) cots=cots.filter(function(h){ return String(h.dtISO||'')>=from; });
+  if(to)   cots=cots.filter(function(h){ return String(h.dtISO||'')<=to; });
+
+  /* vendas do período — mesma regra do Dash de Cotações */
+  var vendas=[];
+  try{
+    vendas=(SALES_DATA||[]).filter(function(s){
+      var m=String(s.d||'').match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+      if(!m) return false;
+      var iso=m[3]+'-'+m[2]+'-'+m[1];
+      if(from && iso<from) return false;
+      if(to   && iso>to)   return false;
+      return true;
+    });
+  }catch(e){}
+
+  /* perfil de cliente — os quatro critérios do cpClassificar */
+  var ideais=[];
+  try{ ideais=cots.filter(function(h){ return cpClassificar(h).ideal; }); }catch(e){}
+  var ganhasIdeais=0;
+  try{ ganhasIdeais=ideais.filter(mgwGanhou).length; }catch(e){}
+  var vendasIdeal=Math.min(ganhasIdeais, vendas.length);
+
+  /* preço: excesso médio ponderado pelo que se cota */
+  var exc=null;
+  try{
+    if(window.CP_PRECOS && CP_PRECOS.cats){
+      var sp=0, se=0;
+      CP_PRECOS.cats.forEach(function(c){
+        if(c.nicho==null) return;
+        var q=cots.filter(function(h){
+          var ref=(typeof cpPrecoDaCategoria==='function')?cpPrecoDaCategoria(h.cat):null;
+          return ref && ref.chave===c.chave;
+        }).length;
+        var e=(c.magiway/c.nicho-1)*100;
+        if(q>0){ sp+=q; se+=e*q; }
+      });
+      if(sp>0) exc=se/sp;
+      else{
+        var comRef=CP_PRECOS.cats.filter(function(c){ return c.nicho!=null; });
+        if(comRef.length) exc=comRef.reduce(function(a,c){ return a+(c.magiway/c.nicho-1)*100; },0)/comRef.length;
+      }
+    }
+  }catch(e){}
+
+  /* índice bruto de contracorrente — o mesmo da bola do Dash de Cotações */
+  var indice=null;
+  try{ indice=mgdCalcular(cots, vendas).indice; }catch(e){}
+
+  /* frota */
+  var frotaTotal=0, frotaMinivan=0;
+  try{
+    var carros=MGW_FROTA.carros()||[];
+    frotaTotal=carros.length;
+    frotaMinivan=carros.filter(function(c){
+      try{ return cpEhMinivan(c.cat)||cpEhMinivan(c.modelo); }catch(e){ return /minivan/i.test(String(c.cat||'')); }
+    }).length;
+  }catch(e){}
+
+  /* dispersão das vendas ao longo do período: coeficiente de variação
+     dos totais diários. É o que separa cadência de sorte. */
+  var cv=null;
+  try{
+    var porDia={};
+    vendas.forEach(function(s){
+      var m=String(s.d||'').match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+      if(m) porDia[m[3]+m[2]+m[1]]=(porDia[m[3]+m[2]+m[1]]||0)+1;
+    });
+    var dias=Object.keys(porDia).length;
+    if(dias>1){
+      var vals=Object.keys(porDia).map(function(k){ return porDia[k]; });
+      var med=vals.reduce(function(a,b){ return a+b; },0)/vals.length;
+      var va=vals.reduce(function(a,b){ return a+Math.pow(b-med,2); },0)/vals.length;
+      if(med>0) cv=Math.sqrt(va)/med*100;
+    }
+  }catch(e){}
+
+  /* dias do ciclo em vigência */
+  var diasCiclo=null;
+  try{ diasCiclo=MGW_CICLO.cicloAtivo().dias; }catch(e){}
+
+  var d={
+    cotacoes    : cots.length,
+    vendas      : vendas.length,
+    pctIdeal    : cots.length ? +(ideais.length/cots.length*100).toFixed(1) : 0,
+    vendasIdeal : vendasIdeal
+  };
+  if(exc!=null)         d.excMedio     = +exc.toFixed(1);
+  if(indice!=null)      d.indice       = indice;
+  if(frotaTotal>0)      d.frotaTotal   = frotaTotal;
+  if(frotaTotal>0)      d.frotaMinivan = frotaMinivan;
+  if(cv!=null)          d.cvVendas     = Math.round(cv);
+  if(diasCiclo)         d.diasCiclo    = diasCiclo;
+
+  return { dados:d, cotIdeal:ideais.length, periodo:(from||'início')+' a '+(to||'hoje'),
+           rastreadas:ganhasIdeais };
+}
+
+function mgDiagAbrir(){
+  var R;
+  try{ R=mgDiagCalcular(); }
+  catch(e){ alert('Não consegui ler os dashes: '+e.message); return; }
+  var d=R.dados;
+  var linhas=Object.keys(d).map(function(k){ return '  "'+k+'": '+d[k]; }).join(',\n');
+  var json='{\n'+linhas+',\n  "_gerado": "'+new Date().toLocaleString('pt-BR')+'"\n}';
+
+  var aviso='';
+  if(d.vendasIdeal===0 && R.cotIdeal>0)
+    aviso='<div style="color:#F2BA52;font-size:.72rem;margin-top:8px;line-height:1.5">'
+      +'Nenhuma das '+R.cotIdeal+' cotações de perfil ideal está marcada como <b>ganha</b> no histórico. '
+      +'Se alguma delas virou reserva, marque o desfecho na cotação — sem isso o documento não consegue '
+      +'atribuir a venda ao perfil, e conta como complexa.</div>';
+
+  MGW_FROTA.abrirModal(
+    '<h3 style="margin:0 0 4px">DADOS DO DIAGNÓSTICO</h3>'
+   +'<div style="font-size:.72rem;color:var(--chalk3);line-height:1.55;margin-bottom:12px">'
+   +'Lido de Cotações e de Vendas no período <b>'+R.periodo+'</b>. '
+   +'São <b>'+d.cotacoes+'</b> cotações, <b>'+R.cotIdeal+'</b> de perfil ideal ('+d.pctIdeal+'%) '
+   +'e <b>'+d.vendas+'</b> fechamentos, dos quais <b>'+d.vendasIdeal+'</b> rastreado até uma cotação ideal.'
+   +'</div>'
+   +'<textarea id="mgdiag-json" class="fi" readonly style="width:100%;height:230px;font-family:\'DM Mono\',monospace;'
+   +'font-size:.72rem;line-height:1.6;resize:vertical">'+json.replace(/</g,'&lt;')+'</textarea>'
+   +aviso
+   +'<div style="font-size:.72rem;color:var(--chalk3);margin-top:12px;line-height:1.6">'
+   +'Copie e cole no documento do diagnóstico: rodapé → <b>atualizar números</b>. '
+   +'O que não estiver aqui (preços do nicho, funções acumuladas, dias até a meta) continua no bloco '
+   +'DADOS do próprio documento, porque não sai de nenhuma tela.</div>'
+   +'<div style="display:flex;gap:8px;margin-top:14px">'
+   +'<button class="tbtn tbtn-g" onclick="mgDiagCopiar()">📋 COPIAR</button>'
+   +'<button class="tbtn" onclick="MGW_FROTA.fechar()">FECHAR</button></div>'
+  );
+}
+function mgDiagCopiar(){
+  var t=document.getElementById('mgdiag-json'); if(!t) return;
+  t.select(); t.setSelectionRange(0,99999);
+  var ok=false;
+  try{ ok=document.execCommand('copy'); }catch(e){}
+  if(!ok && navigator.clipboard) navigator.clipboard.writeText(t.value).then(function(){ ok=true; });
+  toast(ok?'Copiado — cole no documento do diagnóstico':'Selecione e copie com Ctrl+C');
+}
+window.mgDiagCalcular=mgDiagCalcular;
+window.mgDiagAbrir=mgDiagAbrir;
+window.mgDiagCopiar=mgDiagCopiar;
 
 
 /* ═══════════════════════════════════════════════════════════════════
