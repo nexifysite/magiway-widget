@@ -19211,10 +19211,22 @@ function dsCamposContrato(){
 }
 
 /* Lê o mapeamento "RÓTULO NO DOCUSIGN = campo" salvo nas Configurações */
-function dsMapaCampos(){
-  const txt=(typeof _CFG!=='undefined'&&_CFG.docusign&&_CFG.docusign.campos)?_CFG.docusign.campos:'';
+/* ── de onde saem as etiquetas do DocuSign ──────────────────────────
+   Isto já mandou contrato em branco, e vale registrar como: a
+   configuração salva no navegador do vendedor tinha `campos:""`, e o
+   mapeamento dependia de uma migração ter rodado para preenchê-lo. Se
+   a migração não rodasse — versão antiga no ar, config sincronizada da
+   nuvem por cima, perfil novo —, esta função devolvia lista vazia. E
+   lista vazia não dá erro em lugar nenhum: dsMontarLink monta o link
+   com nome e e-mail só, o cliente abre, e o contrato chega vazio sem
+   ninguém ser avisado.
+
+   Agora o padrão é o padrão de verdade: mapeamento vazio cai em
+   DS_CAMPOS_PADRAO. Só sobrescreve quem digitou algo em
+   Configurações → DocuSign → Campos. */
+function dsAnalisarMapa(txt){
   const out=[];
-  String(txt).split(/\r?\n/).forEach(function(l){
+  String(txt==null?'':txt).split(/\r?\n/).forEach(function(l){
     const i=l.indexOf('=');
     if(i<1) return;
     const rotulo=l.slice(0,i).trim(), campo=l.slice(i+1).trim();
@@ -19222,6 +19234,13 @@ function dsMapaCampos(){
   });
   return out;
 }
+function dsMapaCampos(){
+  const txt=(typeof _CFG!=='undefined'&&_CFG.docusign&&_CFG.docusign.campos)?_CFG.docusign.campos:'';
+  const out=dsAnalisarMapa(txt);
+  if(out.length) return out;
+  try{ return dsAnalisarMapa(DS_CAMPOS_PADRAO); }catch(e){ return []; }
+}
+window.dsMapaCampos=dsMapaCampos;
 
 /* Monta a URL do PowerForm com os dados do cliente já preenchidos */
 function dsMontarLink(tipo){
@@ -20599,7 +20618,14 @@ function cfgPopulate(){
   if(el('cfg-ds-voucher'))el('cfg-ds-voucher').value=_ds.voucherUrl||'';
   if(el('cfg-ds-contrato'))el('cfg-ds-contrato').value=_ds.contratoUrl||'';
   if(el('cfg-ds-role'))el('cfg-ds-role').value=_ds.role||'Cliente';
-  if(el('cfg-ds-campos'))el('cfg-ds-campos').value=_ds.campos||'';
+  /* Mostra o mapeamento QUE ESTÁ VALENDO, não o que está gravado. Com o
+     campo gravado vazio quem manda é o DS_CAMPOS_PADRAO, e deixar a
+     caixa em branco fazia parecer que não havia rótulo nenhum. */
+  if(el('cfg-ds-campos')){
+    var _mapaTxt=String(_ds.campos||'').trim();
+    if(!_mapaTxt){ try{ _mapaTxt=DS_CAMPOS_PADRAO; }catch(e){ _mapaTxt=''; } }
+    el('cfg-ds-campos').value=_mapaTxt;
+  }
   if(el('cfg-ds-api'))el('cfg-ds-api').value=_ds.apiUrl||'';
   if(el('cfg-ds-bitly'))el('cfg-ds-bitly').value=_ds.bitlyToken||'';
   // Assinatura (DocuSign)
