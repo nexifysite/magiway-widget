@@ -408,6 +408,294 @@ ul.ls li.c .n{background:var(--cyan);color:#02323D}
 @keyframes cybGira{to{transform:rotate(360deg)}}
 .cyb .gira-r{transform-origin:center;animation:cybGira 30s linear infinite reverse}
 </style>
+<style>
+/* ================= DUAS FACES POR SEÇÃO ================= */
+.faces{display:flex;gap:0;margin:0 0 clamp(22px,2.4vw,38px);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.faces button{font-family:var(--m);font-size:clamp(12.5px,1.06vw,16px);letter-spacing:.14em;text-transform:uppercase;
+  padding:14px clamp(14px,1.5vw,24px);background:transparent;border:0;border-bottom:4px solid transparent;
+  color:var(--ink-3);display:flex;align-items:center;gap:9px;
+  transition:color .16s,border-color .16s,background .16s}
+.faces button:hover{color:var(--ink);background:rgba(34,16,24,.04)}
+.faces button.on{color:var(--vivo);border-bottom-color:var(--vivo);background:rgba(255,10,43,.06)}
+.faces button .n{background:var(--bg-3);color:var(--ink-2);padding:2px 8px;font-size:.86em;min-width:26px;text-align:center}
+.faces button.on .n{background:var(--vivo);color:#fff}
+.faces button .ii{font-size:1.15em;line-height:1;flex:0 0 auto}
+.faces button .tl{text-align:left;line-height:1.35}
+@media (max-width:760px){
+  .faces{gap:0}
+  .faces button{flex:1 1 45%;justify-content:center;padding:13px 10px;font-size:12px;letter-spacing:.09em}
+  .faces button .tx{display:none}
+}
+.face{display:none}
+.face.on{display:block;animation:faceEntra .34s cubic-bezier(.16,.9,.3,1) both}
+@keyframes faceEntra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* ================= CRITÉRIOS DO LUCIANO ================= */
+.crit{margin-top:clamp(22px,2.4vw,40px);background:var(--navy-d);border-left:6px solid var(--gold);
+  padding:clamp(21px,2.1vw,36px);color:#fff;position:relative;overflow:hidden}
+.crit::after{content:"";position:absolute;right:-70px;top:-70px;width:230px;height:230px;
+  background:radial-gradient(closest-side,rgba(224,165,0,.20),transparent);pointer-events:none}
+.crit .ct{font-family:var(--m);font-size:clamp(13px,1.1vw,17px);letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.crit .ct::before{content:"";width:10px;height:10px;background:var(--gold);flex:0 0 auto;animation:piscar 2.4s ease-in-out infinite}
+.crit h4{font-size:clamp(23px,2vw,34px);color:#fff;margin-bottom:16px;font-weight:700;line-height:1.15}
+.crit ol{list-style:none;display:grid;gap:12px;counter-reset:c}
+.crit li{display:grid;grid-template-columns:32px 1fr;gap:14px;align-items:start;
+  font-size:clamp(17px,1.4vw,23px);line-height:1.52;color:rgba(255,255,255,.9)}
+.crit li b{color:#fff}
+.crit li::before{counter-increment:c;content:counter(c,decimal-leading-zero);font-family:var(--m);font-size:12.5px;
+  background:var(--gold);color:#2A1C00;display:grid;place-items:center;height:30px;font-weight:700}
+.crit .rod{margin-top:18px;padding-top:15px;border-top:1px solid rgba(255,255,255,.16);
+  font-family:var(--m);font-size:clamp(12px,1vw,15px);letter-spacing:.07em;color:rgba(255,255,255,.55);text-transform:uppercase}
+
+/* ================= CONSTRUTOR DO VENDEDOR ================= */
+.constr{display:grid;gap:clamp(14px,1.5vw,24px)}
+.cbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--bg-2);
+  border:1px solid var(--line);padding:13px clamp(13px,1.4vw,22px)}
+.sec.alt .cbar{background:var(--pan)}
+.cbar .lb{font-family:var(--m);font-size:clamp(11.5px,.95vw,14px);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);margin-right:auto;line-height:1.5}
+.cbar .lb b{color:var(--vivo)}
+.bt{font-family:var(--m);font-size:clamp(12px,1vw,15px);letter-spacing:.1em;text-transform:uppercase;
+  padding:11px 17px;background:var(--navy);color:#fff;border:0;box-shadow:0 3px 0 var(--navy-d);
+  transition:transform .1s,box-shadow .1s,background .16s}
+.bt:hover{background:#0D4A80}
+.bt:active{transform:translateY(3px);box-shadow:0 0 0 var(--navy-d)}
+.bt.r{background:var(--vivo);box-shadow:0 3px 0 var(--sangue)}
+.bt.r:hover{background:var(--vivo-2)}
+.bt.g{background:var(--verde-d);box-shadow:0 3px 0 #00432A}
+.bt.n{background:var(--bg-3);color:var(--ink-2);box-shadow:0 3px 0 #C9BAA0}
+.bt.n:hover{background:#DACBB4;color:var(--ink)}
+.cabeca{background:var(--pan);border:1px solid var(--line);border-left:6px solid var(--vivo);
+  padding:clamp(18px,1.9vw,30px);display:grid;gap:13px}
+.cin{font-family:var(--f);width:100%;border:0;border-bottom:2px solid var(--line);background:transparent;
+  padding:9px 2px;color:var(--ink)}
+.cin:focus{outline:none;border-bottom-color:var(--vivo)}
+.cin::placeholder{color:var(--ink-3);opacity:.65}
+.cin.tit{font-size:clamp(25px,2.3vw,40px);font-weight:700;text-transform:uppercase;color:var(--navy);letter-spacing:-.01em;line-height:1.1}
+.cin.sub{font-size:clamp(17px,1.4vw,23px);color:var(--ink-2)}
+.blocos{display:grid;gap:clamp(12px,1.3vw,20px)}
+.bloco{background:var(--pan);border:1px solid var(--line);border-left:6px solid var(--cyan);
+  padding:clamp(15px,1.6vw,26px);display:grid;gap:11px}
+.bloco.t1{border-left-color:var(--cyan)}.bloco.t2{border-left-color:var(--verde)}
+.bloco.t3{border-left-color:var(--ambar)}.bloco.t4{border-left-color:var(--uva)}
+.bloco .bh{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.bloco .tp{font-family:var(--m);font-size:clamp(10.5px,.9vw,13px);letter-spacing:.14em;text-transform:uppercase;
+  background:var(--bg-3);color:var(--ink-2);padding:5px 10px}
+.bloco .mv{margin-left:auto;display:flex;gap:6px}
+.mini{width:36px;height:36px;background:var(--bg-2);border:1px solid var(--line);color:var(--ink-2);
+  font-size:15px;font-family:var(--m);line-height:1;transition:background .14s,color .14s}
+.mini:hover{background:var(--bg-3);color:var(--ink)}
+.mini.x:hover{background:var(--vivo);color:#fff;border-color:var(--vivo)}
+.bloco input.bt-h{font-family:var(--f);font-size:clamp(19px,1.6vw,27px);font-weight:700;color:var(--navy);
+  width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;padding:6px 2px}
+.bloco input.bt-h:focus{outline:none;border-bottom-color:var(--cyan)}
+.bloco textarea{font-family:var(--f);font-size:clamp(17px,1.38vw,23px);line-height:1.6;color:var(--ink-2);
+  width:100%;min-height:118px;border:1px solid var(--line);background:var(--bg-2);padding:13px 15px;resize:vertical}
+.bloco textarea:focus{outline:none;border-color:var(--vivo);background:var(--pan)}
+.vazio{background:var(--bg-2);border:2px dashed var(--bg-3);padding:clamp(26px,3vw,52px);text-align:center;
+  font-size:clamp(18px,1.5vw,25px);color:var(--ink-3);line-height:1.55}
+.vazio b{display:block;color:var(--ink-2);font-size:1.12em;margin-bottom:8px}
+.chk{display:grid;gap:10px;margin-top:4px}
+.chk label{display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;
+  font-size:clamp(16px,1.3vw,21px);line-height:1.5;color:var(--ink-2)}
+.chk input{width:21px;height:21px;accent-color:var(--verde-d);margin-top:3px;flex:0 0 auto}
+.chk label.ok span{color:var(--verde-d);text-decoration:line-through;text-decoration-color:rgba(0,121,74,.5)}
+.medidor{display:flex;align-items:center;gap:12px;margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
+.medidor .trk{flex:1}
+.medidor .v{font-family:var(--m);font-size:clamp(14px,1.15vw,18px);color:var(--ink);font-weight:700}
+.sv2{font-family:var(--m);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--verde-d);
+  opacity:0;transition:opacity .2s}
+.sv2.on{opacity:1}
+
+/* ================= TERMO DE CONCEITO ================= */
+.cx{color:var(--vivo);border-bottom:2px dotted var(--vivo);font-weight:700;cursor:pointer;
+  transition:background .14s,color .14s}
+.cx:hover{background:var(--vivo);color:#fff;border-bottom-color:transparent}
+.cx::after{content:"↗";font-size:.68em;vertical-align:super;margin-left:2px;opacity:.7}
+.pan.escuro .cx,.pan.vinho .cx,.crit .cx{color:#FF8A99;border-bottom-color:#FF8A99}
+.pan.escuro .cx:hover,.pan.vinho .cx:hover,.crit .cx:hover{background:#FF8A99;color:#2A0A10}
+
+/* ================= QUADRO DE CONCEITO EM TELA CHEIA ================= */
+#ovc{position:fixed;inset:0;background:rgba(10,3,6,.94);backdrop-filter:blur(10px);z-index:210;display:none;overflow-y:auto}
+#ovc.on{display:block;animation:aparecer .24s ease both}
+#ovcbox{min-height:100vh;background:var(--pan);position:relative;
+  padding:clamp(24px,3vw,56px) clamp(20px,4.5vw,90px) clamp(60px,6vw,120px)}
+#ovcbox::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;
+  background:linear-gradient(90deg,var(--vivo),var(--gold))}
+#ovcx{position:fixed;right:clamp(14px,1.8vw,30px);top:clamp(14px,1.8vw,30px);width:54px;height:54px;
+  background:var(--vivo);color:#fff;border:0;font-size:24px;font-family:var(--f);line-height:1;z-index:4;
+  box-shadow:0 4px 0 var(--sangue)}
+#ovcx:hover{background:var(--navy-d);box-shadow:0 4px 0 #041824}
+#ovch{font-family:var(--m);font-size:clamp(12px,1vw,15.5px);letter-spacing:.2em;color:var(--vivo);
+  text-transform:uppercase;margin-bottom:11px;padding-right:76px;line-height:1.5}
+#ovct{font-size:clamp(38px,4.4vw,74px);font-weight:700;text-transform:uppercase;color:var(--navy);
+  line-height:1.02;letter-spacing:-.018em;padding-right:70px}
+#ovct::after{content:"";display:block;height:5px;width:clamp(80px,8vw,150px);background:var(--vivo);margin-top:16px}
+.cw{max-width:1720px;margin:0 auto}
+.cq{display:grid;grid-template-columns:repeat(2,1fr);align-items:start;
+  gap:clamp(15px,1.7vw,28px);margin-top:clamp(20px,2.2vw,36px)}
+@media (max-width:920px){ .cq{grid-template-columns:1fr} }
+.cq .q{background:var(--bg-2);border:1px solid var(--line);border-top:6px solid var(--cyan);
+  padding:clamp(20px,2vw,34px);display:flex;flex-direction:column;gap:12px}
+.cq .q.q1{border-top-color:var(--cyan)}.cq .q.q2{border-top-color:var(--verde)}
+.cq .q.q3{border-top-color:var(--uva)}.cq .q.q4{border-top-color:var(--vivo)}
+.cq .q .qh{font-family:var(--m);font-size:clamp(12.5px,1.06vw,16px);letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-3);display:flex;align-items:center;gap:10px}
+.cq .q .qi{font-size:1.5em;line-height:1}
+.cq .q.q1 .qh{color:var(--cyan-d)}.cq .q.q2 .qh{color:var(--verde-d)}
+.cq .q.q3 .qh{color:var(--uva)}.cq .q.q4 .qh{color:var(--sangue)}
+.cq .q p{font-size:clamp(18px,1.5vw,25px);line-height:1.6;color:var(--ink-2)}
+.cq .q p+p{margin-top:11px}
+.cq .q b{color:var(--ink)}
+.cq .q ul{list-style:none;display:grid;gap:9px;margin-top:4px}
+.cq .q li{display:block;position:relative;padding-left:27px;
+  font-size:clamp(17px,1.4vw,23px);line-height:1.52;color:var(--ink-2)}
+.cq .q li b{font-weight:700;color:var(--ink)}
+.cq .q li::before{content:"▸";position:absolute;left:0;top:0;color:var(--vivo);font-size:1.05em;line-height:1.5}
+.cft{margin-top:clamp(22px,2.4vw,40px);background:var(--navy-d);color:#fff;padding:clamp(19px,2vw,32px);
+  border-left:6px solid var(--gold)}
+.cft .fh{font-family:var(--m);font-size:clamp(12px,1vw,15px);letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:9px}
+.cft p{font-size:clamp(17px,1.4vw,23px);line-height:1.58;color:rgba(255,255,255,.88)}
+.cft p b{color:#fff}
+.cvi{display:flex;flex-wrap:wrap;gap:9px;margin-top:clamp(18px,2vw,30px)}
+.cvi button{font-family:var(--m);font-size:clamp(12px,1vw,15px);letter-spacing:.09em;text-transform:uppercase;
+  background:var(--bg-3);color:var(--ink-2);border:0;padding:11px 16px;box-shadow:0 3px 0 #C9BAA0}
+.cvi button:hover{background:var(--vivo);color:#fff;box-shadow:0 3px 0 var(--sangue)}
+@media (max-width:760px){ #ov.cheio #ovbox{padding-left:18px;padding-right:18px} }
+</style>
+<style>
+/* ================= GRÁFICOS DOS MÓDULOS ================= */
+.gfx{margin-top:clamp(18px,2vw,32px);background:var(--navy-d);color:#fff;padding:clamp(20px,2.1vw,36px);
+  border-left:6px solid var(--cyan);position:relative;overflow:hidden}
+.gfx::after{content:"";position:absolute;left:-90px;bottom:-90px;width:280px;height:280px;
+  background:radial-gradient(closest-side,rgba(0,184,217,.16),transparent);pointer-events:none}
+.gfx .gh{font-family:var(--m);font-size:clamp(12.5px,1.06vw,16px);letter-spacing:.18em;text-transform:uppercase;
+  color:var(--cyan);display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.gfx .gh::before{content:"";width:10px;height:10px;background:var(--cyan);flex:0 0 auto;animation:piscar 2.4s ease-in-out infinite}
+.gfx h4{font-size:clamp(22px,1.95vw,33px);color:#fff;font-weight:700;line-height:1.14;margin-bottom:4px}
+.gfx .gs{font-family:var(--m);font-size:clamp(12px,1vw,15px);letter-spacing:.08em;color:rgba(255,255,255,.55);
+  text-transform:uppercase;margin-bottom:clamp(16px,1.8vw,28px)}
+.gcx{display:grid;gap:clamp(15px,1.7vw,28px);grid-template-columns:1.45fr .55fr;align-items:start}
+@media (max-width:1080px){ .gcx{grid-template-columns:1fr} }
+
+/* barras comparativas */
+.gcmp{display:grid;gap:clamp(11px,1.2vw,18px)}
+.gl{display:grid;grid-template-columns:minmax(152px,1fr) 2.5fr minmax(74px,auto);gap:13px;align-items:center}
+.gl .k{font-family:var(--m);font-size:clamp(11px,.95vw,14px);letter-spacing:.11em;text-transform:uppercase;
+  color:rgba(255,255,255,.6);line-height:1.45}
+.gl .b{height:clamp(24px,2.2vw,36px);background:rgba(255,255,255,.09);position:relative;overflow:hidden;display:block}
+.gl .b i{position:absolute;left:0;top:0;bottom:0;width:var(--w);display:block;
+  background:linear-gradient(90deg,rgba(255,255,255,.24),rgba(255,255,255,.38));
+  transform:scaleX(0);transform-origin:left}
+.gfx.viu .gl .b i{animation:gxCresce 1s cubic-bezier(.16,.9,.3,1) forwards;animation-delay:var(--d,0ms)}
+@keyframes gxCresce{to{transform:scaleX(1)}}
+.gl.luc .b i{background:linear-gradient(90deg,var(--gold),#FFD34D)}
+.gl.luc .k{color:var(--gold)}
+.gl.meta .b i{background:linear-gradient(90deg,var(--verde-d),var(--verde))}
+.gl.meta .k{color:#57E8A8}
+.gl.base .b i{background:linear-gradient(90deg,#3C5871,#5E7E9B)}
+.gl .v{font-family:var(--m);font-size:clamp(15px,1.35vw,22px);font-weight:700;color:#fff;text-align:right;white-space:nowrap}
+.gl.luc .v{color:var(--gold)}
+.gl.meta .v{color:#57E8A8}
+
+/* anel de progresso */
+.gan{display:grid;place-items:center;gap:9px;background:rgba(255,255,255,.05);padding:clamp(15px,1.6vw,26px)}
+.gan svg{width:min(100%,190px);height:auto;overflow:visible;transform:rotate(-90deg)}
+.gan .trilho{fill:none;stroke:rgba(255,255,255,.12);stroke-width:13}
+.gan .arco{fill:none;stroke:var(--cyan);stroke-width:13;stroke-linecap:butt;
+  stroke-dasharray:var(--C);stroke-dashoffset:var(--C)}
+.gfx.viu .gan .arco{animation:gxArco 1.2s cubic-bezier(.16,.9,.3,1) .18s forwards}
+@keyframes gxArco{to{stroke-dashoffset:var(--O)}}
+.gan .n{font-family:var(--m);font-size:clamp(28px,2.6vw,44px);font-weight:700;color:#fff;line-height:1}
+.gan .l{font-family:var(--m);font-size:clamp(10.5px,.9vw,13px);letter-spacing:.15em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);text-align:center;line-height:1.5}
+
+/* rampa dos marcos */
+.gra{background:rgba(255,255,255,.05);padding:clamp(15px,1.6vw,26px)}
+.gra svg{width:100%;height:auto;overflow:visible;display:block}
+.gra .grd{stroke:rgba(255,255,255,.10);stroke-width:1}
+.gra .eixo{font-family:var(--m);font-size:15px;fill:rgba(255,255,255,.5);letter-spacing:.1em}
+.gra .lin{fill:none;stroke:var(--gold);stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:var(--L);stroke-dashoffset:var(--L)}
+.gfx.viu .gra .lin{animation:gxTraca 1.4s cubic-bezier(.3,.7,.3,1) .25s forwards}
+@keyframes gxTraca{to{stroke-dashoffset:0}}
+.gra .area{fill:url(#gArea);opacity:0}
+.gfx.viu .gra .area{animation:gxSurge .9s ease 1s forwards}
+@keyframes gxSurge{to{opacity:1}}
+.gra .pt{fill:#fff;stroke:var(--gold);stroke-width:3;opacity:0}
+.gfx.viu .gra .pt{animation:gxPonto .45s cubic-bezier(.2,1.4,.4,1) forwards;animation-delay:var(--d,0ms)}
+@keyframes gxPonto{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+.gra .rot{font-family:var(--m);font-size:16px;fill:#fff;font-weight:700;opacity:0}
+.gfx.viu .gra .rot{animation:gxSurge .4s ease forwards;animation-delay:var(--d,0ms)}
+
+/* discussão */
+.disc{margin-top:clamp(16px,1.8vw,28px);padding-top:clamp(14px,1.5vw,24px);border-top:1px solid rgba(255,255,255,.16);
+  display:grid;gap:10px}
+.disc .dt{font-family:var(--m);font-size:clamp(11.5px,.98vw,14.5px);letter-spacing:.17em;text-transform:uppercase;color:var(--gold)}
+.disc p{font-size:clamp(17px,1.4vw,23px);line-height:1.56;color:rgba(255,255,255,.88)}
+.disc p b{color:#fff}
+.disc .falta{background:rgba(255,10,43,.14);border-left:4px solid var(--vivo);padding:12px 15px;
+  font-family:var(--m);font-size:clamp(12px,1vw,15px);letter-spacing:.05em;color:#FFB8C2;text-transform:uppercase;line-height:1.6}
+
+/* funil */
+.gfun{display:grid;gap:7px}
+.gfun .fx{display:grid;grid-template-columns:1fr minmax(88px,auto);gap:13px;align-items:center}
+.gfun .fb{height:clamp(34px,3vw,52px);background:rgba(255,255,255,.08);position:relative;overflow:hidden;
+  display:grid;align-items:center}
+.gfun .fb i{position:absolute;left:50%;top:0;bottom:0;width:var(--w);transform:translateX(-50%) scaleX(0);
+  background:linear-gradient(90deg,var(--cyan-d),var(--cyan));display:block}
+.gfx.viu .gfun .fb i{animation:gxFun .85s cubic-bezier(.16,.9,.3,1) forwards;animation-delay:var(--d,0ms)}
+@keyframes gxFun{to{transform:translateX(-50%) scaleX(1)}}
+.gfun .fb span{position:relative;z-index:2;font-family:var(--m);font-size:clamp(12px,1.05vw,16px);
+  letter-spacing:.1em;text-transform:uppercase;color:#fff;padding-left:14px}
+.gfun .fv{font-family:var(--m);font-size:clamp(15px,1.3vw,21px);font-weight:700;color:var(--cyan);text-align:right}
+.gfun .fq{font-family:var(--m);font-size:clamp(11px,.92vw,13.5px);color:rgba(255,255,255,.45);text-align:right;display:block}
+
+/* fluxo de etapas com conector que preenche */
+.gflu{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:0;align-items:stretch}
+@media (max-width:900px){ .gflu{grid-auto-flow:row} }
+.gflu .et{position:relative;padding:clamp(15px,1.6vw,26px) clamp(12px,1.3vw,20px);
+  background:rgba(255,255,255,.05);border-top:5px solid rgba(255,255,255,.18);
+  display:flex;flex-direction:column;gap:8px;opacity:0;transform:translateY(14px)}
+.gfx.viu .gflu .et{animation:gxEtapa .5s cubic-bezier(.16,.9,.3,1) forwards;animation-delay:var(--d,0ms)}
+@keyframes gxEtapa{to{opacity:1;transform:none}}
+.gflu .et.c1{border-top-color:var(--cyan)}.gflu .et.c2{border-top-color:var(--verde)}
+.gflu .et.c3{border-top-color:var(--gold)}.gflu .et.c4{border-top-color:var(--vivo)}
+.gflu .et+.et{margin-left:2px}
+@media (max-width:900px){ .gflu .et+.et{margin-left:0;margin-top:2px} }
+.gflu .et .en{font-family:var(--m);font-size:clamp(10.5px,.9vw,13px);letter-spacing:.16em;color:rgba(255,255,255,.45)}
+.gflu .et .ee{font-size:clamp(18px,1.55vw,26px);font-weight:700;color:#fff;line-height:1.2}
+.gflu .et .ed{font-size:clamp(15px,1.2vw,19px);line-height:1.5;color:rgba(255,255,255,.72)}
+.gflu .et::after{content:"";position:absolute;right:-9px;top:50%;width:16px;height:2px;background:var(--cyan);
+  transform:translateY(-50%) scaleX(0);transform-origin:left;z-index:2}
+.gflu .et:last-child::after{display:none}
+.gfx.viu .gflu .et::after{animation:gxLiga .35s ease forwards;animation-delay:calc(var(--d,0ms) + 300ms)}
+@keyframes gxLiga{to{transform:translateY(-50%) scaleX(1)}}
+@media (max-width:900px){ .gflu .et::after{display:none} }
+
+/* radar das nove capacidades */
+.grad{background:rgba(255,255,255,.05);padding:clamp(15px,1.7vw,28px)}
+.grad svg{width:100%;height:auto;overflow:visible;display:block}
+.grad .malha{fill:none;stroke:rgba(255,255,255,.13);stroke-width:1}
+.grad .eixo2{stroke:rgba(255,255,255,.13);stroke-width:1}
+.grad .pol{fill:rgba(224,165,0,.22);stroke:var(--gold);stroke-width:3;stroke-linejoin:round;
+  transform-origin:center;transform:scale(0);opacity:0}
+.gfx.viu .grad .pol{animation:gxRadar 1.05s cubic-bezier(.16,.9,.3,1) .2s forwards}
+@keyframes gxRadar{to{transform:scale(1);opacity:1}}
+.grad .rl{font-family:var(--m);font-size:19px;fill:rgba(255,255,255,.78);letter-spacing:.08em}
+.grad .rv{font-family:var(--m);font-size:18px;fill:var(--gold);font-weight:700}
+.grad .pol.eq{stroke-dasharray:7 5;stroke-width:2.4}
+.grad .rleg{display:flex;gap:22px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.grad .rleg .li{font-family:var(--m);font-size:clamp(11.5px,.95vw,14.5px);letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(255,255,255,.72);display:flex;align-items:center;gap:9px}
+.grad .rleg .li::before{content:"";width:22px;height:4px;flex:0 0 auto}
+.grad .rleg .li.eq::before{background:#7FA6C7}
+.grad .rleg .li.lu::before{background:var(--gold)}
+.grad .rp{fill:#fff;stroke:var(--gold);stroke-width:2.5;opacity:0}
+.gfx.viu .grad .rp{animation:gxSurge .4s ease forwards;animation-delay:var(--d,0ms)}
+</style>
 </head>
 <body>
 <div id="cortina" aria-hidden="true"><i></i><i></i><i></i><b></b></div>
@@ -858,7 +1146,7 @@ ul.ls li.c .n{background:var(--cyan);color:#02323D}
 })();
 </script>
 <script>
-/* ============ CAPA · NÚCLEO DE PLASMA VERMELHO COM FEIXES ELÉTRICOS ============ */
+/* ====== CAPA · ESFERA DE PARTÍCULAS VERMELHA — GIRA, PULSA E EMITE IMPULSOS ====== */
 (function(){
   var cv=document.getElementById('plasma');
   if(!cv||!cv.getContext) return;
@@ -868,221 +1156,297 @@ ul.ls li.c .n{background:var(--cyan);color:#02323D}
   var aur=document.createElement('canvas'), ax=aur.getContext('2d');
   if(!ctx||!sx||!gx||!ax) return;
 
-  var W=0,H=0,D=1,CX=0,CY=0,R=0,MX=0;
-  var feixes=[], veus=[], fagulhas=[];
-  var raf=0, pronto=false, t0=0, ult=0, mob=false, bordas=null;
-  var ativo=true, visivel=true, naTela=true;
+  var W=0,H=0,D=1,CX=0,CY=0,R=0,mob=false,bordas=null;
+  var raf=0,pronto=false,t0=0,ult=0,ativo=true,visivel=true,naTela=true;
   var lento=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var FOV=3.4;
+  var casca=[],nucleo=[],poeira=[],aros=[],impulsos=[],faiscas=[];
+  var spD=null,spB=null,spG=null,spP=null;
+  var o={cy:1,sy:0,cp:1,sp:0,cr:1,sr:0};
 
   function al(a,b){ return a+Math.random()*(b-a); }
-  function cV(a){ return 'rgba(255,26,50,'+a+')'; }     /* vermelho vivo   */
-  function cR(a){ return 'rgba(255,112,132,'+a+')'; }   /* rosa incandesc. */
-  function cS(a){ return 'rgba(196,10,28,'+a+')'; }     /* sangue          */
 
-  /* ---------- polilinha fractal (deslocamento do ponto médio) ---------- */
-  function fratal(x1,y1,x2,y2,desl,niv){
-    var p=[{x:x1,y:y1},{x:x2,y:y2}],n,i,a,b,mx,my,dx,dy,L,d,o;
-    for(n=0;n<niv;n++){
-      o=[p[0]];
-      for(i=0;i<p.length-1;i++){
-        a=p[i]; b=p[i+1];
-        mx=(a.x+b.x)/2; my=(a.y+b.y)/2;
-        dx=b.x-a.x; dy=b.y-a.y; L=Math.sqrt(dx*dx+dy*dy)||1;
-        d=(Math.random()-0.5)*desl;
-        o.push({x:mx-dy/L*d,y:my+dx/L*d});
-        o.push(b);
+  /* ---------------- sprites de brilho ---------------- */
+  function sprite(tam,paradas){
+    var c=document.createElement('canvas'); c.width=c.height=tam;
+    var x=c.getContext('2d'), g=x.createRadialGradient(tam/2,tam/2,0,tam/2,tam/2,tam/2),i;
+    for(i=0;i<paradas.length;i++) g.addColorStop(paradas[i][0],paradas[i][1]);
+    x.fillStyle=g; x.fillRect(0,0,tam,tam);
+    return c;
+  }
+  function forjarSprites(){
+    spD=sprite(16,[[0,'rgba(255,224,222,1)'],[0.20,'rgba(255,80,104,0.88)'],[0.52,'rgba(214,14,38,0.30)'],[1,'rgba(150,0,18,0)']]);
+    spB=sprite(24,[[0,'rgba(255,253,252,1)'],[0.18,'rgba(255,178,188,0.92)'],[0.48,'rgba(255,36,64,0.34)'],[1,'rgba(255,10,40,0)']]);
+    spG=sprite(64,[[0,'rgba(255,44,72,0.50)'],[0.34,'rgba(206,10,32,0.17)'],[1,'rgba(140,0,18,0)']]);
+    spP=sprite(12,[[0,'rgba(255,150,164,1)'],[0.34,'rgba(255,40,68,0.55)'],[1,'rgba(180,0,24,0)']]);
+  }
+
+  /* ---------------- nuvens de pontos ---------------- */
+  var AUR=Math.PI*(3-Math.sqrt(5));
+  function esfera(n,deformar){
+    var p=[],i,y,r,th,x,z,d;
+    for(i=0;i<n;i++){
+      y=1-(i/(n-1))*2; r=Math.sqrt(Math.max(0,1-y*y)); th=AUR*i;
+      x=Math.cos(th)*r; z=Math.sin(th)*r;
+      d=1;
+      if(deformar){   /* superfície convoluta, tipo coral/cérebro */
+        d=1+0.23*Math.sin(x*5.1+y*3.3)*Math.sin(z*4.2-y*2.1)
+           +0.15*Math.sin(y*7.4+z*3.1)
+           +0.10*Math.sin(x*9.2-z*6.4+y*2.2);
       }
-      p=o; desl*=0.55;
+      p.push({x:x*d,y:y*d,z:z*d,f:Math.random(),t:Math.random()*6.283});
     }
     return p;
   }
-
-  /* ---------- traço com halo (4 passadas: brilho largo -> núcleo branco) ---------- */
-  function traco(p,w,a,cor,nuc,jit,t){
-    if(p.length<2||a<=0.005) return;
-    var i,x,y;
-    sx.beginPath();
-    for(i=0;i<p.length;i++){
-      x=p[i].x; y=p[i].y;
-      if(jit){ x+=Math.sin(i*1.9+t*37)*jit; y+=Math.cos(i*2.3+t*31)*jit; }
-      if(i===0) sx.moveTo(x,y); else sx.lineTo(x,y);
-    }
-    sx.lineJoin='round'; sx.lineCap='round';
-    sx.strokeStyle=cor(a*0.045); sx.lineWidth=w*8;   sx.stroke();
-    sx.strokeStyle=cor(a*0.095); sx.lineWidth=w*3.6; sx.stroke();
-    sx.strokeStyle=cor(a*0.30);  sx.lineWidth=w*1.5; sx.stroke();
-    if(nuc){ sx.strokeStyle='rgba(255,236,232,'+(a*0.80)+')'; sx.lineWidth=Math.max(0.7*D,w*0.55); sx.stroke(); }
+  function semearPoeira(n){
+    var p=[],i;
+    for(i=0;i<n;i++)
+      p.push({r:al(1.5,3.8),a:al(0,6.283),h:al(-0.55,0.55),v:al(0.03,0.16)*(Math.random()<0.5?-1:1),
+              t:al(0,6.283),s:al(0.35,1.2)});
+    return p;
   }
-
-  /* ---------- feixes elétricos com ramificações ---------- */
-  function novoFeixe(dentro){
-    var ang=Math.random()*Math.PI*2, r0,r1,a1,x0,y0,x1,y1,dist,f,nr,k,idx,pa,rr,d2;
-    if(dentro){ r0=R*al(0.04,0.30); r1=R*al(0.72,1.02); }
-    else      { r0=R*al(0.82,1.08); r1=al(R*2.0,MX);    }
-    a1=ang+al(-0.5,0.5);
-    x0=CX+Math.cos(ang)*r0; y0=CY+Math.sin(ang)*r0*0.96;
-    x1=CX+Math.cos(a1)*r1;  y1=CY+Math.sin(a1)*r1*0.96;
-    dist=Math.sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0));
-    f={p:fratal(x0,y0,x1,y1,dist*al(0.16,0.32),dentro?4:5),
-       vida:0, dur:al(0.18,0.62), w:al(0.8,2.1)*D, ram:[], dentro:!!dentro};
-    nr=dentro?0:(Math.random()<0.78?(1+(Math.random()*3|0)):0);
-    for(k=0;k<nr;k++){
-      idx=(f.p.length*al(0.20,0.75))|0; pa=f.p[idx];
-      rr=dist*al(0.16,0.45);
-      d2=Math.atan2(pa.y-CY,pa.x-CX)+al(-0.95,0.95);
-      f.ram.push(fratal(pa.x,pa.y,pa.x+Math.cos(d2)*rr,pa.y+Math.sin(d2)*rr,rr*al(0.20,0.40),4));
-    }
-    feixes.push(f);
-  }
-
-  /* ---------- véus: filamentos longos que varrem toda a área ---------- */
-  function tecerVeus(){
-    veus=[];
-    var i,ang,a1,r0,r1,x0,y0,x1,y1,d;
-    for(i=0;i<14;i++){
-      ang=Math.random()*Math.PI*2; a1=ang+al(-0.75,0.75);
-      r0=R*al(0.85,1.70); r1=al(MX*0.55,MX*1.15);
-      x0=CX+Math.cos(ang)*r0; y0=CY+Math.sin(ang)*r0;
-      x1=CX+Math.cos(a1)*r1;  y1=CY+Math.sin(a1)*r1;
-      d=Math.sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0));
-      veus.push({p:fratal(x0,y0,x1,y1,d*al(0.22,0.42),5),
-                 vr:al(-0.055,0.055), f:al(0.35,1.25), fase:al(0,6.283), am:al(1.2,4.2)*D});
-    }
-  }
-  function veu(v,t){
-    var rot=t*v.vr, c=Math.cos(rot), s=Math.sin(rot), i,p,dx,dy,x,y;
-    var a=0.10+0.075*Math.sin(t*v.f+v.fase);
-    sx.beginPath();
-    for(i=0;i<v.p.length;i++){
-      p=v.p[i]; dx=p.x-CX; dy=p.y-CY;
-      x=CX+dx*c-dy*s+Math.sin(i*0.55+t*v.f*1.7+v.fase)*v.am;
-      y=CY+dx*s+dy*c+Math.cos(i*0.47+t*v.f*1.3)*v.am;
-      if(i===0) sx.moveTo(x,y); else sx.lineTo(x,y);
-    }
-    sx.lineJoin='round'; sx.lineCap='round';
-    sx.strokeStyle=cS(a*0.28); sx.lineWidth=5.5*D; sx.stroke();
-    sx.strokeStyle=cV(a*0.42); sx.lineWidth=2.1*D; sx.stroke();
-    sx.strokeStyle=cR(a*0.50); sx.lineWidth=0.9*D; sx.stroke();
-  }
-
-  /* ---------- anel poligonal de plasma ---------- */
-  function anel(t,pulso){
-    var L,i,N=9,ang,rr,pts,rot;
-    for(L=0;L<3;L++){
-      rot=t*(0.19+L*0.13)*(L===1?-1:1);
-      pts=[];
-      for(i=0;i<=N;i++){
-        ang=rot+i*(Math.PI*2/N);
-        rr=R*(1+L*0.075)*(1+0.075*Math.sin(t*1.9+i*2.3+L)+0.045*Math.sin(t*3.7-i*1.1));
-        pts.push({x:CX+Math.cos(ang)*rr,y:CY+Math.sin(ang)*rr*0.96});
-      }
-      traco(pts,(1.9-L*0.45)*D,(0.95-L*0.24)*pulso,L===0?cR:cV,L===0,0.9*D,t);
-    }
-  }
-  /* ---------- arcos que rastejam sobre o anel ---------- */
-  function arcos(t){
-    var k,i,n=10,a0,sp,pts,ang,rr;
-    for(k=0;k<7;k++){
-      a0=t*(0.5+k*0.11)*(k%2?1:-1)+k*0.9;
-      sp=0.5+0.35*Math.sin(t*1.3+k);
-      pts=[];
-      for(i=0;i<=n;i++){
-        ang=a0+sp*(i/n);
-        rr=R*(1.02+0.10*Math.sin(t*6+i*0.9+k*2));
-        pts.push({x:CX+Math.cos(ang)*rr,y:CY+Math.sin(ang)*rr*0.96});
-      }
-      traco(pts,1.25*D,0.15+0.4*(0.5+0.5*Math.sin(t*7+k*1.7)),cV,true,1.1*D,t);
-    }
-  }
-
-  /* ---------- núcleo incandescente + estrela interna ---------- */
-  function nucleo(t,pulso){
-    var g=sx.createRadialGradient(CX,CY,0,CX,CY,R*1.35);
-    g.addColorStop(0,   'rgba(255,248,246,'+(0.92*pulso)+')');
-    g.addColorStop(0.10,'rgba(255,196,200,'+(0.62*pulso)+')');
-    g.addColorStop(0.26,'rgba(255,48,74,'  +(0.34*pulso)+')');
-    g.addColorStop(0.58,'rgba(190,10,28,'  +(0.14*pulso)+')');
-    g.addColorStop(1,   'rgba(140,0,18,0)');
-    sx.fillStyle=g; sx.beginPath(); sx.arc(CX,CY,R*1.35,0,6.2832); sx.fill();
-
-    var h=sx.createRadialGradient(CX,CY,R*0.6,CX,CY,R*4.6);
-    h.addColorStop(0,   'rgba(255,26,50,'+(0.11*pulso)+')');
-    h.addColorStop(0.45,'rgba(170,6,24,' +(0.05*pulso)+')');
-    h.addColorStop(1,   'rgba(120,0,16,0)');
-    sx.fillStyle=h; sx.beginPath(); sx.arc(CX,CY,R*4.6,0,6.2832); sx.fill();
-
-    var k,ang,rr,c,s;
+  /* aros de luz: círculos máximos com um trecho aceso que corre */
+  function forjarAros(){
+    aros=[];
+    var k,n,u,v,c;
     for(k=0;k<4;k++){
-      ang=k*Math.PI/2+t*0.12;
-      rr=R*(0.55+0.25*Math.sin(t*3.1+k));
-      c=Math.cos(ang); s=Math.sin(ang);
-      sx.beginPath(); sx.moveTo(CX-c*rr,CY-s*rr); sx.lineTo(CX+c*rr,CY+s*rr);
-      sx.strokeStyle=cV(0.16*pulso);                     sx.lineWidth=4.2*D; sx.stroke();
-      sx.strokeStyle='rgba(255,225,222,'+(0.28*pulso)+')'; sx.lineWidth=1.1*D; sx.stroke();
+      n={x:al(-1,1),y:al(-1,1),z:al(-1,1)};
+      c=Math.sqrt(n.x*n.x+n.y*n.y+n.z*n.z)||1; n.x/=c; n.y/=c; n.z/=c;
+      var a=Math.abs(n.x)<0.9?{x:1,y:0,z:0}:{x:0,y:1,z:0};
+      u={x:a.y*n.z-a.z*n.y, y:a.z*n.x-a.x*n.z, z:a.x*n.y-a.y*n.x};
+      c=Math.sqrt(u.x*u.x+u.y*u.y+u.z*u.z)||1; u.x/=c; u.y/=c; u.z/=c;
+      v={x:n.y*u.z-n.z*u.y, y:n.z*u.x-n.x*u.z, z:n.x*u.y-n.y*u.x};
+      aros.push({u:u,v:v,raio:al(0.97,1.10),fase:al(0,6.283),vel:al(0.25,0.75)*(k%2?1:-1),
+                 larg:al(0.9,2.2),br:al(0.5,1)});
     }
   }
-
-  /* ---------- fagulhas ---------- */
-  function novaFagulha(esp){
-    return {a:Math.random()*Math.PI*2, r:esp?al(R*0.9,MX):R*al(0.9,1.15),
-            v:al(14,90)*D, va:al(-0.35,0.35), s:al(0.5,1.7)*D, o:al(0.25,0.95)};
+  function novoImpulso(){
+    var n={x:al(-1,1),y:al(-1,1),z:al(-1,1)},c=Math.sqrt(n.x*n.x+n.y*n.y+n.z*n.z)||1;
+    n.x/=c; n.y/=c; n.z/=c;
+    var a=Math.abs(n.x)<0.9?{x:1,y:0,z:0}:{x:0,y:1,z:0};
+    var u={x:a.y*n.z-a.z*n.y,y:a.z*n.x-a.x*n.z,z:a.x*n.y-a.y*n.x};
+    c=Math.sqrt(u.x*u.x+u.y*u.y+u.z*u.z)||1; u.x/=c; u.y/=c; u.z/=c;
+    var v={x:n.y*u.z-n.z*u.y,y:n.z*u.x-n.x*u.z,z:n.x*u.y-n.y*u.x};
+    return {u:u,v:v,p:al(0,6.283),vel:al(2.2,5.0)*(Math.random()<0.5?-1:1),
+            raio:al(0.60,0.80),vida:0,dur:al(0.5,1.4),larg:al(0.9,2.0)};
   }
-  function semearFagulhas(){ fagulhas=[]; for(var i=0;i<60;i++) fagulhas.push(novaFagulha(true)); }
-  function fagulha(dt){
-    var i,f,x,y;
-    for(i=0;i<fagulhas.length;i++){
-      f=fagulhas[i]; f.r+=f.v*dt; f.a+=f.va*dt;
-      if(f.r>MX){ fagulhas[i]=novaFagulha(false); continue; }
-      x=CX+Math.cos(f.a)*f.r; y=CY+Math.sin(f.a)*f.r*0.96;
-      sx.fillStyle=(i%4===0)?'rgba(255,230,226,'+f.o+')':cV(f.o);
-      sx.beginPath(); sx.arc(x,y,f.s,0,6.2832); sx.fill();
+  function novaFaisca(){
+    return {a:al(0,6.283),h:al(-0.8,0.8),r:al(1.0,1.15),v:al(0.35,1.5),vida:0,dur:al(0.6,1.8),s:al(0.5,1.5)};
+  }
+
+  /* ---------------- projeção ---------------- */
+  var pX=0,pY=0,pZ=0,pK=0;
+  function projeta(x,y,z,esc){
+    var X=x*o.cy+z*o.sy, Z=-x*o.sy+z*o.cy;
+    var Y=y*o.cp-Z*o.sp; Z=y*o.sp+Z*o.cp;
+    var X2=X*o.cr-Y*o.sr, Y2=X*o.sr+Y*o.cr;
+    pK=FOV/(FOV+Z); pZ=Z;
+    pX=CX+X2*esc*pK; pY=CY+Y2*esc*pK;
+  }
+
+  /* ---------------- camadas ---------------- */
+  function pintaCasca(t,br){
+    var i,p,a,s,rad,tw,n=casca.length;
+    for(i=0;i<n;i++){
+      p=casca[i];
+      projeta(p.x,p.y,p.z,R);
+      rad=Math.sqrt((pX-CX)*(pX-CX)+(pY-CY)*(pY-CY))/(R*1.15);
+      tw=0.55+0.45*Math.sin(t*2.6+p.t);
+      a=(0.11+0.86*rad*rad*rad*rad)*tw*br;
+      if(a<0.012) continue;
+      s=(0.9+1.5*((pZ+1)*0.5))*D*(0.6+0.7*p.f);
+      sx.globalAlpha=a>1?1:a;
+      sx.drawImage(p.f>0.94?spB:spD,pX-s,pY-s,s*2,s*2);
     }
   }
+  function pintaNucleo(t,br){
+    var i,p,a,s,prof,tw,n=nucleo.length;
+    for(i=0;i<n;i++){
+      p=nucleo[i];
+      projeta(p.x,p.y,p.z,R*0.70);
+      prof=(pZ+1)*0.5;
+      tw=0.5+0.5*Math.sin(t*3.1+p.t+p.f*4);
+      a=(0.30+0.88*prof)*(0.50+0.50*tw)*br;
+      if(a<0.012) continue;
+      s=(1.0+2.0*prof)*D*(0.55+0.85*p.f);
+      sx.globalAlpha=a>1?1:a;
+      sx.drawImage(p.f>0.93?spB:spD,pX-s,pY-s,s*2,s*2);
+    }
+  }
+  function pintaAros(t,br){
+    var k,i,ar,n=84,ang,x,y,z,a,ac,prim;
+    for(k=0;k<aros.length;k++){
+      ar=aros[k]; prim=true;
+      sx.globalAlpha=1;
+      for(i=0;i<=n;i++){
+        ang=i*(6.2832/n);
+        x=(ar.u.x*Math.cos(ang)+ar.v.x*Math.sin(ang))*ar.raio;
+        y=(ar.u.y*Math.cos(ang)+ar.v.y*Math.sin(ang))*ar.raio;
+        z=(ar.u.z*Math.cos(ang)+ar.v.z*Math.sin(ang))*ar.raio;
+        projeta(x,y,z,R);
+        ac=0.5+0.5*Math.sin(ang*2+ar.fase+t*ar.vel);
+        a=Math.pow(ac,3.2)*(0.35+0.65*(pZ+1)*0.5)*ar.br*br;
+        if(prim){ sx.beginPath(); sx.moveTo(pX,pY); prim=false; }
+        else sx.lineTo(pX,pY);
+      }
+      sx.closePath();
+      sx.lineJoin='round'; sx.lineCap='round';
+      sx.strokeStyle='rgba(255,26,52,'+(0.10*ar.br*br)+')'; sx.lineWidth=ar.larg*6*D; sx.stroke();
+      sx.strokeStyle='rgba(255,68,94,'+(0.20*ar.br*br)+')'; sx.lineWidth=ar.larg*2.2*D; sx.stroke();
+      /* trecho aceso, ponto a ponto, para dar o crescente da foto */
+      for(i=0;i<=n;i++){
+        ang=i*(6.2832/n);
+        x=(ar.u.x*Math.cos(ang)+ar.v.x*Math.sin(ang))*ar.raio;
+        y=(ar.u.y*Math.cos(ang)+ar.v.y*Math.sin(ang))*ar.raio;
+        z=(ar.u.z*Math.cos(ang)+ar.v.z*Math.sin(ang))*ar.raio;
+        projeta(x,y,z,R);
+        ac=0.5+0.5*Math.sin(ang*2+ar.fase+t*ar.vel);
+        a=Math.pow(ac,3.4)*(0.4+0.6*(pZ+1)*0.5)*ar.br*br;
+        if(a<0.02) continue;
+        var s=(1.6+2.4*((pZ+1)*0.5))*ar.larg*D;
+        sx.globalAlpha=a>1?1:a;
+        sx.drawImage(spB,pX-s,pY-s,s*2,s*2);
+      }
+    }
+  }
+  function pintaPoeira(t,dt,br){
+    var i,p,x,y,z,a,s,n=poeira.length;
+    for(i=0;i<n;i++){
+      p=poeira[i]; p.a+=p.v*dt;
+      x=Math.cos(p.a)*p.r; z=Math.sin(p.a)*p.r; y=p.h*p.r*0.55;
+      projeta(x,y,z,R);
+      a=(0.10+0.42*(0.5+0.5*Math.sin(t*2.2+p.t)))*(0.35+0.65*(pZ+1)*0.5)*br;
+      if(a<0.012) continue;
+      s=(0.7+1.1*((pZ+1)*0.5))*p.s*D;
+      sx.globalAlpha=a>1?1:a;
+      sx.drawImage(spP,pX-s,pY-s,s*2,s*2);
+    }
+  }
+  function pintaImpulsos(t,dt,br){
+    var i,im,k,ang,x,y,z,a,s,prim;
+    for(i=impulsos.length-1;i>=0;i--){
+      im=impulsos[i]; im.vida+=dt; im.p+=im.vel*dt;
+      if(im.vida>=im.dur){ impulsos.splice(i,1); continue; }
+      a=Math.sin(Math.PI*(im.vida/im.dur))*br;
+      /* rastro */
+      prim=true; sx.globalAlpha=1;
+      for(k=14;k>=0;k--){
+        ang=im.p-k*0.055*(im.vel>0?1:-1);
+        x=(im.u.x*Math.cos(ang)+im.v.x*Math.sin(ang))*im.raio;
+        y=(im.u.y*Math.cos(ang)+im.v.y*Math.sin(ang))*im.raio;
+        z=(im.u.z*Math.cos(ang)+im.v.z*Math.sin(ang))*im.raio;
+        projeta(x,y,z,R);
+        if(prim){ sx.beginPath(); sx.moveTo(pX,pY); prim=false; } else sx.lineTo(pX,pY);
+      }
+      sx.lineCap='round';
+      sx.strokeStyle='rgba(255,40,68,'+(0.30*a)+')'; sx.lineWidth=im.larg*5*D; sx.stroke();
+      sx.strokeStyle='rgba(255,214,212,'+(0.55*a)+')'; sx.lineWidth=im.larg*1.3*D; sx.stroke();
+      /* cabeça */
+      x=(im.u.x*Math.cos(im.p)+im.v.x*Math.sin(im.p))*im.raio;
+      y=(im.u.y*Math.cos(im.p)+im.v.y*Math.sin(im.p))*im.raio;
+      z=(im.u.z*Math.cos(im.p)+im.v.z*Math.sin(im.p))*im.raio;
+      projeta(x,y,z,R);
+      s=(4.5+3.5*((pZ+1)*0.5))*im.larg*D;
+      sx.globalAlpha=Math.min(1,a);
+      sx.drawImage(spB,pX-s,pY-s,s*2,s*2);
+    }
+    if(impulsos.length<10) impulsos.push(novoImpulso());
+  }
+  function pintaFaiscas(t,dt,br){
+    var i,f,x,y,z,a,s;
+    for(i=faiscas.length-1;i>=0;i--){
+      f=faiscas[i]; f.vida+=dt; f.r+=f.v*dt;
+      if(f.vida>=f.dur){ faiscas.splice(i,1); continue; }
+      x=Math.cos(f.a)*f.r; z=Math.sin(f.a)*f.r; y=f.h*f.r*0.6;
+      projeta(x,y,z,R);
+      a=Math.sin(Math.PI*(f.vida/f.dur))*br;
+      s=(1.4+1.6*((pZ+1)*0.5))*f.s*D;
+      sx.globalAlpha=Math.min(1,a);
+      sx.drawImage(spB,pX-s,pY-s,s*2,s*2);
+    }
+    if(faiscas.length<26) faiscas.push(novaFaisca());
+  }
+  function pintaRaios(t,br){
+    var k,ang,c,s2,L,g,n=13;
+    sx.globalAlpha=1;
+    for(k=0;k<n;k++){
+      ang=t*0.09+k*(6.2832/n)+0.4*Math.sin(t*0.4+k);
+      L=R*(2.1+1.5*(0.5+0.5*Math.sin(t*0.9+k*1.7)));
+      c=Math.cos(ang); s2=Math.sin(ang);
+      g=sx.createLinearGradient(CX,CY,CX+c*L,CY+s2*L);
+      g.addColorStop(0,'rgba(255,96,120,'+(0.11*br)+')');
+      g.addColorStop(0.30,'rgba(255,26,52,'+(0.045*br)+')');
+      g.addColorStop(1,'rgba(180,0,24,0)');
+      sx.fillStyle=g;
+      sx.beginPath();
+      sx.moveTo(CX-s2*R*0.09,CY+c*R*0.09);
+      sx.lineTo(CX+s2*R*0.09,CY-c*R*0.09);
+      sx.lineTo(CX+c*L+s2*R*0.13,CY+s2*L-c*R*0.13);
+      sx.lineTo(CX+c*L-s2*R*0.13,CY+s2*L+c*R*0.13);
+      sx.closePath(); sx.fill();
+    }
+  }
+  function pintaHalo(br){
+    sx.globalAlpha=1;
+    var g=sx.createRadialGradient(CX,CY,0,CX,CY,R*3.2);
+    g.addColorStop(0,'rgba(255,60,86,'+(0.20*br)+')');
+    g.addColorStop(0.22,'rgba(230,16,44,'+(0.11*br)+')');
+    g.addColorStop(0.60,'rgba(150,0,22,'+(0.045*br)+')');
+    g.addColorStop(1,'rgba(110,0,16,0)');
+    sx.fillStyle=g; sx.beginPath(); sx.arc(CX,CY,R*3.2,0,6.2832); sx.fill();
+    var c=sx.createRadialGradient(CX,CY,0,CX,CY,R*0.72);
+    c.addColorStop(0,'rgba(255,240,238,'+(0.40*br)+')');
+    c.addColorStop(0.34,'rgba(255,70,96,'+(0.20*br)+')');
+    c.addColorStop(1,'rgba(220,10,34,0)');
+    sx.fillStyle=c; sx.beginPath(); sx.arc(CX,CY,R*0.72,0,6.2832); sx.fill();
+  }
 
-  /* ---------- quadro ---------- */
+  /* ---------------- quadro ---------------- */
   function desenhar(t,dt){
-    var pulso=0.82+0.18*Math.sin(t*2.1)+0.09*Math.sin(t*7.3)+0.06*Math.sin(t*13.7);
-    if(Math.random()<0.012) pulso*=1.55;
+    var yaw=t*0.30, pit=0.26*Math.sin(t*0.23)+0.10, rol=t*0.055;
+    o.cy=Math.cos(yaw); o.sy=Math.sin(yaw);
+    o.cp=Math.cos(pit); o.sp=Math.sin(pit);
+    o.cr=Math.cos(rol); o.sr=Math.sin(rol);
 
-    sx.globalCompositeOperation='destination-out';
-    sx.fillStyle='rgba(0,0,0,'+(1-Math.exp(-dt*8.5))+')';
-    sx.fillRect(0,0,W,H);
+    /* respiração + deriva suave do conjunto */
+    var br=0.86+0.14*Math.sin(t*1.7)+0.07*Math.sin(t*5.3);
+    if(Math.random()<0.010) br*=1.5;
+    var cx0=CX, cy0=CY;
+    CX+=Math.sin(t*0.37)*R*0.045; CY+=Math.cos(t*0.29)*R*0.038;
+
+    sx.setTransform(1,0,0,1,0,0);
+    sx.globalCompositeOperation='source-over';
+    sx.globalAlpha=1;
+    sx.clearRect(0,0,W,H);
     sx.globalCompositeOperation='lighter';
 
-    var i,k,f,q,a,r;
-    for(i=0;i<veus.length;i++) veu(veus[i],t);
-    nucleo(t,pulso);
-    anel(t,pulso);
-    arcos(t);
-    fagulha(dt);
+    pintaHalo(br);
+    pintaRaios(t,br);
+    pintaPoeira(t,dt,br);
+    pintaCasca(t,br);
+    pintaAros(t,br);
+    pintaNucleo(t,br);
+    pintaImpulsos(t,dt,br);
+    pintaFaiscas(t,dt,br);
+    sx.globalAlpha=1;
 
-    if(feixes.length<14) novoFeixe(Math.random()<0.30);
-    if(Math.random()<dt*4.5){ for(k=0;k<3;k++) novoFeixe(false); }
-
-    for(i=feixes.length-1;i>=0;i--){
-      f=feixes[i]; f.vida+=dt; q=f.vida/f.dur;
-      if(q>=1){ feixes.splice(i,1); continue; }
-      a=Math.sin(Math.PI*q)*(0.72+0.28*Math.sin(t*47+i));
-      traco(f.p,f.w,a*pulso,f.dentro?cR:cV,true,1.6*D,t);
-      for(r=0;r<f.ram.length;r++) traco(f.ram[r],f.w*0.6,a*0.6*pulso,cV,q<0.6,1.4*D,t);
-    }
+    CX=cx0; CY=cy0;
 
     gx.clearRect(0,0,glo.width,glo.height); gx.drawImage(cena,0,0,glo.width,glo.height);
     ax.clearRect(0,0,aur.width,aur.height); ax.drawImage(cena,0,0,aur.width,aur.height);
 
-    ctx.globalCompositeOperation='source-over';
-    ctx.globalAlpha=1;
+    ctx.globalCompositeOperation='source-over'; ctx.globalAlpha=1;
     ctx.clearRect(0,0,W,H);
     ctx.drawImage(cena,0,0,W,H);
     ctx.globalCompositeOperation='lighter';
-    ctx.globalAlpha=0.80; ctx.drawImage(glo,0,0,W,H);
-    ctx.globalAlpha=0.55; ctx.drawImage(aur,0,0,W,H);
+    ctx.globalAlpha=0.75; ctx.drawImage(glo,0,0,W,H);
+    ctx.globalAlpha=0.50; ctx.drawImage(aur,0,0,W,H);
     ctx.globalAlpha=1;
     if(bordas){ ctx.globalCompositeOperation='destination-out'; ctx.fillStyle=bordas; ctx.fillRect(0,0,W,H); }
     ctx.globalCompositeOperation='source-over';
   }
 
-  /* ---------- medidas / ciclo de vida ---------- */
+  /* ---------------- medidas / ciclo de vida ---------------- */
   function medir(){
     var r=cv.getBoundingClientRect();
     if(r.width<2||r.height<2) return false;
@@ -1093,20 +1457,27 @@ ul.ls li.c .n{background:var(--cyan);color:#02323D}
     aur.width=Math.max(1,W>>4); aur.height=Math.max(1,H>>4);
     mob=!!(window.matchMedia&&window.matchMedia('(max-width:1100px)').matches);
     CX=W*(mob?0.50:0.55);
-    /* mantem o nucleo no campo visivel mesmo quando a capa e mais alta que a tela */
     CY=mob?H*0.5:Math.min(H*0.5,(window.innerHeight||H)*D*0.5);
-    R=Math.min(W,H*(mob?1:1.35))*0.215; MX=Math.sqrt(W*W+H*H)*0.68;
+    R=Math.min(W,H*(mob?1:1.35))*0.255;
+
+    var esc=Math.max(0.4,Math.min(1.25,(W*H)/(D*D)/720000));
+    casca =esfera(Math.round(2100*esc),false);
+    nucleo=esfera(Math.round(3600*esc),true);
+    poeira=semearPoeira(Math.round(520*esc));
+    forjarAros(); forjarSprites();
+    impulsos=[]; faiscas=[];
+
     bordas=ctx.createLinearGradient(0,0,0,H);
-    bordas.addColorStop(0,          mob?'rgba(0,0,0,1)':'rgba(0,0,0,0)');
-    bordas.addColorStop(mob?0.16:0, 'rgba(0,0,0,0)');
+    bordas.addColorStop(0,           mob?'rgba(0,0,0,1)':'rgba(0,0,0,0)');
+    bordas.addColorStop(mob?0.16:0,  'rgba(0,0,0,0)');
     bordas.addColorStop(mob?0.84:0.88,'rgba(0,0,0,0)');
-    bordas.addColorStop(1,          'rgba(0,0,0,1)');
-    sx.clearRect(0,0,W,H);
-    feixes=[]; tecerVeus(); semearFagulhas();
+    bordas.addColorStop(1,           'rgba(0,0,0,1)');
+
     [ctx,sx,gx,ax].forEach(function(c){
       c.imageSmoothingEnabled=true;
       if('imageSmoothingQuality' in c) c.imageSmoothingQuality='high';
     });
+    sx.clearRect(0,0,W,H);
     return true;
   }
   function passo(agora){
@@ -1138,6 +1509,1094 @@ ul.ls li.c .n{background:var(--cyan);color:#02323D}
     },{rootMargin:'160px'}).observe(document.getElementById('capa')||cv);
   }
   tocar();
+})();
+</script>
+<script>
+/* ========== DUAS FACES POR SEÇÃO · CRITÉRIOS DO LUCIANO · CONSTRUTOR DO VENDEDOR ========== */
+(function(){
+  var CH='magiway.treino.jl.';
+  function ler(k){ try{ return localStorage.getItem(CH+k)||''; }catch(e){ return ''; } }
+  function grava(k,v){ try{ localStorage.setItem(CH+k,v); }catch(e){} }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+  /* ---------- o padrão que o Luciano aplica, tema por tema ---------- */
+  var CRITERIOS={
+    painel:{h:'Como o Luciano lê um painel de programa',li:[
+      'Todo alvo tem <b>origem declarada</b>. Número sem origem é chute e não entra no painel.',
+      'Prazo antes de meta: primeiro se combina <b>quando</b> se mede, depois <b>quanto</b>.',
+      'Processo nos primeiros 30 dias, <b>receita só depois do dia 60</b>. Cobrar faturamento cedo produz desconto.',
+      'Um marco só é marco se tiver <b>evidência anexada</b> — gravação, planilha ou conversa.',
+      'Se dois indicadores brigam entre si, <b>o de qualidade ganha</b> do de volume.'
+    ],rod:'Régua aplicada em todos os doze módulos'},
+    hub:{h:'Como o Luciano organiza a área de trabalho',li:[
+      'Cada espaço tem <b>uma entrega só</b>. Espaço que serve para tudo não serve para nada.',
+      'O que foi escrito fica <b>datado</b>. Anotação sem data não vira histórico.',
+      'Anotar no fim do dia, nunca no fim da semana: <b>memória de vendas dura horas</b>.',
+      'Todo espaço de escrita tem um espaço de <b>revisão</b> correspondente.',
+      'O material que o vendedor constrói vale mais que o material que ele recebe — <b>mas só depois de corrigido</b>.'
+    ],rod:'Base da segunda página de cada seção'},
+    por:{h:'O que justifica um programa, na régua do Luciano',li:[
+      'Programa existe para <b>transferir o que funciona</b>, não para ocupar agenda.',
+      'Se o conhecimento está na cabeça de uma pessoa só, a operação tem <b>um ponto único de falha</b>.',
+      'Treinar sem medir é <b>entretenimento</b>: toda etapa precisa de indicador.',
+      'O aprendiz precisa <b>errar com supervisão</b> antes de errar sozinho com cliente.',
+      'O objetivo final não é copiar o Luciano — é <b>o vendedor ter método próprio auditável</b>.'
+    ],rod:'Premissa do programa'},
+    met:{h:'Como o Luciano quer o programa rodando',li:[
+      'Manhã de estudo, <b>tarde de aplicação</b>. Nunca dois turnos de teoria seguidos.',
+      'Toda semana termina com <b>uma entrega física</b> — arquivo, lista ou gravação.',
+      'Correção no mesmo dia. <b>Feedback frio não muda comportamento.</b>',
+      'Nenhum módulo abre sem o anterior ter entrega fechada.',
+      'O vendedor apresenta a versão dele <b>antes</b> de ver a versão do Luciano.'
+    ],rod:'Ritmo de execução'},
+    ins:{h:'Os quatro instrumentos, na régua do Luciano',li:[
+      'Instrumento sem <b>dono e frequência</b> vira enfeite.',
+      'Cada instrumento responde a uma pergunta única e escrita no topo dele.',
+      'Se dois instrumentos medem a mesma coisa, <b>um deles morre</b>.',
+      'O vendedor precisa saber usar o instrumento <b>sem consultar manual</b> até o dia 30.',
+      'Instrumento que ninguém olhou em duas semanas sai do painel.'
+    ],rod:'Governo dos instrumentos'},
+    m1:{h:'M01 · Fundamento — o que o Luciano cobra',li:[
+      'Saber o que a Magiway entrega que a concorrência não entrega, <b>escrito de memória</b>.',
+      'Conhecer faixa de preço, prazo e limite de negociação <b>sem consultar tabela</b>.',
+      'Distinguir os produtos pela <b>dor que resolvem</b>, não pela ficha técnica.',
+      'Nunca prometer o que a operação não entrega: <b>promessa quebrada custa a carteira inteira</b>.',
+      'Ao fim do módulo, sustentar 10 minutos de conversa sobre o portfólio <b>sem travar</b>.'
+    ],rod:'Entrega: lista de diferenciais escrita'},
+    m2:{h:'M02 · Observação silenciosa — o que o Luciano cobra',li:[
+      'Ouvir sem interromper. <b>Pergunta guardada</b> vale mais que pergunta na hora.',
+      'Anotar <b>o que foi dito e como foi dito</b> — palavra, pausa e ordem.',
+      'Separar o que é estilo pessoal do Luciano do que é <b>estrutura repetível</b>.',
+      'Ao fim da semana, três hipóteses escritas sobre o que ele faz de diferente.',
+      'Zero contato com cliente neste módulo. <b>Observar é a tarefa inteira.</b>'
+    ],rod:'Entrega: 3 hipóteses para testar'},
+    m3:{h:'M03 · Captura e codificação — o que o Luciano cobra',li:[
+      'Transcrever <b>literalmente</b> antes de resumir. Resumo cedo apaga o que importa.',
+      'Marcar tom, ritmo, pausa e onde a voz sobe ou desce.',
+      'Toda fala capturada recebe <b>etiqueta de etapa</b>: abertura, diagnóstico, proposta, objeção ou fechamento.',
+      'A codificação do vendedor tem que <b>bater com a do Luciano</b> — é isso que é avaliado.',
+      'Oito áudios catalogados é o mínimo; <b>catalogado quer dizer buscável</b>.'
+    ],rod:'Entrega: 8 áudios catalogados'},
+    m4:{h:'M04 · Primeiro contato assistido — o que o Luciano cobra',li:[
+      'Escrever a resposta, <b>mostrar antes de enviar</b>, só enviar depois do aval.',
+      'Registrar o que foi corrigido em cada atendimento — <b>a correção é o material</b>.',
+      'Primeira resposta <b>abaixo de 10 minutos</b>. É esse número que sustenta todos os outros.',
+      'Nenhuma resposta genérica: o nome do cliente e o problema dele aparecem na primeira linha.',
+      'Errar aqui é barato. <b>Errar no módulo 9 é caro.</b>'
+    ],rod:'Entrega: 5 atendimentos com correção anotada'},
+    m5:{h:'M05 · Abertura e diagnóstico — o que o Luciano cobra',li:[
+      'Abertura em <b>até três frases</b>. A quarta frase já perdeu o cliente.',
+      'Diagnóstico antes de qualquer menção a produto ou preço.',
+      'Perguntar até entender <b>o uso</b>, não só o pedido. O pedido é sintoma.',
+      'Apresentar o roteiro próprio ao Luciano e <b>corrigir sem defender a própria versão</b>.',
+      'Se o vendedor falou mais que o cliente na abertura, o diagnóstico está errado.'
+    ],rod:'Entrega: roteiro v1 — abertura e diagnóstico'},
+    m6:{h:'M06 · Proposta e ancoragem — o que o Luciano cobra',li:[
+      'O <b>valor entra antes do número</b>, sempre. Quem inverte, negocia desconto.',
+      'A primeira âncora é do vendedor, não do cliente.',
+      'Proposta completa: escopo, prazo, condição e o que <b>não</b> está incluso.',
+      'Comparar a própria proposta com a que o Luciano faria e <b>anotar cada diferença</b>.',
+      'Desconto só existe com contrapartida — <b>prazo, volume ou prova social</b>.'
+    ],rod:'Entrega: 5 propostas comparadas'},
+    m7:{h:'M07 · Objeções — o que o Luciano cobra',li:[
+      'Toda objeção é <b>classificada antes de respondida</b>: preço, prazo, confiança ou momento.',
+      'Repetir a objeção com as palavras do cliente antes de responder.',
+      'Resposta tem <b>prova anexa</b> — caso, número ou garantia. Argumento sem prova é opinião.',
+      'Nunca discutir a objeção. <b>Discutir é perder mesmo ganhando.</b>',
+      'Objeção que apareceu três vezes vira <b>item fixo da biblioteca</b>.'
+    ],rod:'Entrega: biblioteca de objeções v1'},
+    m8:{h:'M08 · Follow-up e reativação — o que o Luciano cobra',li:[
+      'Todo follow-up traz <b>informação nova</b>. "Passando para saber" não é follow-up.',
+      'Cadência definida por temperatura do lead, não por humor do vendedor.',
+      'Classificar os leads do dia em <b>quente, morno e frio</b> e conferir a classificação.',
+      'Reativação começa pelo que <b>ficou pendente</b> na última conversa, nunca do zero.',
+      'Lead sem próximo passo agendado é <b>lead perdido</b> — só ainda não avisaram.'
+    ],rod:'Entrega: 25 leads classificados'},
+    m9:{h:'M09 · Carteira própria — o que o Luciano cobra',li:[
+      'A carteira é <b>governada em planilha viva</b>, não na memória.',
+      'Saber, a qualquer momento, quantos leads estão em cada etapa.',
+      'Nenhum cliente fica mais de 72h sem toque enquanto a negociação está aberta.',
+      'Assumir o erro antes de o cliente reclamar. <b>Antecipação vale mais que desculpa.</b>',
+      'Autonomia dentro da faixa; <b>fora da faixa, aval antes</b>.'
+    ],rod:'Entrega: carteira em operação'},
+    m10:{h:'M10 · Constância — o que o Luciano cobra',li:[
+      'O número bom repetido <b>três semanas</b> vale mais que o número ótimo de uma semana.',
+      'Rotina escrita e cumprida: mesmo horário para prospectar, responder e revisar.',
+      'Queda de indicador é <b>investigada no mesmo dia</b>, com hipótese escrita.',
+      'Sem heroísmo de fim de mês. <b>Pico esconde processo quebrado.</b>',
+      'O vendedor registra o próprio desempenho antes de o gestor cobrar.'
+    ],rod:'Entrega: 3 semanas estáveis'},
+    m11:{h:'M11 · Casos difíceis — o que o Luciano cobra',li:[
+      'Cliente irritado: <b>reduzir o ritmo</b>, não subir o tom.',
+      'Reconhecer o fato antes de explicar o motivo. Explicação cedo soa a desculpa.',
+      'Todo caso difícil vira <b>registro escrito</b> com o que funcionou e o que não.',
+      'Saber a hora de <b>escalar</b> — orgulho custa cliente.',
+      'Nunca prometer para acalmar. <b>Acalma agora, explode depois.</b>'
+    ],rod:'Entrega: 5 casos documentados'},
+    m12:{h:'M12 · O método — o que o Luciano cobra',li:[
+      'O método é <b>do vendedor</b>, escrito por ele, com as palavras dele.',
+      'Cada etapa do método tem <b>indicador e evidência</b>.',
+      'O método precisa ser <b>ensinável</b>: outro vendedor consegue seguir sem o autor por perto.',
+      'O que não sobreviveu aos testes dos 60 dias <b>sai do método</b>.',
+      'Documento vivo: data de revisão marcada antes de fechar.'
+    ],rod:'Entrega: método autoral auditável'},
+    bib1:{h:'Biblioteca de roteiros — o padrão do Luciano',li:[
+      'Roteiro é <b>esqueleto, não script</b>: quem lê palavra por palavra soa a robô.',
+      'Cada roteiro declara a <b>situação de uso</b> logo no topo.',
+      'Máximo de três frases por bloco. Bloco longo não sobrevive a conversa real.',
+      'Todo roteiro tem <b>saída para o não</b> — o que fazer quando o cliente recusa.',
+      'Roteiro sem data de teste é rascunho. <b>Só entra na biblioteca depois de usado.</b>'
+    ],rod:'Monte os seus na segunda página'},
+    bib2:{h:'Biblioteca de áudios — o padrão do Luciano',li:[
+      'Áudio catalogado tem <b>etapa, duração e o que se aprende</b> anotados.',
+      'Marcar o <b>minuto exato</b> da virada da conversa.',
+      'Descrever tom e ritmo com palavras próprias, não com adjetivos vagos.',
+      'Um áudio por etapa é o mínimo: abertura, diagnóstico, proposta, objeção, fechamento.',
+      'Ouvir três vezes antes de transcrever. <b>A primeira escuta engana.</b>'
+    ],rod:'Monte o seu catálogo na segunda página'},
+    bib3:{h:'Biblioteca de objeções — o padrão do Luciano',li:[
+      'Registrar a objeção com <b>as palavras do cliente</b>, não com as suas.',
+      'Toda entrada separa <b>o que foi dito</b> do <b>que estava por trás</b>.',
+      'Resposta em até quatro frases, com prova anexa.',
+      'Anotar o resultado: funcionou, funcionou em parte ou não funcionou.',
+      'Revisar a biblioteca <b>a cada 30 dias</b> e aposentar o que não funciona mais.'
+    ],rod:'Monte a sua na segunda página'},
+    neu1:{h:'Como o cliente decide — a leitura do Luciano',li:[
+      'A decisão é <b>emocional e justificada depois</b>. Vender só com dado é vender pela metade.',
+      'O cliente compra <b>redução de risco</b> antes de comprar benefício.',
+      'Excesso de opção trava a decisão. <b>Três caminhos, no máximo.</b>',
+      'A ordem em que a informação chega muda a resposta — <b>ordem é argumento</b>.',
+      'Ninguém decide com pressa alheia. <b>Pressa do vendedor lê-se como desespero.</b>'
+    ],rod:'Base dos módulos 5 a 8'},
+    neu2:{h:'Os treze princípios — como o Luciano os usa',li:[
+      'Princípio se aplica <b>um por vez</b>. Empilhar princípio vira manipulação visível.',
+      'Todo princípio usado precisa ser <b>verdadeiro no caso</b> — prova falsa destrói a relação.',
+      'Se o princípio funciona só uma vez com o mesmo cliente, <b>não use</b>.',
+      'Anotar em qual conversa cada princípio foi aplicado e o que aconteceu.',
+      'Princípio não substitui produto bom. <b>Ele só remove atrito de uma decisão já boa.</b>'
+    ],rod:'Clique em cada princípio para o quadro completo'},
+    neu3:{h:'Suscetibilidade e ética — a linha do Luciano',li:[
+      'A pergunta é sempre: <b>o cliente compraria de novo sabendo de tudo?</b>',
+      'Urgência real pode ser dita. <b>Urgência inventada é fraude.</b>',
+      'Cliente vulnerável — pressa, medo, pouca informação — pede <b>mais explicação, não menos</b>.',
+      'Toda técnica precisa sobreviver ao teste de ser contada ao cliente.',
+      'Venda que exige esconder algo <b>não se faz</b>.'
+    ],rod:'Limite inegociável do programa'},
+    neu4:{h:'O que a neurociência sustenta — o filtro do Luciano',li:[
+      'Separar <b>efeito replicado</b> de manchete de revista.',
+      'Toda afirmação vem com <b>autor, ano e o que foi medido</b>.',
+      'Efeito medido em laboratório nem sempre aparece em conversa comercial — <b>declare a distância</b>.',
+      'Quando a evidência é fraca, dizer que é fraca.',
+      'O que não tem sustentação vira <b>hipótese a testar</b>, não regra a ensinar.'
+    ],rod:'Critério de entrada na base teórica'},
+    ref1:{h:'As sete escolas — como o Luciano escolhe',li:[
+      'Nenhuma escola serve para tudo. <b>Escola é ferramenta, não religião.</b>',
+      'Escolher a escola pelo <b>tipo de venda</b>: ticket, ciclo e complexidade.',
+      'Saber o que cada escola <b>não</b> resolve.',
+      'Misturar escolas só depois de dominar uma.',
+      'A escola aparece no método do vendedor <b>traduzida</b>, nunca copiada.'
+    ],rod:'Referencial aplicado'},
+    ref2:{h:'A bibliografia — como o Luciano lê',li:[
+      'Ler para <b>aplicar</b>: toda leitura termina em uma mudança testável.',
+      'Anotar a página do trecho que virou prática — <b>referência sem página não volta</b>.',
+      'Uma obra por vez, aplicada, antes da seguinte.',
+      'Autor que contradiz outro autor: registrar a contradição, não escolher lado cedo.',
+      'Clique em qualquer conceito para abrir o quadro completo: <b>o que é, como aplica, efeito na mente e como tirar proveito</b>.'
+    ],rod:'Toda a bibliografia é clicável'},
+    anot:{h:'Caderno de anotações — o padrão do Luciano',li:[
+      'Anotar <b>no fim do dia</b>, com a conversa fresca.',
+      'Fato primeiro, interpretação depois, <b>separados</b>.',
+      'Anotação sem próximo passo é desabafo.',
+      'Reler as anotações da semana antes de abrir a semana nova.',
+      'O que se repete três vezes na anotação <b>vira item de método</b>.'
+    ],rod:'Espaço de escrita livre'},
+    aval:{h:'Avaliação de indicadores — a régua do Luciano',li:[
+      'Nota é dada com <b>evidência ao lado</b> — gravação, print ou planilha.',
+      'Autoavaliação antes da avaliação do gestor, sempre.',
+      'Nota baixa com plano vale mais que nota alta sem plano.',
+      'Três conversas por ciclo: <b>a melhor, a pior e uma sorteada</b>.',
+      'Indicador que não mudou em dois ciclos precisa de método novo, não de esforço maior.'
+    ],rod:'Ciclo de avaliação'},
+    feed:{h:'Feedbacks — como o Luciano dá e cobra',li:[
+      'Feedback sobre <b>comportamento observável</b>, nunca sobre personalidade.',
+      'Um ponto por vez. <b>Lista de dez não muda nada.</b>',
+      'Toda devolutiva termina com <b>o que muda na semana seguinte</b>.',
+      'O vendedor responde por escrito o que entendeu — <b>é assim que se confere</b>.',
+      'Feedback registrado, com data. Conversa não registrada não aconteceu.'
+    ],rod:'Devolutiva por módulo'},
+    desen:{h:'Desenvolvimento geral — o que o Luciano olha',li:[
+      'Tendência acima de foto: <b>três pontos formam linha</b>, um ponto não.',
+      'Dias cumpridos e entregas fechadas contam mais que horas sentadas.',
+      'Queda em um indicador é lida junto com os outros — <b>nada se avalia sozinho</b>.',
+      'Progresso sem material construído é <b>presença, não desenvolvimento</b>.',
+      'O painel é do vendedor. <b>Ele apresenta, o gestor confere.</b>'
+    ],rod:'Leitura do conjunto'}
+  };
+
+  /* ---------- moldes de bloco por seção ---------- */
+  var MOLDE_PADRAO={nome:'material',tipos:[
+    ['ANOTAÇÃO','Título da anotação','O que você observou, com fato e data.'],
+    ['ROTEIRO','Situação de uso deste roteiro','As falas, uma por linha. Esqueleto, não script.'],
+    ['VERIFICAÇÃO','O que precisa estar certo','Itens que você confere antes de considerar pronto.'],
+    ['NÚMERO OU PROVA','Qual indicador','O número, de onde saiu e o que ele prova.']
+  ]};
+  var MOLDES={
+    bib1:{nome:'roteiro',tipos:[
+      ['SITUAÇÃO','Quando este roteiro é usado','Tipo de cliente, canal e momento da conversa.'],
+      ['ABERTURA','Abertura','No máximo três frases. Escreva como você fala.'],
+      ['DIAGNÓSTICO','Perguntas de diagnóstico','As perguntas que revelam o uso, não só o pedido.'],
+      ['SAÍDA PARA O NÃO','Quando o cliente recusa','O que você faz e fala quando a resposta é não.']
+    ]},
+    bib2:{nome:'áudio catalogado',tipos:[
+      ['ETAPA','Etapa da conversa e duração','Abertura, diagnóstico, proposta, objeção ou fechamento.'],
+      ['TOM E RITMO','Como ele fala aqui','Onde a voz sobe, onde pausa, qual o ritmo.'],
+      ['O QUE COPIAR','O que é repetível','A estrutura que funciona independente de quem fala.'],
+      ['O QUE EVITAR','O que é estilo pessoal','O que só funciona porque é ele falando.']
+    ]},
+    bib3:{nome:'objeção',tipos:[
+      ['A OBJEÇÃO','A frase do cliente, literal','Com as palavras dele, sem traduzir.'],
+      ['O QUE ESTÁ POR TRÁS','O que ele quis dizer','Preço, prazo, confiança ou momento.'],
+      ['RESPOSTA','Como você responde','Até quatro frases. Sem discutir.'],
+      ['PROVA','O que sustenta a resposta','Caso, número ou garantia que você anexa.']
+    ]}
+  };
+
+  var secs=[].slice.call(document.querySelectorAll('main .sec'));
+  var contadores={};
+
+  function dados(id){
+    var raw=ler('constr.'+id), d=null;
+    try{ d=raw?JSON.parse(raw):null; }catch(e){ d=null; }
+    if(!d||typeof d!=='object') d={};
+    if(!d.blocos||!d.blocos.length) d.blocos=[];
+    if(!d.mk) d.mk={};
+    if(typeof d.tit!=='string') d.tit='';
+    if(typeof d.sub!=='string') d.sub='';
+    return d;
+  }
+  function salva(id,d){ grava('constr.'+id, JSON.stringify(d)); }
+  function preenchidos(d){
+    var n=0,i;
+    for(i=0;i<d.blocos.length;i++){ var b=d.blocos[i]; if(((b.h||'')+(b.c||'')).trim().length>2) n++; }
+    return n;
+  }
+
+  /* ---------- monta as duas faces ---------- */
+  secs.forEach(function(sec){
+    var id=sec.id;
+    if(id==='capa') return;
+    var crit=CRITERIOS[id];
+    var hd=sec.querySelector(':scope > .hd');
+
+    var ap=document.createElement('div');
+    ap.className='face on'; ap.setAttribute('data-face','ap');
+    var mover=[], n=hd?hd.nextSibling:sec.firstChild;
+    while(n){ mover.push(n); n=n.nextSibling; }
+    mover.forEach(function(x){ ap.appendChild(x); });
+
+    if(crit){
+      var cp=document.createElement('div');
+      cp.className='crit';
+      cp.innerHTML='<div class="ct">Critérios do Luciano</div><h4>'+crit.h+'</h4><ol>'+
+        crit.li.map(function(t){ return '<li><span>'+t+'</span></li>'; }).join('')+
+        '</ol><div class="rod">'+esc(crit.rod)+'</div>';
+      ap.appendChild(cp);
+    }
+
+    var mm=document.createElement('div');
+    mm.className='face'; mm.setAttribute('data-face','mm');
+
+    var barra=document.createElement('div');
+    barra.className='faces';
+    var d=dados(id), qt=preenchidos(d);
+    barra.innerHTML=
+      '<button type="button" class="on" data-f="ap"><span class="ii">◧</span>'+
+        '<span class="tl">Apresentação<span class="tx"> · critérios do Luciano</span></span></button>'+
+      '<button type="button" data-f="mm"><span class="ii">✎</span>'+
+        '<span class="tl">Meu material</span><span class="n" data-cont="'+id+'">'+qt+'</span></button>';
+
+    sec.appendChild(barra); sec.appendChild(ap); sec.appendChild(mm);
+    if(hd) sec.insertBefore(barra,hd.nextSibling);
+
+    barra.addEventListener('click',function(ev){
+      var b=ev.target.closest('button[data-f]'); if(!b) return;
+      var f=b.getAttribute('data-f');
+      barra.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on',x===b); });
+      ap.classList.toggle('on',f==='ap');
+      mm.classList.toggle('on',f==='mm');
+      if(f==='mm'&&!mm.dataset.pronto) montaConstrutor(sec,mm);
+      grava('face.'+id,f);
+    });
+
+    if(ler('face.'+id)==='mm'){
+      barra.querySelector('[data-f="mm"]').click();
+    }
+  });
+
+  /* ---------- construtor ---------- */
+  function montaConstrutor(sec,mm){
+    var id=sec.id, molde=MOLDES[id]||MOLDE_PADRAO;
+    var nomeItem=molde.nome||'material';
+    mm.dataset.pronto='1';
+    var d=dados(id);
+    var crit=CRITERIOS[id];
+
+    var wrap=document.createElement('div');
+    wrap.className='constr';
+    wrap.innerHTML=
+      '<div class="cbar"><span class="lb">Página do vendedor · <b>'+esc((sec.getAttribute('data-nav')||'').toUpperCase())+'</b><br>'+
+        'construa o seu '+esc(nomeItem)+' do zero — nada aqui vem pronto</span>'+
+        '<span class="sv2">salvo</span>'+
+        molde.tipos.map(function(t,i){ return '<button type="button" class="bt'+(i===0?'':' n')+'" data-add="'+i+'">+ '+esc(t[0])+'</button>'; }).join('')+
+      '</div>'+
+      '<div class="cabeca">'+
+        '<input class="cin tit" data-c="tit" placeholder="Título do seu '+esc(nomeItem)+'" value="'+esc(d.tit)+'">'+
+        '<input class="cin sub" data-c="sub" placeholder="Uma linha dizendo para que serve e quando usar" value="'+esc(d.sub)+'">'+
+      '</div>'+
+      '<div class="blocos"></div>'+
+      (crit?'<div class="pan at"><span class="ph">Confira contra os <b>critérios do Luciano</b></span>'+
+        '<span class="psub">marque só o que o seu material já cumpre</span><div class="pb"><div class="chk">'+
+        crit.li.map(function(t,i){ return '<label data-k="'+i+'"><input type="checkbox" data-mk="'+i+'"><span>'+t+'</span></label>'; }).join('')+
+        '</div><div class="medidor"><span class="trk"><span class="fl c-vd" data-med style="width:0%"></span></span>'+
+        '<span class="v" data-medv>0/'+crit.li.length+'</span></div></div></div>':'');
+    mm.appendChild(wrap);
+
+    var cxBlocos=wrap.querySelector('.blocos');
+    var aviso=wrap.querySelector('.sv2');
+    var tmSv;
+    function piscaSalvo(){ if(!aviso) return; aviso.classList.add('on'); clearTimeout(tmSv);
+      tmSv=setTimeout(function(){ aviso.classList.remove('on'); },1300); }
+    function atualizaContador(){
+      var el=document.querySelector('[data-cont="'+id+'"]');
+      if(el) el.textContent=preenchidos(d);
+    }
+    function guardar(){ salva(id,d); piscaSalvo(); atualizaContador(); }
+
+    function desenhaBlocos(){
+      if(!d.blocos.length){
+        cxBlocos.innerHTML='<div class="vazio"><b>Nenhum bloco ainda.</b>'+
+          'Use os botões acima para começar o seu '+esc(nomeItem)+' do zero. '+
+          'Cada bloco é seu — escreva com as suas palavras, não copie a apresentação.</div>';
+        return;
+      }
+      cxBlocos.innerHTML=d.blocos.map(function(b,i){
+        var t=molde.tipos[b.t]||molde.tipos[0];
+        return '<div class="bloco t'+((b.t%4)+1)+'" data-i="'+i+'">'+
+          '<div class="bh"><span class="tp">'+esc(t[0])+'</span>'+
+          '<span class="mv"><button type="button" class="mini" data-mv="-1" title="Subir">↑</button>'+
+          '<button type="button" class="mini" data-mv="1" title="Descer">↓</button>'+
+          '<button type="button" class="mini x" data-del title="Remover">✕</button></span></div>'+
+          '<input class="bt-h" data-h placeholder="'+esc(t[1])+'" value="'+esc(b.h)+'">'+
+          '<textarea data-c placeholder="'+esc(t[2])+'">'+esc(b.c)+'</textarea>'+
+        '</div>';
+      }).join('');
+    }
+    desenhaBlocos();
+
+    wrap.addEventListener('click',function(ev){
+      var a=ev.target.closest('[data-add]');
+      if(a){ d.blocos.push({t:parseInt(a.getAttribute('data-add'),10)||0,h:'',c:''});
+        guardar(); desenhaBlocos();
+        var ult=cxBlocos.lastElementChild; if(ult){ var inp=ult.querySelector('[data-h]'); if(inp) inp.focus(); }
+        return; }
+      var bl=ev.target.closest('.bloco'); if(!bl) return;
+      var i=parseInt(bl.getAttribute('data-i'),10);
+      if(ev.target.closest('[data-del]')){
+        if(((d.blocos[i].h||'')+(d.blocos[i].c||'')).trim().length>2 &&
+           !confirm('Remover este bloco? O que está escrito nele se perde.')) return;
+        d.blocos.splice(i,1); guardar(); desenhaBlocos(); return;
+      }
+      var mv=ev.target.closest('[data-mv]');
+      if(mv){
+        var j=i+parseInt(mv.getAttribute('data-mv'),10);
+        if(j<0||j>=d.blocos.length) return;
+        var tmp=d.blocos[i]; d.blocos[i]=d.blocos[j]; d.blocos[j]=tmp;
+        guardar(); desenhaBlocos();
+      }
+    });
+    wrap.addEventListener('input',function(ev){
+      var t=ev.target;
+      if(t.hasAttribute('data-c')&&t.classList.contains('cin')){ d[t.getAttribute('data-c')]=t.value; guardar(); return; }
+      var bl=t.closest('.bloco');
+      if(bl){
+        var i=parseInt(bl.getAttribute('data-i'),10);
+        if(!d.blocos[i]) return;
+        if(t.hasAttribute('data-h')) d.blocos[i].h=t.value;
+        else if(t.hasAttribute('data-c')) d.blocos[i].c=t.value;
+        guardar();
+      }
+    });
+
+    if(crit){
+      var marcas=wrap.querySelectorAll('[data-mk]');
+      function medir(){
+        var n=0;
+        marcas.forEach(function(c){ if(c.checked) n++; });
+        var fl=wrap.querySelector('[data-med]'), vv=wrap.querySelector('[data-medv]');
+        if(fl) fl.style.width=(n/crit.li.length*100)+'%';
+        if(vv) vv.textContent=n+'/'+crit.li.length;
+      }
+      marcas.forEach(function(c){
+        var k=c.getAttribute('data-mk');
+        c.checked=!!d.mk[k];
+        c.closest('label').classList.toggle('ok',c.checked);
+        c.addEventListener('change',function(){
+          d.mk[k]=c.checked; c.closest('label').classList.toggle('ok',c.checked);
+          salva(id,d); piscaSalvo(); medir();
+        });
+      });
+      medir();
+    }
+  }
+})();
+</script>
+<script>
+/* ========== CONCEITOS CLICÁVEIS · QUADRO EM TELA CHEIA ========== */
+(function(){
+  var CH='magiway.treino.jl.';
+  function grava(k,v){ try{ localStorage.setItem(CH+k,v); }catch(e){} }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+  var CONCEITOS={
+  ancoragem:{t:'Ancoragem',h:'Vieses de decisão · Tversky e Kahneman',tm:['ancoragem','ancorar','âncora'],
+  q1:'<p>O primeiro número que entra na conversa <b>vira a referência</b> de tudo o que vem depois. Não porque o cliente acredite nele, mas porque a mente ajusta a partir do ponto em que começou — e ajusta pouco.</p><p>No estudo original, girar uma roleta com um número aleatório <b>antes</b> da pergunta já mudava a resposta das pessoas. O número não tinha relação nenhuma com a pergunta.</p>',
+  q2:'<ul><li>A primeira faixa de preço é sua, não do cliente. Quem fala primeiro define o campo.</li><li>Ancore no <b>escopo completo</b> antes de falar de valor: o que está incluso puxa o número para cima.</li><li>Quando o cliente ancora baixo ("meu orçamento é X"), não negue — <b>reancore</b> mostrando o que X compra e o que não compra.</li></ul>',
+  q3:'<p>O cérebro processa quantidade por <b>comparação, não por valor absoluto</b>. Sem referência, um número não significa nada; com referência, ele significa "acima" ou "abaixo". Uma vez fixada a âncora, todo raciocínio seguinte é ajuste, e o ajuste é sistematicamente insuficiente.</p>',
+  q4:'<ul><li>Nunca entre numa negociação sem <b>saber qual âncora você vai colocar</b>.</li><li>Se o cliente ancorou primeiro, mude a unidade de comparação — de preço total para custo por mês, por uso ou por resultado.</li><li>Registre a âncora usada e o fechamento. Em 20 negociações você descobre a sua faixa real.</li></ul>',
+  f:'<p><b>Tversky, A. & Kahneman, D.</b> — <i>Judgment under Uncertainty: Heuristics and Biases</i>, Science, 1974. Retomado em <i>Rápido e Devagar</i> (2011), cap. 11.</p>',
+  v:['contraste','aversao','enquadramento']},
+
+  aversao:{t:'Aversão à perda',h:'Teoria do prospecto · Kahneman e Tversky',tm:['aversão à perda','aversao a perda'],
+  q1:'<p>Perder dói mais do que ganhar dá prazer, na proporção aproximada de <b>dois para um</b>. Uma perda de R$ 100 pesa como um ganho de R$ 200.</p><p>É por isso que "você deixa de ganhar" convence menos do que "você está perdendo".</p>',
+  q2:'<ul><li>Descreva o custo de não agir em <b>perda concreta</b>: leads que esfriam, capacidade parada, prazo que empurra a entrega.</li><li>Garantia e devolução reduzem a perda percebida — <b>por isso destravam a compra</b>, mesmo raramente usadas.</li><li>Cuidado: perda inventada é chantagem e o cliente sente. Só use o que é verdade no caso dele.</li></ul>',
+  q3:'<p>A resposta emocional à perda é <b>mais rápida e mais intensa</b> que a resposta ao ganho equivalente. Isso torna a inércia confortável: mudar expõe a perder, ficar parado parece neutro — mesmo quando não é.</p>',
+  q4:'<ul><li>Quando o cliente empaca, <b>mostre o que ele já está perdendo hoje</b>, não o que ganharia amanhã.</li><li>Reduza a perda do lado dele: piloto, primeira etapa menor, condição de saída.</li><li>Nunca use com cliente em situação de pressão real. Aí a linha da ética já foi cruzada.</li></ul>',
+  f:'<p><b>Kahneman, D. & Tversky, A.</b> — <i>Prospect Theory: An Analysis of Decision under Risk</i>, Econometrica, 1979.</p>',
+  v:['posse','statusquo','enquadramento']},
+
+  sistema12:{t:'Sistema 1 e Sistema 2',h:'Dois modos de pensar · Kahneman',tm:['sistema 1','sistema 2'],
+  q1:'<p>O <b>Sistema 1</b> é rápido, automático, emocional e sempre ligado. O <b>Sistema 2</b> é lento, deliberado, caro e preguiçoso — só entra quando é chamado.</p><p>Quase toda decisão de compra começa no 1 e é <b>justificada depois</b> pelo 2.</p>',
+  q2:'<ul><li>A abertura fala com o Sistema 1: tom, ritmo, clareza, ausência de atrito.</li><li>A proposta escrita alimenta o Sistema 2: números, escopo, comparação — <b>o material que ele vai usar para justificar</b>.</li><li>Inverter a ordem cansa o cliente antes de convencê-lo.</li></ul>',
+  q3:'<p>Argumentar demais cedo <b>convoca o Sistema 2 para o papel de fiscal</b>, e fiscal encontra defeito. Argumentar na hora certa dá a ele o papel de advogado de uma decisão que o Sistema 1 já tomou.</p>',
+  q4:'<ul><li>Primeiro reduza atrito e risco. <b>Depois</b> entregue a munição racional.</li><li>Quando o cliente diz "vou pensar", ele está passando a bola para o Sistema 2 — entregue o material escrito ali, não depois.</li><li>Frase difícil de ler é frase difícil de acreditar. Simplifique.</li></ul>',
+  f:'<p><b>Kahneman, D.</b> — <i>Rápido e Devagar: Duas Formas de Pensar</i>, 2011.</p>',
+  v:['carga','marcador','disponibilidade']},
+
+  enquadramento:{t:'Enquadramento',h:'Framing · Tversky e Kahneman',tm:['enquadramento','enquadrar'],
+  q1:'<p>A mesma informação muda de valor conforme a moldura. "90% de aproveitamento" e "10% de perda" são o mesmo número e produzem <b>decisões diferentes</b>.</p>',
+  q2:'<ul><li>Escolha a moldura antes de dizer o número: por mês, por uso, por resultado ou por comparação.</li><li>Preço alto vira acessível quando enquadrado no <b>custo do problema</b> que resolve.</li><li>Enquadre a decisão como escolha entre opções suas, não como sim/não à sua proposta.</li></ul>',
+  q3:'<p>A mente não avalia estados absolutos, avalia <b>desvios de um ponto de referência</b>. Trocar a moldura troca o ponto de referência, e com ele o sinal do resultado — ganho ou perda.</p>',
+  q4:'<ul><li>Tenha <b>três molduras prontas</b> para o seu produto e teste qual converte melhor.</li><li>Quando o cliente traz uma moldura ruim ("é caro"), não discuta dentro dela — <b>ofereça outra</b>.</li><li>Anote a moldura usada em cada proposta. É o dado que mais rápido melhora a taxa.</li></ul>',
+  f:'<p><b>Tversky, A. & Kahneman, D.</b> — <i>The Framing of Decisions and the Psychology of Choice</i>, Science, 1981.</p>',
+  v:['ancoragem','aversao','contraste']},
+
+  disponibilidade:{t:'Heurística da disponibilidade',h:'Vieses de decisão · Kahneman',tm:['disponibilidade'],
+  q1:'<p>Julgamos a probabilidade de algo pela <b>facilidade com que um exemplo vem à cabeça</b>. O que é vívido e recente parece mais provável do que é.</p>',
+  q2:'<ul><li>Um caso concreto e bem contado vale mais que uma estatística correta.</li><li>Use o caso <b>mais parecido com o cliente</b>, não o mais impressionante.</li><li>Se o cliente tem um exemplo ruim na cabeça, você precisa de um exemplo, não de um argumento.</li></ul>',
+  q3:'<p>A memória entrega <b>o que está acessível, não o que é representativo</b>. Um único episódio marcante distorce a percepção de risco por meses.</p>',
+  q4:'<ul><li>Monte um repertório de <b>seis casos curtos</b>, um por perfil de cliente, com nome, problema, número e resultado.</li><li>Conte o caso antes de mostrar a média. O caso abre, a média sustenta.</li><li>Nunca invente o caso. Caso falso descoberto encerra a relação.</li></ul>',
+  f:'<p><b>Tversky, A. & Kahneman, D.</b> — <i>Availability: A Heuristic for Judging Frequency and Probability</i>, Cognitive Psychology, 1973.</p>',
+  v:['grude','provasocial','sistema12']},
+
+  posse:{t:'Efeito de posse',h:'Endowment effect · Thaler',tm:['efeito de posse','efeito dotação'],
+  q1:'<p>Assim que alguém sente que algo é seu, passa a <b>valorizá-lo mais</b> — e a exigir mais para abrir mão. Basta segurar o objeto, ou imaginar-se usando.</p>',
+  q2:'<ul><li>Teste, amostra, período de uso e demonstração criam posse antes da compra.</li><li>Fale no <b>presente do indicativo</b>: "quando você estiver usando", não "se você comprar".</li><li>Personalizar a proposta com o nome e o caso dele já é uma forma de posse.</li></ul>',
+  q3:'<p>A posse desloca o ponto de referência: devolver deixa de ser "não ganhar" e passa a ser <b>perder</b> — e perda dói o dobro.</p>',
+  q4:'<ul><li>Crie um passo em que o cliente <b>configura ou escolhe algo</b>. Escolha feita é posse iniciada.</li><li>Em renovação, lembre o que ele já construiu com você. É posse acumulada.</li><li>Não force: posse fabricada sem valor real vira arrependimento e cancelamento.</li></ul>',
+  f:'<p><b>Kahneman, D., Knetsch, J. & Thaler, R.</b> — <i>Experimental Tests of the Endowment Effect and the Coase Theorem</i>, Journal of Political Economy, 1990.</p>',
+  v:['aversao','coerencia','statusquo']},
+
+  reciprocidade:{t:'Reciprocidade',h:'Princípio de influência · Cialdini',tm:['reciprocidade'],
+  q1:'<p>Quem recebe algo sente <b>obrigação de retribuir</b>. É uma das regras mais universais que existem e funciona mesmo quando o favor não foi pedido.</p>',
+  q2:'<ul><li>Entregue valor antes da venda: diagnóstico, comparativo, orientação que serve mesmo se ele não comprar.</li><li>O que você dá precisa ser <b>útil, inesperado e personalizado</b>. Brinde genérico não ativa nada.</li><li>Concessão também é presente: ceder um ponto convida o outro a ceder.</li></ul>',
+  q3:'<p>A dívida social gera <b>desconforto até ser quitada</b>. O cérebro trata obrigação não cumprida como pendência aberta, e pendência incomoda.</p>',
+  q4:'<ul><li>Estruture uma <b>primeira entrega gratuita real</b> no seu processo, sempre a mesma, e meça o efeito na conversão.</li><li>Dê primeiro e não cobre. Cobrar a retribuição destrói o efeito.</li><li>Se você concede desconto, <b>peça algo em troca</b> — prazo, volume, indicação.</li></ul>',
+  f:'<p><b>Cialdini, R.</b> — <i>As Armas da Persuasão</i>, 1984, cap. 2. Base experimental: Regan, 1971.</p>',
+  v:['coerencia','afinidade','contraste']},
+
+  coerencia:{t:'Compromisso e coerência',h:'Princípio de influência · Cialdini',tm:['compromisso e coerência','coerência'],
+  q1:'<p>Depois de assumir uma posição, as pessoas se comportam de forma <b>consistente com ela</b> — principalmente se o compromisso foi público, ativo e voluntário.</p>',
+  q2:'<ul><li>Faça o cliente <b>dizer em voz alta</b> o que precisa resolver antes de você propor.</li><li>Peça compromissos pequenos primeiro: uma reunião, um dado, um teste.</li><li>Confirme por escrito o que ficou combinado. Escrever é comprometer.</li></ul>',
+  q3:'<p>Incoerência entre o que se disse e o que se faz gera <b>desconforto interno</b>, e a mente resolve esse desconforto ajustando o comportamento à declaração — não o contrário.</p>',
+  q4:'<ul><li>Termine toda conversa com <b>um próximo passo dito pelo cliente</b>, não por você.</li><li>Retome literalmente as palavras dele na proposta: "você disse que precisa de X".</li><li>Não use para prender quem quer sair. Compromisso arrancado vira cancelamento.</li></ul>',
+  f:'<p><b>Cialdini, R.</b> — <i>As Armas da Persuasão</i>, cap. 3. Base: Freedman & Fraser, 1966 (pé na porta).</p>',
+  v:['reciprocidade','dissonancia','posse']},
+
+  provasocial:{t:'Prova social',h:'Princípio de influência · Cialdini',tm:['prova social'],
+  q1:'<p>Na dúvida, olhamos para o que <b>pessoas parecidas conosco</b> estão fazendo — e fazemos igual. Quanto maior a incerteza, mais forte o efeito.</p>',
+  q2:'<ul><li>Cite clientes <b>do mesmo segmento e porte</b>. Semelhança pesa mais que fama.</li><li>Números de adoção funcionam: quantos já usam, há quanto tempo, com que resultado.</li><li>Depoimento com nome e contexto vale dez depoimentos anônimos.</li></ul>',
+  q3:'<p>Copiar o grupo é um <b>atalho de baixo custo</b> que costuma acertar. O cérebro usa o comportamento alheio como evidência quando não tem evidência própria.</p>',
+  q4:'<ul><li>Mantenha uma lista viva de <b>casos por segmento</b>, atualizada a cada trimestre.</li><li>Peça o depoimento no momento do resultado, não meses depois.</li><li>Prova social falsa é fraude. Não existe versão leve disso.</li></ul>',
+  f:'<p><b>Cialdini, R.</b> — <i>As Armas da Persuasão</i>, cap. 4. Base experimental: Asch, 1951.</p>',
+  v:['autoridade','unidade','disponibilidade']},
+
+  afinidade:{t:'Afinidade',h:'Princípio de influência · Cialdini',tm:['afinidade'],
+  q1:'<p>Dizemos sim mais facilmente a quem <b>gostamos</b>. Semelhança, elogio sincero, familiaridade e cooperação em torno de um objetivo comum aumentam a afinidade.</p>',
+  q2:'<ul><li>Procure semelhança real — origem, trajetória, tipo de problema. Semelhança fabricada é detectada.</li><li>Elogie o que é verdade e específico: a decisão dele, a pergunta dele, o cuidado dele.</li><li>Coloque-se do <b>mesmo lado do problema</b>, não do outro lado da mesa.</li></ul>',
+  q3:'<p>Gostar reduz a vigilância. O cérebro trata quem é parecido como <b>menos ameaçador</b> e aceita mais rápido o que essa pessoa afirma.</p>',
+  q4:'<ul><li>Nos primeiros minutos, busque <b>um ponto real de conexão</b> e volte a ele no fechamento.</li><li>Adote o vocabulário do cliente. Falar a língua dele é semelhança em ato.</li><li>Afinidade não substitui competência. Ela abre a porta; o método fecha o negócio.</li></ul>',
+  f:'<p><b>Cialdini, R.</b> — <i>As Armas da Persuasão</i>, cap. 5.</p>',
+  v:['rotulacao','escuta','unidade']},
+
+  autoridade:{t:'Autoridade',h:'Princípio de influência · Cialdini',tm:['autoridade'],
+  q1:'<p>Obedecemos a quem parece <b>saber mais</b> — e o "parecer" conta tanto quanto o saber. Título, credencial, resultado demonstrado e até vestimenta mudam a resposta.</p>',
+  q2:'<ul><li>Mostre competência <b>antes</b> de propor: um dado que ele não tinha, uma leitura que ele não fez.</li><li>Reconheça uma limitação do seu produto. Autoridade que admite defeito é mais crível.</li><li>Deixe um terceiro apresentar suas credenciais quando possível.</li></ul>',
+  q3:'<p>Delegar julgamento a um especialista <b>economiza esforço mental</b>. Em decisões complexas, o cérebro prefere confiar a analisar — e esse atalho é difícil de desligar.</p>',
+  q4:'<ul><li>Construa <b>uma prova de domínio</b> para usar em toda primeira conversa.</li><li>Diga o que o cliente <b>não</b> deve comprar de você. Isso vale mais que qualquer certificado.</li><li>Autoridade emprestada de marca alheia se desfaz na primeira pergunta técnica.</li></ul>',
+  f:'<p><b>Cialdini, R.</b> — <i>As Armas da Persuasão</i>, cap. 6. Base: Milgram, 1963.</p>',
+  v:['provasocial','halo','challenger']},
+
+  escassez:{t:'Escassez',h:'Princípio de influência · Cialdini',tm:['escassez'],
+  q1:'<p>O que é raro parece mais valioso. Oportunidade que <b>está acabando</b> mobiliza mais do que oportunidade permanente de igual valor.</p>',
+  q2:'<ul><li>Escassez só se usa quando é <b>verdadeira</b>: agenda, lote, capacidade, prazo de tabela.</li><li>Diga o que se perde, não só o que acaba.</li><li>Informação exclusiva também é escassez — e é a versão mais honesta dela.</li></ul>',
+  q3:'<p>A escassez ativa a <b>aversão à perda</b> e reduz o tempo de deliberação. Com menos tempo, o Sistema 1 decide sozinho.</p>',
+  q4:'<ul><li>Tenha <b>um limite real</b> no seu processo e comunique-o sempre igual.</li><li>Prazo inventado é a forma mais rápida de queimar um cliente para sempre.</li><li>Se o cliente pedir mais tempo, dê — e registre. Confiança rende mais que uma venda.</li></ul>',
+  f:'<p><b>Cialdini, R.</b> — <i>As Armas da Persuasão</i>, cap. 7. Base: Worchel et al., 1975.</p>',
+  v:['aversao','presente','urgencia']},
+
+  unidade:{t:'Unidade',h:'Sétimo princípio · Cialdini',tm:['unidade'],
+  q1:'<p>Mais forte que gostar é <b>pertencer</b>. Quando o cliente sente que você é "dos nossos" — mesma cidade, mesmo ofício, mesma luta — o argumento pesa diferente.</p>',
+  q2:'<ul><li>Identifique o grupo com que o cliente se identifica e mostre pertencimento verdadeiro.</li><li>Use "nós" para o problema e "você" para o benefício.</li><li>Construir algo <b>junto</b> — um plano, uma configuração — cria unidade em ato.</li></ul>',
+  q3:'<p>Identidade compartilhada faz o cérebro tratar o outro como <b>extensão do próprio grupo</b>, e o interesse dele passa a ser lido como interesse comum.</p>',
+  q4:'<ul><li>Envolva o cliente na construção da solução. Co-criação é o atalho mais forte para unidade.</li><li>Nunca finja pertencimento. É a mentira mais fácil de detectar.</li></ul>',
+  f:'<p><b>Cialdini, R.</b> — <i>Pré-Suasão</i>, 2016, cap. 8.</p>',
+  v:['afinidade','provasocial','coerencia']},
+
+  presuasao:{t:'Pré-suasão',h:'O momento antes da mensagem · Cialdini',tm:['pré-suasão','presuasão'],
+  q1:'<p>O que acontece <b>antes</b> da mensagem determina como ela é recebida. Direcionar a atenção para um tema torna esse tema mais importante na hora de decidir.</p>',
+  q2:'<ul><li>A primeira pergunta da conversa define o campo. Escolha-a com cuidado.</li><li>Perguntar "o que mais te preocupa hoje?" coloca o problema no centro <b>antes</b> de você falar de solução.</li><li>O ambiente conta: pontualidade, material pronto, clareza do convite.</li></ul>',
+  q3:'<p>A atenção funciona como <b>holofote</b>: o que está iluminado no momento da decisão parece causal e relevante, mesmo quando não é.</p>',
+  q4:'<ul><li>Padronize <b>as três primeiras frases</b> de toda conversa e teste variações por 20 atendimentos.</li><li>Nunca comece pelo preço, nem para "adiantar". Começar pelo preço enquadra tudo em custo.</li></ul>',
+  f:'<p><b>Cialdini, R.</b> — <i>Pré-Suasão: A Influência Começa Antes Mesmo da Primeira Palavra</i>, 2016.</p>',
+  v:['enquadramento','ancoragem','sistema12']},
+
+  contraste:{t:'Contraste perceptivo',h:'Comparação e percepção · Cialdini',tm:['contraste'],
+  q1:'<p>Nada é caro ou barato sozinho. Um valor só existe <b>ao lado de outro</b>. Apresentado depois de algo maior, o mesmo número parece menor.</p>',
+  q2:'<ul><li>Mostre a opção completa antes da recomendada.</li><li>Complementos entram <b>depois</b> do item principal, nunca antes.</li><li>Compare com o custo do problema, não com o concorrente.</li></ul>',
+  q3:'<p>A percepção é relativa por construção: os sentidos registram <b>diferença</b>, não valor absoluto. Isso vale para peso, luz, temperatura e também para preço.</p>',
+  q4:'<ul><li>Monte sempre <b>três opções</b>, com a do meio sendo a que você quer vender.</li><li>Cuidado com contraste exagerado: se a opção alta for absurda, o cliente perde a confiança no conjunto.</li></ul>',
+  f:'<p><b>Cialdini, R.</b> — <i>As Armas da Persuasão</i>, cap. 1.</p>',
+  v:['ancoragem','isca','excesso']},
+
+  isca:{t:'Efeito isca',h:'Decoy effect · Huber, Payne e Puto',tm:['efeito isca','isca'],
+  q1:'<p>Acrescentar uma terceira opção <b>claramente pior</b> que uma das duas existentes faz a opção dominante parecer melhor — e aumenta sua escolha.</p>',
+  q2:'<ul><li>Três planos, sendo um deles pior que o do meio em preço <b>e</b> em conteúdo.</li><li>A isca não é para ser vendida; é para dar régua à comparação.</li><li>Funciona melhor quando as diferenças são fáceis de ver numa tabela.</li></ul>',
+  q3:'<p>Sem uma comparação clara, escolher é caro. A isca <b>cria uma comparação fácil</b>, e a mente prefere a comparação fácil à decisão correta.</p>',
+  q4:'<ul><li>Estruture sua tabela de planos com uma opção de referência que <b>ninguém deve escolher</b>.</li><li>Se o cliente escolher a isca, você errou o desenho — e deve corrigir, não vender.</li></ul>',
+  f:'<p><b>Huber, J., Payne, J. & Puto, C.</b> — <i>Adding Asymmetrically Dominated Alternatives</i>, Journal of Consumer Research, 1982.</p>',
+  v:['contraste','excesso','enquadramento']},
+
+  excesso:{t:'Excesso de escolha',h:'Choice overload · Iyengar e Lepper',tm:['excesso de escolha','paradoxo da escolha'],
+  q1:'<p>Mais opções atraem mais atenção e produzem <b>menos decisão</b>. No estudo clássico, a banca com 24 sabores atraía mais gente e vendia dez vezes menos que a de 6.</p>',
+  q2:'<ul><li>Nunca apresente mais de <b>três caminhos</b> por vez.</li><li>Se o portfólio é grande, filtre <b>você</b> antes de mostrar. Filtrar é o serviço.</li><li>Recomende explicitamente uma opção e diga por quê.</li></ul>',
+  q3:'<p>Cada opção adicional aumenta o <b>custo de comparação</b> e o medo de arrependimento. Acima de certo ponto, adiar vira a saída mais confortável.</p>',
+  q4:'<ul><li>Transforme seu catálogo em <b>três recomendações por perfil</b> de cliente.</li><li>Quando o cliente pedir "me manda tudo", mande três e explique o critério do corte.</li></ul>',
+  f:'<p><b>Iyengar, S. & Lepper, M.</b> — <i>When Choice is Demotivating</i>, Journal of Personality and Social Psychology, 2000. Ver também Schwartz, <i>O Paradoxo da Escolha</i>, 2004.</p>',
+  v:['carga','isca','contraste']},
+
+  zeigarnik:{t:'Efeito Zeigarnik',h:'Pendências abertas · Bluma Zeigarnik',tm:['efeito zeigarnik','zeigarnik'],
+  q1:'<p>Tarefas <b>interrompidas são lembradas melhor</b> que tarefas concluídas. A mente mantém em aberto o que ficou sem fechamento.</p>',
+  q2:'<ul><li>Termine a conversa com <b>uma pergunta em aberto</b> e um encontro marcado para respondê-la.</li><li>Deixe um item do diagnóstico explicitamente pendente: "falta eu entender X".</li><li>Follow-up que retoma a pendência tem resposta muito maior que follow-up genérico.</li></ul>',
+  q3:'<p>Pendência ocupa <b>memória de trabalho</b> e gera tensão leve e persistente. O alívio só vem com o fechamento — e é o cérebro que procura fechar.</p>',
+  q4:'<ul><li>Nunca encerre um contato sem deixar <b>um fio solto combinado</b>.</li><li>Registre a pendência com as palavras do cliente e comece o próximo contato por ela.</li></ul>',
+  f:'<p><b>Zeigarnik, B.</b> — <i>Über das Behalten von erledigten und unerledigten Handlungen</i>, Psychologische Forschung, 1927.</p>',
+  v:['coerencia','carga','picofim']},
+
+  picofim:{t:'Regra do pico e fim',h:'Como a experiência é lembrada · Kahneman',tm:['pico e fim','regra do pico'],
+  q1:'<p>A lembrança de uma experiência é definida quase inteiramente pelo <b>momento mais intenso</b> e pelo <b>final</b> — a duração quase não conta.</p>',
+  q2:'<ul><li>Planeje um <b>pico positivo</b> em toda negociação: uma entrega inesperada, uma solução elegante.</li><li>O fechamento é o que fica: última mensagem, última entrega, último contato.</li><li>Em caso difícil, garanta que o <b>fim</b> seja bom — mesmo que o meio tenha sido ruim.</li></ul>',
+  q3:'<p>A memória não grava a média da experiência; grava <b>amostras salientes</b>. Por isso um atendimento longo e correto pode ser lembrado pior que um curto com um bom final.</p>',
+  q4:'<ul><li>Desenhe conscientemente o <b>último minuto</b> de cada etapa do seu processo.</li><li>Depois de um problema resolvido, faça um contato extra só para fechar bem. É o mais barato dos investimentos.</li></ul>',
+  f:'<p><b>Redelmeier, D. & Kahneman, D.</b> — <i>Patients\' memories of painful medical treatments</i>, Pain, 1996.</p>',
+  v:['zeigarnik','disponibilidade','grude']},
+
+  exposicao:{t:'Mera exposição',h:'Familiaridade · Zajonc',tm:['mera exposição'],
+  q1:'<p>Quanto mais vemos algo, mais gostamos dele — <b>mesmo sem lembrar de ter visto</b>. Familiaridade sozinha já produz preferência.</p>',
+  q2:'<ul><li>Presença constante e discreta vale mais que campanha intensa e rara.</li><li>Follow-up com informação útil mantém exposição sem virar incômodo.</li><li>Padronize identidade, assinatura e formato: <b>repetição só funciona se for reconhecível</b>.</li></ul>',
+  q3:'<p>O reconhecimento reduz o <b>esforço de processamento</b>, e a mente interpreta esse conforto como "gostar". É por isso que marca conhecida reduz o trabalho do vendedor.</p>',
+  q4:'<ul><li>Estabeleça uma <b>cadência fixa</b> de contato útil, mesmo com quem não comprou.</li><li>Exposição sem conteúdo vira spam e inverte o efeito.</li></ul>',
+  f:'<p><b>Zajonc, R.</b> — <i>Attitudinal Effects of Mere Exposure</i>, Journal of Personality and Social Psychology, 1968.</p>',
+  v:['afinidade','provasocial','grude']},
+
+  confirmacao:{t:'Viés de confirmação',h:'Como sustentamos o que já achamos',tm:['viés de confirmação'],
+  q1:'<p>Procuramos e valorizamos informação que <b>confirma</b> o que já acreditamos, e descontamos o que contraria. Vale para o cliente e vale para o vendedor.</p>',
+  q2:'<ul><li>Se o cliente chegou com uma ideia fixa, não ataque de frente — <b>traga um caso</b> que não caiba nela.</li><li>Ao diagnosticar, procure ativamente o que <b>desmente</b> a sua primeira hipótese.</li><li>Pergunte "o que te faria mudar de ideia?". A resposta é o mapa.</li></ul>',
+  q3:'<p>Rever uma crença custa esforço e admite erro. É mais barato para o cérebro <b>filtrar o mundo</b> do que reorganizar o modelo.</p>',
+  q4:'<ul><li>Na revisão semanal, liste <b>um fato que contraria</b> a sua leitura da carteira.</li><li>Grave e ouça as conversas perdidas, não só as ganhas. É onde está a informação nova.</li></ul>',
+  f:'<p><b>Wason, P.</b> — <i>On the failure to eliminate hypotheses</i>, Quarterly Journal of Experimental Psychology, 1960.</p>',
+  v:['dissonancia','halo','afundado']},
+
+  afundado:{t:'Custo afundado',h:'Sunk cost · Arkes e Blumer',tm:['custo afundado'],
+  q1:'<p>Continuamos investindo em algo <b>porque já investimos</b>, não porque vale a pena daqui para frente. O passado não deveria contar, mas conta.</p>',
+  q2:'<ul><li>Reconheça o investimento anterior do cliente antes de propor mudança. Negar aumenta a resistência.</li><li>Ajude-o a separar <b>o que já foi gasto</b> do que ainda será.</li><li>Do seu lado: negociação parada há meses não merece mais tempo só por causa do tempo já gasto.</li></ul>',
+  q3:'<p>Abandonar é admitir perda, e perda dói. Manter <b>adia a dor</b> — e o adiamento parece racional porque vem embrulhado em esperança.</p>',
+  q4:'<ul><li>Revise a carteira com a pergunta: <b>"se eu não tivesse investido nada aqui, começaria hoje?"</b></li><li>Estabeleça um limite de contatos por lead. Depois dele, o lead volta para a base fria.</li></ul>',
+  f:'<p><b>Arkes, H. & Blumer, C.</b> — <i>The Psychology of Sunk Cost</i>, Organizational Behavior and Human Decision Processes, 1985.</p>',
+  v:['aversao','statusquo','confirmacao']},
+
+  statusquo:{t:'Viés do status quo',h:'A força de não mudar · Samuelson e Zeckhauser',tm:['status quo'],
+  q1:'<p>Ficar como está é a <b>opção padrão</b> da mente. Mudar exige justificativa; permanecer, não. É o concorrente mais forte que você tem.</p>',
+  q2:'<ul><li>Seu concorrente real, na maioria dos casos, é o <b>"deixar como está"</b>. Trate-o como opção na conversa.</li><li>Torne o custo de não mudar visível e datado.</li><li>Reduza o tamanho do primeiro passo até ele ficar menor que a inércia.</li></ul>',
+  q3:'<p>Mudança expõe a arrependimento por <b>ação</b>, que dói mais que arrependimento por omissão. Por isso a inércia parece segura mesmo quando é cara.</p>',
+  q4:'<ul><li>Sempre inclua a linha <b>"o que acontece se nada mudar"</b> na sua proposta.</li><li>Ofereça piloto, etapa ou reversibilidade. Saída fácil destrava entrada.</li></ul>',
+  f:'<p><b>Samuelson, W. & Zeckhauser, R.</b> — <i>Status Quo Bias in Decision Making</i>, Journal of Risk and Uncertainty, 1988.</p>',
+  v:['aversao','posse','presente']},
+
+  halo:{t:'Efeito halo',h:'Uma impressão contamina o resto · Thorndike',tm:['efeito halo'],
+  q1:'<p>Uma característica boa e visível faz o resto <b>parecer bom também</b>. Aparência cuidada vira competência; pontualidade vira confiabilidade.</p>',
+  q2:'<ul><li>Cuide dos sinais visíveis: proposta bem formatada, resposta rápida, material sem erro.</li><li>Um detalhe malfeito contamina o julgamento do conjunto — <b>o halo funciona nos dois sentidos</b>.</li><li>Comece pela sua melhor prova. O que vem depois é lido sob a luz dela.</li></ul>',
+  q3:'<p>Avaliar cada atributo separadamente é caro. O cérebro <b>generaliza a partir do primeiro sinal forte</b> e mantém a impressão até ser contrariado com força.</p>',
+  q4:'<ul><li>Padronize o que é visível: modelo de proposta, assinatura, tempo de resposta.</li><li>Elimine erros de português do material. Custa pouco e vale muito.</li></ul>',
+  f:'<p><b>Thorndike, E.</b> — <i>A constant error in psychological ratings</i>, Journal of Applied Psychology, 1920.</p>',
+  v:['autoridade','exposicao','confirmacao']},
+
+  presente:{t:'Viés do presente',h:'Desconto hiperbólico · Laibson',tm:['viés do presente'],
+  q1:'<p>Damos <b>peso desproporcional ao agora</b>. Um benefício hoje vale mais que um benefício maior daqui a três meses — e a preferência se inverte quando os dois ficam distantes.</p>',
+  q2:'<ul><li>Traga o primeiro ganho para <b>perto</b>: o que muda já na primeira semana.</li><li>Divida a entrega em marcos curtos e visíveis.</li><li>Benefício de longo prazo precisa de <b>marco intermediário</b> para existir na cabeça do cliente.</li></ul>',
+  q3:'<p>O sistema de recompensa responde muito mais ao <b>imediato</b>. O futuro é abstrato, e o abstrato mobiliza pouco.</p>',
+  q4:'<ul><li>Reescreva seus benefícios em <b>semanas, não em anos</b>.</li><li>Combine com o cliente um resultado verificável em 30 dias. Isso sustenta a renovação.</li></ul>',
+  f:'<p><b>Laibson, D.</b> — <i>Golden Eggs and Hyperbolic Discounting</i>, Quarterly Journal of Economics, 1997.</p>',
+  v:['escassez','statusquo','aversao']},
+
+  dissonancia:{t:'Dissonância cognitiva',h:'O desconforto de se contradizer · Festinger',tm:['dissonância cognitiva','dissonância'],
+  q1:'<p>Manter duas ideias incompatíveis gera <b>desconforto</b>, e a mente resolve ajustando uma delas — quase sempre a mais fácil de mudar.</p>',
+  q2:'<ul><li>Depois da compra, o cliente procura razões para ter comprado. <b>Entregue essas razões</b> — é o que reduz cancelamento.</li><li>Não force o cliente a admitir que errou antes. Ofereça uma saída digna.</li><li>Contradição apontada na cara gera defesa, não mudança.</li></ul>',
+  q3:'<p>O cérebro protege a <b>coerência da própria imagem</b>. Mudar de opinião é mais barato quando não implica admitir burrice.</p>',
+  q4:'<ul><li>Monte um contato de <b>pós-venda no terceiro dia</b> com reforço da decisão.</li><li>Quando o cliente muda de posição, celebre a decisão nova sem lembrar a antiga.</li></ul>',
+  f:'<p><b>Festinger, L.</b> — <i>A Theory of Cognitive Dissonance</i>, 1957.</p>',
+  v:['coerencia','confirmacao','posse']},
+
+  carga:{t:'Carga cognitiva',h:'O limite de processamento · Sweller',tm:['carga cognitiva'],
+  q1:'<p>A memória de trabalho é <b>pequena e cansa rápido</b>. Informação demais, mal organizada, impede o aprendizado e a decisão.</p>',
+  q2:'<ul><li>Uma ideia por bloco. Uma decisão por reunião.</li><li>Ordene do <b>geral para o detalhe</b>, nunca o contrário.</li><li>Corte tudo que não muda a decisão. Detalhe irrelevante gasta o cliente.</li></ul>',
+  q3:'<p>Quando a carga excede o limite, o processamento <b>degrada em vez de desacelerar</b>: o cliente não fica confuso e continua, ele desiste.</p>',
+  q4:'<ul><li>Reescreva sua proposta até caber em <b>uma página</b>. Anexos ficam anexos.</li><li>Em reunião longa, feche cada bloco com uma frase-resumo antes de seguir.</li></ul>',
+  f:'<p><b>Sweller, J.</b> — <i>Cognitive Load During Problem Solving</i>, Cognitive Science, 1988. Ver também Miller, 1956.</p>',
+  v:['excesso','sistema12','grude']},
+
+  espacamento:{t:'Efeito de espaçamento',h:'Como o treino fixa · Ebbinghaus',tm:['espaçamento','curva do esquecimento'],
+  q1:'<p>Estudar o mesmo conteúdo <b>distribuído no tempo</b> fixa muito mais do que estudar tudo de uma vez, mesmo com o mesmo número de horas.</p>',
+  q2:'<ul><li>Revisões curtas em dias alternados valem mais que um treinamento de oito horas.</li><li>Reveja o roteiro <b>antes de esquecer</b>, não depois.</li><li>Este programa é desenhado assim: sessenta dias, não uma semana intensiva.</li></ul>',
+  q3:'<p>Cada recuperação da memória <b>reforça o traço</b>. Recuperar com esforço — quando já está quase esquecido — reforça mais do que reler.</p>',
+  q4:'<ul><li>Bloqueie <b>15 minutos diários</b> de revisão do material próprio.</li><li>Teste-se de memória antes de consultar. O erro na tentativa é o que ensina.</li></ul>',
+  f:'<p><b>Ebbinghaus, H.</b> — <i>Über das Gedächtnis</i>, 1885. Revisão moderna: Cepeda et al., 2006.</p>',
+  v:['deliberada','carga','tacito']},
+
+  deliberada:{t:'Prática deliberada',h:'A diferença entre repetir e treinar · Ericsson',tm:['prática deliberada'],
+  q1:'<p>Repetir não melhora. Melhora a prática <b>com objetivo específico, no limite da capacidade, com correção imediata</b> e repetição da parte que falhou.</p>',
+  q2:'<ul><li>Treine <b>uma etapa por vez</b>: só abertura, só diagnóstico, só objeção.</li><li>Grave, ouça, marque o erro exato e refaça só aquele trecho.</li><li>Sem alguém corrigindo, a repetição consolida o defeito.</li></ul>',
+  q3:'<p>O aprendizado ocorre na <b>zona de desconforto</b>. Prática confortável mantém o nível; prática difícil com correção o move.</p>',
+  q4:'<ul><li>Toda semana escolha <b>um único ponto</b> para melhorar e meça-o.</li><li>Peça correção específica: "o que eu deveria ter feito no minuto 4?".</li></ul>',
+  f:'<p><b>Ericsson, A., Krampe, R. & Tesch-Römer, C.</b> — <i>The Role of Deliberate Practice</i>, Psychological Review, 1993. Ver <i>Pico</i>, 2016.</p>',
+  v:['espacamento','tacito','picofim']},
+
+  tacito:{t:'Conhecimento tácito e SECI',h:'Como o que se sabe fazer vira método · Nonaka e Takeuchi',tm:['conhecimento tácito','seci'],
+  q1:'<p>Conhecimento <b>tácito</b> é o que a pessoa sabe fazer mas não consegue explicar. O modelo SECI descreve como ele vira conhecimento da organização: <b>Socialização, Externalização, Combinação, Internalização</b>.</p>',
+  q2:'<ul><li><b>Socialização</b>: observar o Luciano trabalhando, sem interromper (módulos 1–2).</li><li><b>Externalização</b>: transcrever e codificar o que ele faz (módulos 3–4).</li><li><b>Combinação</b>: transformar em roteiros e bibliotecas (módulos 5–8).</li><li><b>Internalização</b>: praticar até virar automático (módulos 9–12).</li></ul>',
+  q3:'<p>A etapa que quase todo mundo pula é a <b>externalização</b>: sem transcrever, o aprendiz fica com uma imitação vaga em vez de uma estrutura utilizável.</p>',
+  q4:'<ul><li>Não pule a transcrição literal. É o passo caro que faz o resto funcionar.</li><li>Ao fim, o material precisa ser <b>ensinável por outra pessoa</b>. Esse é o teste.</li></ul>',
+  f:'<p><b>Nonaka, I. & Takeuchi, H.</b> — <i>The Knowledge-Creating Company</i>, 1995. Base: Polanyi, <i>The Tacit Dimension</i>, 1966.</p>',
+  v:['deliberada','espacamento','spin']},
+
+  spin:{t:'SPIN',h:'Perguntar antes de propor · Rackham',tm:['spin'],
+  q1:'<p>Quatro tipos de pergunta em ordem: <b>Situação</b> (contexto), <b>Problema</b> (dificuldade), <b>Implicação</b> (consequência) e <b>Necessidade de solução</b> (valor de resolver).</p><p>Baseado na observação de <b>35 mil conversas de venda</b>.</p>',
+  q2:'<ul><li>Poucas perguntas de situação — elas cansam e não vendem.</li><li>A <b>implicação</b> é o coração: é onde o problema ganha tamanho.</li><li>A última pergunta faz o cliente <b>dizer o benefício</b> em vez de você.</li></ul>',
+  q3:'<p>Quando o próprio cliente enuncia a consequência do problema, entra em ação o <b>compromisso e coerência</b>: ele passa a defender a solução como ideia dele.</p>',
+  q4:'<ul><li>Escreva <b>três perguntas de implicação</b> para o seu produto e use em toda conversa.</li><li>Meça: em quantas conversas o cliente disse o benefício antes de você?</li></ul>',
+  f:'<p><b>Rackham, N.</b> — <i>SPIN Selling</i>, 1988.</p>',
+  v:['coerencia','gap','challenger']},
+
+  challenger:{t:'Challenger Sale',h:'Ensinar em vez de atender · Dixon e Adamson',tm:['challenger'],
+  q1:'<p>Entre cinco perfis de vendedor, o que mais performa em vendas complexas é o <b>desafiador</b>: ensina algo novo, adapta a mensagem e assume o controle da conversa.</p>',
+  q2:'<ul><li>Leve ao cliente <b>uma informação que ele não tinha</b> sobre o próprio negócio.</li><li>Discorde com respeito quando a leitura dele estiver errada.</li><li>Controle não é agressividade: é <b>não deixar a conversa sem próximo passo</b>.</li></ul>',
+  q3:'<p>Uma informação nova e relevante reposiciona o vendedor de <b>fornecedor para conselheiro</b>, e conselheiro é ouvido de outro jeito — ativa autoridade.</p>',
+  q4:'<ul><li>Prepare <b>um insight por segmento</b> e atualize a cada trimestre.</li><li>Só desafie o que você pode sustentar com dado. Desafio sem prova vira arrogância.</li></ul>',
+  f:'<p><b>Dixon, M. & Adamson, B.</b> — <i>The Challenger Sale</i>, 2011.</p>',
+  v:['autoridade','gap','spin']},
+
+  gap:{t:'Gap Selling',h:'Vender a distância · Keenan',tm:['gap selling'],
+  q1:'<p>Vende-se a <b>distância entre o estado atual e o estado desejado</b>. Sem gap medido, não há venda — há apresentação de produto.</p>',
+  q2:'<ul><li>Descreva o estado atual em <b>números do cliente</b>, não em adjetivos.</li><li>Descreva o estado desejado com a mesma unidade de medida.</li><li>A proposta é a ponte entre os dois, e só isso.</li></ul>',
+  q3:'<p>Um gap explícito e quantificado cria <b>tensão de pendência</b>. Sem número, o problema continua abstrato — e o abstrato não move ninguém.</p>',
+  q4:'<ul><li>Nenhuma proposta sai sem a linha <b>"hoje X, com a solução Y, diferença Z"</b>.</li><li>Se você não consegue medir o gap, você ainda não diagnosticou.</li></ul>',
+  f:'<p><b>Keenan</b> — <i>Gap Selling</i>, 2018.</p>',
+  v:['spin','statusquo','challenger']},
+
+  rotulacao:{t:'Rotulação e espelhamento',h:'Técnicas de tensão · Voss',tm:['rotulação','espelhamento'],
+  q1:'<p><b>Rotular</b> é nomear a emoção do outro ("parece que você já se decepcionou com isso"). <b>Espelhar</b> é repetir as últimas palavras dele em tom de pergunta.</p>',
+  q2:'<ul><li>Rotule antes de responder à objeção. Emoção nomeada perde força.</li><li>Espelhe quando quiser mais informação sem perguntar.</li><li>Use <b>perguntas calibradas</b> — "como eu faço isso?" — para transferir o problema.</li></ul>',
+  q3:'<p>Nomear a emoção <b>reduz a ativação</b> do sistema de ameaça e devolve a conversa ao raciocínio. Ser espelhado gera sensação de estar sendo ouvido.</p>',
+  q4:'<ul><li>Treine cinco rótulos prontos para as objeções mais comuns da sua carteira.</li><li>Depois de rotular, <b>fique em silêncio</b>. O silêncio faz o trabalho.</li></ul>',
+  f:'<p><b>Voss, C.</b> — <i>Negocie Como Se Sua Vida Dependesse Disso</i>, 2016.</p>',
+  v:['escuta','afinidade','sistema12']},
+
+  escuta:{t:'Escuta ativa',h:'Ouvir para entender · Rogers e Farson',tm:['escuta ativa'],
+  q1:'<p>Ouvir sem preparar a resposta, devolvendo em voz alta o que se entendeu, <b>até o outro confirmar</b>. É uma técnica, não uma virtude.</p>',
+  q2:'<ul><li>Não interrompa. A informação que vende costuma vir depois da pausa.</li><li>Devolva com as palavras dele: "então o problema é X, e o que te trava é Y — é isso?".</li><li>Anote enquanto ouve. Anotar sinaliza que o que ele diz importa.</li></ul>',
+  q3:'<p>Ser compreendido reduz defesa e aumenta abertura. Quem se sente ouvido <b>revela mais</b> — inclusive o critério real de decisão.</p>',
+  q4:'<ul><li>Meça o seu tempo de fala. Na abertura, o cliente deve falar <b>ao menos o dobro</b>.</li><li>Termine todo diagnóstico com um resumo confirmado por ele.</li></ul>',
+  f:'<p><b>Rogers, C. & Farson, R.</b> — <i>Active Listening</i>, 1957.</p>',
+  v:['rotulacao','spin','afinidade']},
+
+  marcador:{t:'Marcador somático',h:'A emoção como atalho · Damásio',tm:['marcador somático'],
+  q1:'<p>Decisões vêm marcadas por <b>sinais corporais</b> associados a experiências passadas. Pacientes com lesão nessa região raciocinam bem e <b>não conseguem decidir</b>.</p>',
+  q2:'<ul><li>Sensação ruim do cliente é dado, não ruído. Pergunte sobre ela.</li><li>Reduza sinais de risco: clareza, previsibilidade, ausência de letra miúda.</li><li>Uma experiência ruim anterior com outro fornecedor <b>marca a sua proposta também</b>.</li></ul>',
+  q3:'<p>A emoção não atrapalha a razão: ela <b>viabiliza</b> a decisão, cortando alternativas antes da deliberação consciente.</p>',
+  q4:'<ul><li>Pergunte cedo: <b>"o que já deu errado antes nisso?"</b>. A resposta orienta toda a conversa.</li><li>Trate os sinais de desconforto na hora em que aparecem, não no fechamento.</li></ul>',
+  f:'<p><b>Damásio, A.</b> — <i>O Erro de Descartes</i>, 1994.</p>',
+  v:['sistema12','aversao','escuta']},
+
+  grude:{t:'Mensagem que gruda',h:'SUCCESs · Chip e Dan Heath',tm:['mensagem que gruda'],
+  q1:'<p>Ideias que ficam têm seis traços: <b>simples, inesperadas, concretas, credíveis, emocionais e em forma de história</b>.</p>',
+  q2:'<ul><li>Uma frase-núcleo por proposta. Se não cabe numa frase, ainda não está pronta.</li><li>Troque adjetivo por número e número por comparação concreta.</li><li>Conte o caso como história, com personagem e obstáculo.</li></ul>',
+  q3:'<p>O concreto é <b>codificado em mais lugares</b> da memória que o abstrato, e o inesperado abre uma lacuna que a mente quer fechar.</p>',
+  q4:'<ul><li>Reescreva sua apresentação até um leigo repetir o essencial <b>depois de ouvir uma vez</b>.</li><li>Teste: peça ao cliente para explicar sua proposta a um colega. O que ele esquecer, você escreveu mal.</li></ul>',
+  f:'<p><b>Heath, C. & Heath, D.</b> — <i>Made to Stick</i>, 2007.</p>',
+  v:['carga','disponibilidade','picofim']},
+
+  urgencia:{t:'Urgência ética',h:'O limite do programa',tm:['urgência ética'],
+  q1:'<p>Urgência real — agenda cheia, lote acabando, tabela mudando — <b>pode e deve ser dita</b>. Urgência inventada é fraude, e não existe versão leve disso.</p>',
+  q2:'<ul><li>Só comunique prazo que você <b>cumpriria</b> se o cliente pedisse para esperar.</li><li>Se o prazo passar e nada acontecer, sua palavra vale menos para sempre.</li><li>Diante de cliente pressionado, <b>ofereça mais tempo</b>, não menos.</li></ul>',
+  q3:'<p>Pressão de tempo reduz deliberação e aumenta arrependimento. Venda feita sob urgência falsa tem <b>cancelamento e reputação piores</b> que venda perdida.</p>',
+  q4:'<ul><li>Teste toda técnica com a pergunta: <b>o cliente compraria de novo sabendo de tudo?</b></li><li>Registre os prazos comunicados. Auditoria própria é o que protege a carteira.</li></ul>',
+  f:'<p>Princípio ético do programa. Fundamento em <b>Cialdini</b>, <i>As Armas da Persuasão</i>, posfácio sobre uso responsável.</p>',
+  v:['escassez','presente','autoridade']}
+  };
+
+  /* ---------- quadro em tela cheia ---------- */
+  var ovc=document.createElement('div');
+  ovc.id='ovc';
+  ovc.innerHTML='<div id="ovcbox"><button id="ovcx" type="button" aria-label="Fechar">✕</button>'+
+    '<div class="cw"><div id="ovch"></div><h2 id="ovct"></h2><div id="ovcc"></div></div></div>';
+  document.body.appendChild(ovc);
+  var ovch=ovc.querySelector('#ovch'), ovct=ovc.querySelector('#ovct'), ovcc=ovc.querySelector('#ovcc');
+
+  function fecharC(){ ovc.classList.remove('on'); document.body.style.overflow=''; }
+  ovc.querySelector('#ovcx').addEventListener('click',fecharC);
+  ovc.addEventListener('click',function(e){ if(e.target===ovc) fecharC(); });
+  addEventListener('keydown',function(e){ if(e.key==='Escape'&&ovc.classList.contains('on')) fecharC(); });
+
+  var QH=[['q1','O QUE É','◍','q1'],['q2','COMO SE APLICA NA VENDA','▶','q2'],
+          ['q3','QUE EFEITO FAZ NA MENTE','◈','q3'],['q4','COMO TIRAR PROVEITO','★','q4']];
+
+  function abreConceito(k){
+    var c=CONCEITOS[k]; if(!c) return;
+    ovch.textContent=c.h||'Conceito';
+    ovct.textContent=c.t;
+    var q=QH.map(function(x,i){
+      return '<div class="q q'+(i+1)+'"><div class="qh"><span class="qi">'+x[2]+'</span>'+x[1]+'</div>'+(c[x[0]]||'')+'</div>';
+    }).join('');
+    var rel=(c.v||[]).filter(function(r){ return CONCEITOS[r]; });
+    ovcc.innerHTML='<div class="cq">'+q+'</div>'+
+      '<div class="cft"><div class="fh">De onde vem · fonte</div>'+(c.f||'')+'</div>'+
+      (rel.length?'<div class="cvi"><span style="font-family:var(--m);font-size:13px;letter-spacing:.16em;'+
+        'text-transform:uppercase;color:var(--ink-3);align-self:center;margin-right:6px">Ver também</span>'+
+        rel.map(function(r){ return '<button type="button" data-ir-cn="'+r+'">'+esc(CONCEITOS[r].t)+' →</button>'; }).join('')+'</div>':'');
+    ovc.classList.add('on');
+    ovc.scrollTop=0;
+    document.body.style.overflow='hidden';
+    grava('cn.ultimo',k);
+  }
+  ovcc.addEventListener('click',function(e){
+    var b=e.target.closest('[data-ir-cn]'); if(b) abreConceito(b.getAttribute('data-ir-cn'));
+  });
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-cn]'); if(!t) return;
+    e.preventDefault(); e.stopPropagation();
+    abreConceito(t.getAttribute('data-cn'));
+  },true);
+
+  /* ---------- ligar os termos no texto ---------- */
+  var PULAR=/^(A|BUTTON|INPUT|TEXTAREA|SELECT|SCRIPT|STYLE|H1|H2|CODE|LABEL)$/;
+  var PULAR_CL=['cx','mi','tag','ph','psub','selo','ficha','ent','src','ct','fh','qh','rod','lb','tp','cin','bt'];
+  function podeLigar(no){
+    var e=no.parentElement;
+    while(e&&e!==document.body){
+      if(PULAR.test(e.tagName)) return false;
+      if(e.id==='ovc'||e.id==='ov'||e.id==='side') return false;
+      for(var i=0;i<PULAR_CL.length;i++) if(e.classList.contains(PULAR_CL[i])) return false;
+      if(e.getAttribute&&e.getAttribute('data-face')==='mm') return false;
+      e=e.parentElement;
+    }
+    return true;
+  }
+  function ligar(){
+    var pares=[];
+    Object.keys(CONCEITOS).forEach(function(k){
+      (CONCEITOS[k].tm||[CONCEITOS[k].t]).forEach(function(tm){ pares.push([tm,k]); });
+    });
+    pares.sort(function(a,b){ return b[0].length-a[0].length; });
+    var alt=pares.map(function(p){ return p[0].replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }).join('|');
+    var RX=new RegExp('(^|[^0-9A-Za-zÀ-ÿ])('+alt+')(?![0-9A-Za-zÀ-ÿ])','i');
+    var mapa={};
+    pares.forEach(function(p){ mapa[p[0].toLowerCase()]=p[1]; });
+
+    document.querySelectorAll('main .sec').forEach(function(sec){
+      var usados={};
+      var ap=sec.querySelector('.face[data-face="ap"]')||sec;
+      var nos=[], w=document.createTreeWalker(ap,NodeFilter.SHOW_TEXT,null);
+      var n; while((n=w.nextNode())) if(n.nodeValue&&n.nodeValue.length>3) nos.push(n);
+      nos.forEach(function(no){
+        if(!no.parentNode||!podeLigar(no)) return;
+        var m=RX.exec(no.nodeValue); if(!m) return;
+        var k=mapa[m[2].toLowerCase()]; if(!k) return;
+        if((usados[k]||0)>=2) return;
+        usados[k]=(usados[k]||0)+1;
+        var ini=m.index+m[1].length;
+        var meio=no.splitText(ini);
+        meio.splitText(m[2].length);
+        var sp=document.createElement('span');
+        sp.className='cx'; sp.setAttribute('data-cn',k);
+        sp.setAttribute('role','button'); sp.setAttribute('tabindex','0');
+        sp.title='Abrir o quadro completo deste conceito';
+        sp.textContent=meio.nodeValue;
+        meio.parentNode.replaceChild(sp,meio);
+      });
+    });
+  }
+  ligar();
+
+  /* ---------- índice de conceitos e fontes, na bibliografia ---------- */
+  (function(){
+    var ref=document.querySelector('#ref2 .face[data-face="ap"]'); if(!ref) return;
+    var chaves=Object.keys(CONCEITOS).sort(function(a,b){
+      return CONCEITOS[a].t.localeCompare(CONCEITOS[b].t,'pt'); });
+    var fontes=chaves.map(function(k){
+      return '<tr><td><span class="cx" data-cn="'+k+'">'+esc(CONCEITOS[k].t)+'</span></td>'+
+             '<td>'+esc(CONCEITOS[k].h)+'</td><td>'+String(CONCEITOS[k].f||'').replace(/<\/?p>/g,'')+'</td></tr>';
+    }).join('');
+    var bl=document.createElement('div');
+    bl.innerHTML=
+      '<div class="pan inf" style="margin-top:clamp(20px,2.2vw,36px)">'+
+        '<span class="ph">Índice de conceitos · <b>'+chaves.length+' verbetes clicáveis</b></span>'+
+        '<span class="psub">clique em qualquer um para abrir o quadro em tela cheia: o que é · como aplica · efeito na mente · como tirar proveito</span>'+
+        '<div class="pb"><div class="cvi" style="margin-top:14px">'+
+          chaves.map(function(k){ return '<button type="button" data-cn="'+k+'">'+esc(CONCEITOS[k].t)+'</button>'; }).join('')+
+        '</div></div>'+
+      '</div>'+
+      '<div class="pan neu" style="margin-top:clamp(14px,1.5vw,24px)">'+
+        '<span class="ph">Fontes primárias de cada conceito</span>'+
+        '<span class="psub">autor · obra · ano — a bibliografia por trás de cada verbete</span>'+
+        '<div class="pb"><table><thead><tr><th>Conceito</th><th>Campo</th><th>Fonte</th></tr></thead>'+
+        '<tbody>'+fontes+'</tbody></table></div>'+
+      '</div>';
+    var crit=ref.querySelector('.crit');
+    while(bl.firstChild){ ref.insertBefore(bl.firstChild, crit||null); }
+  })();
+})();
+</script>
+<script>
+/* ========== GRÁFICOS DOS MÓDULOS · OS RESULTADOS DO LUCIANO ========== */
+(function(){
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+  var FALTA='Aguardando o arquivo de dados · este quadro abre espaço para o número real assim que ele chegar';
+
+  /* ---------- peças ---------- */
+  function barras(t,lin){
+    return '<div class="gcmp">'+lin.map(function(l,i){
+      return '<div class="gl '+(l[2]||'')+'"><span class="k">'+esc(l[0])+'</span>'+
+        '<span class="b"><i style="--w:'+l[1]+'%;--d:'+(i*140)+'ms"></i></span>'+
+        '<span class="v">'+esc(l[3])+'</span></div>';
+    }).join('')+'</div>';
+  }
+  function anel(pc,rot){
+    var R=76, C=2*Math.PI*R, O=C*(1-pc/100);
+    return '<div class="gan"><svg viewBox="0 0 200 200" role="img" aria-label="'+esc(rot)+' '+pc+'%">'+
+      '<circle class="trilho" cx="100" cy="100" r="'+R+'"/>'+
+      '<circle class="arco" cx="100" cy="100" r="'+R+'" style="--C:'+C.toFixed(1)+';--O:'+O.toFixed(1)+'"/>'+
+      '</svg><span class="n">'+pc+'%</span><span class="l">'+esc(rot)+'</span></div>';
+  }
+  var nRampa=0;
+  function rampa(t,pts,un,inv){
+    var gid='gArea'+(++nRampa);
+    var W=760,H=330,ml=74,mr=34,mt=34,mb=56;
+    var vs=pts.map(function(p){ return p[1]; });
+    var mx=Math.max.apply(null,vs), mn=Math.min.apply(null,vs);
+    var alto=Math.max(mx,inv?mx:mx), baixo=inv?0:0;
+    var faixa=(alto-baixo)||1;
+    var px=function(i){ return ml+(W-ml-mr)*(pts.length>1?i/(pts.length-1):0.5); };
+    var py=function(v){ var r=(v-baixo)/faixa; if(inv) r=1-r; return mt+(H-mt-mb)*(1-r); };
+    var d=pts.map(function(p,i){ return (i?'L':'M')+px(i).toFixed(1)+' '+py(p[1]).toFixed(1); }).join(' ');
+    var L=0,i;
+    for(i=1;i<pts.length;i++){ var dx=px(i)-px(i-1), dy=py(pts[i][1])-py(pts[i-1][1]); L+=Math.sqrt(dx*dx+dy*dy); }
+    var area=d+' L'+px(pts.length-1).toFixed(1)+' '+(H-mb)+' L'+px(0).toFixed(1)+' '+(H-mb)+' Z';
+    var g='';
+    for(i=0;i<=4;i++){ var y=mt+(H-mt-mb)*i/4; g+='<line class="grd" x1="'+ml+'" y1="'+y.toFixed(1)+'" x2="'+(W-mr)+'" y2="'+y.toFixed(1)+'"/>'; }
+    return '<div class="gra"><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(t)+'">'+
+      '<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1">'+
+      '<stop offset="0%" stop-color="#E0A500" stop-opacity=".30"/>'+
+      '<stop offset="100%" stop-color="#E0A500" stop-opacity="0"/></linearGradient></defs>'+g+
+      '<path class="area" d="'+area+'" style="fill:url(#'+gid+')"/>'+
+      '<path class="lin" d="'+d+'" style="--L:'+L.toFixed(1)+'"/>'+
+      pts.map(function(p,i){
+        return '<circle class="pt" cx="'+px(i).toFixed(1)+'" cy="'+py(p[1]).toFixed(1)+'" r="7" style="--d:'+(700+i*180)+'ms"/>'+
+          '<text class="rot" x="'+px(i).toFixed(1)+'" y="'+(py(p[1])-19).toFixed(1)+'" text-anchor="middle" style="--d:'+(800+i*180)+'ms">'+esc(p[1]+un)+'</text>'+
+          '<text class="eixo" x="'+px(i).toFixed(1)+'" y="'+(H-20)+'" text-anchor="middle">'+esc(p[0])+'</text>';
+      }).join('')+
+      '</svg></div>';
+  }
+  function funil(et){
+    var top=et[0][1]||1;
+    return '<div class="gfun">'+et.map(function(e,i){
+      var w=Math.max(16,Math.round(e[1]/top*100));
+      return '<div class="fx"><div class="fb"><i style="--w:'+w+'%;--d:'+(i*160)+'ms"></i><span>'+esc(e[0])+'</span></div>'+
+        '<div><span class="fv">'+esc(e[2])+'</span><span class="fq">'+esc(e[3]||'')+'</span></div></div>';
+    }).join('')+'</div>';
+  }
+  function fluxo(et){
+    return '<div class="gflu">'+et.map(function(e,i){
+      return '<div class="et c'+((i%4)+1)+'" style="--d:'+(i*150)+'ms"><span class="en">'+esc(e[0])+'</span>'+
+        '<span class="ee">'+esc(e[1])+'</span><span class="ed">'+esc(e[2])+'</span></div>';
+    }).join('')+'</div>';
+  }
+  function radar(eixos){
+    var W=620,cx=310,cy=300,R=195,n=eixos.length,i;
+    function pt(i,r){ var a=-Math.PI/2+i*2*Math.PI/n; return [cx+Math.cos(a)*R*r, cy+Math.sin(a)*R*r]; }
+    var malha='';
+    for(var k=1;k<=4;k++){
+      var pol=[]; for(i=0;i<n;i++){ var p=pt(i,k/4); pol.push(p[0].toFixed(1)+','+p[1].toFixed(1)); }
+      malha+='<polygon class="malha" points="'+pol.join(' ')+'"/>';
+    }
+    for(i=0;i<n;i++){ var e=pt(i,1); malha+='<line class="eixo2" x1="'+cx+'" y1="'+cy+'" x2="'+e[0].toFixed(1)+'" y2="'+e[1].toFixed(1)+'"/>'; }
+    function poligono(chave,cor,op,cls){
+      var pol=[]; for(i=0;i<n;i++){ var p=pt(i,eixos[i][chave]/100); pol.push(p[0].toFixed(1)+','+p[1].toFixed(1)); }
+      return '<polygon class="'+cls+'" points="'+pol.join(' ')+'" style="fill:'+cor+';fill-opacity:'+op+';stroke:'+cor+'"/>';
+    }
+    var rot='';
+    for(i=0;i<n;i++){
+      var p=pt(i,1.17), an=(-Math.PI/2+i*2*Math.PI/n);
+      var ta=Math.abs(Math.cos(an))<0.3?'middle':(Math.cos(an)>0?'start':'end');
+      rot+='<text class="rl" x="'+p[0].toFixed(1)+'" y="'+p[1].toFixed(1)+'" text-anchor="'+ta+'">'+esc(eixos[i][0])+'</text>'+
+           '<text class="rv" x="'+p[0].toFixed(1)+'" y="'+(p[1]+22).toFixed(1)+'" text-anchor="'+ta+'">'+esc(eixos[i][3])+'</text>';
+      var q=pt(i,eixos[i].luc/100);
+      rot+='<circle class="rp" cx="'+q[0].toFixed(1)+'" cy="'+q[1].toFixed(1)+'" r="6" style="--d:'+(900+i*130)+'ms"/>';
+    }
+    return '<div class="grad"><svg viewBox="0 0 '+W+' 600" role="img" aria-label="Capacidades comparadas">'+malha+
+      poligono('eq','#7FA6C7',.14,'pol eq')+poligono('luc','#E0A500',.26,'pol')+rot+'</svg>'+
+      '<div class="rleg"><span class="li eq">Média da equipe</span><span class="li lu">Luciano</span></div></div>';
+  }
+
+  /* ---------- dados: só números que já estão neste documento ---------- */
+  var MARCOS={
+    resp:[['DIA 30',30],['DIA 60',15],['DIA 90',10],['DIA 180',10]],
+    atend:[['DIA 30',60],['DIA 60',70],['DIA 90',78],['DIA 180',78]],
+    orc:[['DIA 30',50],['DIA 60',65],['DIA 90',79],['DIA 180',79]],
+    rec:[['DIA 30',0],['DIA 60',15],['DIA 90',30],['DIA 180',40]]
+  };
+  var G={
+    painel:{h:'A régua traduzida em funil',s:'a cada 100 leads, o que o padrão do Luciano entrega no dia 90',
+      cx:funil([['Leads que chegam',100,'100','base'],['Atendidos no prazo',78,'78','78% · alvo dia 90'],
+                ['Viram orçamento',62,'62','79% dos atendidos']]),
+      lado:anel(78,'atendimento · alvo dia 90'),
+      d:['O funil não tem nada de otimista: <b>78% e 79% já foram registrados em julho</b>. O que o programa cobra é repetir isso com um segundo vendedor, não superar recorde.',
+         'A queda de 100 para 62 mostra onde está o dinheiro: <b>cada ponto de atendimento vale mais que qualquer discurso de fechamento</b>.'],
+      falta:1},
+    met:{h:'O caminho do conhecimento tácito',s:'SECI · as quatro etapas que este programa executa em sessenta dias',
+      cx:fluxo([['ETAPA 1 · MÓDULOS 1–2','Socialização','Observar o Luciano trabalhando, sem interromper e sem opinar.'],
+                ['ETAPA 2 · MÓDULOS 3–4','Externalização','Transcrever e codificar. É a etapa que quase todo mundo pula.'],
+                ['ETAPA 3 · MÓDULOS 5–8','Combinação','Virar roteiro, biblioteca e proposta — material que outro usa.'],
+                ['ETAPA 4 · MÓDULOS 9–12','Internalização','Praticar até o método ficar automático e autoral.']]),
+      d:['Pular a externalização é o erro mais caro: sem transcrição literal, o aprendiz sai com <b>imitação vaga</b> em vez de estrutura.',
+         'Cada etapa tem entrega física. <b>Etapa sem arquivo não aconteceu.</b>']},
+    m1:{h:'Onde a receita entra na conta',s:'régua de chegada · % da receita do mês cobrada do vendedor',
+      cx:rampa('Receita',MARCOS.rec,'%'),lado:anel(8,'do programa concluído'),
+      d:['No módulo 1 <b>não se cobra receita</b> — e isso é decisão de método, não gentileza. Cobrar faturamento cedo produz desconto, e desconto destrói a tabela da equipe inteira.',
+         'Os primeiros trinta dias cobram <b>processo</b>: repertório escrito, prazo de resposta e presença.'],falta:1},
+    m2:{h:'O relógio que sustenta tudo',s:'régua de chegada · tempo até a primeira resposta',
+      cx:rampa('1ª resposta',MARCOS.resp,' min',true),lado:anel(17,'do programa concluído'),
+      d:['A primeira resposta abaixo de <b>10 minutos</b> é o número que sustenta os outros dois. Sem ele, atendimento e orçamento não se movem.',
+         'O módulo 2 ainda não responde cliente — observa. Mas é aqui que se aprende <b>por que o Luciano responde rápido</b> e o que ele já tem pronto para conseguir isso.'],falta:1},
+    m3:{h:'A curva do atendimento',s:'régua de chegada · % dos leads atendidos dentro do prazo',
+      cx:rampa('Atendimento',MARCOS.atend,'%'),lado:anel(25,'do programa concluído'),
+      d:['De 60% a 78% em noventa dias. O salto não vem de esforço: vem de <b>ter resposta pronta e catalogada</b> — que é exatamente a entrega deste módulo.',
+         'Oito áudios catalogados hoje valem mais que oitenta ouvidos sem transcrição.'],falta:1},
+    m4:{h:'Velocidade · o resultado do Luciano',s:'capacidade 01 · leads respondidos dentro do prazo',
+      cx:barras('Velocidade',[['Média da equipe',46,'base','46%'],['Luciano',78,'luc','78%'],['Sua meta · dia 90',78,'meta','78%']])+
+         rampa('1ª resposta',MARCOS.resp,' min',true),
+      lado:anel(33,'do programa concluído'),
+      d:['<b>46% para 78%</b>: essa é a distância entre a média da operação e o Luciano na primeira capacidade. Não é talento — é ter o material pronto antes do lead chegar.',
+         'A meta do dia 90 é <b>igualar</b>, não superar. Superar recorde no primeiro trimestre costuma significar que alguém está descontando preço.']},
+    m5:{h:'Diagnóstico · o resultado do Luciano',s:'capacidade 02 · conversas em que o problema real foi identificado',
+      cx:barras('Diagnóstico',[['Média da equipe',13,'base','13%'],['Luciano',43,'luc','43%'],['Sua meta · dia 90',43,'meta','43%']]),
+      lado:anel(42,'do programa concluído'),
+      d:['<b>13% para 43%</b> — mais de três vezes. É o indicador que mais se moveu em toda a operação, e o que justifica o SPIN estar no módulo 2 da leitura.',
+         'Repare no absoluto: mesmo o Luciano diagnostica de verdade em <b>menos da metade</b> das conversas. A régua é honesta, não heroica.']},
+    m6:{h:'Proposta e preço · o resultado do Luciano',s:'capacidades 03 e 05 · orçamento gerado e disciplina de desconto',
+      cx:barras('Vira proposta',[['Média da equipe',59,'base','59%'],['Luciano',79,'luc','79%'],['Sua meta · dia 90',79,'meta','79%']])+
+         rampa('Atendimento → orçamento',MARCOS.orc,'%'),
+      lado:anel(50,'do programa concluído'),
+      d:['<b>59% para 79%</b> no que vira orçamento, com desconto médio de <b>−3,6%</b>. Os dois números andam juntos: quem ancora no valor não precisa ceder no número.',
+         'Se o seu percentual de orçamento subir e o desconto subir junto, <b>o ganho é falso</b> — você comprou volume com margem.']},
+    m7:{h:'Coragem · o resultado do Luciano',s:'capacidade 09 · seis pontos acima da média em situação de tensão',
+      cx:rampa('Atendimento → orçamento',MARCOS.orc,'%'),
+      lado:anel(58,'do programa concluído'),
+      d:['A capacidade 09 aparece no mapa como <b>6 pontos</b> de diferença — é o que separa quem responde à objeção de quem a evita.',
+         'Objeção não se ganha por argumento. Ganha-se por <b>classificar antes de responder</b> e ter prova anexa.'],falta:1},
+    m8:{h:'Follow-up · o trabalho que ninguém estava fazendo',s:'gargalo medido na operação',
+      cx:funil([['Orçamentos enviados',100,'100','base do mês'],['Recebem follow-up hoje',34,'—','não medido'],
+                ['Retornam com 1% de reativação',1,'1%','R$ 39 mil no período']]),
+      lado:anel(67,'do programa concluído'),
+      d:['O diagnóstico da operação encontrou <b>80 horas por mês</b> de follow-up descoberto — meia vaga de trabalho parada.',
+         'A conta que abre este módulo: <b>1% dos orçamentos abandonados</b> voltando já paga a operação. Não é meta ambiciosa, é sobra.'],falta:1},
+    m9:{h:'Multifrente e concentração de risco',s:'capacidade 07 · frentes conduzidas em paralelo',
+      cx:barras('Concentração da receita',[['Agosto · antes do programa',100,'base','100%'],
+        ['Teto aceitável · dia 180',40,'meta','40%'],['Luciano · frentes simultâneas',100,'luc','4 frentes']]),
+      lado:anel(75,'do programa concluído'),
+      d:['<b>100% da receita de agosto saiu de um vendedor.</b> O programa existe por causa desse número — é elogio ao Luciano e crítica ao desenho da operação.',
+         'A meta de <b>40% máximo por vendedor em 180 dias</b> se alcança aumentando o denominador, nunca reduzindo o que ele entrega.']},
+    m10:{h:'Constância · o resultado do Luciano',s:'capacidade 04 · semanas dentro do padrão',
+      cx:barras('Constância',[['Média da equipe',31,'base','31%'],['Luciano',94,'luc','94%'],['Sua meta · dia 180',94,'meta','94%']]),
+      lado:anel(83,'do programa concluído'),
+      d:['<b>31% para 94%</b> é a maior distância de todo o mapa. Constância é a capacidade mais rara e a menos ensinada.',
+         'Três semanas de número bom valem mais que uma semana de número ótimo — <b>pico esconde processo quebrado</b>.']},
+    m11:{h:'Execução sob pressão',s:'capacidade 08 · volume entregue em relação à média',
+      cx:barras('Execução',[['Média da equipe',28,'base','1,00x'],['Luciano',99,'luc','3,53x'],['Sua meta · dia 180',56,'meta','2,00x']]),
+      lado:anel(92,'do programa concluído'),
+      d:['<b>3,53 vezes</b> a média. Caso difícil é onde essa diferença aparece — e onde ela é aprendida.',
+         'A meta realista do primeiro semestre é <b>2x</b>, não 3,53x. Meta impossível não é ambição, é desistência antecipada.'],falta:1},
+    m12:{h:'As nove capacidades, lado a lado',s:'onde a equipe está e onde o Luciano está · comparação em quatro eixos medidos',
+      cx:radar([['VELOCIDADE',0,0,'46→78%',,],['DIAGNÓSTICO',0,0,'13→43%'],['VIRA PROPOSTA',0,0,'59→79%'],['CONSTÂNCIA',0,0,'31→94%']].map(function(e,i){
+        var pares=[[46,78],[13,43],[59,79],[31,94]];
+        e.eq=pares[i][0]; e.luc=pares[i][1]; return e; })),
+      lado:anel(100,'do programa concluído'),
+      d:['As quatro capacidades acima são as que têm <b>par comparativo medido</b>. As outras cinco — preço (−3,6%), leitura (23/dia), multifrente (4 frentes), execução (3,53x) e coragem (6 pontos) — estão registradas em unidades próprias e não entram no mesmo eixo.',
+         'O método autoral fecha o programa quando <b>o seu polígono encosta no dele</b> e você consegue explicar como chegou lá.'],falta:1}
+  };
+
+  /* ---------- injeta ---------- */
+  Object.keys(G).forEach(function(id){
+    var sec=document.getElementById(id); if(!sec) return;
+    var ap=sec.querySelector('.face[data-face="ap"]'); if(!ap) return;
+    var g=G[id];
+    var el=document.createElement('div');
+    el.className='gfx';
+    el.innerHTML='<div class="gh">Os resultados do Luciano</div><h4>'+g.h+'</h4><div class="gs">'+esc(g.s)+'</div>'+
+      (g.lado?'<div class="gcx"><div>'+g.cx+'</div><div>'+g.lado+'</div></div>':g.cx)+
+      '<div class="disc"><span class="dt">O que este número quer dizer</span>'+
+        g.d.map(function(t){ return '<p>'+t+'</p>'; }).join('')+
+        (g.falta?'<div class="falta">'+FALTA+'</div>':'')+
+      '</div>';
+    var crit=ap.querySelector('.crit');
+    ap.insertBefore(el,crit||null);
+  });
+
+  /* ---------- anima quando entra na tela ---------- */
+  var lento=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var alvos=document.querySelectorAll('.gfx');
+  if(lento||!window.IntersectionObserver){
+    alvos.forEach(function(e){ e.classList.add('viu'); });
+  }else{
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add('viu'); io.unobserve(x.target); } });
+    },{threshold:.16,rootMargin:'0px 0px -60px 0px'});
+    alvos.forEach(function(e){ io.observe(e); });
+    /* rede de segurança: nenhum gráfico pode ficar em branco se o observer não disparar */
+    setTimeout(function(){ alvos.forEach(function(e){ e.classList.add('viu'); }); },11000);
+  }
 })();
 </script>
 </body>
