@@ -301,17 +301,86 @@ ul.tight li{margin:8px 0;}
 </header>
 
 <section>
-  <h2>Antes de tudo <span class="h2note">o que você pediu e eu não consegui puxar</span></h2>
-  <div class="blocked">
-    <h3>Os números de hoje, 7 dias e 30 dias estão bloqueados</h3>
-    <p>Você pediu o desempenho nas três janelas. Não consegui: o trial do Supermetrics da conta <code>carlosemerson1995@gmail.com</code> <b>expirou em 02/08/2026</b>. Toda consulta de métrica volta <code>[TRIAL_EXPIRED]</code> — gasto, impressões, conversas, CPA, ROAS, frequência. Testei nas três janelas e nas duas contas principais.</p>
-    <p>O que continuou funcionando foi a API de <i>gestão</i>: estrutura de campanhas, conjuntos, anúncios, segmentação, orçamentos, públicos e as recomendações que o próprio Meta gera. É sobre isso que este relatório se apoia — e, como você vai ver, dá para condenar boa parte da conta só pela estrutura, sem olhar um único CPA.</p>
-    <p><b>Dois caminhos para destravar as métricas:</b></p>
+  <h2>A pergunta que importa <span class="h2note">dá para viver disso?</span></h2>
+  <p class="lede">Com os números de 1 a 23 de agosto na mão, a resposta curta é: <b>o volume serve, o preço ainda não.</b> A operação entrega cerca de <b>11 conversas por dia</b> a <b>R$&nbsp;23,07</b> cada. É base suficiente para trabalhar — mas você está pagando aproximadamente o dobro do que essa mesma estrutura pode custar depois de arrumada, e ainda não consegue provar se dá lucro, porque nenhuma venda é registrada.</p>
+
+  <div class="money" style="margin-top:22px;">
+    <div class="cell">
+      <span class="lab">Gasto · 1 a 23 ago</span>
+      <span class="val">R$ 7.169</span>
+      <span class="sub">R$ 311,69/dia. Ritmo mensal ≈ R$ 9.350.</span>
+    </div>
+    <div class="cell">
+      <span class="lab">Conversas no WhatsApp</span>
+      <span class="val">257</span>
+      <span class="sub">≈ 11,2/dia · ritmo de 335/mês.</span>
+    </div>
+    <div class="cell warn">
+      <span class="lab">Custo por conversa</span>
+      <span class="val">R$ 23,07</span>
+      <span class="sub">Varia de R$ 20,29 a R$ 26,33 entre as campanhas grandes.</span>
+    </div>
+    <div class="cell crit">
+      <span class="lab">Compras registradas</span>
+      <span class="val">0</span>
+      <span class="sub">Coluna "Compras" vazia em todas. Você não mede retorno.</span>
+    </div>
+  </div>
+
+  <h3>Quanto você precisa fechar para a mídia se pagar</h3>
+  <p>Esta é a única conta que decide se vale a pena. A mídia se paga quando a <b>margem líquida por aluguel</b> ficar acima do CAC da linha correspondente à sua taxa de fechamento.</p>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Se você fecha…</th>
+          <th class="num">CAC por aluguel</th>
+          <th class="num">Aluguéis/mês</th>
+          <th>Leitura</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>5% das conversas</td><td class="num">R$ 461</td><td class="num">17</td><td>Só fecha se a margem por aluguel passar de R$ 461. Apertado.</td></tr>
+        <tr><td>10% das conversas</td><td class="num">R$ 231</td><td class="num">34</td><td>Viável para diária média/alta com locação longa.</td></tr>
+        <tr><td>15% das conversas</td><td class="num">R$ 154</td><td class="num">50</td><td>Zona saudável para locadora com margem própria.</td></tr>
+        <tr><td>20% das conversas</td><td class="num">R$ 115</td><td class="num">67</td><td>Negócio escalável — vale aumentar orçamento.</td></tr>
+        <tr><td>30% das conversas</td><td class="num">R$ 77</td><td class="num">101</td><td>Escalar agressivamente.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><b>O número que só você tem:</b> das 257 conversas de agosto, quantas viraram aluguel de fato? Com esse dado a resposta deixa de ser cenário e vira conta fechada. Se forem 25 ou mais, a operação já se sustenta hoje — e o problema passa a ser só escalar.</p>
+
+  <h3>O teto é bem mais alto do que o que você está vendo</h3>
+  <p>As duas maiores campanhas — <code>OTIMIZADO ABO 1008 V2.2</code> e <code>ABO 1008 VERTICAL 2.2</code> — são exatamente as que apontei no achado E-01 como rodando conjuntos de segmentação idêntica uma contra a outra. Juntas gastaram R$&nbsp;2.934 e trouxeram 139 conversas a R$&nbsp;21,11. Elas não estão brigando por públicos diferentes: estão dividindo o mesmo público e pagando ágio no leilão por isso.</p>
+  <div class="ev">
+OTIMIZADO ABO 1008 V2.2   R$ 1.339,02  →  66 conversas  @ R$ 20,29
+ABO 1008 VERTICAL 2.2     R$ 1.594,78  →  73 conversas  @ R$ 21,85
+                          ─────────────────────────────────────────
+mesmo público, somadas    R$ 2.933,80  → 139 conversas  @ R$ 21,11
+
+Estimativa do próprio Meta para fundir os conjuntos: −46% no custo por conversa
+  → R$ 11,40/conversa  →  <b>257 conversas pelo mesmo dinheiro</b> (+118)
+  </div>
+  <p>Mesmo que só metade dessa estimativa se confirme, o custo por conversa cai para a faixa de R$&nbsp;15–16 e o mesmo orçamento de R$&nbsp;9.350/mês passa de 335 para algo entre 480 e 590 conversas. É o mesmo dinheiro comprando <b>quase o dobro de clientes potenciais</b> — sem criativo novo, sem verba nova.</p>
+
+  <h3>Um sinal escondido nas colunas de alcance</h3>
+  <p>A frequência de cada campanha parece saudável, entre 1,03 e 1,56. Mas essa leitura engana: cada campanha conta o mesmo usuário como alcance novo. Somando as oito, são <b>104.035 impressões</b> para <b>73.888 de alcance somado</b> — e o alcance <i>único</i> é necessariamente menor que isso, porque as campanhas miram o mesmo público.</p>
+  <div class="ev">
+Se o alcance único for 80% da soma (59.110 pessoas) → frequência real <b>1,76</b>
+Se for 70% (51.722 pessoas)                        → frequência real <b>2,01</b>
+Se for 60% (44.333 pessoas)                        → frequência real <b>2,35</b>
+  </div>
+  <p><b>Como medir em 30 segundos:</b> no Gerenciador, selecione todas as campanhas e leia a linha de total da coluna <i>Alcance</i>. Esse número é deduplicado. Quanto mais abaixo de 73.888 ele estiver, maior a sobreposição — e mais dinheiro o E-01 está custando.</p>
+
+  <div class="blocked" style="margin-top:28px;">
+    <h3>O que ainda falta para fechar a conta</h3>
+    <p>Você mencionou que acompanha isso <b>desde o início de julho</b>, mas o print cobre só 1 a 23 de agosto. Faltam duas coisas para eu sair do diagnóstico e ir para a projeção:</p>
     <ol>
-      <li><b>Windsor.ai</b> (grátis, ~2 min, é o caminho rápido): abra <code>https://onboard.windsor.ai/token_login?access_token=kw34zO5nVv5u11Ia5aa4Qbf6dtTArjBhDp6fNqm9F6&amp;next=/facebook/authorize&amp;origin=mcp&amp;connector=facebook</code> e autorize o Meta. Sua conta Windsor hoje só tem o Instagram orgânico (<code>vazamemes</code>) conectado. Assim que o Meta Ads entrar, eu puxo hoje / 7 dias / 30 dias por campanha, conjunto e criativo.</li>
-      <li><b>Supermetrics</b>: reativar a assinatura do time <code>1853389</code>. Mais caro e mais lento, mas mantém o histórico que já está mapeado.</li>
+      <li><b>Julho.</b> Sem ele não dá para saber se o custo por conversa está subindo, caindo ou estável — que é o que determina se a operação escala ou satura. Um print da mesma tela com o período de julho resolve.</li>
+      <li><b>Quantas conversas viraram aluguel.</b> O dado que transforma a tabela de cenários acima em resposta única.</li>
     </ol>
-    <p>Me avise quando conectar que eu rodo as três janelas e fecho o veredito de performance por campanha.</p>
+    <p>As duas campanhas <code>1308 CBO VERTICAL 4.1</code> e <code>4.2</code> não aparecem no print — devem estar abaixo da dobra. Os totais acima consideram só as oito visíveis.</p>
+    <p>Se preferir que eu pare de depender de print: conectar o Meta Ads no Windsor (<code>https://onboard.windsor.ai/token_login?access_token=kw34zO5nVv5u11Ia5aa4Qbf6dtTArjBhDp6fNqm9F6&amp;next=/facebook/authorize&amp;origin=mcp&amp;connector=facebook</code>) me dá qualquer janela, por conjunto e por criativo. O Supermetrics segue bloqueado — trial expirado em 02/08/2026.</p>
   </div>
 </section>
 
@@ -442,20 +511,25 @@ Segmentação nos dois: BR · 24+ · Instagram+WhatsApp · mobile · interesse "
     <div class="body">
       <div class="fhead">
         <span class="fid">E-03</span>
-        <span class="ftitle">A campanha de leads otimiza para conversão no site — e a conta não tem pixel</span>
-        <span class="fcost">R$ 190/dia</span>
+        <span class="ftitle">O pixel registra Lead mas não registra Compra — você não consegue medir retorno</span>
+        <span class="fcost">R$ 9.350/mês sem ROAS</span>
       </div>
-      <p><code>[LEADS] [SITE] MAGIWAY LP PREMIUM</code> roda com objetivo <code>OUTCOME_LEADS</code> e meta de otimização <code>OFFSITE_CONVERSIONS</code> em oito conjuntos — ou seja, pede ao Meta que otimize por conversão no site. Mas o endpoint de conversões e pixels da conta volta <b>vazio nos dois</b>.</p>
+      <p><b>Correção de um achado anterior:</b> a primeira versão deste relatório dizia que a conta não tinha pixel, porque o endpoint da API devolve <code>{"conversions": [], "pixels": []}</code>. Os dados de agosto derrubaram isso — a campanha de leads registrou <b>51 leads a R$&nbsp;24,31</b>. O pixel existe e dispara <code>Lead</code>; ele está no nível da BM e compartilhado, que era exatamente a ressalva que eu tinha deixado marcada para verificar. Essa parte está resolvida.</p>
+      <p>O problema real é outro, e é mais sério: a coluna <b>Compras está vazia em todas as campanhas</b>. Você mede o topo do funil (conversa, lead) e não mede o fundo (aluguel fechado, receita).</p>
       <div class="ev">
-campaign_and_resource_get(resource_type="conversions") →
-  { "conversions": [], "pixels": [] }
+Eventos que chegam ao Meta:   Lead ✓   ·   Conversa iniciada ✓
+Eventos que NÃO chegam:       <b>Purchase ✗</b>  ·  valor de conversão ✗
 
-Recomendação aberta pelo Meta sobre ESTA campanha:
+Consequência 1 — você: não consegue calcular ROAS nem CAC real por campanha.
+Consequência 2 — o Meta: otimiza para quem PREENCHE FORMULÁRIO,
+                 não para quem ALUGA CARRO. São perfis diferentes.
+
+Recomendação aberta pelo Meta sobre esta campanha:
   SIGNALS_GROWTH_CAPI_V2 — "custo por resultado 17,8% mais baixo"
       </div>
-      <p style="margin-top:14px;">Sem sinal de conversão, o algoritmo otimiza no escuro: entrega para quem <i>parece</i> clicar, não para quem fecha aluguel. O público de remarketing <code>[LEAD] 180D</code> tem <b>20 pessoas</b> em 180 dias — o que reforça que o funil de site praticamente não registra nada.</p>
-      <p class="verify">Verificar antes de agir: o pixel pode estar no nível da BM e compartilhado, e esse endpoint listar só os pixels da própria conta. Confira em Gerenciador de Eventos → Fontes de dados se o pixel está de fato vinculado a <code>act_1031334006429656</code> e disparando <code>Lead</code>.</p>
-      <div class="fix"><b>Correção</b>Vincular o pixel à conta, instalar a API de Conversões e só então deixar essa campanha otimizar por conversão. Enquanto não houver evento chegando, é dinheiro entregue no escuro.</div>
+      <p style="margin-top:14px;">Há um segundo sinal estranho: o público <code>[LEAD] 180D</code> tem <b>20 pessoas</b>, mas só agosto gerou 51 leads. Ou a regra do público está errada, ou os leads não estão populando a audiência — de qualquer forma, seu melhor material de remarketing está sendo perdido.</p>
+      <p>E vale olhar a qualidade: a landing page converte bem (51 leads em 223 cliques = <b>22,9%</b>, número saudável), mas apenas <b>8</b> desses viraram contato no WhatsApp. Os outros 43 estão parados em algum formulário.</p>
+      <div class="fix"><b>Correção</b>Disparar o evento <code>Purchase</code> com valor quando um aluguel for fechado, instalar a API de Conversões e corrigir a regra do <code>[LEAD] 180D</code>. Antes disso, confirmar que alguém está de fato ligando para os 51 leads — se não estiver, é R$ 1.240/mês comprando formulário que ninguém abre.</div>
     </div>
   </div>
 
@@ -683,40 +757,40 @@ Ficaram fora deste relatório por não levarem a marca Magiway.
           <td>Intocadas há 3 meses, objetivo Tráfego, 1 anúncio por conjunto, criativo com câmbio desatualizado. Não depende de métrica.</td>
         </tr>
         <tr>
-          <td><span class="nm">ABO 2208 VOLUME</span><span class="id">3 conjuntos · gêmea da CBO 2208</span></td>
+          <td><span class="nm">ABO 2208 VOLUME</span><span class="id">5 conversas @ R$ 15,70 · amostra pequena</span></td>
           <td class="num">126</td>
           <td><span class="pill p-kill">Desligar</span></td>
-          <td>Clone exato da CBO 2208 VOLUME 2.2, mesmo dia. Manter apenas uma das duas — sugiro manter a CBO.</td>
+          <td>Clone exato da CBO 2208 VOLUME 2.2, mesmo dia. Só 5 conversas — não julgue pelo custo, a amostra não vale nada ainda. Desligar uma das duas pela estrutura, não pelo número.</td>
         </tr>
         <tr>
-          <td><span class="nm">OTIMIZADO - ABO 1008 VERTICAL 2.2</span><span class="id">2 conjuntos ativos</span></td>
+          <td><span class="nm">OTIMIZADO - ABO 1008 VERTICAL 2.2</span><span class="id">66 conversas @ R$ 20,29 · R$ 1.339 gastos</span></td>
           <td class="num">254</td>
           <td><span class="pill p-kill">Desligar</span></td>
-          <td>Os dois conjuntos duplicam conjuntos ativos da ABO 1008 V2.2 e da ABO 2208 V5. É a maior fonte isolada de canibalização.</td>
+          <td><b>É a campanha mais barata da conta</b> — e mesmo assim duplica a ABO 1008 V2.2. Em vez de desligar, <b>funda as duas</b>: R$ 2.934 e 139 conversas hoje divididas no mesmo público.</td>
         </tr>
         <tr>
-          <td><span class="nm">ABO 2208 VERTICAL 5</span><span class="id">2 conjuntos · R$ 40 cada</span></td>
+          <td><span class="nm">ABO 2208 VERTICAL 5</span><span class="id">1 conversa @ R$ 48,80 · sem amostra</span></td>
           <td class="num">80</td>
           <td><span class="pill p-kill">Desligar</span></td>
-          <td>Ambos os conjuntos são cópias de baixo orçamento de conjuntos já ativos em outras campanhas (Grupos B e C).</td>
+          <td>Ambos os conjuntos são cópias de baixo orçamento de conjuntos já ativos em outras campanhas (Grupos B e C). Uma única conversa em 2 dias não diz nada — desligar pela duplicação.</td>
         </tr>
         <tr>
-          <td><span class="nm">ABO CAP 7.1</span><span class="id">2 conjuntos idênticos · R$ 68 cada</span></td>
+          <td><span class="nm">ABO CAP 7.1</span><span class="id">48 conversas @ R$ 26,33 · a mais cara</span></td>
           <td class="num">136</td>
           <td><span class="pill p-fix">Corrigir</span></td>
-          <td>Os dois conjuntos ativos são idênticos entre si. Desligar um resolve. O Meta sinalizou <code>BUDGET_LIMITED</code> no que ficar.</td>
+          <td><b>Pior custo por conversa das grandes (R$ 26,33)</b> e os dois conjuntos ativos são idênticos entre si. Desligar um e, se não melhorar em 7 dias, desligar a campanha: é 30% mais cara que a melhor.</td>
         </tr>
         <tr>
-          <td><span class="nm">[ENG] 12980 - VOLUME - M3</span><span class="id">2 conjuntos ativos</span></td>
+          <td><span class="nm">[ENG] 12980 - VOLUME - M3</span><span class="id">62 conversas @ R$ 25,40 · R$ 1.575 gastos</span></td>
           <td class="num">248</td>
           <td><span class="pill p-fix">Corrigir</span></td>
-          <td>O <code>[INT] M3</code> (R$ 90) é único e bem construído — manter. O <code>[INT] M4 VERTICAL 2</code> (R$ 158) duplica a ABO 2208 V5.</td>
+          <td>Custo 25% acima da melhor campanha. O <code>[INT] M3</code> (R$ 90) é único e bem construído — manter. O <code>[INT] M4 VERTICAL 2</code> (R$ 158) duplica a ABO 2208 V5 e leva a maior fatia do orçamento.</td>
         </tr>
         <tr>
-          <td><span class="nm">ABO 1008 VERTICAL 2.2</span><span class="id">2 conjuntos ativos</span></td>
+          <td><span class="nm">ABO 1008 VERTICAL 2.2</span><span class="id">73 conversas @ R$ 21,85 · maior volume</span></td>
           <td class="num">168</td>
           <td><span class="pill p-fix">Corrigir</span></td>
-          <td>Manter só o <code>VERTICAL 1</code> (R$ 128) e desligar o <code>VERTICAL 3</code> (R$ 40), que é clone. Melhor conjunto de exclusões da conta.</td>
+          <td><b>Maior volume da conta e segundo melhor custo.</b> É o núcleo da operação. Fundir com a OTIMIZADO e desligar o <code>VERTICAL 3</code> (R$ 40), que é clone.</td>
         </tr>
         <tr>
           <td><span class="nm">1308 CBO VERTICAL 4.1</span><span class="id">CBO · 2 de 5 conjuntos ativos</span></td>
@@ -731,16 +805,16 @@ Ficaram fora deste relatório por não levarem a marca Magiway.
           <td>Teste legítimo de criativo novo com público próprio. Único lugar da conta onde há teste real e isolado.</td>
         </tr>
         <tr>
-          <td><span class="nm">CBO 2208 VOLUME 2.2</span><span class="id">CBO · 3 conjuntos</span></td>
+          <td><span class="nm">CBO 2208 VOLUME 2.2</span><span class="id">2 conversas @ R$ 14,91 · sem amostra</span></td>
           <td class="num">60</td>
           <td><span class="pill p-fix">Corrigir</span></td>
-          <td>Manter esta e matar a gêmea ABO. Mas os 3 conjuntos usam só o interesse "Orlando" com Advantage+ ligado — na prática, um público só.</td>
+          <td>O R$ 14,91 parece o melhor da conta, mas são <b>2 conversas</b> — ruído puro. Manter esta e matar a gêmea ABO. Reavaliar só depois de ~30 conversas.</td>
         </tr>
         <tr>
-          <td><span class="nm">[LEADS] [SITE] MAGIWAY LP PREMIUM</span><span class="id">3 conjuntos · otimiza conversão</span></td>
+          <td><span class="nm">[LEADS] [SITE] MAGIWAY LP PREMIUM</span><span class="id">51 leads @ R$ 24,31 · LP converte 22,9%</span></td>
           <td class="num">190</td>
-          <td><span class="pill p-kill">Pausar</span></td>
-          <td>Otimiza por conversão no site sem pixel confirmado e com público de leads de 20 pessoas. Pausar até o rastreamento funcionar.</td>
+          <td><span class="pill p-fix">Corrigir</span></td>
+          <td><b>Veredito revisto:</b> antes eu mandava pausar por achar que não havia pixel — os dados provaram que há. A landing page converte bem. Manter, mas instrumentar <code>Purchase</code> e confirmar que os 51 leads estão sendo trabalhados: só 8 viraram contato.</td>
         </tr>
         <tr>
           <td><span class="nm">Traffic Campaign + Sales Campaign</span><span class="id">Magiway Rental Car · sem orçamento</span></td>
