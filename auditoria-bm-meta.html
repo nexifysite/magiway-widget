@@ -292,9 +292,9 @@ ul.tight li{margin:8px 0;}
     <span>23 ago 2026</span>
   </div>
   <h1>Raio-X da BM Magiway</h1>
-  <p class="standfirst">Oito contas de anúncio, 1.866 campanhas, ~R$&nbsp;2.205 por dia expostos. Setenta por cento do orçamento vivo está sentado em públicos que competem entre si.</p>
+  <p class="standfirst">Quatro contas Magiway, 1.859 campanhas, ~R$&nbsp;2.205 por dia expostos. Setenta por cento do orçamento vivo está sentado em públicos que competem entre si.</p>
   <div class="mast-meta">
-    <span><b>Escopo:</b> 8 contas de anúncio da BM</span>
+    <span><b>Escopo:</b> apenas as contas Magiway da BM</span>
     <span><b>Método:</b> Meta Marketing API via Supermetrics</span>
     <span><b>Base:</b> estrutura + recomendações do próprio Meta</span>
   </div>
@@ -343,7 +343,7 @@ ul.tight li{margin:8px 0;}
 </section>
 
 <section>
-  <h2>Inventário da BM <span class="h2note">8 contas · 1.866 campanhas · 25 ativas</span></h2>
+  <h2>Inventário Magiway <span class="h2note">4 contas · 1.859 campanhas · 18 ativas</span></h2>
   <div class="scroll">
     <table>
       <thead>
@@ -366,34 +366,14 @@ ul.tight li{margin:8px 0;}
           <td>A operação de verdade. Nomenclatura muito melhor, exclusões configuradas. É onde vale investir o esforço.</td>
         </tr>
         <tr>
-          <td><span class="nm">Magiway Rental Car</span><span class="id">act_857256446973267</span></td>
+          <td><span class="nm">Magiway Rental Car</span><span class="id">act_857256446973267 · somente leitura</span></td>
           <td class="num">2</td><td class="num">2</td>
-          <td>Esqueleto. "Traffic Campaign" + "Sales Campaign", nomes padrão em inglês, sem orçamento definido.</td>
-        </tr>
-        <tr>
-          <td><span class="nm">Rent X</span><span class="id">act_1261300195767859</span></td>
-          <td class="num">2</td><td class="num">2</td>
-          <td>Mesmo esqueleto idêntico. Tráfego com fim previsto para 14/12/2026.</td>
-        </tr>
-        <tr>
-          <td><span class="nm">Gs Car Rental</span><span class="id">act_1697345757950167</span></td>
-          <td class="num">2</td><td class="num">2</td>
-          <td>Mesmo esqueleto idêntico.</td>
-        </tr>
-        <tr>
-          <td><span class="nm">(sem nome)</span><span class="id">act_1012406831164580</span></td>
-          <td class="num">2</td><td class="num">2</td>
-          <td>Mesmo esqueleto. Conta sem nome legível na BM — vale identificar de quem é.</td>
-        </tr>
-        <tr>
-          <td><span class="nm">Carlos Emerson</span><span class="id">act_190855544392892</span></td>
-          <td class="num">1</td><td class="num">1</td>
-          <td>Conta pessoal. Um impulsionamento de Marketplace de outubro de 2024 ("Filmes e Séries na Palma da Mão!") ainda marcado como ativo.</td>
+          <td>Esqueleto. "Traffic Campaign" + "Sales Campaign", nomes padrão em inglês, sem orçamento definido. Não é operação real.</td>
         </tr>
         <tr class="dim">
           <td><span class="nm">LOCADORA</span><span class="id">act_1355053380018788</span></td>
           <td class="num">0</td><td class="num">0</td>
-          <td>Vazia.</td>
+          <td>Vazia. Nenhuma campanha, nunca usada.</td>
         </tr>
       </tbody>
     </table>
@@ -650,22 +630,21 @@ Conjuntos com o nome padrão do Meta: "Novo conjunto de anúncios de Tráfego".
     <div class="body">
       <div class="fhead">
         <span class="fid">E-12</span>
-        <span class="ftitle">Quatro contas-fantasma com campanhas ligadas e um impulsionamento de 2024</span>
+        <span class="ftitle">A conta "Magiway Rental Car" é um esqueleto ligado, criado por ferramenta externa</span>
         <span class="fcost">risco de gasto oculto</span>
       </div>
-      <p>Quatro contas da BM — <b>Magiway Rental Car</b>, <b>Rent X</b>, <b>Gs Car Rental</b> e uma conta sem nome — contêm exatamente o mesmo par de campanhas em inglês, <code>Traffic Campaign</code> e <code>Sales Campaign</code>, todas marcadas como ativas, sem orçamento no nível da campanha. Parecem criadas por alguma ferramenta ou integração externa.</p>
+      <p>A conta <b>Magiway Rental Car</b> contém apenas duas campanhas, com nomes padrão em inglês — <code>Traffic Campaign</code> e <code>Sales Campaign</code> — ambas marcadas como ativas e sem orçamento no nível da campanha. Não têm anúncio nem histórico. O padrão é típico de criação automática por ferramenta ou integração externa, não por operador.</p>
       <div class="ev">
-act_857256446973267  Magiway Rental Car   Traffic Campaign + Sales Campaign   ENABLED
-act_1261300195767859 Rent X               Traffic Campaign + Sales Campaign   ENABLED
-act_1697345757950167 Gs Car Rental        Traffic Campaign + Sales Campaign   ENABLED
-act_1012406831164580 (sem nome)           Traffic Campaign + Sales Campaign   ENABLED
+act_857256446973267  Magiway Rental Car   (somente leitura para este acesso)
+  Traffic Campaign  · OUTCOME_TRAFFIC · ENABLED · orçamento no nível do conjunto
+  Sales Campaign    · OUTCOME_SALES   · ENABLED · sem data de início
 
-act_190855544392892  Carlos Emerson (pessoal)
-  "[Filmes e Séries na Palma da Mão!] Classificado do Marketplace turbinado em 28/10/2024"
-  R$ 6/dia · objetivo CONVERSIONS · fim previsto 31/10/2024 · ainda ENABLED
+Observação de escopo: outras 3 contas da BM (Rent X, Gs Car Rental e uma sem nome)
+têm exatamente o mesmo par de campanhas — mesma origem, mesma ferramenta.
+Ficaram fora deste relatório por não levarem a marca Magiway.
       </div>
-      <p style="margin-top:14px;">Três dessas contas aparecem como somente-leitura para este acesso, o que significa que alguém de fora administra. Vale saber quem, porque contas ligadas à mesma BM compartilham sinal, público e reputação — e um problema de política numa delas respinga nas outras.</p>
-      <div class="fix"><b>Correção</b>Identificar quem criou essas quatro contas, desligar os esqueletos e remover da BM o que não for da operação. Encerrar o impulsionamento de 2024 na conta pessoal.</div>
+      <p style="margin-top:14px;">A conta aparece como <b>somente leitura</b> para este acesso, o que significa que quem administra está fora do seu controle direto. Isso importa: contas ligadas à mesma BM compartilham sinal, público e reputação — um problema de política numa delas respinga nas outras.</p>
+      <div class="fix"><b>Correção</b>Descobrir qual ferramenta criou essa conta e por quê, desligar os dois esqueletos e recuperar o acesso de administrador — ou removê-la da BM se não for da operação.</div>
     </div>
   </div>
 
@@ -764,16 +743,10 @@ act_190855544392892  Carlos Emerson (pessoal)
           <td>Otimiza por conversão no site sem pixel confirmado e com público de leads de 20 pessoas. Pausar até o rastreamento funcionar.</td>
         </tr>
         <tr>
-          <td><span class="nm">8 esqueletos "Traffic/Sales Campaign"</span><span class="id">4 contas · sem orçamento</span></td>
+          <td><span class="nm">Traffic Campaign + Sales Campaign</span><span class="id">Magiway Rental Car · sem orçamento</span></td>
           <td class="num">—</td>
           <td><span class="pill p-kill">Desligar</span></td>
-          <td>Campanhas vazias criadas por ferramenta externa, ligadas em 4 contas. Sem função conhecida.</td>
-        </tr>
-        <tr>
-          <td><span class="nm">Marketplace turbinado 28/10/2024</span><span class="id">conta pessoal · fim previsto 31/10/2024</span></td>
-          <td class="num">6</td>
-          <td><span class="pill p-kill">Desligar</span></td>
-          <td>Impulsionamento pessoal de quase dois anos atrás, sem relação com a locadora, ainda marcado como ativo.</td>
+          <td>Esqueletos vazios criados por ferramenta externa. Sem anúncio, sem histórico, sem função conhecida.</td>
         </tr>
       </tbody>
     </table>
@@ -803,7 +776,7 @@ act_190855544392892  Carlos Emerson (pessoal)
         <li>Desligar uma das gêmeas <b>CBO/ABO 2208</b> (R$ 126/dia).</li>
         <li>Desligar <b>OTIMIZADO - ABO 1008 V2.2</b> e <b>ABO 2208 VERTICAL 5</b> (R$ 334/dia em clones).</li>
         <li>Desligar um dos dois <code>[INT] M4 NICHADO ORLANDO</code> idênticos (R$ 68/dia).</li>
-        <li>Desligar os 8 esqueletos e o impulsionamento de 2024.</li>
+        <li>Desligar os 2 esqueletos da <b>Magiway Rental Car</b>.</li>
         <li>Conectar o Meta Ads no Windsor para destravar as métricas.</li>
       </ol>
     </div>
@@ -836,6 +809,7 @@ act_190855544392892  Carlos Emerson (pessoal)
 </section>
 
 <footer>
+  Escopo: apenas as contas que levam a marca Magiway — CA - Magi Way, CA - LOCADORA MAGIWAY, Magiway Rental Car e LOCADORA (vazia). Ficaram de fora Rent X, Gs Car Rental, uma conta sem nome e a conta pessoal Carlos Emerson. As três primeiras têm os mesmos esqueletos "Traffic/Sales Campaign" da Magiway Rental Car; se forem da mesma operação, é só avisar que eu incluo.<br>
   Fonte: Meta Marketing API via Supermetrics (endpoints de gestão), lida em 23/08/2026. Estrutura, segmentação, orçamentos, públicos e recomendações nativas do Meta foram extraídos integralmente.<br>
   Métricas de desempenho (gasto, conversas, CPA, ROAS, frequência) não puderam ser lidas: trial do Supermetrics expirado em 02/08/2026. Nenhum número de performance neste relatório é estimado — o que não pôde ser medido está marcado como bloqueado.<br>
   Itens marcados "verificar antes de agir" dependem de confirmação no Gerenciador de Anúncios, porque a API pode não expor todos os campos de segmentação e de fonte de dados.
