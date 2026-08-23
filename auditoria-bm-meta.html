@@ -1,0 +1,844 @@
+<title>Raio-X da BM Magiway</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --navy:#0D1F4E;
+  --crimson:#C41E3A;
+  --amber:#9A6410;
+  --sage:#2A6149;
+  --ground:#F2F3F7;
+  --panel:#FFFFFF;
+  --panel-2:#E9EBF1;
+  --ink:#141A2C;
+  --ink-2:#4A5268;
+  --ink-3:#767E94;
+  --rule:#D3D7E2;
+  --rule-2:#BFC5D4;
+  --stripe-crit:var(--crimson);
+  --stripe-warn:var(--amber);
+  --stripe-ok:var(--sage);
+  --shadow:0 1px 2px rgba(13,31,78,.06), 0 8px 24px -12px rgba(13,31,78,.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --navy:#8FA6DE;
+    --crimson:#F2647C;
+    --amber:#E0A93F;
+    --sage:#6FBE97;
+    --ground:#0B0F1B;
+    --panel:#141A2A;
+    --panel-2:#1D2436;
+    --ink:#E8EBF3;
+    --ink-2:#A8B0C4;
+    --ink-3:#7C8497;
+    --rule:#2A3247;
+    --rule-2:#3A4358;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --navy:#8FA6DE;
+  --crimson:#F2647C;
+  --amber:#E0A93F;
+  --sage:#6FBE97;
+  --ground:#0B0F1B;
+  --panel:#141A2A;
+  --panel-2:#1D2436;
+  --ink:#E8EBF3;
+  --ink-2:#A8B0C4;
+  --ink-3:#7C8497;
+  --rule:#2A3247;
+  --rule-2:#3A4358;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Source Serif 4",Georgia,serif;
+  font-size:17px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px 96px;}
+
+/* ---------- masthead ---------- */
+.mast{
+  border-bottom:2px solid var(--ink);
+  padding:40px 0 20px;
+  margin-bottom:36px;
+}
+.kicker{
+  font-family:"Archivo",system-ui,sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--crimson);
+  display:flex;flex-wrap:wrap;gap:14px;align-items:center;
+}
+.kicker .sep{color:var(--rule-2);}
+h1{
+  font-family:"Archivo",system-ui,sans-serif;
+  font-size:clamp(34px,6vw,62px);
+  font-weight:800;
+  letter-spacing:-.025em;
+  line-height:1.02;
+  margin:16px 0 12px;
+  text-wrap:balance;
+  color:var(--ink);
+}
+.standfirst{
+  font-size:19px;color:var(--ink-2);max-width:64ch;margin:0;
+}
+.mast-meta{
+  margin-top:22px;display:flex;flex-wrap:wrap;gap:8px 28px;
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:12px;color:var(--ink-3);
+}
+.mast-meta b{color:var(--ink-2);font-weight:500;}
+
+/* ---------- generic section ---------- */
+section{margin-top:56px;}
+h2{
+  font-family:"Archivo",system-ui,sans-serif;
+  font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink);
+  margin:0 0 6px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--rule-2);
+  display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+}
+h2 .h2note{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:400;
+  letter-spacing:0;text-transform:none;color:var(--ink-3);
+}
+h3{
+  font-family:"Archivo",system-ui,sans-serif;
+  font-size:20px;font-weight:700;letter-spacing:-.01em;
+  margin:32px 0 8px;color:var(--ink);text-wrap:balance;
+}
+p{margin:14px 0;max-width:70ch;}
+.lede{max-width:70ch;color:var(--ink-2);}
+a{color:var(--navy);}
+
+/* ---------- blocked notice ---------- */
+.blocked{
+  background:var(--panel);
+  border:1px solid var(--rule-2);
+  border-left:4px solid var(--crimson);
+  border-radius:3px;
+  padding:22px 24px;
+  box-shadow:var(--shadow);
+}
+.blocked h3{margin-top:0;font-size:17px;}
+.blocked p{margin:10px 0;font-size:16px;}
+.blocked ol{margin:12px 0 4px;padding-left:20px;max-width:70ch;}
+.blocked li{margin:8px 0;}
+code{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.86em;background:var(--panel-2);
+  padding:1px 5px;border-radius:3px;color:var(--ink);
+  word-break:break-word;
+}
+
+/* ---------- money panel ---------- */
+.money{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:1px;background:var(--rule-2);
+  border:1px solid var(--rule-2);border-radius:3px;overflow:hidden;
+  margin-top:20px;box-shadow:var(--shadow);
+}
+.cell{background:var(--panel);padding:20px 22px;}
+.cell .lab{
+  font-family:"Archivo",sans-serif;font-size:10.5px;font-weight:700;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);
+  display:block;margin-bottom:10px;
+}
+.cell .val{
+  font-family:"IBM Plex Mono",monospace;font-size:27px;font-weight:600;
+  letter-spacing:-.02em;color:var(--ink);display:block;line-height:1.1;
+  font-variant-numeric:tabular-nums;
+}
+.cell .sub{
+  font-size:13.5px;color:var(--ink-2);display:block;margin-top:8px;line-height:1.45;
+}
+.cell.crit .val{color:var(--crimson);}
+.cell.warn .val{color:var(--amber);}
+
+/* ---------- tables ---------- */
+.scroll{overflow-x:auto;margin-top:20px;border:1px solid var(--rule-2);border-radius:3px;background:var(--panel);box-shadow:var(--shadow);}
+table{border-collapse:collapse;width:100%;min-width:660px;}
+th{
+  font-family:"Archivo",sans-serif;font-size:10.5px;font-weight:700;
+  letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);
+  text-align:left;padding:13px 16px;border-bottom:1px solid var(--rule-2);
+  background:var(--panel-2);white-space:nowrap;vertical-align:bottom;
+}
+td{
+  padding:13px 16px;border-bottom:1px solid var(--rule);
+  font-size:15px;vertical-align:top;color:var(--ink);
+}
+tbody tr:last-child td{border-bottom:none;}
+td.num,th.num{
+  text-align:right;font-family:"IBM Plex Mono",monospace;
+  font-variant-numeric:tabular-nums;font-size:13.5px;white-space:nowrap;
+}
+td .id{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-3);
+  display:block;margin-top:3px;
+}
+td .nm{font-weight:600;}
+tr.dim td{color:var(--ink-3);}
+
+/* verdict pills */
+.pill{
+  display:inline-block;font-family:"Archivo",sans-serif;font-size:10px;
+  font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  padding:4px 9px;border-radius:2px;white-space:nowrap;border:1px solid;
+}
+.p-kill{color:var(--crimson);border-color:var(--crimson);background:color-mix(in srgb,var(--crimson) 9%,transparent);}
+.p-fix{color:var(--amber);border-color:var(--amber);background:color-mix(in srgb,var(--amber) 11%,transparent);}
+.p-keep{color:var(--sage);border-color:var(--sage);background:color-mix(in srgb,var(--sage) 11%,transparent);}
+
+/* ---------- findings ---------- */
+.finding{
+  background:var(--panel);
+  border:1px solid var(--rule-2);
+  border-radius:3px;
+  margin-top:16px;
+  display:grid;
+  grid-template-columns:5px 1fr;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.finding .stripe{background:var(--rule-2);}
+.finding.crit .stripe{background:var(--stripe-crit);}
+.finding.warn .stripe{background:var(--stripe-warn);}
+.finding.info .stripe{background:var(--navy);}
+.finding .body{padding:20px 24px 22px;}
+.fhead{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:baseline;}
+.fid{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;
+  color:var(--ink-3);letter-spacing:.02em;
+}
+.ftitle{
+  font-family:"Archivo",sans-serif;font-size:19px;font-weight:700;
+  letter-spacing:-.01em;color:var(--ink);flex:1 1 320px;line-height:1.25;
+}
+.fcost{
+  font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:600;
+  color:var(--crimson);white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+.finding.warn .fcost{color:var(--amber);}
+.finding.info .fcost{color:var(--ink-3);}
+.finding p{margin:12px 0 0;font-size:16px;}
+.ev{
+  margin-top:14px;padding:12px 15px;background:var(--panel-2);
+  border-left:2px solid var(--rule-2);border-radius:2px;
+  font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.65;
+  color:var(--ink-2);overflow-x:auto;
+}
+.ev b{color:var(--ink);font-weight:600;}
+.fix{
+  margin-top:14px;font-size:15.5px;color:var(--ink);
+  padding-top:12px;border-top:1px solid var(--rule);
+}
+.fix b{
+  font-family:"Archivo",sans-serif;font-size:10.5px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--sage);
+  display:block;margin-bottom:5px;
+}
+.verify{
+  margin-top:10px;font-size:14px;color:var(--amber);font-style:italic;
+}
+
+/* ---------- plan ---------- */
+.plan{display:grid;gap:16px;margin-top:20px;}
+@media(min-width:860px){.plan{grid-template-columns:repeat(3,1fr);}}
+.phase{
+  background:var(--panel);border:1px solid var(--rule-2);border-radius:3px;
+  padding:22px;box-shadow:var(--shadow);display:flex;flex-direction:column;
+}
+.phase .when{
+  font-family:"Archivo",sans-serif;font-size:11px;font-weight:800;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--crimson);
+  margin-bottom:4px;
+}
+.phase .goal{
+  font-family:"Archivo",sans-serif;font-size:17px;font-weight:700;
+  color:var(--ink);margin-bottom:14px;line-height:1.3;
+}
+.phase ol{margin:0;padding-left:19px;font-size:15px;}
+.phase li{margin:9px 0;}
+.phase.p2 .when{color:var(--amber);}
+.phase.p3 .when{color:var(--sage);}
+
+footer{
+  margin-top:64px;padding-top:20px;border-top:1px solid var(--rule-2);
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-3);
+  line-height:1.7;
+}
+ul.tight{max-width:70ch;padding-left:20px;}
+ul.tight li{margin:8px 0;}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="kicker">
+    <span>Auditoria estrutural</span><span class="sep">/</span>
+    <span>Meta Business Manager</span><span class="sep">/</span>
+    <span>23 ago 2026</span>
+  </div>
+  <h1>Raio-X da BM Magiway</h1>
+  <p class="standfirst">Oito contas de anúncio, 1.866 campanhas, ~R$&nbsp;2.205 por dia expostos. Setenta por cento do orçamento vivo está sentado em públicos que competem entre si.</p>
+  <div class="mast-meta">
+    <span><b>Escopo:</b> 8 contas de anúncio da BM</span>
+    <span><b>Método:</b> Meta Marketing API via Supermetrics</span>
+    <span><b>Base:</b> estrutura + recomendações do próprio Meta</span>
+  </div>
+</header>
+
+<section>
+  <h2>Antes de tudo <span class="h2note">o que você pediu e eu não consegui puxar</span></h2>
+  <div class="blocked">
+    <h3>Os números de hoje, 7 dias e 30 dias estão bloqueados</h3>
+    <p>Você pediu o desempenho nas três janelas. Não consegui: o trial do Supermetrics da conta <code>carlosemerson1995@gmail.com</code> <b>expirou em 02/08/2026</b>. Toda consulta de métrica volta <code>[TRIAL_EXPIRED]</code> — gasto, impressões, conversas, CPA, ROAS, frequência. Testei nas três janelas e nas duas contas principais.</p>
+    <p>O que continuou funcionando foi a API de <i>gestão</i>: estrutura de campanhas, conjuntos, anúncios, segmentação, orçamentos, públicos e as recomendações que o próprio Meta gera. É sobre isso que este relatório se apoia — e, como você vai ver, dá para condenar boa parte da conta só pela estrutura, sem olhar um único CPA.</p>
+    <p><b>Dois caminhos para destravar as métricas:</b></p>
+    <ol>
+      <li><b>Windsor.ai</b> (grátis, ~2 min, é o caminho rápido): abra <code>https://onboard.windsor.ai/token_login?access_token=kw34zO5nVv5u11Ia5aa4Qbf6dtTArjBhDp6fNqm9F6&amp;next=/facebook/authorize&amp;origin=mcp&amp;connector=facebook</code> e autorize o Meta. Sua conta Windsor hoje só tem o Instagram orgânico (<code>vazamemes</code>) conectado. Assim que o Meta Ads entrar, eu puxo hoje / 7 dias / 30 dias por campanha, conjunto e criativo.</li>
+      <li><b>Supermetrics</b>: reativar a assinatura do time <code>1853389</code>. Mais caro e mais lento, mas mantém o histórico que já está mapeado.</li>
+    </ol>
+    <p>Me avise quando conectar que eu rodo as três janelas e fecho o veredito de performance por campanha.</p>
+  </div>
+</section>
+
+<section>
+  <h2>O dinheiro em jogo <span class="h2note">orçamento diário somado dos objetos ATIVOS</span></h2>
+  <div class="money">
+    <div class="cell crit">
+      <span class="lab">Exposição diária total</span>
+      <span class="val">R$ 2.205</span>
+      <span class="sub">≈ R$ 66.140/mês, somando as duas contas com campanhas ligadas.</span>
+    </div>
+    <div class="cell">
+      <span class="lab">Conta viva · LOCADORA</span>
+      <span class="val">R$ 1.394</span>
+      <span class="sub">10 campanhas ativas. Última criada em 22/08 — a operação real está aqui.</span>
+    </div>
+    <div class="cell warn">
+      <span class="lab">Conta legado · Magi Way</span>
+      <span class="val">R$ 811</span>
+      <span class="sub">6 campanhas ainda ligadas, com anúncios ativos e aprovados. Nada tocado desde 20/05.</span>
+    </div>
+    <div class="cell crit">
+      <span class="lab">Em público duplicado</span>
+      <span class="val">70%</span>
+      <span class="sub">R$ 982/dia dos R$ 1.394 estão em conjuntos cuja segmentação é idêntica à de outro conjunto ativo.</span>
+    </div>
+  </div>
+  <p class="lede" style="margin-top:18px;">Desses R$&nbsp;982, cerca de <b>R$&nbsp;376/dia (R$&nbsp;11,3&nbsp;mil/mês)</b> são pura redundância: é o que sobra depois de manter um conjunto por público e desligar os clones. Não é uma estimativa de otimização — é orçamento duplicado, contado a partir das especificações de segmentação lidas na API.</p>
+</section>
+
+<section>
+  <h2>Inventário da BM <span class="h2note">8 contas · 1.866 campanhas · 25 ativas</span></h2>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Conta</th>
+          <th class="num">Campanhas</th>
+          <th class="num">Ativas</th>
+          <th>Situação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="nm">CA - Magi Way</span><span class="id">act_860123571920763</span></td>
+          <td class="num">1.694</td><td class="num">6</td>
+          <td>Cemitério ativo. 97% das campanhas são de Tráfego. Parada desde 20/05/2026, mas 6 campanhas seguem ligadas queimando R$&nbsp;811/dia.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">CA - LOCADORA MAGIWAY</span><span class="id">act_1031334006429656</span></td>
+          <td class="num">163</td><td class="num">10</td>
+          <td>A operação de verdade. Nomenclatura muito melhor, exclusões configuradas. É onde vale investir o esforço.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">Magiway Rental Car</span><span class="id">act_857256446973267</span></td>
+          <td class="num">2</td><td class="num">2</td>
+          <td>Esqueleto. "Traffic Campaign" + "Sales Campaign", nomes padrão em inglês, sem orçamento definido.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">Rent X</span><span class="id">act_1261300195767859</span></td>
+          <td class="num">2</td><td class="num">2</td>
+          <td>Mesmo esqueleto idêntico. Tráfego com fim previsto para 14/12/2026.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">Gs Car Rental</span><span class="id">act_1697345757950167</span></td>
+          <td class="num">2</td><td class="num">2</td>
+          <td>Mesmo esqueleto idêntico.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">(sem nome)</span><span class="id">act_1012406831164580</span></td>
+          <td class="num">2</td><td class="num">2</td>
+          <td>Mesmo esqueleto. Conta sem nome legível na BM — vale identificar de quem é.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">Carlos Emerson</span><span class="id">act_190855544392892</span></td>
+          <td class="num">1</td><td class="num">1</td>
+          <td>Conta pessoal. Um impulsionamento de Marketplace de outubro de 2024 ("Filmes e Séries na Palma da Mão!") ainda marcado como ativo.</td>
+        </tr>
+        <tr class="dim">
+          <td><span class="nm">LOCADORA</span><span class="id">act_1355053380018788</span></td>
+          <td class="num">0</td><td class="num">0</td>
+          <td>Vazia.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Os erros <span class="h2note">ordenados por dinheiro em risco</span></h2>
+  <p class="lede">Cada achado abaixo saiu da leitura direta da API — especificação de segmentação, orçamento, objetivo e meta de otimização de cada objeto. Onde o próprio Meta já sinalizou o problema, eu cito a recomendação dele.</p>
+
+  <div class="finding crit">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="fhead">
+        <span class="fid">E-01</span>
+        <span class="ftitle">Você está leiloando contra você mesmo em 70% do orçamento</span>
+        <span class="fcost">R$ 982/dia expostos</span>
+      </div>
+      <p>Encontrei quatro grupos de conjuntos <b>ativos</b> com assinatura de segmentação byte a byte idêntica — mesma localização, faixa etária, gênero, plataforma, posicionamentos, dispositivo e a mesma lista de interesses — rodando em campanhas diferentes ao mesmo tempo. Quando dois conjuntos disputam a mesma pessoa, o Meta cobra o lance mais alto dos dois. Você paga o ágio do próprio leilão.</p>
+      <div class="ev">
+<b>Grupo A</b> — BR, 25-54, todos, Instagram, 11 interesses → <b>R$ 296/dia</b> em 3 conjuntos
+  R$ 128  [INT] BR HM 25-54 / ORLANDO — VERTICAL 1   « OTIMIZADO - ABO 1008 VERTICAL 2.2
+  R$ 128  [INT] BR HM 25-54 / ORLANDO — VERTICAL 1   « ABO 1008 VERTICAL 2.2
+  R$  40  [INT] BR HM 25-54 / ORLANDO — VERTICAL 3   « ABO 1008 VERTICAL 2.2
+
+<b>Grupo B</b> — BR, 28+, todos, Instagram, 11 interesses → <b>R$ 166/dia</b>
+  R$ 126  [INT] BR HM / ORLANDO — VERTICAL 2         « OTIMIZADO - ABO 1008 VERTICAL 2.2
+  R$  40  [INT] BR HM / ORLANDO — VERTICAL 2         « ABO 2208 VERTICAL 5
+
+<b>Grupo C</b> — BR, 27+, feminino, Instagram, 16 interesses → <b>R$ 198/dia</b>
+  R$ 158  [INT] M4 VERTICAL 2                        « [ENG] 12980 - VOLUME - M3
+  R$  40  [INT] M4 VERTICAL 2                        « ABO 2208 VERTICAL 5
+
+<b>Grupo D</b> — BR, 24+, feminino, Advantage+, só "Orlando" → <b>R$ 136/dia</b>, na mesma campanha
+  R$  68  [INT] M4 NICHADO ORLANDO - VERTICAL 2      « ABO CAP 7.1
+  R$  68  [INT] M4 NICHADO ORLANDO                   « ABO CAP 7.1
+      </div>
+      <p style="margin-top:14px;">O próprio Meta já abriu duas recomendações de <code>FRAGMENTATION</code> sobre exatamente esses conjuntos, com estimativa de <b>custo por conversa 46% menor</b> se forem fundidos.</p>
+      <div class="fix"><b>Correção</b>Manter um conjunto por público e desligar os clones. Recupera ~R$ 376/dia (R$ 11,3 mil/mês) de orçamento redundante e tira a pressão de leilão dos R$ 982 restantes.</div>
+    </div>
+  </div>
+
+  <div class="finding crit">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="fhead">
+        <span class="fid">E-02</span>
+        <span class="ftitle">CBO e ABO gêmeas, criadas no mesmo dia, com os mesmos conjuntos e criativos</span>
+        <span class="fcost">R$ 186/dia</span>
+      </div>
+      <p>Em 22/08 nasceram duas campanhas: <code>CBO 2208 VOLUME 2.2</code> (R$ 60/dia no nível da campanha) e <code>ABO 2208 VOLUME</code> (3 × R$ 42 = R$ 126/dia). Não são um teste CBO&nbsp;vs&nbsp;ABO — são a <b>mesma coisa duplicada</b>: os três conjuntos têm o mesmo nome, a mesma segmentação e os mesmos sete criativos nos dois lados.</p>
+      <div class="ev">
+Conjuntos idênticos nas duas campanhas:
+  [AB] ANDRÔMEDA · [INT] M ORLANDO 1 · [INT] NIVER SET, OUT, NOV + ORLANDO
+Criativos idênticos nos dois lados (7):
+  CARD TESTE - FAMILIA 2 · CARD TESTE - FAMILIA 3 · V NOVO AG - 02/03/04 · JULHO 3 · JULHO 6-7
+Segmentação nos dois: BR · 24+ · Instagram+WhatsApp · mobile · interesse "Orlando, Flórida" · Advantage+ ligado
+      </div>
+      <p style="margin-top:14px;">Um teste CBO vs ABO legítimo exige públicos <i>separados</i>. Do jeito que está, as duas campanhas disputam as mesmas pessoas com os mesmos anúncios — e nenhuma das duas vai gerar leitura confiável.</p>
+      <div class="fix"><b>Correção</b>Desligar uma das duas hoje. Se o objetivo é testar estrutura de orçamento, refazer com públicos mutuamente exclusivos.</div>
+    </div>
+  </div>
+
+  <div class="finding crit">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="fhead">
+        <span class="fid">E-03</span>
+        <span class="ftitle">A campanha de leads otimiza para conversão no site — e a conta não tem pixel</span>
+        <span class="fcost">R$ 190/dia</span>
+      </div>
+      <p><code>[LEADS] [SITE] MAGIWAY LP PREMIUM</code> roda com objetivo <code>OUTCOME_LEADS</code> e meta de otimização <code>OFFSITE_CONVERSIONS</code> em oito conjuntos — ou seja, pede ao Meta que otimize por conversão no site. Mas o endpoint de conversões e pixels da conta volta <b>vazio nos dois</b>.</p>
+      <div class="ev">
+campaign_and_resource_get(resource_type="conversions") →
+  { "conversions": [], "pixels": [] }
+
+Recomendação aberta pelo Meta sobre ESTA campanha:
+  SIGNALS_GROWTH_CAPI_V2 — "custo por resultado 17,8% mais baixo"
+      </div>
+      <p style="margin-top:14px;">Sem sinal de conversão, o algoritmo otimiza no escuro: entrega para quem <i>parece</i> clicar, não para quem fecha aluguel. O público de remarketing <code>[LEAD] 180D</code> tem <b>20 pessoas</b> em 180 dias — o que reforça que o funil de site praticamente não registra nada.</p>
+      <p class="verify">Verificar antes de agir: o pixel pode estar no nível da BM e compartilhado, e esse endpoint listar só os pixels da própria conta. Confira em Gerenciador de Eventos → Fontes de dados se o pixel está de fato vinculado a <code>act_1031334006429656</code> e disparando <code>Lead</code>.</p>
+      <div class="fix"><b>Correção</b>Vincular o pixel à conta, instalar a API de Conversões e só então deixar essa campanha otimizar por conversão. Enquanto não houver evento chegando, é dinheiro entregue no escuro.</div>
+    </div>
+  </div>
+
+  <div class="finding crit">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="fhead">
+        <span class="fid">E-04</span>
+        <span class="ftitle">A conta antiga continua ligada, com oferta desatualizada no ar</span>
+        <span class="fcost">R$ 811/dia</span>
+      </div>
+      <p>A <code>CA - Magi Way</code> não recebe uma campanha nova desde 20/05/2026, mas seis campanhas seguem <code>ENABLED</code>, com conjuntos ligados e anúncios <code>ACTIVE</code> + <code>APPROVED</code>. Não é uma conta arquivada — é uma conta apta a entregar. E o criativo que está no ar diz:</p>
+      <div class="ev">
+"ALUGUE SEU CARRO EM ORLANDO / MIAMI / FLL , <b>DÓLAR A R$4.49</b> NÃO PERCA TEMPO !!!!!!!!!!"
+  ↳ campanha "Campanha criativo 2 29/04 — Cópia — Cópia" · R$ 210/dia · destino api.whatsapp.com/send
+  ↳ conjunto: "Novo conjunto de anúncios de Tráfego" (nome padrão do Meta)
+  ↳ 1 único anúncio no conjunto · objetivo Tráfego · BR 25+ · Advantage+ ligado
+      </div>
+      <p style="margin-top:14px;">Câmbio cravado no criativo, dez pontos de exclamação e um único anúncio por conjunto. Se essa conta ainda estiver entregando, é R$ 24,3 mil/mês em tráfego frio com uma promessa de preço que provavelmente não se sustenta mais — o que é problema comercial e de confiança, não só de mídia.</p>
+      <div class="fix"><b>Correção</b>Desligar as seis campanhas hoje. É a decisão mais fácil e de maior valor do relatório: nada ali foi tocado em três meses e o criativo está desatualizado.</div>
+    </div>
+  </div>
+
+  <div class="finding warn">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="fhead">
+        <span class="fid">E-05</span>
+        <span class="ftitle">Objetivo de campanha e meta de otimização não conversam</span>
+        <span class="fcost">37 conjuntos</span>
+      </div>
+      <p>Vinte e oito conjuntos rodam sob objetivo <code>LINK_CLICKS</code> — um objetivo legado do Meta — mas otimizando para <code>CONVERSATIONS</code>. Outros nove estão em <code>OUTCOME_ENGAGEMENT</code> otimizando também para <code>CONVERSATIONS</code>. Três estruturas diferentes tentando comprar a mesma coisa: conversa no WhatsApp.</p>
+      <div class="ev">
+objetivo LINK_CLICKS        → otimização CONVERSATIONS        28 conjuntos
+objetivo OUTCOME_ENGAGEMENT → otimização CONVERSATIONS         9 conjuntos
+objetivo OUTCOME_LEADS      → otimização OFFSITE_CONVERSIONS   8 conjuntos
+
+Na conta legado: 1.645 de 1.694 campanhas (97%) usam OUTCOME_TRAFFIC.
+      </div>
+      <p style="margin-top:14px;">Objetivo legado limita leilão, posicionamentos e sinal de aprendizado. Para uma locadora que vende por WhatsApp, o caminho correto é um só: <code>OUTCOME_ENGAGEMENT</code> com otimização por conversa, ou <code>OUTCOME_SALES</code> quando o pixel estiver funcionando.</p>
+      <div class="fix"><b>Correção</b>Padronizar em uma estrutura única e aposentar tudo que estiver em <code>LINK_CLICKS</code>. Campanhas legadas não se convertem — precisam ser recriadas.</div>
+    </div>
+  </div>
+
+  <div class="finding warn">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="fhead">
+        <span class="fid">E-06</span>
+        <span class="ftitle">Só Instagram, só celular — Facebook e Advantage+ desligados</span>
+        <span class="fcost">3 alertas do Meta</span>
+      </div>
+      <p>Quase todos os conjuntos ativos rodam exclusivamente em <code>instagram</code>, em <code>MOBILE</code>, com posicionamentos escolhidos à mão. Sem Facebook, sem Messenger, sem Audience Network, sem desktop. O Meta abriu três recomendações <code>AUTOMATIC_PLACEMENTS</code> com a estimativa mais alta do relatório inteiro:</p>
+      <div class="ev">
+AUTOMATIC_PLACEMENTS → "custo por conversa por mensagem iniciada <b>70% mais baixo</b>"
+  [INT] M4 VERTICAL 2 · [INT] BR HM 25-54 / ORLANDO — VERTICAL 1 (×2 conjuntos)
+
+ADVANTAGE_PLUS_AUDIENCE → "custo por conversa <b>45% mais baixo</b>" (4 recomendações)
+PERFORMANT_CREATIVE_REELS_OPT_IN → 21 conjuntos com mídia boa para Reels não otimizada
+      </div>
+      <p style="margin-top:14px;">O público-alvo — famílias brasileiras planejando Orlando — pesquisa muito em desktop e consome bastante Facebook. Amputar metade do inventário para "controlar" a entrega custa caro num leilão que hoje é resolvido por aprendizado de máquina.</p>
+      <div class="fix"><b>Correção</b>Ligar posicionamentos Advantage+ em pelo menos dois conjuntos como teste controlado, contra os manuais atuais. É o teste de maior retorno esperado da lista.</div>
+    </div>
+  </div>
+
+  <div class="finding warn">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="fhead">
+        <span class="fid">E-07</span>
+        <span class="ftitle">Quarenta anúncios por conjunto — o Meta só distribui para seis</span>
+        <span class="fcost">688 inserções ativas</span>
+      </div>
+      <p>Os conjuntos carregam de 23 a 41 anúncios cada, com 12 a 20 ativos. Mas são apenas <b>42 criativos únicos</b> em toda a conta, replicados 688 vezes. O Meta concentra entrega em poucos anúncios por conjunto; o resto nunca sai da fase de aprendizado e só polui a leitura.</p>
+      <div class="ev">
+47 inserções em 6 campanhas   [AD] CARD TESTE - FAMÍLIA 1
+36 inserções em 6 campanhas   [AD] CARD TESTE - FAMILIA 3
+36 inserções em 6 campanhas   [AD] V NOVO AG - 09
+35 inserções em 6 campanhas   [AD] V NOVO AG - 03
+27 inserções em 5 campanhas   [AD] VÍDEO MAJU EDITADO
+      </div>
+      <p style="margin-top:14px;">Dois detalhes que valem atenção: criativos chamados <b>"CARD TESTE"</b> estão em produção como anúncio principal, e criativos nomeados <b>"JULHO 3"</b> e <b>"JULHO 6-7"</b> continuam no ar no fim de agosto. Não há rotação real — há acúmulo.</p>
+      <div class="fix"><b>Correção</b>Máximo de 6 anúncios ativos por conjunto. Aposentar os "JULHO" e promover a produção só o que passou no teste — parando de rodar cards de teste como anúncio final.</div>
+    </div>
+  </div>
+
+  <div class="finding warn">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="fhead">
+        <span class="fid">E-08</span>
+        <span class="ftitle">Remarketing praticamente inexistente e nenhum lookalike</span>
+        <span class="fcost">0 campanhas</span>
+      </div>
+      <p>Existem 37 públicos salvos na conta, mas os de retargeting são minúsculos e — o mais importante — <b>nenhuma campanha ativa os usa como inclusão</b>. Eles aparecem só como exclusão. Não há um único público semelhante (lookalike) na conta.</p>
+      <div class="ev">
+Públicos de retargeting (tamanho real):
+  [LEAD] 180D                      <b>20</b>        ← praticamente vazio
+  [IG] ENV 7D                   1.000
+  [IG] VISITOU PERFIL 15D       1.400
+  [FB] INTERAGIU 365D          10.000
+  [IG] INTERAGIU 365D          33.200
+
+Públicos "salvos" de interesse — os maiores:
+  HM 25-60                136.500.000     PÚBLICO 7 BR HM 25-55   126.500.000
+  LOCADORA                114.900.000     LOCADORA SAO PAULO       99.200.000
+      </div>
+      <p style="margin-top:14px;">Um público salvo de 136 milhões de pessoas no Brasil não é segmentação — é a população adulta inteira. E o funil está invertido: você paga caro para atrair gente nova no topo e não tem nada capturando quem já demonstrou interesse. Os 33.200 do <code>[IG] INTERAGIU 365D</code> são o ativo mais barato da conta e estão parados.</p>
+      <div class="fix"><b>Correção</b>Criar uma campanha de remarketing com <code>[IG] INTERAGIU 365D</code> + <code>[IG] VISITOU PERFIL 15D</code> como inclusão, e um lookalike 1% sobre quem iniciou conversa. Limpar os públicos salvos de 100M+.</div>
+    </div>
+  </div>
+
+  <div class="finding warn">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="fhead">
+        <span class="fid">E-09</span>
+        <span class="ftitle">Advantage+ ligado e desligado sem critério, dentro da mesma conta</span>
+        <span class="fcost">inconsistência</span>
+      </div>
+      <p>O parâmetro <code>advantage_audience</code> aparece como <code>true</code> em alguns conjuntos, <code>false</code> em outros e <code>null</code> em outros — às vezes dentro da mesma campanha. Isso torna qualquer comparação entre conjuntos inválida, porque eles não estão jogando pelas mesmas regras.</p>
+      <div class="ev">
+ABO CAP 7.1        → advantage_audience: <b>true</b>,  1 interesse ("Orlando, Flórida")
+CBO 2208 VOLUME    → advantage_audience: <b>true</b>,  1 interesse
+1308 CBO V4.1      → advantage_audience: <b>false</b>, 10-18 interesses
+ABO 1008 V2.2      → advantage_audience: <b>null</b>,  11 interesses
+      </div>
+      <p style="margin-top:14px;">Há um efeito colateral silencioso: com Advantage+ ligado, o interesse vira <i>sugestão</i>, não restrição. Os conjuntos chamados "NICHADO" na verdade não são nichados — o Meta expande livremente e eles convergem para o mesmo público. É parte da explicação do Grupo D em E-01.</p>
+      <div class="fix"><b>Correção</b>Escolher um padrão para a conta e aplicar em todos os conjuntos. Se for testar, isolar a variável em vez de misturá-la com público e criativo ao mesmo tempo.</div>
+    </div>
+  </div>
+
+  <div class="finding warn">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="fhead">
+        <span class="fid">E-10</span>
+        <span class="ftitle">Nome de conjunto que não corresponde à segmentação configurada</span>
+        <span class="fcost">verificar</span>
+      </div>
+      <p>O conjunto <code>[INT] NIVER SET, OUT, NOV + ORLANDO</code> promete segmentação por aniversariantes de setembro, outubro e novembro. Na especificação lida pela API, a segmentação dele é <b>exatamente igual</b> à do <code>[INT] M ORLANDO 1</code>: BR, 24+, Instagram + WhatsApp, mobile, um único interesse "Orlando, Flórida", Advantage+ ligado. Nenhum sinal de aniversário.</p>
+      <p class="verify">Verificar antes de agir: eventos de vida e comportamentos podem não aparecer no resumo de segmentação que a API devolve. Abra o conjunto no Gerenciador e confirme. Se realmente não houver o filtro de aniversário, são dois conjuntos idênticos com nomes diferentes — e é mais um caso do E-01.</p>
+      <div class="fix"><b>Correção</b>Auditar nome contra especificação em todos os conjuntos ativos. Um nome que mente é pior que nenhum nome: leva a decisões erradas na hora de cortar.</div>
+    </div>
+  </div>
+
+  <div class="finding info">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="fhead">
+        <span class="fid">E-11</span>
+        <span class="ftitle">1.694 campanhas, 77% chamadas "Cópia" — a conta antiga é inauditável</span>
+        <span class="fcost">higiene</span>
+      </div>
+      <p>Na <code>CA - Magi Way</code> há 1.694 campanhas para apenas 325 nomes-base distintos: fator de duplicação de 5,2×. Um único nome-base foi copiado <b>301 vezes</b>. Em dezembro de 2024 foram criadas 448 campanhas em um mês.</p>
+      <div class="ev">
+301x  FACE + INSTA 5 CRIATIVO 12/12/24 ABERTO
+202x  FACE + INSTA 1 CRIATIVO 12/12/24 ABERTO
+ 55x  FACE + INST CRIATIVO 04/06/25
+ 53x  TESTE CRIATIVO 15-11
+
+Nomes com "— Cópia" encadeado até 9 vezes no mesmo título.
+Conjuntos com o nome padrão do Meta: "Novo conjunto de anúncios de Tráfego".
+      </div>
+      <p style="margin-top:14px;">Duplicar campanha para "reiniciar o aprendizado" é um hábito que destrói o histórico: cada cópia começa do zero e nenhuma acumula sinal suficiente para sair da fase de aprendizado. É provavelmente a causa-raiz do desempenho ruim daquela conta.</p>
+      <div class="fix"><b>Correção</b>Não recuperar essa conta — encerrá-la e consolidar tudo na LOCADORA, que já nasceu com padrão de nomenclatura decente (<code>[ENG-MSG] [WHATS] ABO 2208 VOLUME</code>).</div>
+    </div>
+  </div>
+
+  <div class="finding info">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="fhead">
+        <span class="fid">E-12</span>
+        <span class="ftitle">Quatro contas-fantasma com campanhas ligadas e um impulsionamento de 2024</span>
+        <span class="fcost">risco de gasto oculto</span>
+      </div>
+      <p>Quatro contas da BM — <b>Magiway Rental Car</b>, <b>Rent X</b>, <b>Gs Car Rental</b> e uma conta sem nome — contêm exatamente o mesmo par de campanhas em inglês, <code>Traffic Campaign</code> e <code>Sales Campaign</code>, todas marcadas como ativas, sem orçamento no nível da campanha. Parecem criadas por alguma ferramenta ou integração externa.</p>
+      <div class="ev">
+act_857256446973267  Magiway Rental Car   Traffic Campaign + Sales Campaign   ENABLED
+act_1261300195767859 Rent X               Traffic Campaign + Sales Campaign   ENABLED
+act_1697345757950167 Gs Car Rental        Traffic Campaign + Sales Campaign   ENABLED
+act_1012406831164580 (sem nome)           Traffic Campaign + Sales Campaign   ENABLED
+
+act_190855544392892  Carlos Emerson (pessoal)
+  "[Filmes e Séries na Palma da Mão!] Classificado do Marketplace turbinado em 28/10/2024"
+  R$ 6/dia · objetivo CONVERSIONS · fim previsto 31/10/2024 · ainda ENABLED
+      </div>
+      <p style="margin-top:14px;">Três dessas contas aparecem como somente-leitura para este acesso, o que significa que alguém de fora administra. Vale saber quem, porque contas ligadas à mesma BM compartilham sinal, público e reputação — e um problema de política numa delas respinga nas outras.</p>
+      <div class="fix"><b>Correção</b>Identificar quem criou essas quatro contas, desligar os esqueletos e remover da BM o que não for da operação. Encerrar o impulsionamento de 2024 na conta pessoal.</div>
+    </div>
+  </div>
+
+  <div class="finding info">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="fhead">
+        <span class="fid">E-13</span>
+        <span class="ftitle">Nenhuma campanha usa controle de custo</span>
+        <span class="fcost">todas</span>
+      </div>
+      <p>Todas as campanhas com estratégia definida usam <code>LOWEST_COST_WITHOUT_CAP</code> — menor custo, sem teto. Nenhuma usa <i>cost cap</i> ou <i>bid cap</i>, mesmo em uma operação que já roda há mais de dois anos e deveria ter um CPA-alvo conhecido.</p>
+      <div class="fix"><b>Correção</b>Depois de estabilizar a estrutura e ter os números na mão, aplicar <i>cost cap</i> nos conjuntos vencedores. Antes disso, não — teto de custo em conta desorganizada só trava a entrega.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Vale a pena estar no ar? <span class="h2note">veredito estrutural, campanha por campanha</span></h2>
+  <p class="lede">Você perguntou o que compensa manter ligado. A tabela abaixo é um veredito <b>estrutural</b>: baseado em duplicação, coerência de objetivo e configuração — não em CPA, porque as métricas estão bloqueadas. Onde a estrutura sozinha já condena, marquei <b>Desligar</b> com confiança. Onde a decisão final depende do número, marquei <b>Corrigir</b> e indiquei o que checar.</p>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Campanha</th>
+          <th class="num">R$/dia</th>
+          <th>Veredito</th>
+          <th>Por quê</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="nm">6 campanhas da conta CA - Magi Way</span><span class="id">act_860123571920763 · Tráfego</span></td>
+          <td class="num">811</td>
+          <td><span class="pill p-kill">Desligar</span></td>
+          <td>Intocadas há 3 meses, objetivo Tráfego, 1 anúncio por conjunto, criativo com câmbio desatualizado. Não depende de métrica.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">ABO 2208 VOLUME</span><span class="id">3 conjuntos · gêmea da CBO 2208</span></td>
+          <td class="num">126</td>
+          <td><span class="pill p-kill">Desligar</span></td>
+          <td>Clone exato da CBO 2208 VOLUME 2.2, mesmo dia. Manter apenas uma das duas — sugiro manter a CBO.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">OTIMIZADO - ABO 1008 VERTICAL 2.2</span><span class="id">2 conjuntos ativos</span></td>
+          <td class="num">254</td>
+          <td><span class="pill p-kill">Desligar</span></td>
+          <td>Os dois conjuntos duplicam conjuntos ativos da ABO 1008 V2.2 e da ABO 2208 V5. É a maior fonte isolada de canibalização.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">ABO 2208 VERTICAL 5</span><span class="id">2 conjuntos · R$ 40 cada</span></td>
+          <td class="num">80</td>
+          <td><span class="pill p-kill">Desligar</span></td>
+          <td>Ambos os conjuntos são cópias de baixo orçamento de conjuntos já ativos em outras campanhas (Grupos B e C).</td>
+        </tr>
+        <tr>
+          <td><span class="nm">ABO CAP 7.1</span><span class="id">2 conjuntos idênticos · R$ 68 cada</span></td>
+          <td class="num">136</td>
+          <td><span class="pill p-fix">Corrigir</span></td>
+          <td>Os dois conjuntos ativos são idênticos entre si. Desligar um resolve. O Meta sinalizou <code>BUDGET_LIMITED</code> no que ficar.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">[ENG] 12980 - VOLUME - M3</span><span class="id">2 conjuntos ativos</span></td>
+          <td class="num">248</td>
+          <td><span class="pill p-fix">Corrigir</span></td>
+          <td>O <code>[INT] M3</code> (R$ 90) é único e bem construído — manter. O <code>[INT] M4 VERTICAL 2</code> (R$ 158) duplica a ABO 2208 V5.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">ABO 1008 VERTICAL 2.2</span><span class="id">2 conjuntos ativos</span></td>
+          <td class="num">168</td>
+          <td><span class="pill p-fix">Corrigir</span></td>
+          <td>Manter só o <code>VERTICAL 1</code> (R$ 128) e desligar o <code>VERTICAL 3</code> (R$ 40), que é clone. Melhor conjunto de exclusões da conta.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">1308 CBO VERTICAL 4.1</span><span class="id">CBO · 2 de 5 conjuntos ativos</span></td>
+          <td class="num">90</td>
+          <td><span class="pill p-keep">Manter</span></td>
+          <td>Segmentação exclusiva, sem duplicata ativa, exclusões corretas, CBO com 2 conjuntos. É a campanha mais bem montada da conta.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">1308 CBO VERTICAL 4.2 · NOVOS VÍDEOS</span><span class="id">CBO · teste de criativo</span></td>
+          <td class="num">42</td>
+          <td><span class="pill p-keep">Manter</span></td>
+          <td>Teste legítimo de criativo novo com público próprio. Único lugar da conta onde há teste real e isolado.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">CBO 2208 VOLUME 2.2</span><span class="id">CBO · 3 conjuntos</span></td>
+          <td class="num">60</td>
+          <td><span class="pill p-fix">Corrigir</span></td>
+          <td>Manter esta e matar a gêmea ABO. Mas os 3 conjuntos usam só o interesse "Orlando" com Advantage+ ligado — na prática, um público só.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">[LEADS] [SITE] MAGIWAY LP PREMIUM</span><span class="id">3 conjuntos · otimiza conversão</span></td>
+          <td class="num">190</td>
+          <td><span class="pill p-kill">Pausar</span></td>
+          <td>Otimiza por conversão no site sem pixel confirmado e com público de leads de 20 pessoas. Pausar até o rastreamento funcionar.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">8 esqueletos "Traffic/Sales Campaign"</span><span class="id">4 contas · sem orçamento</span></td>
+          <td class="num">—</td>
+          <td><span class="pill p-kill">Desligar</span></td>
+          <td>Campanhas vazias criadas por ferramenta externa, ligadas em 4 contas. Sem função conhecida.</td>
+        </tr>
+        <tr>
+          <td><span class="nm">Marketplace turbinado 28/10/2024</span><span class="id">conta pessoal · fim previsto 31/10/2024</span></td>
+          <td class="num">6</td>
+          <td><span class="pill p-kill">Desligar</span></td>
+          <td>Impulsionamento pessoal de quase dois anos atrás, sem relação com a locadora, ainda marcado como ativo.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Vale reativar alguma? <span class="h2note">resposta curta: ainda não</span></h2>
+  <p class="lede">Você perguntou se compensa reativar alguma campanha pausada. <b>Hoje, não.</b> A conta viva já tem 70% do orçamento em público duplicado — religar qualquer conjunto pausado, por melhor que seja, só aumenta a sobreposição e piora o leilão. Reativar antes de consolidar é adicionar barulho a um sistema que já não consegue se ouvir.</p>
+  <p>Há três coisas que <i>merecem</i> voltar, mas nenhuma delas é "religar uma campanha antiga":</p>
+  <ul class="tight">
+    <li><b>O conjunto <code>[INT] M1</code></b> (pausado, presente na 1308 CBO V4.1 e na [ENG] 12980) é o mais bem pensado que encontrei: 17-18 interesses combinando Orlando, Disney, <i>Família</i>, <i>Família (conceito social)</i> e <i>Veículo de luxo</i>. É o único que descreve de verdade o cliente da Magiway — família brasileira indo a Orlando que precisa de carro. Vale ressuscitar <b>depois</b> da consolidação, como conjunto principal e não como mais um clone.</li>
+    <li><b>O remarketing, que nunca existiu de fato.</b> Os 33.200 do <code>[IG] INTERAGIU 365D</code> são o público mais barato e mais quente da conta e hoje só servem como exclusão. Essa é a "reativação" com maior retorno esperado — mas é campanha nova, não religamento.</li>
+    <li><b>Os posicionamentos automáticos.</b> O Meta estima 70% de redução no custo por conversa. Não custa orçamento novo: é um botão nos conjuntos que já estão no ar.</li>
+  </ul>
+  <p>Fora isso, a resposta honesta é que qualquer decisão de reativação precisa dos números que estão bloqueados. Assim que o Meta Ads estiver conectado no Windsor, eu comparo as pausadas contra as ativas nas três janelas e digo exatamente quais valem voltar.</p>
+</section>
+
+<section>
+  <h2>O que fazer <span class="h2note">em 48 horas, 7 dias e 30 dias</span></h2>
+  <div class="plan">
+    <div class="phase">
+      <div class="when">Próximas 48 horas</div>
+      <div class="goal">Parar o sangramento</div>
+      <ol>
+        <li>Desligar as <b>6 campanhas da CA - Magi Way</b> (R$ 811/dia).</li>
+        <li>Desligar uma das gêmeas <b>CBO/ABO 2208</b> (R$ 126/dia).</li>
+        <li>Desligar <b>OTIMIZADO - ABO 1008 V2.2</b> e <b>ABO 2208 VERTICAL 5</b> (R$ 334/dia em clones).</li>
+        <li>Desligar um dos dois <code>[INT] M4 NICHADO ORLANDO</code> idênticos (R$ 68/dia).</li>
+        <li>Desligar os 8 esqueletos e o impulsionamento de 2024.</li>
+        <li>Conectar o Meta Ads no Windsor para destravar as métricas.</li>
+      </ol>
+    </div>
+    <div class="phase p2">
+      <div class="when">Primeiros 7 dias</div>
+      <div class="goal">Consertar o rastreamento e a estrutura</div>
+      <ol>
+        <li>Confirmar o pixel em <code>act_1031334006429656</code> e instalar a API de Conversões. Só então religar a campanha de leads.</li>
+        <li>Reduzir para <b>6 anúncios ativos por conjunto</b>, aposentando os criativos "JULHO" e os "CARD TESTE".</li>
+        <li>Ligar <b>posicionamentos Advantage+</b> em 2 conjuntos como teste contra os manuais.</li>
+        <li>Padronizar <code>advantage_audience</code> em toda a conta.</li>
+        <li>Auditar nome × segmentação de cada conjunto ativo, começando pelo <code>NIVER SET, OUT, NOV</code>.</li>
+        <li>Com as métricas na mão: ranquear os 42 criativos e cortar a cauda.</li>
+      </ol>
+    </div>
+    <div class="phase p3">
+      <div class="when">Trinta dias</div>
+      <div class="goal">Reconstruir sobre base limpa</div>
+      <ol>
+        <li>Consolidar em <b>3 campanhas</b>: aquisição fria, remarketing e teste de criativo.</li>
+        <li>Subir a campanha de <b>remarketing</b> com <code>[IG] INTERAGIU 365D</code> + <code>VISITOU PERFIL 15D</code> como inclusão.</li>
+        <li>Criar <b>lookalike 1%</b> sobre quem iniciou conversa no WhatsApp.</li>
+        <li>Ressuscitar o <code>[INT] M1</code> como conjunto principal de aquisição.</li>
+        <li>Migrar tudo que ainda estiver em <code>LINK_CLICKS</code> para estrutura atual.</li>
+        <li>Limpar os públicos salvos de 100M+ e encerrar a conta legado.</li>
+        <li>Com histórico limpo, aplicar <i>cost cap</i> nos conjuntos vencedores.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Fonte: Meta Marketing API via Supermetrics (endpoints de gestão), lida em 23/08/2026. Estrutura, segmentação, orçamentos, públicos e recomendações nativas do Meta foram extraídos integralmente.<br>
+  Métricas de desempenho (gasto, conversas, CPA, ROAS, frequência) não puderam ser lidas: trial do Supermetrics expirado em 02/08/2026. Nenhum número de performance neste relatório é estimado — o que não pôde ser medido está marcado como bloqueado.<br>
+  Itens marcados "verificar antes de agir" dependem de confirmação no Gerenciador de Anúncios, porque a API pode não expor todos os campos de segmentação e de fonte de dados.
+</footer>
+
+</div>
