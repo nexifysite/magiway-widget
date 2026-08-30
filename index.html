@@ -18046,7 +18046,11 @@ var EM_CAT_SINONIMOS={
   'minivan':'minivan 7l', 'minivan 7l limited':'minivan 7l', 'minivan 8l':'minivan 7l',
   'pacifica':'minivan 7l', 'pacifica 7l':'minivan 7l', 'pacifica limited':'minivan 7l',
   'voyager':'minivan 7l', 'carnival':'minivan 7l', 'sienna':'minivan 7l',
+  'chrysler pacifica':'minivan 7l', 'chrysler pacifica limited':'minivan 7l',
+  'chrysler pacifica hybrid':'minivan 7l', 'chrysler voyager':'minivan 7l',
+  'kia carnival':'minivan 7l', 'toyota sienna':'minivan 7l',
   'expedition':'suv premium', 'suburban':'suv premium', 'tahoe':'suv premium', 'escalade':'suv premium',
+  'chevrolet suburban':'suv premium', 'ford expedition':'suv premium',
   /* Van: nome curto e modelos, todos para a mesma faixa de preço. 'minivan 8l'
      lá em cima é só rede de segurança — como a categoria existe de verdade em
      _CFG.cats, o casamento exato acontece antes e o sinônimo nunca dispara. */
@@ -18071,8 +18075,16 @@ function emCategoriasDisponiveis(){
 }
 function emCatObj(nome){
   var cats=(typeof _CFG!=='undefined'&&_CFG.cats)?_CFG.cats:[];
+  /* O nome INTEIRO primeiro, antes de tirar o "Limited". Sem isto a
+     categoria "Minivan Limited" nunca seria encontrada: a limpeza a
+     transformava em "Minivan" e o preco dela ficava lá, cadastrado e
+     inalcançável. Tirar o "Limited" continua valendo como segunda
+     tentativa, para "Pacifica Limited" e afins que vêm da frota. */
+  var cru=String(nome||'').trim().toLowerCase();
+  var achou=cats.find(function(c){return String(c.nome).toLowerCase()===cru;});
+  if(achou) return achou;
   var n=String(nome||'').replace(/\s*limited/i,'').trim().toLowerCase();
-  var achou=cats.find(function(c){return String(c.nome).toLowerCase()===n;});
+  achou=cats.find(function(c){return String(c.nome).toLowerCase()===n;});
   if(achou) return achou;
   var alvo=EM_CAT_SINONIMOS[n] || EM_CAT_SINONIMOS[String(nome||'').trim().toLowerCase()];
   if(alvo) achou=cats.find(function(c){return String(c.nome).toLowerCase()===alvo;});
@@ -19786,7 +19798,11 @@ let _CFG={
     {id:'sedan',   nome:'Sedan',        taxa:65,  taxaAlta:89,  taxaBaixa:65},
     {id:'suv',     nome:'SUV',          taxa:69,  taxaAlta:99,  taxaBaixa:69},
     {id:'mini7',   nome:'Minivan 7L',   taxa:79,  taxaAlta:129, taxaBaixa:79},
+    /* 8L e Limited nascem com o MESMO preco da 7L. Nascem, nao ficam presas:
+       sao linhas de verdade na tabela, entao da para mexer em cada uma em
+       Configuracoes. Espelhar para sempre tiraria esse controle. */
     {id:'mini8',   nome:'Minivan 8L',   taxa:79,  taxaAlta:129, taxaBaixa:79},
+    {id:'mini7lim',nome:'Minivan Limited', taxa:79, taxaAlta:129, taxaBaixa:79},
     {id:'mustang', nome:'Mustang',      taxa:199, taxaAlta:199, taxaBaixa:199},
     {id:'van12',   nome:'Van 12L',      taxa:129, taxaAlta:199, taxaBaixa:129},
     {id:'suvprem', nome:'SUV Premium',  taxa:199, taxaAlta:199, taxaBaixa:199}
@@ -20507,6 +20523,40 @@ function cfgLoad(){
       if(idxMia>=0)_CFG.locs.splice(idxMia+1,0,fll); else _CFG.locs.push(fll);
     }
   }catch(e){}
+  /* ── As minivans irmas: 8L e Limited saem pelo preco da 7L ──
+     Nao passa por numero de migracao de proposito. Config que veio da nuvem,
+     perfil novo ou versao antiga no ar deixariam a categoria de fora, e o
+     vendedor so descobriria na hora de cotar. Aqui a garantia e por
+     existencia: se faltar, cria copiando o preco da 7L do momento. Se ja
+     existir, nao encosta - o preco e dele para editar. */
+  try{
+    if(Array.isArray(_CFG.cats) && _CFG.cats.length){
+      const acha=(re)=>_CFG.cats.find(c=>c&&re.test(String(c.nome||'')));
+      const m7=acha(/minivan\s*7\s*l/i);
+      if(m7){
+        const preco=()=>({taxa:m7.taxa, taxaAlta:m7.taxaAlta, taxaBaixa:m7.taxaBaixa});
+        const pos=_CFG.cats.indexOf(m7);
+        let n=1;
+        if(!acha(/minivan\s*8\s*l/i))
+          _CFG.cats.splice(pos+(n++),0,{id:'mini8',nome:'Minivan 8L',...preco()});
+        if(!acha(/minivan\s*limited|limited/i))
+          _CFG.cats.splice(pos+(n++),0,{id:'mini7lim',nome:'Minivan Limited',...preco()});
+
+        /* Alinhamento UMA VEZ. As duas ja existiam com preco diferente da
+           7L em quem ja usa o app, e o pedido foi que saiam pelo mesmo
+           preco. Depois de alinhar, a marca fica gravada e este bloco nao
+           encosta mais: se um dia a 8L tiver preco proprio, quem decide e
+           quem edita em Configuracoes, nao esta linha. */
+        if(!_CFG._minivansAlinhadas){
+          [acha(/minivan\s*8\s*l/i), acha(/minivan\s*limited|limited/i)].forEach(c=>{
+            if(!c) return;
+            c.taxa=m7.taxa; c.taxaAlta=m7.taxaAlta; c.taxaBaixa=m7.taxaBaixa;
+          });
+          _CFG._minivansAlinhadas=1;
+        }
+      }
+    }
+  }catch(e){}
   // ── Migração: garante as URLs padrão dos PowerForms DocuSign da Magiway se estiverem vazias ──
   try{
     const DS_DEF={
@@ -20587,7 +20637,13 @@ function cfgLoad(){
         _CFG.cats=_CFG.cats.filter(c=>!(c&&(/convert/i.test(c.id||'')||/convert/i.test(c.nome||''))));
         _CFG.cats.forEach(c=>{
           if(!c)return;
-          if(c.id==='mini8'||/minivan\s*8\s*l/i.test(c.nome||'')){c.taxaAlta=129;if(!(c.taxaBaixa>0))c.taxaBaixa=79;if(!(c.taxa>0))c.taxa=79;}
+          /* O 129 fixo saiu daqui em 30/08. Ele cravava a alta temporada da
+             8L em 129 enquanto a 7L estava em 159 — e como as duas devem
+             sair pelo mesmo preço, isso vinha cobrando 30 dólares a menos
+             por diária na 8L sem ninguém ter decidido. O alinhamento com a
+             7L passou a ser feito no bloco das minivans irmãs, logo acima,
+             que copia o preço da 7L em vez de escrever número solto. */
+          if(c.id==='mini8'||/minivan\s*8\s*l/i.test(c.nome||'')){if(!(c.taxaBaixa>0))c.taxaBaixa=79;if(!(c.taxa>0))c.taxa=79;}
           if(c.id==='mustang'||/mustang/i.test(c.nome||'')){c.taxa=199;c.taxaAlta=199;c.taxaBaixa=199;}
         });
       }
