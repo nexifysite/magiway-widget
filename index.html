@@ -6166,7 +6166,8 @@ Data de retirada = din"></textarea>
     <select id="mgrsv-filtcat" class="mgw-input" onchange="MGW_RESV.filterTable()"><option value="">Todas as categorias</option></select>
     <button class="mgw-btn" onclick="MGW_RESV.refresh()">↻ Atualizar</button>
     <button class="mgw-btn mgw-btn-csv" onclick="MGW_RESV.exportCSV()" title="Baixa um CSV com as mesmas colunas da aba 📦 HISTÓRICO — é só colar na planilha">📤 EXPORTAR P/ SHEETS (HISTÓRICO)</button>
-    <button class="mgw-btn" onclick="MGW_RESV.importarAgora()" title="Traz para dentro do app as reservas da aba de fechamento da planilha que ainda não estão aqui. Reserva repetida na planilha entra as duas vezes; o que já está no app não entra de novo.">📥 IMPORTAR DA PLANILHA</button>
+    <button class="mgw-btn mgw-btn-csv" onclick="MGW_RESV.importarCiclo()" title="Traz da aba de fechamento só as reservas do mês em vigência (dia 13 → dia 12), com as 22 colunas exatamente como estão na tabela. Mostra o que vai entrar antes de gravar.">📆 TRAZER O MÊS EM VIGÊNCIA</button>
+    <button class="mgw-btn" onclick="MGW_RESV.importarAgora()" title="Traz o histórico INTEIRO da aba de fechamento que ainda não está aqui — não só o mês em vigência. Reserva repetida na planilha entra as duas vezes; o que já está no app não entra de novo.">📥 Importar tudo</button>
     <button class="mgw-btn" id="mgrsv-planilha">🔌 Cortar vínculo com a planilha</button>
   </div>
   <div class="mgw-hint">📋 Colunas idênticas à aba <b>📦 HISTÓRICO</b> da planilha FECHAMENTO MAGIWAY, ordenadas pela <b>data de fechamento</b> (mais antiga primeiro). Atualiza sozinha a partir das abas <b>HISTÓRICO</b> e <b>FECHAMENTOS</b>.<br>
@@ -24683,9 +24684,10 @@ function dispDetalhe(chave){
    É diferença de multiconjunto, não de conjunto. Repetida na planilha
    entra; repetida do que o app já tem, não.
    ═══════════════════════════════════════════════════════════════════ */
-function importarDaPlanilha(){
+function importarDaPlanilha(filtro){
   if(!window.MGW_RES) throw new Error('base local indisponível');
   var daPlanilha=DATA.filter(function(r){ return !r._local; });
+  if(typeof filtro==='function') daPlanilha=daPlanilha.filter(filtro);
   if(!daPlanilha.length) return 0;
   var jaTenho={};
   (MGW_RES.load()||[]).forEach(function(r){
@@ -24706,7 +24708,13 @@ function importarDaPlanilha(){
       dataFech:iso(r.dataFech), vendedor:r.vendedor||'', cliente:r.cliente||'',
       whatsapp:r.whats||r.tel||'', modelo:r.modelo||'', cadeirinha:r.cadeirinha||'',
       entrega:iso(r.entrega), devolucao:iso(r.devolucao),
-      hEntrega:r.hEnt||'', hDevolucao:r.hDev||'',
+      /* A planilha entrega o horário como {h,mm}. Guardar o objeto cru
+         escrevia "[object Object]" na reserva do app — aparecia assim na
+         tela e ia assim para o contrato. A tabela sempre mostrou "10:00"
+         porque formata na hora de desenhar; aqui a formatação tem de
+         acontecer antes de gravar, senão o que fica salvo não é o que se
+         vê. */
+      hEntrega:timeStr(r.hEnt), hDevolucao:timeStr(r.hDev),
       localEnt:r.localEnt||'', localDev:r.localDev||'', aerea:r.aerea||'',
       valorVenda:r.valor||0, diariaUSD:r.diariaUSD||0, diariaBRL:r.diariaBRL||0,
       valorIntegral:r.valorIntegral||0, custoReal:r.custoReal||0,
@@ -24754,6 +24762,95 @@ function importarAgora(){
   try{ refresh(); }catch(e){}
   var msg=n+' reserva'+(n>1?'s':'')+' importada'+(n>1?'s':'')+' da planilha';
   if(typeof toast==='function') toast('📥 '+msg); else alert(msg);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PONTE DO MÊS EM VIGÊNCIA
+   ───────────────────────────────────────────────────────────────────
+   Traz da aba de fechamento SÓ as reservas do ciclo em vigência, e as
+   grava como reservas do app — as mesmas 22 colunas que estão na
+   tabela, valor por valor.
+
+   Por que separada do "importar tudo": são duas intenções diferentes.
+   Importar tudo é o que se faz uma vez, antes de cortar o vínculo com a
+   planilha, e traz o histórico inteiro. Esta é a de rotina: fechou o
+   mês, aperta, e o que está na aba de fechamento passa a existir dentro
+   do app sem depender mais da planilha estar no ar.
+
+   Mostra o que vai entrar ANTES de gravar. Importação que grava
+   primeiro e conta depois é a que ninguém confere.
+   ═══════════════════════════════════════════════════════════════════ */
+function reservasDaPlanilhaNoCiclo(){
+  var ciclo=null;
+  try{ ciclo=(window.MGW_CICLO)?MGW_CICLO.cicloAtivo():null; }catch(e){}
+  if(!ciclo) return {ciclo:null, linhas:[]};
+  var dela=function(r){
+    if(r._local) return false;
+    try{
+      return MGW_CICLO.ehDoCicloCorrente ? MGW_CICLO.ehDoCicloCorrente(r,ciclo)
+                                         : MGW_CICLO.dentro(r.dataFech,ciclo);
+    }catch(e){ return false; }
+  };
+  return {ciclo:ciclo, linhas:DATA.filter(dela)};
+}
+function importarCiclo(){
+  if(!LOADED){
+    alert('A planilha ainda não foi lida nesta sessão.\n\n'+
+          'Clique em "↻ Atualizar", espere as reservas aparecerem, e tente de novo.');
+    return;
+  }
+  var R=reservasDaPlanilhaNoCiclo();
+  if(!R.ciclo){ alert('Não consegui identificar o mês em vigência.'); return; }
+  if(!R.linhas.length){
+    alert('Nenhuma reserva da planilha está no mês em vigência ('+R.ciclo.label+').\n\n'+
+          'Confira o seletor de mês na barra lateral e se a aba de fechamento já tem as linhas.');
+    return;
+  }
+  /* Quantas dessas realmente vão entrar: as que o app ainda não tem.
+     A conta é a mesma do importarDaPlanilha — multiconjunto, então
+     reserva repetida na planilha conta as duas vezes. */
+  var jaTenho={};
+  (MGW_RES.load()||[]).forEach(function(r){
+    var k=[String(r.cliente||'').trim().toUpperCase(),
+           MGW_RES.dataBR(r.entrega), MGW_RES.dataBR(r.devolucao),
+           String(r.modelo||'').trim().toUpperCase()].join('|');
+    jaTenho[k]=(jaTenho[k]||0)+1;
+  });
+  var iso=function(d){ return d?(d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)):''; };
+  var novas=[], repetidas=0, soma=0;
+  R.linhas.forEach(function(r){
+    var ch=[String(r.cliente||'').trim().toUpperCase(), MGW_RES.dataBR(iso(r.entrega)),
+            MGW_RES.dataBR(iso(r.devolucao)), String(r.modelo||'').trim().toUpperCase()].join('|');
+    if(jaTenho[ch]>0){ jaTenho[ch]--; repetidas++; return; }
+    novas.push(r); soma+=(+r.valor||0);
+  });
+
+  if(!novas.length){
+    alert('Tudo do mês em vigência já está no app.\n\n'+
+          R.linhas.length+' reserva(s) na aba de fechamento, todas já importadas. Nada a fazer.');
+    return;
+  }
+  var amostra=novas.slice(0,12).map(function(r){
+    return '  • '+(r.cliente||'—')+'   '+fmtBR(r.entrega)+' → '+fmtBR(r.devolucao)+
+           '   '+(r.modelo||'—')+'   '+rsvBRL(r.valor);
+  }).join('\n');
+  var msg='Trazer para as reservas do app · '+R.ciclo.label+'\n'+
+          R.ciclo.periodo+'\n\n'+
+          novas.length+' reserva(s) nova(s)   ·   R$ '+
+            soma.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'\n'+
+          (repetidas?(repetidas+' já estavam no app e não entram de novo\n'):'')+
+          '\n'+amostra+(novas.length>12?('\n  … e mais '+(novas.length-12)):'')+
+          '\n\nAs 22 colunas vão exatamente como estão na tabela. Confirmar?';
+  if(!confirm(msg)) return;
+
+  var n=0;
+  try{
+    var soCiclo={}; novas.forEach(function(r){ soCiclo[DATA.indexOf(r)]=1; });
+    n=importarDaPlanilha(function(r){ return soCiclo[DATA.indexOf(r)]===1; });
+  }catch(e){ alert('Não consegui importar: '+(e&&e.message||e)); return; }
+  try{ refresh(); }catch(e){}
+  var t=n+' reserva'+(n>1?'s':'')+' do mês em vigência agora vive'+(n>1?'m':'')+' dentro do app';
+  if(typeof toast==='function') toast('📆 '+t); else alert(t);
 }
 
 /* Botão: corta o vínculo com a planilha, importando antes. */
@@ -24996,7 +25093,8 @@ window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, rend
   dispQuadro:renderDisponibilidade, dispDetalhe:dispDetalhe,
   processar:processarReservas,   /* exposto para teste do pipeline de mesclagem */
   cortarPlanilha:cortarPlanilha, religarPlanilha:religarPlanilha,
-  importarDaPlanilha:importarDaPlanilha, importarAgora:importarAgora, planilhaLigada:planilhaLigada,
+  importarDaPlanilha:importarDaPlanilha, importarAgora:importarAgora,
+  importarCiclo:importarCiclo, previaCiclo:reservasDaPlanilhaNoCiclo, planilhaLigada:planilhaLigada,
   estadoPlanilha:function(){ loadPlan(); return JSON.parse(JSON.stringify(PLAN)); },
   regraCorte:function(v){ if(!v) return; REGRA.corte=v; saveRegra(); classificarOrigem(DATA); renderReservas();
     if(typeof toast==='function') toast('📐 Corte em '+fmtBR(new Date(v+'T00:00:00'))+' — vale para a equipe toda'); },
