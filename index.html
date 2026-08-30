@@ -6168,6 +6168,7 @@ Data de retirada = din"></textarea>
     <button class="mgw-btn mgw-btn-csv" onclick="MGW_RESV.exportCSV()" title="Baixa um CSV com as mesmas colunas da aba 📦 HISTÓRICO — é só colar na planilha">📤 EXPORTAR P/ SHEETS (HISTÓRICO)</button>
     <button class="mgw-btn mgw-btn-csv" onclick="MGW_RESV.importarCiclo()" title="Traz da aba de fechamento só as reservas do mês em vigência (dia 13 → dia 12), com as 22 colunas exatamente como estão na tabela. Mostra o que vai entrar antes de gravar.">📆 TRAZER O MÊS EM VIGÊNCIA</button>
     <button class="mgw-btn" onclick="MGW_RESV.importarAgora()" title="Traz o histórico INTEIRO da aba de fechamento que ainda não está aqui — não só o mês em vigência. Reserva repetida na planilha entra as duas vezes; o que já está no app não entra de novo.">📥 Importar tudo</button>
+    <button class="mgw-btn" id="mgrsv-auto" onclick="MGW_RESV.alternarAuto()"></button>
     <button class="mgw-btn" id="mgrsv-planilha">🔌 Cortar vínculo com a planilha</button>
   </div>
   <div class="mgw-hint">📋 Colunas idênticas à aba <b>📦 HISTÓRICO</b> da planilha FECHAMENTO MAGIWAY, ordenadas pela <b>data de fechamento</b> (mais antiga primeiro). Atualiza sozinha a partir das abas <b>HISTÓRICO</b> e <b>FECHAMENTOS</b>.<br>
@@ -22895,7 +22896,11 @@ function forCalendar(){
     var tel=String(r.whatsapp||'').replace(/\D/g,'').slice(-4)||'----';
     function hora(s){ var m=String(s||'').match(/(\d{1,2}):(\d{2})/); return m?{h:+m[1],mm:+m[2]}:null; }
     return {
-      _local:true, _id:r.id, _src:'app',
+      /* _src carrega a aba de origem quando a reserva veio da planilha.
+         É o que mantém a linha da aba FECHAMENTOS dentro do mês em
+         vigência depois de importada — ver o comentário em
+         importarDaPlanilha. Reserva criada aqui dentro segue 'app'. */
+      _local:true, _id:r.id, _src:(r._origemAba||'app'),
       dataFech:toDate(r.dataFech), vendedor:r.vendedor, cliente:r.cliente,
       whats:r.whatsapp, tel:tel, cadeirinha:r.cadeirinha,
       modelo:r.modelo, cat:(typeof window.MGW_CAT_OF==='function')?window.MGW_CAT_OF(r.modelo, r.obs):'Outros',
@@ -23634,7 +23639,7 @@ function mesclarReservas(rows){
    não carregada. O interruptor é da empresa (sincroniza).
    ═══════════════════════════════════════════════════════════════════ */
 var PLANILHA_K='gs_planilha_v1';
-var PLAN={ligada:true, importadaEm:null, importadas:0};
+var PLAN={ligada:true, importadaEm:null, importadas:0, auto:true, autoEm:null, autoN:0};
 function loadPlan(){
   try{ var s=localStorage.getItem(PLANILHA_K);
     if(s){ var p=JSON.parse(s); if(p&&typeof p==='object') PLAN=Object.assign(PLAN,p); } }catch(e){}
@@ -23643,6 +23648,7 @@ function savePlan(){
   try{ localStorage.setItem(PLANILHA_K, JSON.stringify(PLAN)); }catch(e){}
 }
 function planilhaLigada(){ return PLAN.ligada!==false; }
+function autoLigado(){ loadPlan(); return PLAN.auto!==false; }
 
 function loadAll(force){
   if(LOADING) return;
@@ -23680,6 +23686,10 @@ function loadAll(force){
     DATA=processarReservas(merged); LOADED=true; assignCars();
     try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(), rows:serialize(DATA)})); }catch(e){}
     renderAll();
+    /* O mês em vigência se preenche sozinho a partir da aba de fechamento.
+       Fica aqui, depois do renderAll e dentro do caminho de SUCESSO: se a
+       leitura falhou, o fluxo já saiu lá em cima e nada é gravado. */
+    var autoN=autoPreencherCiclo();
     var when=new Date().toLocaleTimeString('pt-BR');
     var overN=DATA.filter(function(r){return r.over;}).length;
     /* Por que o número aqui pode não bater com o da planilha:
@@ -23695,7 +23705,8 @@ function loadAll(force){
           +(excluidas?(' · '+excluidas+' excluída(s)/juntada(s)'):'')
         +')')
       : '';
-    setStatuses('✓ '+DATA.length+' reservas na base'+conta+(added?(' · +'+added+' nova(s)'):' · nenhuma nova')+' · atualizado '+when+(overN?(' · ⚠ '+overN+' em overbooking'):'')+(warns.length?(' · ⚠ '+warns.join('; ')):''),false);
+    setStatuses('✓ '+DATA.length+' reservas na base'+conta+(added?(' · +'+added+' nova(s)'):' · nenhuma nova')
+      +(autoN?(' · 🔗 '+autoN+' do mês trazida(s) da planilha para o app'):'')+' · atualizado '+when+(overN?(' · ⚠ '+overN+' em overbooking'):'')+(warns.length?(' · ⚠ '+warns.join('; ')):''),false);
   }
   SOURCE_TABS.forEach(function(t){
     loadTab(t.cands, t.hist).then(function(res){
@@ -24724,6 +24735,14 @@ function importarDaPlanilha(filtro){
     /* A marca de origem vai DEPOIS do normalize: ele só mantém os campos que
        conhece, então dentro do objeto ela seria descartada em silêncio. */
     novo._daPlanilha=true;
+    /* De QUAL aba ela veio, e não só "veio da planilha".
+       Sem isto a importação tinha um efeito colateral silencioso: a linha
+       da aba FECHAMENTOS conta no ciclo por estar naquela aba, mesmo sem
+       data de fechamento preenchida. Ao ser copiada para dentro do app
+       ela virava _src:'app', perdia essa marca, e saía do mês em
+       vigência — a reserva sumia do faturamento no instante em que era
+       importada, que é o pior momento possível para sumir. */
+    novo._origemAba=r._src||'';
     novo._importadaEm=new Date().toISOString();
     arr.push(novo);
     n++;
@@ -24851,6 +24870,66 @@ function importarCiclo(){
   try{ refresh(); }catch(e){}
   var t=n+' reserva'+(n>1?'s':'')+' do mês em vigência agora vive'+(n>1?'m':'')+' dentro do app';
   if(typeof toast==='function') toast('📆 '+t); else alert(t);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PREENCHIMENTO AUTOMÁTICO DO MÊS
+   ───────────────────────────────────────────────────────────────────
+   Roda sozinho depois de CADA leitura bem-sucedida da planilha: o que
+   está na aba de fechamento e pertence ao ciclo em vigência passa a
+   existir dentro do app, sem ninguém apertar nada.
+
+   As travas, porque escrita automática sem trava é como se perde dado:
+     · só roda se pelo menos uma aba respondeu — leitura que falhou não
+       importa nada, senão um problema de rede viraria base incompleta;
+     · só o ciclo em vigência;
+     · só ADICIONA. Nunca apaga, nunca sobrescreve reserva existente;
+     · a mesma deduplicação de multiconjunto: rodar cem vezes seguidas
+       traz o mesmo que rodar uma;
+     · dá para desligar no botão da barra, e a escolha vale para a
+       equipe toda.
+   Não abre caixa de diálogo: é rotina, e rotina que interrompe vira
+   rotina que se desliga. O que fez aparece na linha de status.
+   ═══════════════════════════════════════════════════════════════════ */
+function autoPreencherCiclo(){
+  try{
+    if(!autoLigado()) return 0;
+    if(!planilhaLigada()) return 0;
+    var R=reservasDaPlanilhaNoCiclo();
+    if(!R.ciclo || !R.linhas.length) return 0;
+    var idx={}; R.linhas.forEach(function(r){ idx[DATA.indexOf(r)]=1; });
+    var n=importarDaPlanilha(function(r){ return idx[DATA.indexOf(r)]===1; });
+    if(n){
+      loadPlan();
+      PLAN.autoEm=new Date().toISOString();
+      PLAN.autoN=(PLAN.autoN||0)+n;
+      savePlan();
+      try{ syncLocais(); }catch(e){}
+    }
+    return n;
+  }catch(e){ console.warn('[reservas] preenchimento automático',e); return 0; }
+}
+function alternarAuto(){
+  loadPlan();
+  PLAN.auto=!autoLigado();
+  savePlan();
+  pintarBotaoAuto();
+  if(PLAN.auto){
+    var n=autoPreencherCiclo();
+    if(typeof toast==='function')
+      toast('🔗 Ligado — o mês em vigência passa a ser preenchido sozinho'+(n?(' · '+n+' trazida(s) agora'):''));
+  }else if(typeof toast==='function'){
+    toast('🔗 Desligado — as reservas do mês só entram no app quando você mandar','orange');
+  }
+}
+function pintarBotaoAuto(){
+  var b=document.getElementById('mgrsv-auto'); if(!b) return;
+  var on=autoLigado();
+  b.textContent=(on?'🔗 Preenchimento automático: LIGADO':'🔗 Preenchimento automático: DESLIGADO');
+  b.classList.toggle('mgw-btn-csv', on);
+  b.title=on
+    ? 'A cada leitura da planilha, as reservas da aba de fechamento que pertencem ao mês em vigência entram sozinhas no app. Só adiciona, nunca apaga. Clique para desligar.'
+    : 'As reservas do mês só entram quando você clicar em TRAZER O MÊS EM VIGÊNCIA. Clique para ligar o automático.';
 }
 
 /* Botão: corta o vínculo com a planilha, importando antes. */
@@ -25057,6 +25136,7 @@ function renderAll(){
   renderReservas(); renderIssues(); renderAgenda();
   try{ renderDisponibilidade(); }catch(e){ console.warn('[disponibilidade]',e); }
   try{ atualizarBotaoPlanilha(); }catch(e){}
+  try{ pintarBotaoAuto(); }catch(e){}
   /* as reservas são a fonte das vendas: avisa o resto do app */
   try{ if(typeof window.mgwAposReservas==='function') window.mgwAposReservas(); }catch(e){}
 }
@@ -25065,6 +25145,9 @@ function onNav(id){
   if(id!=='calendario' && id!=='reservas' && id!=='agenda' && id!=='vendasmes') return;
   if(!window.MGW_AUTENTICADO) return;   /* sem login, não lê a planilha */
   loadOverrides(); loadFlags(); loadRegra(); populateCatFilter(); startAutoRefresh();
+  /* o rótulo do interruptor tem de estar certo ao ABRIR a aba, e não só
+     depois que a planilha responder — renderAll pode demorar ou nem vir */
+  try{ pintarBotaoAuto(); }catch(e){}
   if(id==='agenda') ensureAgDate();
   /* ao abrir o Calendário, sempre volta pro dia de hoje (linha vermelha visível) */
   if(id==='calendario'){ setTimeout(goTodayInternal,60); setTimeout(goTodayInternal,320); }
@@ -25095,6 +25178,8 @@ window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, rend
   cortarPlanilha:cortarPlanilha, religarPlanilha:religarPlanilha,
   importarDaPlanilha:importarDaPlanilha, importarAgora:importarAgora,
   importarCiclo:importarCiclo, previaCiclo:reservasDaPlanilhaNoCiclo, planilhaLigada:planilhaLigada,
+  alternarAuto:alternarAuto, autoLigado:autoLigado, autoPreencher:autoPreencherCiclo,
+  pintarAuto:pintarBotaoAuto,
   estadoPlanilha:function(){ loadPlan(); return JSON.parse(JSON.stringify(PLAN)); },
   regraCorte:function(v){ if(!v) return; REGRA.corte=v; saveRegra(); classificarOrigem(DATA); renderReservas();
     if(typeof toast==='function') toast('📐 Corte em '+fmtBR(new Date(v+'T00:00:00'))+' — vale para a equipe toda'); },
