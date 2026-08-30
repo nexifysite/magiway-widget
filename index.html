@@ -6084,6 +6084,7 @@ Data de retirada = din"></textarea>
     <select id="mgrsv-filtcat" class="mgw-input" onchange="MGW_RESV.filterTable()"><option value="">Todas as categorias</option></select>
     <button class="mgw-btn" onclick="MGW_RESV.refresh()">↻ Atualizar</button>
     <button class="mgw-btn mgw-btn-csv" onclick="MGW_RESV.exportCSV()" title="Baixa um CSV com as mesmas colunas da aba 📦 HISTÓRICO — é só colar na planilha">📤 EXPORTAR P/ SHEETS (HISTÓRICO)</button>
+    <button class="mgw-btn" onclick="MGW_RESV.importarAgora()" title="Traz para dentro do app as reservas da aba de fechamento da planilha que ainda não estão aqui. Reserva repetida na planilha entra as duas vezes; o que já está no app não entra de novo.">📥 IMPORTAR DA PLANILHA</button>
     <button class="mgw-btn" id="mgrsv-planilha">🔌 Cortar vínculo com a planilha</button>
   </div>
   <div class="mgw-hint">📋 Colunas idênticas à aba <b>📦 HISTÓRICO</b> da planilha FECHAMENTO MAGIWAY, ordenadas pela <b>data de fechamento</b> (mais antiga primeiro). Atualiza sozinha a partir das abas <b>HISTÓRICO</b> e <b>FECHAMENTOS</b>.<br>
@@ -18015,8 +18016,18 @@ function emSet(id,v){ var el=document.getElementById(id); if(!el) return; v=(v==
 }
 function emFillSel(id,arr,keep){ var el=document.getElementById(id); if(!el) return; var cur=el.value; el.innerHTML=(keep?'<option value=""></option>':'')+arr.map(function(o){var v=(typeof o==='object')?o.v:o,t=(typeof o==='object')?o.t:o;return '<option value="'+v.replace(/"/g,'&quot;')+'">'+t+'</option>';}).join(''); if(cur)emSet(id,cur); }
 function emitirInitSelects(){
+  /* A lista de categorias sai da tabela de preços (Configurações → Categorias),
+     não de uma lista escrita aqui. Estava fixa em quatro nomes, e por isso
+     Minivan 7L, Minivan 8L, Van 12L, Mustang e MINIVAN 15L existiam no app
+     inteiro menos no contrato — quem emitia tinha de escolher "Minivan" e
+     torcer para o sinônimo acertar o preço.
+
+     Fica FORA da trava _emSelectsDone de propósito: a primeira chamada pode
+     acontecer antes de _CFG carregar, e aí a lista curta de reserva ficaria
+     congelada para sempre. Refazer é barato e o emFillSel preserva o que já
+     estava escolhido. */
+  emFillSel('em-cat', emCategoriasDisponiveis(), true);
   if(_emSelectsDone) return; _emSelectsDone=true;
-  emFillSel('em-cat',['Minivan','SUV Premium','SUV','Sedan'],true);
   var locs=['Aeroporto de Orlando (MCO)','Orlando — entrega em endereço','Aeroporto de Miami (MIA)','Aeroporto de Fort Lauderdale (FLL)','Aeroporto de Tampa (TPA)','Aeroporto de Sanford (SFB)'];
   emFillSel('em-locret',locs,true); emFillSel('em-locdev',locs,true);
   var times=['NÃO INFORMADO']; for(var h=0;h<24;h++){ for(var m=0;m<60;m+=30){ times.push((h<10?'0':'')+h+':'+(m<10?'0':'')+m); } }
@@ -18035,8 +18046,29 @@ var EM_CAT_SINONIMOS={
   'minivan':'minivan 7l', 'minivan 7l limited':'minivan 7l', 'minivan 8l':'minivan 7l',
   'pacifica':'minivan 7l', 'pacifica 7l':'minivan 7l', 'pacifica limited':'minivan 7l',
   'voyager':'minivan 7l', 'carnival':'minivan 7l', 'sienna':'minivan 7l',
-  'expedition':'suv premium', 'suburban':'suv premium', 'tahoe':'suv premium', 'escalade':'suv premium'
+  'expedition':'suv premium', 'suburban':'suv premium', 'tahoe':'suv premium', 'escalade':'suv premium',
+  /* Van: nome curto e modelos, todos para a mesma faixa de preço. 'minivan 8l'
+     lá em cima é só rede de segurança — como a categoria existe de verdade em
+     _CFG.cats, o casamento exato acontece antes e o sinônimo nunca dispara. */
+  'van':'van 12l', 'van 12':'van 12l', 'van 12 lugares':'van 12l',
+  'transit':'van 12l', 'ford transit':'van 12l', 'sprinter':'van 12l'
 };
+
+/* Categorias que o Emitir oferece: as da tabela de preços, na ordem em que
+   estão cadastradas. Se a configuração ainda não carregou, cai na lista curta
+   de antes — melhor um select com quatro opções do que um select vazio. */
+function emCategoriasDisponiveis(){
+  try{
+    var cats=(typeof _CFG!=='undefined'&&Array.isArray(_CFG.cats))?_CFG.cats:[];
+    var nomes=cats.map(function(c){ return String(c&&c.nome||'').trim(); })
+                  .filter(function(n){ return n; });
+    /* sem repetir, caso alguém cadastre o mesmo nome duas vezes */
+    var vistos={}, saida=[];
+    nomes.forEach(function(n){ var k=n.toLowerCase(); if(vistos[k]) return; vistos[k]=1; saida.push(n); });
+    if(saida.length) return saida;
+  }catch(e){}
+  return ['Minivan 7L','Minivan 8L','Van 12L','SUV Premium','SUV','Sedan'];
+}
 function emCatObj(nome){
   var cats=(typeof _CFG!=='undefined'&&_CFG.cats)?_CFG.cats:[];
   var n=String(nome||'').replace(/\s*limited/i,'').trim().toLowerCase();
@@ -24420,23 +24452,44 @@ function dispDetalhe(chave){
 /* Traz para a base do app TODA reserva que hoje só existe na planilha.
    Devolve quantas entraram. Não duplica: quem já é do app (_local) fica fora,
    e o que já tem a mesma chave de deduplicação também. */
+/* ═══════════════════════════════════════════════════════════════════
+   IMPORTAR DA PLANILHA — a contagem importa, não só a existência
+   ───────────────────────────────────────────────────────────────────
+   A versão anterior usava chave de CONJUNTO: marcava `jaTenho[chave]=1`
+   e pulava tudo que repetisse. Só que a aba de fechamento tem, de
+   verdade, linhas idênticas da mesma pessoa — duas reservas iguais,
+   duas locações mesmo. Essas precisam entrar as duas, e a versão de
+   conjunto trazia uma só, calada.
+
+   Agora a chave conta OCORRÊNCIAS. Para cada chave, quantas o app já
+   tem; a planilha só entra com o que passar disso:
+
+     planilha 2, app 0  →  importa 2
+     planilha 2, app 1  →  importa 1
+     planilha 2, app 2  →  importa 0
+
+   É diferença de multiconjunto, não de conjunto. Repetida na planilha
+   entra; repetida do que o app já tem, não.
+   ═══════════════════════════════════════════════════════════════════ */
 function importarDaPlanilha(){
   if(!window.MGW_RES) throw new Error('base local indisponível');
   var daPlanilha=DATA.filter(function(r){ return !r._local; });
   if(!daPlanilha.length) return 0;
   var jaTenho={};
   (MGW_RES.load()||[]).forEach(function(r){
-    jaTenho[[String(r.cliente||'').trim().toUpperCase(),
-             MGW_RES.dataBR(r.entrega), MGW_RES.dataBR(r.devolucao),
-             String(r.modelo||'').trim().toUpperCase()].join('|')]=1;
+    var k=[String(r.cliente||'').trim().toUpperCase(),
+           MGW_RES.dataBR(r.entrega), MGW_RES.dataBR(r.devolucao),
+           String(r.modelo||'').trim().toUpperCase()].join('|');
+    jaTenho[k]=(jaTenho[k]||0)+1;
   });
   var iso=function(d){ return d?(d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)):''; };
   var arr=MGW_RES.load()||[], n=0;
   daPlanilha.forEach(function(r){
     var ch=[String(r.cliente||'').trim().toUpperCase(), MGW_RES.dataBR(iso(r.entrega)),
             MGW_RES.dataBR(iso(r.devolucao)), String(r.modelo||'').trim().toUpperCase()].join('|');
-    if(jaTenho[ch]) return;
-    jaTenho[ch]=1;
+    /* já existe uma cópia dessa no app: consome a cópia e segue. A próxima
+       linha igual da planilha não encontra mais crédito e entra. */
+    if(jaTenho[ch]>0){ jaTenho[ch]--; return; }
     var novo=MGW_RES.normalize({
       dataFech:iso(r.dataFech), vendedor:r.vendedor||'', cliente:r.cliente||'',
       whatsapp:r.whats||r.tel||'', modelo:r.modelo||'', cadeirinha:r.cadeirinha||'',
@@ -24457,6 +24510,38 @@ function importarDaPlanilha(){
   });
   if(n) MGW_RES.save(arr);
   return n;
+}
+
+/* Botão 📥 IMPORTAR DA PLANILHA — só importa, não corta nada.
+   Existia só embutido no "cortar vínculo", que é irreversível e assusta.
+   Este traz as reservas da aba de fechamento para dentro do app e deixa a
+   planilha ligada do jeito que estava. Pode clicar quantas vezes quiser:
+   rodar de novo não duplica o que já veio. */
+function importarAgora(){
+  if(!LOADED){
+    alert('A planilha ainda não foi lida nesta sessão.\n\n'+
+          'Clique em "↻ Atualizar", espere as reservas aparecerem na tela, e tente de novo.');
+    return;
+  }
+  var daPlanilha=DATA.filter(function(r){ return !r._local; }).length;
+  if(!daPlanilha){
+    alert('Nenhuma reserva vinda da planilha está na tela agora.\n\n'+
+          'Se você já cortou o vínculo, não há o que importar. Se não cortou, '+
+          'clique em "↻ Atualizar" primeiro.');
+    return;
+  }
+  var n=0;
+  try{ n=importarDaPlanilha(); }
+  catch(e){ alert('Não consegui importar: '+(e&&e.message||e)); return; }
+
+  if(!n){
+    if(typeof toast==='function') toast('Nada novo — as '+daPlanilha+' da planilha já estão no app','orange');
+    else alert('Nada novo para importar.');
+    return;
+  }
+  try{ refresh(); }catch(e){}
+  var msg=n+' reserva'+(n>1?'s':'')+' importada'+(n>1?'s':'')+' da planilha';
+  if(typeof toast==='function') toast('📥 '+msg); else alert(msg);
 }
 
 /* Botão: corta o vínculo com a planilha, importando antes. */
@@ -24699,7 +24784,7 @@ window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, rend
   dispQuadro:renderDisponibilidade, dispDetalhe:dispDetalhe,
   processar:processarReservas,   /* exposto para teste do pipeline de mesclagem */
   cortarPlanilha:cortarPlanilha, religarPlanilha:religarPlanilha,
-  importarDaPlanilha:importarDaPlanilha, planilhaLigada:planilhaLigada,
+  importarDaPlanilha:importarDaPlanilha, importarAgora:importarAgora, planilhaLigada:planilhaLigada,
   estadoPlanilha:function(){ loadPlan(); return JSON.parse(JSON.stringify(PLAN)); },
   regraCorte:function(v){ if(!v) return; REGRA.corte=v; saveRegra(); classificarOrigem(DATA); renderReservas();
     if(typeof toast==='function') toast('📐 Corte em '+fmtBR(new Date(v+'T00:00:00'))+' — vale para a equipe toda'); },
@@ -25278,7 +25363,8 @@ var SEMENTE={
     {key:'Minivan 8L',  label:'Minivan 8L',        cor:'#FFA51A'},
     {key:'SUV Premium', label:'SUV Premium',       cor:'#FF4757'},
     {key:'SUV',         label:'SUV',               cor:'#1FA9A6'},
-    {key:'Sedan',       label:'Sedan',             cor:'#9AB4CC'}
+    {key:'Sedan',       label:'Sedan',             cor:'#9AB4CC'},
+    {key:'Van 12L',     label:'Van 12L',           cor:'#7A5CFF'}
   ],
   carros:[
     {id:'v195', cat:'Minivan', modelo:'Chrysler Pacifica',        placa:'ID68JC',  cor:'Prata'},
@@ -25320,27 +25406,42 @@ var abaFrota='', buscaFrota='';
    categoria "Minivan 8L" e põe uma vaga de carro nela.
    Roda uma vez, marcada em F._migv. Não mexe em carro nenhum já cadastrado. */
 function migrarFrota(){
-  if(F._migv>=2) return false;
+  if(F._migv>=3) return false;
   var mudou=false;
   var achaCat=function(k){ return (F.cats||[]).filter(function(c){ return c.key===k; })[0]; };
 
-  var m7=achaCat('Minivan');
-  if(m7 && m7.label!=='Minivan 7L'){ m7.label='Minivan 7L'; mudou=true; }
+  /* ── v2 · Minivan 7L e 8L ── */
+  if(!(F._migv>=2)){
+    var m7=achaCat('Minivan');
+    if(m7 && m7.label!=='Minivan 7L'){ m7.label='Minivan 7L'; mudou=true; }
 
-  if(!achaCat('Minivan 8L')){
-    var pos=(F.cats||[]).map(function(c){return c.key;}).indexOf('Minivan');
-    var nova={key:'Minivan 8L', id:'Minivan 8L', label:'Minivan 8L', cor:'#FFA51A'};
-    if(pos>=0) F.cats.splice(pos+1,0,nova); else F.cats.push(nova);
+    if(!achaCat('Minivan 8L')){
+      var pos=(F.cats||[]).map(function(c){return c.key;}).indexOf('Minivan');
+      var nova={key:'Minivan 8L', id:'Minivan 8L', label:'Minivan 8L', cor:'#FFA51A'};
+      if(pos>=0) F.cats.splice(pos+1,0,nova); else F.cats.push(nova);
+      mudou=true;
+    }
+    /* só cria a vaga se a categoria estiver vazia — se o Luciano já cadastrou
+       o 8L dele, não duplica */
+    var tem8=(F.carros||[]).some(function(v){ return v.cat==='Minivan 8L'; });
+    if(!tem8){
+      F.carros.push({id:'v800', cat:'Minivan 8L', modelo:'', placa:'', cor:'', oficina:[]});
+      mudou=true;
+    }
+  }
+
+  /* ── v3 · Van 12L ──
+     A categoria já existia na tabela de preços (_CFG.cats) e nos selects de
+     cotação, mas não na frota — então não aparecia no calendário nem no
+     quadro de disponibilidade, e reserva de Van caía em "Sem categoria".
+     Fica sem carro cadastrado de propósito: inventar placa coloca dado falso
+     num cadastro que vira contrato. Cadastre em Frota → Van 12L. */
+  if(!achaCat('Van 12L')){
+    F.cats.push({key:'Van 12L', id:'Van 12L', label:'Van 12L', cor:'#7A5CFF'});
     mudou=true;
   }
-  /* só cria a vaga se a categoria estiver vazia — se o Luciano já cadastrou
-     o 8L dele, não duplica */
-  var tem8=(F.carros||[]).some(function(v){ return v.cat==='Minivan 8L'; });
-  if(!tem8){
-    F.carros.push({id:'v800', cat:'Minivan 8L', modelo:'', placa:'', cor:'', oficina:[]});
-    mudou=true;
-  }
-  F._migv=2;
+
+  F._migv=3;
   return mudou;
 }
 
@@ -25355,7 +25456,7 @@ function fCarregar(){
       } }
   }catch(e){}
   F=JSON.parse(JSON.stringify(SEMENTE));
-  F._migv=2;
+  F._migv=3;
   normalizar();
   fGravar();
 }
