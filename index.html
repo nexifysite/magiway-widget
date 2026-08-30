@@ -23143,9 +23143,24 @@ window.nomeChaveTol=nomeChaveTol;   /* usado pelos testes e pelo pareamento cota
 
 /* Assinatura da LINHA (tudo que importa). Duas linhas com a mesma assinatura são
    cópia literal — o caso de "copiei de FECHAMENTOS e colei no HISTÓRICO". */
+/* A assinatura da linha decide o que é cópia e o que é reserva de verdade.
+   O MODELO entrou aqui em 30/08 e o motivo importa: uma família que aluga
+   DOIS carros para o mesmo período, no mesmo nome, pelo mesmo valor, gerava
+   duas linhas com assinatura igual — e a segunda era descartada como cópia
+   de copiar/colar. Sumia um carro do calendário e uma reserva do
+   faturamento, calada.
+
+   Com o modelo dentro, "Pacifica" e "Carnival" deixam de ser a mesma linha,
+   e duas Pacificas se separam se cada uma levar a placa junto do modelo —
+   que é o que o cadastro deveria ter de qualquer jeito.
+
+   Só o modelo entrou, e a observação NÃO. Observação é texto livre: a mesma
+   reserva costuma ter nota diferente entre as abas, e usá-la aqui faria a
+   mesma venda contar duas vezes. Modelo diferente na mesma aba é carro
+   diferente; observação diferente não prova nada. */
 function rowSig(r){
   return [dedupeKey(r), r.devolucao?r.devolucao.getTime():0, Math.round((r.valor||0)*100),
-          norm(r.formaPag), norm(r.parc)].join('|');
+          norm(r.formaPag), norm(r.parc), norm(r.modelo)].join('|');
 }
 
 /* Junta as linhas que são a mesma reserva numa só.
