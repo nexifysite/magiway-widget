@@ -22101,10 +22101,32 @@ function todasReservas(){
   try{ return (window.MGW_RESV && typeof MGW_RESV.dados==='function') ? MGW_RESV.dados().slice() : []; }
   catch(e){ return []; }
 }
+/* ── A aba FECHAMENTOS é o ciclo corrente ──────────────────────────
+   A planilha tem duas abas: FECHAMENTOS é onde a venda entra enquanto o
+   mês corre, e HISTÓRICO é o arquivo para onde ela migra na virada.
+   Estar na aba de fechamento JÁ É a declaração de que fechou neste
+   ciclo — é mais confiável do que a coluna de data, que fica em branco
+   ou errada justamente enquanto a linha ainda está sendo trabalhada.
+
+   Antes o app olhava só a data, então venda lançada sem data de
+   fechamento, ou com a data digitada torto, ficava fora do faturamento
+   e fora da meta sem ninguém perceber.
+
+   A regra vale SÓ quando o mês em vigência é o de hoje. Se o seletor da
+   barra lateral estiver num mês passado, a aba de fechamento não pode
+   ser arrastada para dentro dele — lá o que manda continua sendo a data. */
+function ehDoCicloCorrente(r,c){
+  if(dentro(r.dataFech,c)) return true;
+  if(r && r._src==='fech'){
+    var hoje=cicloAtual();
+    if(c && hoje && c.ym===hoje.ym) return true;
+  }
+  return false;
+}
 function reservasDoCiclo(c){
   c=c||cicloAtivo();
   return todasReservas()
-    .filter(function(r){ return dentro(r.dataFech,c); })
+    .filter(function(r){ return ehDoCicloCorrente(r,c); })
     .sort(function(a,b){ return (a.dataFech?a.dataFech.getTime():0)-(b.dataFech?b.dataFech.getTime():0); });
 }
 /* "Reservas que ele fez" — a coluna VENDEDOR da planilha. */
@@ -22172,6 +22194,7 @@ window.MGW_CICLO={
   FIXO:FIXO_MENSAL, PCT:COMISSAO_PCT, PCT_OUTROS:COMISSAO_OUTROS_PCT, DIA_VIRADA:DIA_VIRADA,
   ciclo:ciclo, cicloAtual:cicloAtual, cicloAtivo:cicloAtivo, dentro:dentro,
   todasReservas:todasReservas, reservasDoCiclo:reservasDoCiclo, ehDoLuciano:ehDoLuciano,
+  ehDoCicloCorrente:ehDoCicloCorrente,
   resumo:resumo, comissaoDaReserva:comissaoDaReserva, metas:metas, MEDALHAS:MEDALHAS, posicaoNaPista:posicaoNaPista,
   fmtBR:fmtBR, fmtR:fmtR, fmtR0:fmtR0, esc:esc, norm:norm
 };
@@ -23924,7 +23947,17 @@ function renderReservas(){
   /* ciclo do mês em vigência (dia 13 → dia 12) para o destaque azul */
   var ciclo=null;
   try{ ciclo=(window.MGW_CICLO)?MGW_CICLO.cicloAtivo():null; }catch(e){}
-  var noCiclo=function(r){ try{ return ciclo && MGW_CICLO.dentro(r.dataFech,ciclo); }catch(e){ return false; } };
+  /* Mesma regra do Dashboard e das Metas — inclusive a aba FECHAMENTOS
+     valendo como ciclo corrente. Se as duas telas discordassem, a linha
+     apareceria sem o selo MÊS e mesmo assim entraria no faturamento, que é
+     a pior combinação possível: parece erro de conta. */
+  var noCiclo=function(r){
+    try{
+      if(!ciclo) return false;
+      return MGW_CICLO.ehDoCicloCorrente ? MGW_CICLO.ehDoCicloCorrente(r,ciclo)
+                                         : MGW_CICLO.dentro(r.dataFech,ciclo);
+    }catch(e){ return false; }
+  };
   var nCiclo=0;
   var dupN=0;
   var _conf=loadConferidas();
