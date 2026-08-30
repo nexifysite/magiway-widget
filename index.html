@@ -23610,8 +23610,40 @@ function mesclarReservas(rows){
       g.partes++;
       a._partes=g.partes;
     } else if(a._src!==r._src){
-      /* abas diferentes → a mesma reserva contada nas duas; o HISTÓRICO manda */
-      if(r._src==='hist' && a._src!=='hist'){ r._partes=a._partes; g.base=r; }
+      /* ── a mesma reserva existe nas duas abas ──
+         Ela nasce em FECHAMENTOS e é copiada para o HISTÓRICO. Quando as
+         duas linhas são idênticas, o caso já foi resolvido lá em cima como
+         cópia literal. Aqui elas são DIFERENTES — quase sempre porque
+         alguém corrigiu um campo numa aba e não na outra. Fica uma só; a
+         pergunta é qual.
+
+         Até 30/08 ficava sempre a do HISTÓRICO, e isso invertia o mês em
+         vigência: a correção feita na aba de fechamento era descartada em
+         favor da cópia velha do arquivo, e a reserva aparecia com o valor
+         antigo. Trabalhava-se numa aba e via-se a outra.
+
+         A regra agora tem prazo. Dentro do mês em vigência manda
+         FECHAMENTOS, que é a aba viva, onde a correção acontece. Fora
+         dele manda o HISTÓRICO, que é o arquivo já fechado.
+
+         Uma consequência que vale saber: estar na aba FECHAMENTOS já
+         define a linha como do mês em vigência — foi assim que ficou
+         combinado, porque a data de fechamento costuma faltar enquanto a
+         linha está sendo trabalhada. Então, na prática, sempre que a
+         cópia da aba de fechamento existe, é ela que vale. O ramo do
+         HISTÓRICO atende o resto: cópia do arquivo contra reserva criada
+         dentro do app. */
+      var _hoje=null;
+      try{ _hoje=(window.MGW_CICLO)?MGW_CICLO.cicloAtual():null; }catch(e){}
+      var _noMes=function(x){
+        if(!_hoje) return false;
+        try{ return MGW_CICLO.ehDoCicloCorrente ? MGW_CICLO.ehDoCicloCorrente(x,_hoje)
+                                                : MGW_CICLO.dentro(x.dataFech,_hoje); }
+        catch(e){ return false; }
+      };
+      var _doMes=_noMes(a)||_noMes(r);
+      var _ganha=_doMes ? 'fech' : 'hist';
+      if(r._src===_ganha && a._src!==_ganha){ r._partes=a._partes; g.base=r; }
     } else {
       /* mesma aba, mesmo cliente, mas sem cara de alteração: são DUAS
          reservas de verdade (ex.: o cliente alugou dois carros). Mantém
