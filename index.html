@@ -949,6 +949,10 @@ select.ffi option{background:#000020;color:#FF0000}
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
         Dashboard Cotações
       </div>
+      <div class="sb-item" onclick="nav('trafego',this)">
+        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+        Tráfego × Comercial
+      </div>
       <div class="sb-sec">Sistema</div>
       <div class="sb-item active" onclick="nav('vendedores',this)">
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 11-4 0 2 2 0 014 0zm6 7a2 2 0 11-4 0 2 2 0 014 0zm-9 0a2 2 0 11-4 0 2 2 0 014 0zM7 16a3 3 0 016 0M13 16a3 3 0 016 0"></path></svg>
@@ -5581,6 +5585,84 @@ select.ffi option{background:#000020;color:#FF0000}
 </div>
 </div>
 
+      <!-- ═══════════════════════════════════════════════════════════════
+           TRÁFEGO × COMERCIAL
+           A pergunta que esta aba responde: entre o dinheiro que entra no
+           anúncio e a reserva que sai assinada, ONDE o funil vaza — e de
+           quem é a alavanca para tapar.
+
+           Os números de tráfego não chegam sozinhos: o painel do CRM é
+           outro sistema, com login próprio, e o navegador não consegue
+           lê-lo daqui por causa da política de origem. Então eles são
+           colados, do mesmo jeito que o diagnóstico recebe os dados do
+           app. Cotações e vendas o app já tem — essas saem sozinhas.
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="panel" id="panel-trafego">
+        <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">TRÁFEGO × COMERCIAL</span><div class="sec-line"></div></div>
+
+        <div class="mgw-hint">
+          🔗 O funil inteiro numa tela: <b>investimento → leads → cotações → reservas</b>.
+          As cotações e as reservas saem do próprio app, recortadas pelo ciclo em vigência (dia 13 → dia 12).
+          Os números de tráfego você cola do
+          <a href="https://painelmagiway.nexflowcrm.com.br/" target="_blank" rel="noopener" style="color:var(--ice)">painel do CRM</a>
+          — clique em <b>LANÇAR DADOS DE TRÁFEGO</b>.<br>
+          <span style="color:var(--gold)">Todo gráfico abre grande ao clicar, com a leitura escrita embaixo.</span>
+        </div>
+
+        <div class="mgrsv-toolbar" style="margin-bottom:14px">
+          <button class="mgw-btn mgw-btn-csv" onclick="MGW_TRAF.lancar()">✍️ LANÇAR DADOS DE TRÁFEGO</button>
+          <button class="mgw-btn" onclick="MGW_TRAF.render()">↻ Recalcular</button>
+          <button class="mgw-btn" onclick="MGW_TRAF.exportar()">📤 Exportar leitura (texto)</button>
+          <span id="tf-periodo" class="mgw-status" style="margin-left:auto;color:var(--chalk2)"></span>
+        </div>
+
+        <div id="tf-vazio"></div>
+
+        <!-- indicadores do funil -->
+        <div class="kpi-grid" id="tf-kpis" style="margin-bottom:14px"></div>
+
+        <!-- gráficos -->
+        <div class="ch-grid2" style="margin-bottom:14px">
+          <div class="card"><div class="card-title">O FUNIL, ETAPA POR ETAPA</div>
+            <div class="card-sub">quantos sobrevivem de uma etapa para a seguinte</div>
+            <div style="height:240px;position:relative"><canvas id="tf-funil"></canvas></div></div>
+          <div class="card"><div class="card-title">ONDE O FUNIL VAZA</div>
+            <div class="card-sub">% perdido em cada passagem · a maior barra é o gargalo</div>
+            <div style="height:240px;position:relative"><canvas id="tf-vaza"></canvas></div></div>
+        </div>
+
+        <div class="ch-grid2" style="margin-bottom:14px">
+          <div class="card"><div class="card-title">CUSTO POR ETAPA</div>
+            <div class="card-sub">quanto custa um lead, uma cotação e uma reserva</div>
+            <div style="height:240px;position:relative"><canvas id="tf-custo"></canvas></div></div>
+          <div class="card"><div class="card-title">INVESTIMENTO × RECEITA</div>
+            <div class="card-sub">o que entrou no anúncio contra o que saiu em reserva</div>
+            <div style="height:240px;position:relative"><canvas id="tf-roas"></canvas></div></div>
+        </div>
+
+        <div class="ch-grid2" style="margin-bottom:14px">
+          <div class="card"><div class="card-title">LEAD × COTAÇÃO × VENDA NO TEMPO</div>
+            <div class="card-sub">as três séries lado a lado · descasamento entre elas é diagnóstico</div>
+            <div style="height:240px;position:relative"><canvas id="tf-tempo"></canvas></div></div>
+          <div class="card"><div class="card-title">QUALIDADE DO QUE ENTRA</div>
+            <div class="card-sub">cotações dentro e fora do perfil ideal · é a régua do tráfego</div>
+            <div style="height:240px;position:relative"><canvas id="tf-qualidade"></canvas></div></div>
+        </div>
+
+        <!-- pontos críticos -->
+        <div class="sec-head" style="margin-top:26px"><div class="sec-dot" style="background:var(--fire)"></div><span class="sec-ttl">O QUE ESTÁ CERTO E O QUE ESTÁ ERRADO</span><div class="sec-line"></div></div>
+        <div id="tf-pontos"></div>
+
+        <!-- plano de ação -->
+        <div class="sec-head" style="margin-top:26px"><div class="sec-dot" style="background:var(--gold)"></div><span class="sec-ttl">PLANO DE AÇÃO · O QUE MUDAR E QUEM RESPONDE</span><div class="sec-line"></div></div>
+        <div id="tf-plano"></div>
+
+        <!-- responsabilidade -->
+        <div class="sec-head" style="margin-top:26px"><div class="sec-dot" style="background:var(--ice)"></div><span class="sec-ttl">DE QUEM É A ALAVANCA</span><div class="sec-line"></div></div>
+        <div id="tf-resp"></div>
+      </div>
+
+
 
 
       <!-- (aba GERAL — EMPRESA removida: sistema com usuário único) -->
@@ -8622,6 +8704,7 @@ const NAV={
   analitico:['ANÁLISE AVANÇADA','Métricas calculadas'],
   historico:['HISTÓRICO DE COTAÇÕES','Todas as cotações registradas automaticamente'],
   dashcot:['DASHBOARD COTAÇÕES','KPIs e análise completa das cotações geradas'],
+  trafego:['TRÁFEGO × COMERCIAL','Do anúncio à reserva · onde o funil vaza, de quem é a alavanca e o que fazer'],
   comparativo:['COMPARATIVO','O que cotamos × o que fechamos · cliente ideal e cliente complexo'],
   vendedores:['CONTROLE DE ACESSO','Usuário único · gerente Luciano · dados sincronizados no Supabase'],
   config:['CONFIGURAÇÕES','Parâmetros do sistema · Login · Comandos'],
@@ -12427,7 +12510,32 @@ var MGW_VERBETES={
 'cp-perfil-conv':d=>`Conversão do segmento ideal contra a do segmento complexo. É o indicador que qualifica qualquer avaliação de desempenho individual: se a carteira recebida é majoritariamente complexa, exigir a taxa observada no segmento ideal equivale a cobrar um resultado que a composição da demanda não comporta.
   ${d.total===0?'Ambas as barras estão em zero por ausência de desfecho apurado — a comparação permanece indeterminada.':''}`,
 'cp-gauge':d=>`Participação do cliente ideal no total da base. Quanto menor a proporção, maior a dificuldade intrínseca do período — e menor o poder explicativo da taxa de conversão agregada sobre a atuação da equipe.`,
-'cp-tend':d=>`Evolução temporal da conversão. A <b>tendência</b> tem maior valor informativo que o nível de um período isolado: oscilação de um mês é ruído amostral; três períodos em declínio configuram deterioração de processo.`
+'cp-tend':d=>`Evolução temporal da conversão. A <b>tendência</b> tem maior valor informativo que o nível de um período isolado: oscilação de um mês é ruído amostral; três períodos em declínio configuram deterioração de processo.`,
+
+/* ── TRÁFEGO × COMERCIAL ── */
+'tf-funil':d=>`Cada barra é uma etapa do caminho entre o dinheiro que entra no anúncio e a reserva que sai assinada. A escala é <b>logarítmica</b> de propósito: em escala normal a impressão esmaga todo o resto e as etapas que interessam viram um traço.
+  A leitura útil não é a altura de nenhuma barra isolada — é a <b>distância entre barras vizinhas</b>. Onde o degrau é mais alto, está a perda. De ${d.lMax} para a etapa seguinte é onde mais gente desaparece, e é lá que o esforço rende.
+  Etapa que não aparece é etapa não medida, não etapa zerada: sem o número lançado, o app prefere omitir a inventar.`,
+
+'tf-vaza':d=>`Percentual perdido em cada passagem do funil. Aqui barra alta é ruim: <b>${d.lMax}</b> perde ${d.vMax}% do que chegou nela, e é o maior vazamento medido.
+  Perda alta no topo é normal e não assusta — anúncio é assim, a maioria de quem vê não clica. O que precisa de resposta é perda alta <b>embaixo</b>, onde cada unidade já custou dinheiro: um lead perdido custa o valor do lead; uma cotação perdida custa o lead mais o tempo de quem atendeu.
+  Regra de decisão: ataque um elo por vez, sempre o de maior perda. Melhorar o que não é a restrição não muda o resultado do conjunto — só produz atividade.`,
+
+'tf-custo':d=>`Quanto custa cada etapa e o que a reserva devolve. As três primeiras barras são custo; a última é receita por reserva.
+  A conta que decide é <b>CAC contra ticket</b>: enquanto o custo de aquisição couber com folga dentro do ticket, escalar verba aumenta lucro. Quando o CAC passa de um quarto do ticket, a aquisição come a margem e escalar verba aumenta faturamento e diminui resultado — que é o erro mais caro e mais fácil de cometer, porque o faturamento sobe e parece que está dando certo.
+  Duas saídas, ambas de gestão: elevar o ticket (mix e diárias) ou reduzir o custo de aquisição construindo marca. Só a segunda cai com o tempo em vez de subir.`,
+
+'tf-roas':d=>`O que entrou em anúncio contra o que saiu em reserva, no mesmo ciclo.
+  Uma ressalva que evita conclusão errada: a receita da reserva não é lucro. Dela ainda saem custo do carro, operação e comissão. O retorno aqui serve para comparar <b>ciclos entre si</b> e para dizer se o anúncio está pagando a si mesmo — não para dizer se a empresa deu lucro.
+  E há defasagem: o lead de hoje pode virar reserva no mês que vem. Ciclo isolado com retorno baixo é sinal, não veredito; três ciclos seguidos em queda é veredito.`,
+
+'tf-tempo':d=>`As três séries que importam, lado a lado: leads, cotações e reservas do ciclo.
+  O valor está no <b>descasamento</b>. Lead subindo com cotação parada indica lead que não está sendo atendido, ou lead fora do perfil — e o gráfico de qualidade separa as duas. Cotação subindo com reserva parada indica preço ou disponibilidade, não conversa: o cliente pediu, foi cotado, e recusou o número.
+  Cada um desses dois diagnósticos aponta para uma mesa diferente. Confundi-los é o que mantém a discussão girando.`,
+
+'tf-qualidade':d=>`Composição do que entra, medida contra os quatro critérios do cliente ideal: mais de 10 diárias, Orlando→Orlando, minivan e retirada em até três meses. Todos obrigatórios — falhar em um já classifica como complexo.
+  Esta é a <b>régua do tráfego</b>, e é diferente de volume. Lead fora do perfil consome exatamente o mesmo tempo de atendimento de um lead bom e entrega recusa no fim: é custo dobrado, invisível no relatório de mídia e visível na agenda de quem atende.
+  Enquanto a meta do tráfego for volume de lead, o incentivo continua premiando o número errado. A meta precisa ser lead <b>dentro do perfil</b>.`
 };
 
 
@@ -19887,7 +19995,7 @@ function ehVendedor(v){ return !!v && v.role==='admin'; }
    são da EMPRESA: a pendência que o Luciano lança na reunião tem de aparecer
    para o Dickson, e o carro que a Mariana marcou como entregue tem de aparecer
    entregue para todo mundo. */
-const VENDOR_SHARED_KEYS = ['gs_cfg_v1','gs_ai_keys','gs_frota_v2','gs_shortcuts','gs_cambio_modal','gs_focus_mode','gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1','gs_planilha_v1'];
+const VENDOR_SHARED_KEYS = ['gs_trafego_v1','gs_cfg_v1','gs_ai_keys','gs_frota_v2','gs_shortcuts','gs_cambio_modal','gs_focus_mode','gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1','gs_planilha_v1'];
 /* 'gs_cot_' entrou aqui em 08/08/2026: as cotações eram guardadas por usuário
    (mgv_<uid>__gs_cot_2026_08), então cada computador tinha as suas e nada
    aparecia no outro. Como cotação é dado da empresa — e aqui só existe uma
@@ -27308,5 +27416,604 @@ thead th,.mgdisp-tab thead th,.mgrsv-table thead th{ background:#070f1a !importa
    que é um arquivo único e autossuficiente. Manter seletor de painel que
    não existe mais só engorda a folha e engana quem for procurar. */
 
+
+/* ── TRÁFEGO × COMERCIAL ── */
+.tf-dono{display:inline-block;font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;
+  border:1px solid;padding:2px 7px;margin-left:8px;white-space:nowrap;vertical-align:middle}
+.tf-ponto{background:rgba(255,255,255,.03);border:1px solid var(--edge);border-left:3px solid var(--chalk3);
+  padding:14px 16px;margin-bottom:8px}
+.tf-ponto-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.tf-ico{font-size:.9rem}
+.tf-ponto-t{font-size:.82rem;font-weight:700;color:#fff}
+.tf-prova{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--gold);margin-bottom:6px}
+.tf-porque{font-size:.75rem;line-height:1.7;color:var(--chalk2)}
+.tf-acao{display:flex;gap:14px;background:rgba(255,255,255,.03);border:1px solid var(--edge);
+  padding:14px 16px;margin-bottom:8px}
+.tf-acao-n{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:800;color:var(--gold);
+  min-width:24px;line-height:1.4}
+.tf-acao-h{font-size:.82rem;font-weight:700;color:#fff;margin-bottom:6px;line-height:1.5}
+.tf-prazo{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.08em;color:var(--chalk3);
+  border:1px solid var(--edge);padding:2px 7px;margin-left:8px;white-space:nowrap}
+.tf-tabwrap{overflow-x:auto}
+@media(max-width:640px){.tf-acao{flex-direction:column;gap:6px}}
 </style><!--/mgw-skin-v2-->
+<script id="mgw-trafego-js">
+/* ═══════════════════════════════════════════════════════════════════
+   MAGIWAY — TRÁFEGO × COMERCIAL
+   ───────────────────────────────────────────────────────────────────
+   O funil da Magiway atravessa duas casas: o dinheiro entra no anúncio
+   (tráfego) e a reserva sai assinada (comercial). Cada lado enxerga só
+   a própria metade, e é exatamente no meio que a discussão trava —
+   "mandei lead", "o lead é ruim", e ninguém tem o número da passagem.
+
+   Esta aba junta as duas metades numa conta só e, mais importante,
+   ATRIBUI cada perda a quem tem a alavanca para consertá-la. Atribuir
+   não é acusar: é dizer a quem perguntar.
+
+   DE ONDE VÊM OS DADOS
+     · cotações e reservas → do próprio app, recortadas pelo ciclo em
+       vigência (dia 13 → dia 12), como todo o resto
+     · investimento, impressões, cliques e leads → colados do painel do
+       CRM. O painel é outro sistema, com login próprio: o navegador não
+       consegue lê-lo daqui por causa da política de origem, e fingir
+       que consegue seria entregar tela que quebra no primeiro uso.
+
+   O QUE ESTA ABA NÃO FAZ
+     Não estima o que não foi informado. Sem o número de leads, a
+     passagem lead→cotação aparece como "não medida", e não como zero.
+     Zero inventado vira decisão errada.
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+'use strict';
+
+var TRAF_K='gs_trafego_v1';
+var T={ periodos:[] };   /* [{ym, invest, impressoes, cliques, leads, obs}] */
+var charts={};
+
+/* ── armazenamento ───────────────────────────────────────────────── */
+function carregar(){
+  try{ var s=localStorage.getItem(TRAF_K); if(s){ var p=JSON.parse(s);
+    if(p && Array.isArray(p.periodos)) T=p; } }catch(e){}
+  return T;
+}
+function gravar(){
+  try{ localStorage.setItem(TRAF_K, JSON.stringify(T)); }
+  catch(e){ if(typeof toast==='function') toast('Não consegui salvar os dados de tráfego','red'); }
+}
+var n0=function(v){ return Math.round(+v||0).toLocaleString('pt-BR'); };
+var n1=function(v){ return (+v||0).toFixed(1).replace('.',','); };
+var brl=function(v){ return 'R$ '+(+v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}); };
+var esc2=function(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;'); };
+
+/* ── o ciclo em vigência, igual ao resto do app ──────────────────── */
+function cicloAtual(){
+  try{ return MGW_CICLO.cicloAtivo(); }catch(e){ return null; }
+}
+function ymDoCiclo(c){ return c? c.ym : ''; }
+
+/* ── comercial: o que o app já sabe ──────────────────────────────── */
+function dadosComerciais(c){
+  var out={cotacoes:0, cotIdeal:0, vendas:0, receita:0, medido:false};
+  if(!c) return out;
+  try{
+    var cots=(typeof HIST_COT!=='undefined'&&HIST_COT)?HIST_COT.slice():[];
+    var de=c.ini, ate=c.fim;
+    var dentro=function(iso){
+      var m=String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})/); if(!m) return false;
+      var d=new Date(+m[1],+m[2]-1,+m[3]);
+      return d>=new Date(de.getFullYear(),de.getMonth(),de.getDate())
+          && d<=new Date(ate.getFullYear(),ate.getMonth(),ate.getDate());
+    };
+    var noCiclo=cots.filter(function(h){ return dentro(h.dtISO); });
+    out.cotacoes=noCiclo.length;
+    try{ out.cotIdeal=noCiclo.filter(function(h){ return cpClassificar(h).ideal; }).length; }catch(e){}
+    out.medido=true;
+  }catch(e){}
+  try{
+    var rs=MGW_CICLO.reservasDoCiclo(c);
+    out.vendas=rs.length;
+    out.receita=rs.reduce(function(a,r){ return a+(+r.valor||0); },0);
+  }catch(e){}
+  return out;
+}
+
+/* ── o funil consolidado ─────────────────────────────────────────── */
+function montar(){
+  carregar();
+  var c=cicloAtual(), ym=ymDoCiclo(c);
+  var tf=T.periodos.filter(function(p){ return p.ym===ym; })[0]
+      || {ym:ym, invest:null, impressoes:null, cliques:null, leads:null};
+  var com=dadosComerciais(c);
+
+  var F={
+    ciclo:c, ym:ym,
+    invest:(tf.invest!=null&&tf.invest!=='')?+tf.invest:null,
+    impressoes:(tf.impressoes!=null&&tf.impressoes!=='')?+tf.impressoes:null,
+    cliques:(tf.cliques!=null&&tf.cliques!=='')?+tf.cliques:null,
+    leads:(tf.leads!=null&&tf.leads!=='')?+tf.leads:null,
+    cotacoes:com.cotacoes, cotIdeal:com.cotIdeal,
+    vendas:com.vendas, receita:com.receita,
+    temTrafego:false
+  };
+  F.temTrafego = (F.invest!=null || F.leads!=null);
+
+  /* passagens — null quando não dá para medir, nunca zero de mentira */
+  F.pLeadCot = (F.leads>0) ? (F.cotacoes/F.leads*100) : null;
+  F.pCotVen  = (F.cotacoes>0) ? (F.vendas/F.cotacoes*100) : null;
+  F.pCliqLead= (F.cliques>0 && F.leads!=null) ? (F.leads/F.cliques*100) : null;
+  F.pImpCliq = (F.impressoes>0 && F.cliques!=null) ? (F.cliques/F.impressoes*100) : null;
+  F.pGeral   = (F.leads>0) ? (F.vendas/F.leads*100) : null;
+
+  /* custos */
+  F.cpl = (F.invest!=null && F.leads>0) ? (F.invest/F.leads) : null;
+  F.cpc = (F.invest!=null && F.cotacoes>0) ? (F.invest/F.cotacoes) : null;
+  F.cac = (F.invest!=null && F.vendas>0) ? (F.invest/F.vendas) : null;
+  F.roas= (F.invest>0) ? (F.receita/F.invest) : null;
+  F.ticket = F.vendas>0 ? (F.receita/F.vendas) : null;
+  F.pctIdeal = F.cotacoes>0 ? (F.cotIdeal/F.cotacoes*100) : null;
+  return F;
+}
+
+/* ═══ RÉGUAS ═══
+   Cada limite abaixo é um número declarado, não um palpite escondido no
+   código. Estão todos aqui, num lugar só, para poderem ser discutidos e
+   mudados quando a operação mudar. */
+var REGUA={
+  leadCotBom:35,     /* % de leads que viram cotação — abaixo disso, atendimento ou qualificação */
+  leadCotRuim:15,
+  cotVenBom:20,      /* % de cotações que fecham */
+  cotVenRuim:8,
+  idealBom:25,       /* % das cotações dentro do perfil ideal */
+  idealRuim:10,
+  roasBom:8,         /* receita por real investido */
+  roasRuim:3,
+  cacSobreTicket:0.25 /* CAC não deveria passar de 25% do ticket */
+};
+
+/* ── quem responde por cada etapa ──────────────────────────────────
+   A regra é uma só, e vale sem exceção: responde quem decide.
+   · impressão e clique   → TRÁFEGO (criativo, público, verba)
+   · clique → lead        → TRÁFEGO (promessa do anúncio) + GESTÃO (verba de marca)
+   · lead → cotação       → COMERCIAL (tempo de resposta, follow-up)
+                             com ressalva: lead fora do perfil é TRÁFEGO
+   · cotação → venda      → COMERCIAL (condução), com ressalva de PREÇO → GESTÃO
+   · perfil do que entra  → TRÁFEGO (segmentação) + GESTÃO (verba e posicionamento)
+   · CAC acima do ticket  → GESTÃO (preço e orçamento) */
+var DONO={
+  trafego:{rot:'TRÁFEGO', cor:'#FFD11A'},
+  comercial:{rot:'COMERCIAL', cor:'#1FA9A6'},
+  gestao:{rot:'GESTÃO', cor:'#FF4757'}
+};
+function selo(k){ var d=DONO[k]||DONO.gestao;
+  return '<span class="tf-dono" style="border-color:'+d.cor+';color:'+d.cor+'">'+d.rot+'</span>'; }
+
+/* ═══ PONTOS CRÍTICOS — o que está certo e o que está errado ═══
+   Cada ponto carrega o número que o sustenta e o dono da alavanca. Um
+   ponto sem número é opinião, e opinião não entra em reunião de
+   orçamento. */
+function pontos(F){
+  var P=[];
+  var add=function(tipo,dono,titulo,prova,porque){
+    P.push({tipo:tipo,dono:dono,titulo:titulo,prova:prova,porque:porque}); };
+
+  /* ── passagem lead → cotação ── */
+  if(F.pLeadCot==null){
+    add('cinza','trafego','Passagem lead → cotação não medida',
+      'nenhum número de leads lançado para '+(F.ciclo?F.ciclo.label:'o ciclo'),
+      'Sem o volume de leads, não há como separar "chegou pouco" de "chegou e não foi atendido". '+
+      'É a informação que decide se o problema é de tráfego ou de comercial, e ela custa um lançamento por mês.');
+  }else if(F.pLeadCot>=REGUA.leadCotBom){
+    add('bom','comercial','O lead que chega está sendo trabalhado',
+      n1(F.pLeadCot)+'% dos '+n0(F.leads)+' leads viraram cotação',
+      'Acima de '+REGUA.leadCotBom+'% indica atendimento respondendo e qualificando. Este elo não é o gargalo.');
+  }else if(F.pLeadCot<REGUA.leadCotRuim){
+    add('ruim','comercial','A maior parte do lead morre antes da cotação',
+      'só '+n1(F.pLeadCot)+'% dos '+n0(F.leads)+' leads viraram cotação'+
+      (F.cpl!=null?' · cada lead custou '+brl(F.cpl):''),
+      'Abaixo de '+REGUA.leadCotRuim+'% há duas causas possíveis, e elas têm donos diferentes: '+
+      'tempo de primeira resposta alto (comercial) ou lead fora do perfil (tráfego). '+
+      'A régua do perfil ideal, no gráfico ao lado, separa as duas — não trate como uma coisa só.');
+  }else{
+    add('atencao','comercial','Passagem lead → cotação abaixo do alvo',
+      n1(F.pLeadCot)+'% contra alvo de '+REGUA.leadCotBom+'%',
+      'Zona intermediária: ainda dá para recuperar com tempo de resposta e follow-up, sem mexer em verba.');
+  }
+
+  /* ── qualidade do que entra ── */
+  if(F.pctIdeal==null){
+    add('cinza','trafego','Perfil do que entra não medido','sem cotações no ciclo',
+      'Sem cotação registrada não há como avaliar segmentação.');
+  }else if(F.pctIdeal>=REGUA.idealBom){
+    add('bom','trafego','O anúncio está trazendo o cliente certo',
+      n1(F.pctIdeal)+'% das '+n0(F.cotacoes)+' cotações cumprem os quatro critérios do perfil ideal',
+      'Segmentação funcionando. Nesse cenário, perda adiante é condução ou preço — não é público.');
+  }else if(F.pctIdeal<REGUA.idealRuim){
+    add('ruim','trafego','O anúncio está trazendo o cliente errado',
+      'só '+n1(F.pctIdeal)+'% das cotações são do perfil ideal ('+n0(F.cotIdeal)+' de '+n0(F.cotacoes)+')',
+      'Este é o ponto mais caro do funil e o menos visível: lead fora do perfil consome o MESMO tempo de '+
+      'atendimento de um lead bom e entrega recusa no fim. Cobrar conversão do comercial sem corrigir isto é '+
+      'cobrar o efeito de uma decisão que não é dele. Tráfego sem marketing acerta volume e erra segmento.');
+  }else{
+    add('atencao','trafego','Perfil do que entra abaixo do alvo',
+      n1(F.pctIdeal)+'% de cliente ideal, alvo '+REGUA.idealBom+'%',
+      'Metade do esforço de atendimento está indo para pedido que dificilmente fecha.');
+  }
+
+  /* ── cotação → venda ── */
+  if(F.pCotVen==null){
+    add('cinza','comercial','Conversão de cotação não medida','sem cotações no ciclo','');
+  }else if(F.pCotVen>=REGUA.cotVenBom){
+    add('bom','comercial','A cotação está fechando bem',
+      n1(F.pCotVen)+'% das cotações viraram reserva',
+      'Acima de '+REGUA.cotVenBom+'%. A condução da venda não é o gargalo deste ciclo.');
+  }else if(F.pCotVen<REGUA.cotVenRuim){
+    add('ruim','gestao','A cotação chega e não fecha',
+      'só '+n1(F.pCotVen)+'% das '+n0(F.cotacoes)+' cotações viraram reserva',
+      'Quando o pedido chega, é cotado e mesmo assim não fecha, a causa raramente é a conversa: é o número. '+
+      'Preço fora da faixa em que o cliente compara faz a recusa acontecer antes de qualquer argumento. '+
+      'Esta linha é da gestão porque a alavanca — tabela e política de desconto — está com ela.');
+  }else{
+    add('atencao','gestao','Conversão de cotação abaixo do alvo',
+      n1(F.pCotVen)+'% contra alvo de '+REGUA.cotVenBom+'%','');
+  }
+
+  /* ── dinheiro ── */
+  if(F.roas!=null){
+    if(F.roas>=REGUA.roasBom)
+      add('bom','gestao','O investimento está se pagando',
+        'cada R$ 1 em anúncio devolveu '+n1(F.roas)+' em reserva'+
+        (F.invest!=null?' · '+brl(F.invest)+' investidos, '+brl(F.receita)+' fechados':''),
+        'Retorno saudável. O limite aqui deixa de ser eficiência e passa a ser capacidade de frota.');
+    else if(F.roas<REGUA.roasRuim)
+      add('ruim','gestao','Cada real investido volta pouco',
+        'retorno de '+n1(F.roas)+'× · '+brl(F.invest)+' investidos para '+brl(F.receita)+' em reserva',
+        'Abaixo de '+REGUA.roasRuim+'× o anúncio deixa de ser aquisição e vira custo fixo. Antes de cortar a '+
+        'verba, veja qual etapa está vazando: cortar tráfego com funil furado só reduz o volume da perda, '+
+        'não corrige a causa.');
+    else
+      add('atencao','gestao','Retorno do investimento na faixa intermediária',
+        n1(F.roas)+'× por real investido','');
+  }
+  if(F.cac!=null && F.ticket!=null){
+    var r=F.cac/F.ticket;
+    if(r>REGUA.cacSobreTicket)
+      add('ruim','gestao','Custo de aquisição alto para o ticket',
+        'CAC '+brl(F.cac)+' contra ticket médio de '+brl(F.ticket)+' — '+n1(r*100)+'% do valor da reserva',
+        'Acima de '+Math.round(REGUA.cacSobreTicket*100)+'% do ticket, a aquisição come a margem. Duas saídas, e '+
+        'as duas são decisão de gestão: elevar o ticket (mix e diárias) ou reduzir o custo de aquisição '+
+        'construindo marca, que é o único caminho em que o custo cai com o tempo em vez de subir.');
+    else
+      add('bom','gestao','Custo de aquisição cabe no ticket',
+        'CAC '+brl(F.cac)+' = '+n1(r*100)+'% do ticket de '+brl(F.ticket),'');
+  }
+  if(!F.temTrafego){
+    add('cinza','gestao','Nenhum dado de tráfego lançado neste ciclo',
+      'investimento, cliques e leads em branco',
+      'Metade do funil está invisível. Enquanto ficar assim, toda discussão sobre "de quem é a culpa" é '+
+      'opinião contra opinião — e reunião assim se decide por quem fala mais alto, não por quem tem razão.');
+  }
+  return P;
+}
+
+/* ═══ PLANO DE AÇÃO ═══
+   Ordenado por tamanho do vazamento: primeiro o elo que perde mais.
+   Melhorar o que não é a restrição não muda o resultado do conjunto —
+   só gera atividade. */
+function plano(F){
+  var A=[];
+  var perdas=[];
+  if(F.pLeadCot!=null) perdas.push({etapa:'lead → cotação', perda:100-F.pLeadCot, dono:'comercial'});
+  if(F.pCotVen!=null)  perdas.push({etapa:'cotação → venda', perda:100-F.pCotVen, dono:'gestao'});
+  if(F.pctIdeal!=null) perdas.push({etapa:'perfil do que entra', perda:100-F.pctIdeal, dono:'trafego'});
+  perdas.sort(function(a,b){ return b.perda-a.perda; });
+  var gargalo=perdas[0]||null;
+
+  if(gargalo) A.push({dono:gargalo.dono, prazo:'esta semana',
+    t:'Tratar o gargalo antes de qualquer outra coisa: '+gargalo.etapa,
+    d:'É onde se perde mais ('+n1(gargalo.perda)+'% do que entra nesta passagem). Toda melhoria fora daqui '+
+      'não muda o resultado do conjunto — é a teoria das restrições aplicada ao funil: melhorar o que não é a '+
+      'restrição só produz atividade.'});
+
+  if(F.pctIdeal!=null && F.pctIdeal<REGUA.idealBom) A.push({dono:'trafego', prazo:'15 dias',
+    t:'Reescrever público e criativo em cima dos quatro critérios do cliente ideal',
+    d:'Mais de 10 diárias, Orlando→Orlando, minivan e retirada em até 3 meses. Hoje só '+n1(F.pctIdeal)+'% do '+
+      'que entra cumpre os quatro. A meta do tráfego deixa de ser volume de lead e passa a ser <b>lead dentro '+
+      'do perfil</b> — sem trocar a régua, o incentivo continua premiando o número errado.'});
+
+  if(F.pLeadCot!=null && F.pLeadCot<REGUA.leadCotBom) A.push({dono:'comercial', prazo:'imediato',
+    t:'Medir e publicar o tempo de primeira resposta, por atendente e por dia',
+    d:'É a variável mais barata do funil e a que mais mexe na passagem lead→cotação. Sem medir, a discussão '+
+      'volta a ser "eu respondo rápido" contra "demora muito", que não se resolve.'});
+
+  if(F.pCotVen!=null && F.pCotVen<REGUA.cotVenBom) A.push({dono:'gestao', prazo:'30 dias',
+    t:'Testar preço em uma categoria, com resultado combinado por escrito ANTES de começar',
+    d:'Cotação que chega e não fecha é sinal de número, não de conversa. Combinar o critério antes evita que a '+
+      'leitura do resultado dependa de quem a fizer. Trinta dias, uma categoria, uma decisão.'});
+
+  if(F.roas!=null && F.roas<REGUA.roasBom) A.push({dono:'gestao', prazo:'no orçamento do mês',
+    t:'Separar verba de marca da verba de performance, com percentual declarado',
+    d:'Tráfego compra atenção enquanto se paga e para no dia em que o pagamento para. Marca acumula e faz o '+
+      'custo de aquisição cair com o tempo. Enquanto forem a mesma linha de orçamento, a de marca é sempre '+
+      'cortada primeiro, porque o retorno dela é diferido.'});
+
+  if(!F.temTrafego) A.push({dono:'trafego', prazo:'toda segunda-feira',
+    t:'Lançar investimento, cliques e leads da semana nesta aba',
+    d:'Cinco minutos. É o que transforma a reunião de tráfego de opinião em conta.'});
+
+  A.push({dono:'gestao', prazo:'mensal',
+    t:'Levar este quadro para a reunião com as três colunas visíveis',
+    d:'Cada linha vermelha tem um dono declarado. Reunião em que a perda não tem dono termina sem decisão, e o '+
+      'mesmo número reaparece no mês seguinte.'});
+  return A;
+}
+
+/* ═══ DESENHO ═══ */
+function temChart(){ return typeof Chart!=='undefined' && Chart && Chart.defaults; }
+function graf(id,cfg){
+  if(!temChart()) return;
+  var el=document.getElementById(id); if(!el) return;
+  try{ if(charts[id]) charts[id].destroy(); }catch(e){}
+  try{ var c=Chart.getChart?Chart.getChart(el):null; if(c) c.destroy(); }catch(e){}
+  try{ charts[id]=new Chart(el,cfg); }catch(e){ console.warn('[trafego] '+id,e); }
+}
+var VERDE='rgba(26,255,157,.85)', VERM='rgba(255,71,87,.85)',
+    AMAR='rgba(255,209,26,.85)', AZUL='rgba(59,158,255,.85)', TEAL='rgba(31,169,166,.85)';
+var EIXO={grid:{color:'rgba(255,255,255,.05)'},
+          ticks:{color:'#7B93B5',font:{size:10,family:'DM Mono'},precision:0}};
+var BASE={responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{labels:{color:'#C9D8EA',font:{size:11}}}},
+  scales:{x:EIXO,y:Object.assign({beginAtZero:true},EIXO)}};
+
+function desenhar(F){
+  /* 1 · funil */
+  var etapas=[], vals=[], cores=[];
+  if(F.impressoes!=null){ etapas.push('Impressões'); vals.push(F.impressoes); cores.push('rgba(122,92,255,.85)'); }
+  if(F.cliques!=null){ etapas.push('Cliques'); vals.push(F.cliques); cores.push(AZUL); }
+  if(F.leads!=null){ etapas.push('Leads'); vals.push(F.leads); cores.push(AMAR); }
+  etapas.push('Cotações'); vals.push(F.cotacoes); cores.push(TEAL);
+  etapas.push('Reservas'); vals.push(F.vendas); cores.push(VERDE);
+  graf('tf-funil',{type:'bar',data:{labels:etapas,datasets:[{label:'quantidade',data:vals,
+    backgroundColor:cores,borderRadius:0,minBarLength:4}]},
+    options:Object.assign({indexAxis:'y'},BASE,{plugins:{legend:{display:false}},
+      scales:{x:Object.assign({beginAtZero:true,type:'logarithmic'},EIXO),y:EIXO}})});
+
+  /* 2 · onde vaza */
+  var vl=[], vv=[], vc=[];
+  if(F.pImpCliq!=null){ vl.push('Impressão → clique'); vv.push(100-F.pImpCliq); vc.push('rgba(122,92,255,.85)'); }
+  if(F.pCliqLead!=null){ vl.push('Clique → lead'); vv.push(100-F.pCliqLead); vc.push(AZUL); }
+  if(F.pLeadCot!=null){ vl.push('Lead → cotação'); vv.push(100-F.pLeadCot); vc.push(AMAR); }
+  if(F.pCotVen!=null){ vl.push('Cotação → reserva'); vv.push(100-F.pCotVen); vc.push(VERM); }
+  graf('tf-vaza',{type:'bar',data:{labels:vl,datasets:[{label:'% perdido',data:vv,
+    backgroundColor:vc,borderRadius:0,minBarLength:4}]},
+    options:Object.assign({indexAxis:'y'},BASE,{plugins:{legend:{display:false}},
+      scales:{x:Object.assign({beginAtZero:true,max:100},EIXO),y:EIXO}})});
+
+  /* 3 · custo por etapa */
+  var cl=[], cv=[];
+  if(F.cpl!=null){ cl.push('Por lead'); cv.push(+F.cpl.toFixed(2)); }
+  if(F.cpc!=null){ cl.push('Por cotação'); cv.push(+F.cpc.toFixed(2)); }
+  if(F.cac!=null){ cl.push('Por reserva (CAC)'); cv.push(+F.cac.toFixed(2)); }
+  if(F.ticket!=null){ cl.push('Ticket médio'); cv.push(+F.ticket.toFixed(2)); }
+  graf('tf-custo',{type:'bar',data:{labels:cl,datasets:[{label:'R$',data:cv,
+    backgroundColor:cl.map(function(x){ return /Ticket/.test(x)?VERDE:AMAR; }),
+    borderRadius:0,minBarLength:4}]},
+    options:Object.assign({},BASE,{plugins:{legend:{display:false}}})});
+
+  /* 4 · investimento × receita */
+  graf('tf-roas',{type:'bar',data:{labels:['Investido no anúncio','Fechado em reserva'],
+    datasets:[{label:'R$',data:[F.invest||0,F.receita||0],
+      backgroundColor:[VERM,VERDE],borderRadius:0,minBarLength:4}]},
+    options:Object.assign({},BASE,{plugins:{legend:{display:false}}})});
+
+  /* 5 · as três séries */
+  graf('tf-tempo',{type:'bar',data:{labels:['Leads','Cotações','Reservas'],
+    datasets:[{label:'no ciclo',data:[F.leads||0,F.cotacoes,F.vendas],
+      backgroundColor:[AMAR,TEAL,VERDE],borderRadius:0,minBarLength:4}]},
+    options:Object.assign({},BASE,{plugins:{legend:{display:false}}})});
+
+  /* 6 · qualidade */
+  var fora=Math.max(0,F.cotacoes-F.cotIdeal);
+  graf('tf-qualidade',{type:'doughnut',
+    data:{labels:['Dentro do perfil ideal','Fora do perfil'],
+      datasets:[{data:[F.cotIdeal,fora],backgroundColor:[VERDE,VERM],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{color:'#C9D8EA',font:{size:11}}}}}});
+}
+
+/* ═══ TELA ═══ */
+function kpi(tag,val,sub,cls){
+  return '<div class="kpi '+(cls||'kpi-o')+'"><div class="kg"></div>'
+    +'<div class="kpi-tag">'+tag+'</div><div class="kpi-val">'+val+'</div>'
+    +'<div class="kpi-sub">'+sub+'</div><div class="kpi-bar"></div></div>';
+}
+function render(){
+  var F=montar();
+  var el=function(id){ return document.getElementById(id); };
+  var per=el('tf-periodo');
+  if(per) per.textContent=F.ciclo? ('ciclo '+F.ciclo.label+' · '+F.ciclo.periodo) : '';
+
+  var vz=el('tf-vazio');
+  if(vz) vz.innerHTML = F.temTrafego ? '' :
+    '<div class="mgw-status" style="color:var(--gold);border-left:3px solid var(--gold);padding:12px 14px;margin-bottom:14px">'
+    +'⚠️ Sem dados de tráfego lançados para este ciclo. As colunas de cotação e reserva já estão certas — '
+    +'falta a metade de cima do funil. Clique em <b>LANÇAR DADOS DE TRÁFEGO</b> e cole os números do painel.</div>';
+
+  var K=el('tf-kpis');
+  if(K){
+    var h='';
+    h+=kpi('Investido', F.invest!=null?brl(F.invest):'—',
+           F.invest!=null?'em anúncio no ciclo':'não lançado', F.invest!=null?'kpi-o':'kpi-o');
+    h+=kpi('Leads', F.leads!=null?n0(F.leads):'—',
+           F.cpl!=null?(brl(F.cpl)+' cada'):'não lançado', 'kpi-y');
+    h+=kpi('Cotações', n0(F.cotacoes),
+           F.pLeadCot!=null?(n1(F.pLeadCot)+'% dos leads'):'do histórico do app', 'kpi-t');
+    h+=kpi('Reservas', n0(F.vendas),
+           F.pCotVen!=null?(n1(F.pCotVen)+'% das cotações'):'no ciclo', 'kpi-g');
+    h+=kpi('Receita', brl(F.receita), F.ticket!=null?('ticket '+brl(F.ticket)):'no ciclo', 'kpi-g');
+    h+=kpi('Retorno', F.roas!=null?(n1(F.roas)+'×'):'—',
+           F.roas!=null?'por real investido':'precisa do investimento', 'kpi-t');
+    h+=kpi('CAC', F.cac!=null?brl(F.cac):'—',
+           (F.cac!=null&&F.ticket)?(n1(F.cac/F.ticket*100)+'% do ticket'):'custo por reserva', 'kpi-y');
+    h+=kpi('Cliente ideal', F.pctIdeal!=null?(n1(F.pctIdeal)+'%'):'—',
+           F.cotacoes?(n0(F.cotIdeal)+' de '+n0(F.cotacoes)+' cotações'):'sem cotações', 'kpi-o');
+    K.innerHTML=h;
+  }
+
+  desenhar(F);
+
+  var ICO={bom:'✅', ruim:'⛔', atencao:'⚠️', cinza:'◻️'};
+  var COR={bom:'#1AFF9D', ruim:'#FF4757', atencao:'#FFD11A', cinza:'#7B93B5'};
+  var P=pontos(F), pe=el('tf-pontos');
+  if(pe) pe.innerHTML=P.map(function(p){
+    return '<div class="tf-ponto" style="border-left-color:'+COR[p.tipo]+'">'
+      +'<div class="tf-ponto-h"><span class="tf-ico">'+ICO[p.tipo]+'</span>'
+      +'<span class="tf-ponto-t">'+esc2(p.titulo)+'</span>'+selo(p.dono)+'</div>'
+      +(p.prova?'<div class="tf-prova">'+esc2(p.prova)+'</div>':'')
+      +(p.porque?'<div class="tf-porque">'+p.porque+'</div>':'')
+      +'</div>';
+  }).join('');
+
+  var A=plano(F), ae=el('tf-plano');
+  if(ae) ae.innerHTML=A.map(function(a,i){
+    return '<div class="tf-acao">'
+      +'<div class="tf-acao-n">'+(i+1)+'</div>'
+      +'<div><div class="tf-acao-h">'+esc2(a.t)+' '+selo(a.dono)
+      +'<span class="tf-prazo">'+esc2(a.prazo)+'</span></div>'
+      +'<div class="tf-porque">'+a.d+'</div></div></div>';
+  }).join('');
+
+  var re=el('tf-resp');
+  if(re) re.innerHTML=
+    '<div class="mgw-hint" style="margin-bottom:10px">A regra é uma só e vale sem exceção: '
+    +'<b>responde quem decide</b>. Quem não decide não pode ser cobrado pelo efeito da decisão alheia — '
+    +'cobrar assim não é rigor, é erro de atribuição virando política.</div>'
+    +'<div class="tf-tabwrap"><table class="mgrsv-table"><thead><tr>'
+    +'<th>Etapa do funil</th><th>Quem decide</th><th>O que a alavanca é</th><th>Como se mede</th>'
+    +'</tr></thead><tbody>'
+    +[['Impressão e clique','trafego','Criativo, público, verba diária','CTR e custo por clique'],
+      ['Clique → lead','trafego','Promessa do anúncio e página de destino','% de cliques que viram conversa'],
+      ['Perfil do que entra','trafego','Segmentação contra os 4 critérios','% de cotação dentro do perfil ideal'],
+      ['Verba de marca','gestao','Orçamento separado do de performance','custo de aquisição ao longo dos meses'],
+      ['Lead → cotação','comercial','Tempo de resposta e follow-up','% de leads que viram cotação'],
+      ['Qualidade do atendimento','comercial','Roteiro, objeção, retorno','conversão dentro do perfil ideal'],
+      ['Cotação → reserva','gestao','Preço de tabela e política de desconto','% de cotações que fecham'],
+      ['Mix da frota','gestao','O que existe para vender','ocupação por categoria'],
+      ['CAC contra ticket','gestao','Preço e orçamento','CAC ÷ ticket médio']
+     ].map(function(r){
+      return '<tr><td>'+r[0]+'</td><td>'+selo(r[1])+'</td><td style="font-size:.72rem">'+r[2]
+        +'</td><td style="font-size:.72rem;color:var(--chalk2)">'+r[3]+'</td></tr>';
+     }).join('')
+    +'</tbody></table></div>';
+  return F;
+}
+
+/* ═══ LANÇAMENTO DOS NÚMEROS DE TRÁFEGO ═══
+   Formulário curto de propósito. Quatro campos, e todos podem ficar em
+   branco: o que faltar aparece como "não medido", nunca como zero. */
+function lancar(){
+  carregar();
+  var c=cicloAtual(); if(!c){ alert('Não consegui identificar o ciclo em vigência.'); return; }
+  var p=T.periodos.filter(function(x){ return x.ym===c.ym; })[0] || {};
+  var v=function(x){ return (x==null||x==='')?'':x; };
+  var html=
+     '<h3 style="margin:0 0 4px">DADOS DE TRÁFEGO</h3>'
+    +'<div style="font-size:.72rem;color:var(--chalk3);line-height:1.55;margin-bottom:14px">'
+    +'Ciclo <b>'+c.label+'</b> · '+c.periodo+'.<br>'
+    +'Copie do <a href="https://painelmagiway.nexflowcrm.com.br/" target="_blank" rel="noopener" '
+    +'style="color:var(--ice)">painel do CRM</a>. Campo em branco fica como <b>não medido</b> — o app não '
+    +'inventa zero, porque zero inventado vira decisão errada.</div>'
+    +'<div class="ff"><label class="fl">Investimento no período (R$)</label>'
+    +'<input class="ffi" id="tf-i-invest" type="number" step="0.01" placeholder="ex.: 4200" value="'+v(p.invest)+'"></div>'
+    +'<div class="ff"><label class="fl">Leads / conversas iniciadas</label>'
+    +'<input class="ffi" id="tf-i-leads" type="number" placeholder="ex.: 180" value="'+v(p.leads)+'"></div>'
+    +'<div class="ff"><label class="fl">Cliques no anúncio (opcional)</label>'
+    +'<input class="ffi" id="tf-i-cliques" type="number" placeholder="ex.: 1400" value="'+v(p.cliques)+'"></div>'
+    +'<div class="ff"><label class="fl">Impressões (opcional)</label>'
+    +'<input class="ffi" id="tf-i-impr" type="number" placeholder="ex.: 96000" value="'+v(p.impressoes)+'"></div>'
+    +'<div class="ff"><label class="fl">Observação (campanha, canal, o que mudou)</label>'
+    +'<input class="ffi" id="tf-i-obs" placeholder="opcional" value="'+esc2(v(p.obs)).replace(/"/g,'&quot;')+'"></div>'
+    +'<div style="display:flex;gap:8px;margin-top:14px">'
+    +'<button class="tbtn tbtn-g" onclick="MGW_TRAF.salvar()">SALVAR</button>'
+    +'<button class="tbtn" onclick="MGW_FROTA.fechar()">CANCELAR</button></div>';
+  MGW_FROTA.abrirModal(html);
+}
+function salvar(){
+  var c=cicloAtual(); if(!c) return;
+  var g=function(id){ var e=document.getElementById(id); if(!e) return null;
+    var s=String(e.value||'').trim(); return s===''?null:s; };
+  var num=function(id){ var s=g(id); if(s==null) return null; var n=parseFloat(String(s).replace(',','.'));
+    return isFinite(n)?n:null; };
+  carregar();
+  T.periodos=T.periodos.filter(function(x){ return x.ym!==c.ym; });
+  T.periodos.push({ ym:c.ym, invest:num('tf-i-invest'), leads:num('tf-i-leads'),
+    cliques:num('tf-i-cliques'), impressoes:num('tf-i-impr'),
+    obs:g('tf-i-obs')||'', em:new Date().toISOString() });
+  gravar();
+  try{ MGW_FROTA.fechar(); }catch(e){}
+  render();
+  if(typeof toast==='function') toast('📈 Dados de tráfego salvos para '+c.label);
+}
+
+/* Leitura em texto, para colar na reunião ou no WhatsApp. */
+function exportar(){
+  var F=render();
+  var L=[];
+  L.push('MAGIWAY · TRÁFEGO × COMERCIAL');
+  L.push(F.ciclo? (F.ciclo.label+' · '+F.ciclo.periodo) : '');
+  L.push('');
+  L.push('FUNIL');
+  if(F.impressoes!=null) L.push('  impressões .... '+n0(F.impressoes));
+  if(F.cliques!=null)    L.push('  cliques ....... '+n0(F.cliques));
+  if(F.leads!=null)      L.push('  leads ......... '+n0(F.leads));
+  L.push('  cotações ...... '+n0(F.cotacoes)+(F.pLeadCot!=null?('  ('+n1(F.pLeadCot)+'% dos leads)'):''));
+  L.push('  reservas ...... '+n0(F.vendas)+(F.pCotVen!=null?('  ('+n1(F.pCotVen)+'% das cotações)'):''));
+  L.push('');
+  L.push('DINHEIRO');
+  if(F.invest!=null) L.push('  investido ..... '+brl(F.invest));
+  L.push('  receita ....... '+brl(F.receita));
+  if(F.roas!=null)   L.push('  retorno ....... '+n1(F.roas)+'x por real');
+  if(F.cac!=null)    L.push('  CAC ........... '+brl(F.cac));
+  if(F.ticket!=null) L.push('  ticket médio .. '+brl(F.ticket));
+  L.push('');
+  L.push('PONTOS');
+  pontos(F).forEach(function(p){
+    L.push('  ['+(DONO[p.dono]||DONO.gestao).rot+'] '+
+      (p.tipo==='bom'?'OK   ':p.tipo==='ruim'?'GRAVE':p.tipo==='atencao'?'ATEN ':'—    ')+' '+p.titulo);
+    if(p.prova) L.push('         '+p.prova);
+  });
+  L.push('');
+  L.push('PLANO');
+  plano(F).forEach(function(a,i){
+    L.push('  '+(i+1)+'. ['+(DONO[a.dono]||DONO.gestao).rot+' · '+a.prazo+'] '+a.t);
+  });
+  var txt=L.join('\n');
+  MGW_FROTA.abrirModal(
+    '<h3 style="margin:0 0 10px">LEITURA DO FUNIL</h3>'
+   +'<textarea class="fi" readonly style="width:100%;height:340px;font-family:\'DM Mono\',monospace;'
+   +'font-size:.68rem;line-height:1.6;resize:vertical" id="tf-txt">'+esc2(txt)+'</textarea>'
+   +'<div style="display:flex;gap:8px;margin-top:12px">'
+   +'<button class="tbtn tbtn-g" onclick="MGW_TRAF.copiar()">📋 COPIAR</button>'
+   +'<button class="tbtn" onclick="MGW_FROTA.fechar()">FECHAR</button></div>');
+}
+function copiar(){
+  var t=document.getElementById('tf-txt'); if(!t) return;
+  t.select(); t.setSelectionRange(0,99999);
+  var ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+  if(typeof toast==='function') toast(ok?'Copiado':'Selecione e copie com Ctrl+C');
+}
+
+window.MGW_TRAF={ render:render, lancar:lancar, salvar:salvar, exportar:exportar,
+                  copiar:copiar, dados:montar, regua:REGUA };
+
+/* Encadeia no roteador sem apagar quem já estava lá. */
+window.onNavChange=(function(){
+  var prev=window.onNavChange;
+  return function(id){
+    if(typeof prev==='function'){ try{ prev(id); }catch(e){ console.warn('[trafego] handler anterior',e); } }
+    if(id==='trafego'){ try{ render(); }catch(e){ console.warn('[trafego] render',e); } }
+  };
+})();
+})();
+</script>
+
 </body></html>
