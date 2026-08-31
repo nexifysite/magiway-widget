@@ -6187,23 +6187,29 @@ Data de retirada = din"></textarea>
 
 <!-- ═══════════ RESERVAS (tabela de fechamento) ═══════════ -->
 <div class="panel" id="panel-reservas">
+  <!-- A barra tinha oito botões. Sete deles eram interruptores de coisas
+       que hoje acontecem sozinhas — importar o mês, importar tudo, ligar o
+       espelho, ligar o preenchimento automático, ver todos os meses — ou
+       ações que ninguém deve usar por engano, como cortar o vínculo com a
+       planilha. Botão que não se aperta no dia a dia atrapalha os dois que
+       se apertam.
+
+       O que ficou: buscar, filtrar categoria, atualizar e exportar.
+       O resto continua existindo em MGW_RESV, para quando for preciso:
+         MGW_RESV.importarCiclo()      traz o mês agora, sem esperar
+         MGW_RESV.importarAgora()      traz o histórico inteiro
+         MGW_RESV.alternarEspelho()    agrupa cópias e parcelas
+         MGW_RESV.alternarAuto()       desliga o preenchimento automático
+         MGW_RESV.cortarPlanilha()     corta o vínculo com a planilha -->
   <div class="mgrsv-toolbar">
     <input id="mgrsv-search" class="mgw-input" style="flex:1;min-width:200px" placeholder="🔎 Buscar por nome, WhatsApp, modelo, cidade, vendedor…" oninput="MGW_RESV.filterTable()">
     <select id="mgrsv-filtcat" class="mgw-input" onchange="MGW_RESV.filterTable()"><option value="">Todas as categorias</option></select>
     <button class="mgw-btn" onclick="MGW_RESV.refresh()">↻ Atualizar</button>
-    <button class="mgw-btn mgw-btn-csv" onclick="MGW_RESV.exportCSV()" title="Baixa um CSV com as mesmas colunas da aba 📦 HISTÓRICO — é só colar na planilha">📤 EXPORTAR P/ SHEETS (HISTÓRICO)</button>
-    <button class="mgw-btn mgw-btn-csv" onclick="MGW_RESV.importarCiclo()" title="Traz da aba de fechamento só as reservas do mês em vigência (dia 13 → dia 12), com as 22 colunas exatamente como estão na tabela. Mostra o que vai entrar antes de gravar.">📆 TRAZER O MÊS EM VIGÊNCIA</button>
-    <button class="mgw-btn" onclick="MGW_RESV.importarAgora()" title="Traz o histórico INTEIRO da aba de fechamento que ainda não está aqui — não só o mês em vigência. Reserva repetida na planilha entra as duas vezes; o que já está no app não entra de novo.">📥 Importar tudo</button>
-    <button class="mgw-btn" id="mgrsv-espelho" onclick="MGW_RESV.alternarEspelho()"></button>
-    <button class="mgw-btn" id="mgrsv-auto" onclick="MGW_RESV.alternarAuto()"></button>
-    <label class="mgw-btn" style="display:flex;align-items:center;gap:7px;cursor:pointer" title="Marcado, a tabela volta a mostrar a base inteira — inclusive as de outros meses, que normalmente ficam na aba Histórico de Reservas.">
-      <input type="checkbox" id="mgrsv-tudo" onchange="MGW_RESV.filterTable()" style="accent-color:var(--fire)"> ver todos os meses
-    </label>
-    <button class="mgw-btn" id="mgrsv-planilha">🔌 Cortar vínculo com a planilha</button>
+    <button class="mgw-btn mgw-btn-csv" onclick="MGW_RESV.exportCSV()" title="Baixa um CSV com as mesmas colunas da planilha — é só colar de volta">📤 Exportar CSV</button>
   </div>
   <div class="mgw-hint">📋 Colunas idênticas à aba <b>📦 HISTÓRICO</b> da planilha FECHAMENTO MAGIWAY, ordenadas pela <b>data de fechamento</b> (mais antiga primeiro). Atualiza sozinha a partir das abas <b>HISTÓRICO</b> e <b>FECHAMENTOS</b>.<br>
     <span style="color:#8CC8FF">Linhas em azul</span> = fechadas no mês em vigência (dia 13 → dia 12), as que contam no Dashboard e nas Metas. <b>APP</b> = criada aqui.<br>
-    Com o <b>espelho ligado</b> (padrão), cada linha da planilha é uma linha aqui — em branco ou não, repetida ou não. Com ele desligado, cópias idênticas e parcelas do mesmo pagamento voltam a ser juntadas, e a marca <b>2x</b> reaparece nas juntadas.</div>
+    Cada linha da planilha é uma linha aqui — em branco ou não, repetida ou não. O que a planilha tem, o app mostra.</div>
   <div id="mgrsv-espelho-aviso"></div>
   <div id="mgrsv-regra"></div>
   <div id="mgrsv-status" class="mgw-status"></div>
@@ -25326,6 +25332,8 @@ function alternarAuto(){
   }
 }
 function pintarBotaoEspelho(){
+  /* o botão saiu da barra; a FAIXA de aviso continua, porque ela não é
+     controle, é informação sobre o dinheiro */
   var b=document.getElementById('mgrsv-espelho');
   if(b){
     var on=espelhoLigado();
@@ -25353,7 +25361,7 @@ function pintarBotaoEspelho(){
     +'Elas contam no faturamento, e é isso que faz o total ficar '
     +'<b style="color:var(--gold)">R$ '+(d.reais||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})
     +'</b> acima do que daria agrupando ('+d.agrupadas+' reserva(s) distintas). '
-    +'Se preferir o total sem repetição, desligue o espelho no botão acima.</div>';
+    +'É o total da planilha, e é por isso que ele bate com o que você soma lá.</div>';
 }
 function alternarEspelho(){
   var novo=!espelhoLigado();
