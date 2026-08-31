@@ -1754,6 +1754,7 @@ select.ffi option{background:#000020;color:#FF0000}
   </div>
 
   <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+    <button class="mgw-btn" onclick="emLimparFicha(true)" title="Apaga CPF, nascimento, sexo, e-mail, CNH, validade, CEP e condutores adicionais — os dados que a cotação não traz e que sobram do cliente anterior">🧹 Limpar ficha do cliente</button>
     <button class="form-btn" style="background:linear-gradient(135deg,#FF0000,#b30000)" onclick="emitirCadastrarVenda()">💾 SALVAR RESERVA (Reservas + Controle de Vendas)</button>
     <button class="form-btn" style="background:linear-gradient(135deg,#FFD11A,#FF9500);color:#04101e" onclick="gerarVoucherDoc()">🎟️ Gerar Voucher (PDF)</button>
     <button class="form-btn" style="background:linear-gradient(135deg,#1FA9A6,#0d7a77)" onclick="gerarContratoPDF()">📝 Gerar Contrato (PDF)</button>
@@ -17970,6 +17971,19 @@ function emitirLoadFromCot(id){
   if(!c)return;
   try{ emitirInitSelects(); }catch(e){}
   const set=(k,v)=>{ if(typeof emSet==='function'){ emSet(k,(v==null?'':v)); } else { const el=document.getElementById(k); if(el)el.value=(v==null?'':v); } };
+  /* Cotação de OUTRO cliente: a ficha pessoal do anterior sai junto. A
+     cotação não carrega CPF, CNH nem endereço — se ficassem, o contrato
+     do cliente novo sairia com os documentos do cliente velho. Quando é
+     o MESMO cliente, nada é apagado: é o caso de voltar para completar. */
+  try{
+    const nomeNovo=(c.cliente&&c.cliente!=='Sem nome')?c.cliente:'';
+    const nomeAtual=_emVal('em-nome');
+    if(nomeNovo && nomeAtual && _emNomeChave(nomeNovo)!==_emNomeChave(nomeAtual) && _emFichaPreenchida()){
+      const n=emLimparFicha(false);
+      if(n && typeof toast==='function')
+        toast('🧹 Ficha de '+nomeAtual+' limpa ('+n+' campo(s)) — preencha os documentos de '+nomeNovo,'orange');
+    }
+  }catch(e){}
   set('em-nome',c.cliente&&c.cliente!=='Sem nome'?c.cliente:'');
   set('em-tel',c.tel&&c.tel!=='—'?c.tel:'');
   set('em-cat',c.cat);
@@ -17989,6 +18003,79 @@ function emitirLoadFromCot(id){
   try{ if(typeof emCalc==='function') emCalc(); }catch(e){}
 }
 function _emVal(id){return (document.getElementById(id)?.value||'').trim();}
+
+/* ═══════════════════════════════════════════════════════════════════
+   A FICHA DO CLIENTE NÃO PODE SOBRAR PARA O PRÓXIMO
+   ───────────────────────────────────────────────────────────────────
+   Nada nesta tela limpava os campos. Carregar a cotação seguinte
+   trocava nome, telefone, categoria, datas e valor — e deixava
+   INTACTOS o CPF, o nascimento, o e-mail, a CNH, a validade, o CEP e os
+   condutores adicionais do cliente anterior. O contrato do cliente novo
+   saía com o CPF e a CNH de outra pessoa, e nada na tela denunciava:
+   os campos estavam preenchidos, só que com os dados errados.
+
+   Três travas agora:
+     1. carregar cotação de OUTRO cliente limpa a ficha pessoal;
+     2. um botão para limpar a ficha na mão, a qualquer momento;
+     3. na hora de emitir, se aquele CPF já saiu num contrato com OUTRO
+        nome, o app pergunta antes de gerar — inclusive quando o nome
+        foi digitado à mão, sem passar por cotação.
+   ═══════════════════════════════════════════════════════════════════ */
+var EM_FICHA_PESSOAL=['em-cpf','em-nasc','em-sexo','em-email','em-cnh','em-cnhval','em-cep'];
+(function(){ for(var i=1;i<=4;i++){ ['nome','cpf','nasc','cnh','cnhval'].forEach(function(k){
+  EM_FICHA_PESSOAL.push('em-ad'+i+'-'+k); }); } })();
+
+function _emFichaPreenchida(){
+  return EM_FICHA_PESSOAL.some(function(id){ return _emVal(id)!==''; });
+}
+function emLimparFicha(perguntar){
+  if(perguntar && _emFichaPreenchida()){
+    if(!confirm('Limpar a ficha do cliente?\n\n'+
+      'Apaga CPF, nascimento, sexo, e-mail, CNH, validade, CEP e os condutores adicionais.\n'+
+      'Nome, telefone, datas, categoria e valor permanecem.')) return 0;
+  }
+  var n=0;
+  EM_FICHA_PESSOAL.forEach(function(id){
+    var el=document.getElementById(id); if(!el) return;
+    if(el.value){ n++; }
+    el.value='';
+  });
+  if(perguntar && typeof toast==='function') toast('🧹 Ficha do cliente limpa ('+n+' campo(s))');
+  return n;
+}
+
+/* Os CPFs que já saíram em contrato, com o nome de quem assinou. É a
+   memória que permite dizer "esse CPF já foi usado por outra pessoa". */
+var CPF_EMIT_K='gs_cpf_emitidos_v1';
+function _cpfDig(s){ return String(s||'').replace(/\D/g,''); }
+function _emNomeChave(s){
+  return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9 ]/g,'').replace(/\s+/g,' ').trim();
+}
+function loadCpfEmitidos(){
+  try{ return JSON.parse(localStorage.getItem(CPF_EMIT_K)||'{}')||{}; }catch(e){ return {}; }
+}
+function registrarCpfEmitido(cpf,nome){
+  var d=_cpfDig(cpf); if(d.length<11||!nome) return;
+  var m=loadCpfEmitidos();
+  m[d]={nome:nome, ts:Date.now()};
+  try{ localStorage.setItem(CPF_EMIT_K, JSON.stringify(m)); }catch(e){}
+}
+/* true = pode seguir. Só interrompe quando o CPF já saiu com OUTRO nome. */
+function conferirCpfDoCliente(){
+  var cpf=_emVal('em-cpf'), nome=_emVal('em-nome');
+  var d=_cpfDig(cpf); if(d.length<11||!nome) return true;
+  var ant=loadCpfEmitidos()[d];
+  if(!ant||!ant.nome) return true;
+  if(_emNomeChave(ant.nome)===_emNomeChave(nome)) return true;
+  return confirm('⚠ ESTE CPF JÁ SAIU EM OUTRO CONTRATO.\n\n'+
+    'CPF '+cpf+'\n'+
+    'já foi emitido para: '+ant.nome+' ('+new Date(ant.ts).toLocaleDateString('pt-BR')+')\n'+
+    'e agora está na ficha de: '+nome+'\n\n'+
+    'Quase sempre isso é a ficha do cliente anterior que ficou na tela — '+
+    'use "🧹 Limpar ficha" e preencha o CPF certo.\n\n'+
+    'Emitir assim mesmo?');
+}
 
 /* ═══════════════════════════════════════════════════════════════════
    EMITIR · LEITOR DE DOCUMENTOS COM IA
@@ -18409,6 +18496,7 @@ async function gerarContratoPDF(){
   if(!window.PDFLib){ if(st)st.textContent='⚠ Biblioteca pdf-lib não carregou (precisa de internet).'; return; }
   if(!window.MGW_CONTRACT_B64){ if(st)st.textContent='⚠ Modelo do contrato não encontrado.'; return; }
   var nome=_emVal('em-nome'); if(!nome){ if(st)st.textContent='⚠ Preencha ao menos o nome do cliente.'; return; }
+  if(!conferirCpfDoCliente()){ if(st)st.textContent='⏹ Contrato não gerado — confira o CPF.'; return; }
   if(st) st.textContent='⏳ Gerando contrato...';
   emCalc();
   try{
@@ -18487,6 +18575,9 @@ async function gerarContratoPDF(){
     // NÃO abre e NÃO baixa automaticamente — só guarda o link, pra abrir apenas se o usuário clicar em "Ver PDF".
     try{ if(window._ultimoContratoPdfUrl) URL.revokeObjectURL(window._ultimoContratoPdfUrl); }catch(e){}
     window._ultimoContratoPdfUrl=URL.createObjectURL(blob);
+    /* Só registra depois que o contrato saiu de verdade — é ele que dá
+       ao próximo aviso o direito de dizer "esse CPF já foi emitido". */
+    try{ registrarCpfEmitido(g('em-cpf'), g('em-nome')); }catch(e){}
     if(st) st.innerHTML='✅ Contrato preenchido. Clique em <strong>ASSINAR NO DOCUSIGN + ENVIAR NO WHATSAPP</strong> pra ver as opções de link/PDF.';
     return window._ultimoContratoPdfUrl;
   }catch(e){ if(st) st.textContent='⚠ Erro ao gerar contrato: '+(e&&e.message||e); }
@@ -19723,6 +19814,7 @@ function gerarVoucherDoc(){
   const setSt=h=>{if(st)st.innerHTML=h;};
   const nome=_emVal('em-nome');
   if(!nome){setSt('<span style="color:var(--fire)">⚠️ Informe ao menos o nome do cliente para gerar o voucher.</span>');return;}
+  if(!conferirCpfDoCliente()){setSt('⏹ Voucher não gerado — confira o CPF.');return;}
   const g=id=>{const v=_emVal(id);return v?_esc(v):'—';};
   const numV=_emVal('em-res');
   const _d2br=iso=>{const m=(''+(iso||'')).match(/^(\d{4})-(\d{2})-(\d{2})/);return m?`${m[3]}/${m[2]}/${m[1]}`:(iso||'');};
@@ -29028,6 +29120,10 @@ function lancar(){
     +'Copie do <a href="https://painelmagiway.nexflowcrm.com.br/" target="_blank" rel="noopener" '
     +'style="color:var(--ice)">painel do CRM</a>. Campo em branco fica como <b>não medido</b> — o app não '
     +'inventa zero, porque zero inventado vira decisão errada.</div>'
+    +'<div class="ff"><label class="fl">Cole aqui o que você copiou do painel</label>'
+    +'<textarea class="ffi" id="tf-i-colar" rows="4" placeholder="Abra o painel, selecione o bloco de números do período, Ctrl+C e cole aqui. O app procura investimento, leads, cliques e impressões pelos rótulos e preenche os campos abaixo — você confere antes de salvar."></textarea></div>'
+    +'<div style="display:flex;gap:8px;margin:-4px 0 12px"><button class="tbtn" onclick="MGW_TRAF.lerColado()">📥 LER O QUE COLEI</button></div>'
+    +'<div id="tf-i-leitura" style="font-size:.7rem;color:var(--chalk3);line-height:1.5;margin-bottom:10px"></div>'
     +'<div class="ff"><label class="fl">Investimento no período (R$)</label>'
     +'<input class="ffi" id="tf-i-invest" type="number" step="0.01" placeholder="ex.: 4200" value="'+v(p.invest)+'"></div>'
     +'<div class="ff"><label class="fl">Leads / conversas iniciadas</label>'
@@ -29043,6 +29139,91 @@ function lancar(){
     +'<button class="tbtn" onclick="MGW_FROTA.fechar()">CANCELAR</button></div>';
   MGW_FROTA.abrirModal(html);
 }
+/* ═══════════════════════════════════════════════════════════════════
+   LER O PAINEL SEM DIGITAR
+   ───────────────────────────────────────────────────────────────────
+   O app não busca no painel sozinho: para isso ele precisaria de um
+   endereço de API, de uma chave e de o painel autorizar a origem do app
+   (CORS). Nada disso existe hoje, e inventar não adianta.
+
+   O que existe é o texto: o que aparece na tela do painel pode ser
+   copiado e colado aqui. Esta rotina acha os quatro números pelos
+   rótulos, em qualquer ordem, e MOSTRA o que entendeu de cada um antes
+   de preencher — leitura de texto erra, e erro que aparece é erro que
+   se corrige. O que não for encontrado fica em branco: não medido, e
+   não zero.
+   ═══════════════════════════════════════════════════════════════════ */
+var TF_ROTULOS=[
+  {campo:'tf-i-invest', rot:'Investimento',
+   pats:[/invest(?:imento|ido)?/i,/valor\s+gasto/i,/\bgasto\b/i,/\bverba\b/i,/custo\s+total/i,/amount\s+spent/i,/\bspend\b/i]},
+  {campo:'tf-i-leads', rot:'Leads',
+   pats:[/\bleads?\b/i,/conversas?\s+iniciadas?/i,/\bconversas?\b/i,/\bcontatos?\b/i,/mensagens?\s+iniciadas?/i,/oportunidades?/i]},
+  {campo:'tf-i-cliques', rot:'Cliques',
+   pats:[/\bcliques?\b/i,/\bclicks?\b/i]},
+  {campo:'tf-i-impr', rot:'Impressões',
+   pats:[/impress(?:o|õ|oe)es|impressao|impressões|impressoes/i,/\bimpressions\b/i,/alcance/i,/\breach\b/i]}
+];
+/* pt-BR e en-US no mesmo texto: 1.400 e 1,400 são os dois mil e
+   quatrocentos, e 4.200,50 e 4,200.50 também. Decide pelo separador
+   que vem por último. */
+function tfNumero(s){
+  s=String(s||'').replace(/[R$\s%]/g,'');
+  if(!s) return null;
+  var temV=s.indexOf(',')>-1, temP=s.indexOf('.')>-1;
+  if(temV&&temP) s=(s.lastIndexOf(',')>s.lastIndexOf('.')) ? s.replace(/\./g,'').replace(',','.') : s.replace(/,/g,'');
+  else if(temV) s=(/,\d{1,2}$/.test(s)) ? s.replace(',','.') : s.replace(/,/g,'');
+  else if(temP && !/\.\d{1,2}$/.test(s)) s=s.replace(/\./g,'');
+  var n=parseFloat(s);
+  return isFinite(n)?n:null;
+}
+function lerColado(){
+  var ta=document.getElementById('tf-i-colar');
+  var out=document.getElementById('tf-i-leitura');
+  var txt=ta?String(ta.value||''):'';
+  if(!txt.trim()){ if(out) out.innerHTML='<span style="color:var(--gold)">Cole o texto do painel primeiro.</span>'; return; }
+  /* achata em linhas: rótulo e número podem estar na mesma linha
+     ("Leads 180"), em linhas seguidas, ou separados por tab/dois-pontos */
+  var linhas=txt.split(/\r?\n/).map(function(l){ return l.replace(/\s+/g,' ').trim(); }).filter(Boolean);
+  var achados=[];
+  TF_ROTULOS.forEach(function(f){
+    var val=null, de='';
+    for(var i=0;i<linhas.length && val===null;i++){
+      var bate=f.pats.some(function(p){ return p.test(linhas[i]); });
+      if(!bate) continue;
+      /* número na mesma linha, depois do rótulo */
+      var resto=linhas[i];
+      f.pats.forEach(function(p){ var m=resto.match(p); if(m) resto=resto.slice(resto.indexOf(m[0])+m[0].length); });
+      var m1=resto.match(/-?[\d][\d.,]*/);
+      if(m1){ val=tfNumero(m1[0]); de=linhas[i]; }
+      /* senão, primeiro número das duas linhas seguintes */
+      if(val===null){
+        for(var j=i+1;j<Math.min(i+3,linhas.length) && val===null;j++){
+          /* o número sozinho na linha de baixo, com ou sem moeda na frente:
+             "212", "R$ 3.750,90", "$5,480.25", "US$ 1.200" */
+          var m2=linhas[j].match(/^(?:R\$|US\$|\$|€)?\s*-?[\d][\d.,]*$/);
+          if(m2){ val=tfNumero(m2[0]); de=linhas[i]+' → '+linhas[j]; }
+        }
+      }
+    }
+    achados.push({campo:f.campo, rot:f.rot, val:val, de:de});
+  });
+  var n=0;
+  achados.forEach(function(a){
+    if(a.val===null) return;
+    var el=document.getElementById(a.campo); if(el){ el.value=a.val; n++; }
+  });
+  if(out){
+    out.innerHTML=achados.map(function(a){
+      return a.val===null
+        ? ('• <b>'+a.rot+'</b>: <span style="color:var(--gold)">não achei no que você colou</span> — digite abaixo, ou deixe em branco para ficar como não medido.')
+        : ('• <b>'+a.rot+'</b>: <span style="color:var(--ice)">'+a.val.toLocaleString('pt-BR')+'</span>'+
+           (a.de?(' <span style="opacity:.6">— li de "'+esc2(a.de).slice(0,70)+'"</span>'):''));
+    }).join('<br>')+'<br><b>Confira os quatro antes de salvar.</b>';
+  }
+  if(typeof toast==='function') toast(n?('📥 '+n+' campo(s) preenchido(s) do painel'):'Não achei os rótulos no texto colado', n?'':'orange');
+  return n;
+}
+
 function salvar(){
   var c=cicloAtual(); if(!c) return;
   var g=function(id){ var e=document.getElementById(id); if(!e) return null;
@@ -29109,6 +29290,7 @@ function copiar(){
 }
 
 window.MGW_TRAF={ render:render, lancar:lancar, salvar:salvar, exportar:exportar,
+  lerColado:lerColado, lerTexto:tfNumero,
                   copiar:copiar, dados:montar, regua:REGUA };
 
 /* Encadeia no roteador sem apagar quem já estava lá. */
