@@ -1609,8 +1609,8 @@ select.ffi option{background:#000020;color:#FF0000}
 <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">EMITIR DOCUMENTOS · CONTRATO + VOUCHER</span><div class="sec-line"></div></div>
 <div class="card" style="margin-bottom:16px">
   <div class="card-title">✍️ Reserva · Contrato &amp; Voucher</div>
-  <div class="card-sub">Esta tela emite <strong>voucher</strong>, <strong>contrato</strong> e o <strong>link de assinatura</strong> do DocuSign. Os valores em <span style="color:var(--ice)">verde</span> são calculados sozinhos.<br>
-  <span style="color:var(--gold)">A reserva em si não é salva aqui.</span> Ela é lançada na aba <strong>📋 FECHAMENTOS</strong> da planilha e entra sozinha no mês em vigência do app na próxima leitura — uma fonte só, sem risco de a mesma reserva existir em dois lugares com valores diferentes.</div>
+  <div class="card-sub">Esta tela tem <strong>todos os campos da aba 📦 HISTÓRICO</strong> da planilha e emite <strong>voucher</strong>, <strong>contrato</strong> e o <strong>link de assinatura</strong> do DocuSign. Os valores em <span style="color:var(--ice)">verde</span> são calculados sozinhos.<br>
+  O caminho normal da reserva é a aba <strong>📋 FECHAMENTOS</strong> da planilha, que entra sozinha no mês em vigência. <strong>SALVAR RESERVA</strong> é para quando a venda fecha antes de a planilha ser atualizada: grava aqui mesmo, na aba <strong>Reservas</strong> (que alimenta o Calendário e a Agenda) e no <strong>Controle de Vendas</strong>. <span style="color:var(--gold)">Se depois você lançar a mesma reserva na planilha, ela aparece duas vezes na aba Reservas — apague a que sobrar.</span></div>
   <div class="ff" style="margin-top:14px;max-width:420px">
     <label class="eml">Carregar de uma cotação (opcional)</label>
     <select class="ffi" id="em-cot" onchange="emitirLoadFromCot(this.value)"><option value="">— preencher manualmente —</option></select>
@@ -1754,6 +1754,7 @@ select.ffi option{background:#000020;color:#FF0000}
   </div>
 
   <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+    <button class="form-btn" style="background:linear-gradient(135deg,#FF0000,#b30000)" onclick="emitirCadastrarVenda()">💾 SALVAR RESERVA (Reservas + Controle de Vendas)</button>
     <button class="form-btn" style="background:linear-gradient(135deg,#FFD11A,#FF9500);color:#04101e" onclick="gerarVoucherDoc()">🎟️ Gerar Voucher (PDF)</button>
     <button class="form-btn" style="background:linear-gradient(135deg,#1FA9A6,#0d7a77)" onclick="gerarContratoPDF()">📝 Gerar Contrato (PDF)</button>
     <button class="form-btn" style="background:linear-gradient(135deg,#25D366,#128C7E)" onclick="dsEnviarContratoWhats()">✍️ ASSINAR NO DOCUSIGN + ENVIAR NO WHATSAPP</button>
@@ -6189,18 +6190,18 @@ Data de retirada = din"></textarea>
 <div class="panel" id="panel-reservas">
   <!-- A barra tinha oito botões. Sete deles eram interruptores de coisas
        que hoje acontecem sozinhas — importar o mês, importar tudo, ligar o
-       espelho, ligar o preenchimento automático, ver todos os meses — ou
-       ações que ninguém deve usar por engano, como cortar o vínculo com a
-       planilha. Botão que não se aperta no dia a dia atrapalha os dois que
-       se apertam.
+       espelho, ligar o preenchimento automático, ver todos os meses.
+       Botão que não se aperta no dia a dia atrapalha os dois que se apertam.
+
+       A leitura da planilha NÃO desliga mais: junto com o botão foi embora
+       o jeito de ficar sem planilha e sem lugar para religar.
 
        O que ficou: buscar, filtrar categoria, atualizar e exportar.
        O resto continua existindo em MGW_RESV, para quando for preciso:
          MGW_RESV.importarCiclo()      traz o mês agora, sem esperar
          MGW_RESV.importarAgora()      traz o histórico inteiro
          MGW_RESV.alternarEspelho()    agrupa cópias e parcelas
-         MGW_RESV.alternarAuto()       desliga o preenchimento automático
-         MGW_RESV.cortarPlanilha()     corta o vínculo com a planilha -->
+         MGW_RESV.alternarAuto()       desliga o preenchimento automático -->
   <div class="mgrsv-toolbar">
     <input id="mgrsv-search" class="mgw-input" style="flex:1;min-width:200px" placeholder="🔎 Buscar por nome, WhatsApp, modelo, cidade, vendedor…" oninput="MGW_RESV.filterTable()">
     <select id="mgrsv-filtcat" class="mgw-input" onchange="MGW_RESV.filterTable()"><option value="">Todas as categorias</option></select>
@@ -18489,21 +18490,14 @@ function criarReservaDaVenda(s, extra){
 
 // Cadastra a venda a partir dos dados preenchidos na tela Emitir Documentos.
 // O valor é digitado em R$ e convertido para US$ (padrão do restante do app).
-/* Saiu da tela em 31/08: a reserva do mes passou a vir SO da aba 📋
-   FECHAMENTOS da planilha. Duas portas de entrada para o mesmo dado
-   significavam a mesma reserva existindo em dois lugares, com valores
-   que podiam divergir - foi o que gerou linha duplicada e reserva
-   incompleta que ninguem sabia de onde tinha vindo.
-   A funcao fica porque outros pontos do arquivo ainda a mencionam em
-   texto de ajuda; se for chamada, avisa em vez de gravar calada. */
+/* Voltou à tela: cadastrar reserva aqui não é mais proibido. O caminho
+   normal continua sendo a aba 📋 FECHAMENTOS da planilha, que entra
+   sozinha no mês em vigência — mas quando a venda fecha antes de a
+   planilha ser atualizada, o vendedor precisa de onde lançar. A reserva
+   salva aqui nasce marcada como do app (_local) e convive com a da
+   planilha; se as duas existirem, aparecem lado a lado na aba Reservas
+   e a que sobrar é apagada na mão. */
 function emitirCadastrarVenda(){
-  alert('A reserva não é mais salva por aqui.\n\n'+
-        'Lance na aba 📋 FECHAMENTOS da planilha — ela entra sozinha no mês '+
-        'em vigência do app na próxima leitura.\n\n'+
-        'Esta tela continua emitindo voucher, contrato e o link do DocuSign.');
-  return;
-}
-function _emitirCadastrarVendaAntigo(){
   const nome=_emVal('em-nome');
   const valBRL=(typeof _dsParseBRL==='function')?_dsParseBRL(_emVal('em-valor')):(parseFloat(_emVal('em-valor'))||0);
   if(!nome){ if(typeof toast==='function')toast('Preencha o nome do cliente','orange'); return; }
@@ -23391,7 +23385,7 @@ function numOf(c){ if(!c) return 0; var v=cellV(c); if(typeof v==='number') retu
   else s=s.replace(/,/g,'');
   var f=parseFloat(s); return isFinite(f)?f:0; }
 /* isHist=true → coluna V é MÊS REFERÊNCIA; false → V é OBSERVAÇÕES e W é o voucher */
-var _recusadas=0;   /* linhas que pareciam reserva e nao passaram no criterio */
+var _recusadas=0;   /* linhas sem nada que as identifique (total/rodapé) */
 function rowsFromResp(resp,isHist){
   var out=[];
   if(!resp||!resp.table||!resp.table.rows) return out;
@@ -23400,27 +23394,28 @@ function rowsFromResp(resp,isHist){
     var c=rows[i].c||[]; var g=function(j){ return c[j]||null; };
     var entrega=parseDate(g(6)); var nome=cellF(g(2)).trim();
     /* ── o que faz uma linha ser reserva ──────────────────────────────
-       Antes exigia DATA DE ENTREGA. Reserva lançada sem a entrega ainda
-       definida — que na aba de fechamento acontece o tempo todo — era
-       descartada em silêncio: não aparecia na tela, não entrava no
-       faturamento e ninguém ficava sabendo que existia.
+       Não faz mais peneira. O app é ESPELHO da aba: a linha entra como
+       está, com os campos que tiver e os buracos que tiver. Antes eram
+       exigidas data + vendedor + cliente + valor juntos, e reserva ainda
+       pela metade sumia da tela sem aviso.
 
-       O critério agora é o que a operação usa de verdade: alguma data,
-       vendedor, cliente e valor. O resto pode faltar e a reserva entra
-       assim mesmo, com o que tiver. Cabeçalho e linha de total não
-       passam: não têm as quatro juntas. */
+       Sobra só o que não é reserva: linha em que não há NADA que
+       identifique quem é — sem cliente, sem vendedor, sem modelo e sem
+       data nenhuma. É a linha de total, a linha vazia entre blocos e o
+       rodapé. Sem esse mínimo o total da planilha entraria como se
+       fosse mais uma venda e dobraria o faturamento. */
     var _fech=parseDate(g(0));
     var _vend=cellF(g(1)).trim();
-    var _val =numOf(g(13));
-    if(!nome || !_vend || !(_val>0) || !(entrega||_fech)){
-      if(nome||_vend||_val) _recusadas++;
+    var _mod =cellF(g(4)).trim();
+    if(!nome && !_vend && !_mod && !entrega && !_fech){
+      if(numOf(g(13))) _recusadas++;   /* tinha valor: era total/rodapé */
       continue;
     }
     var col21=cellF(g(21)).trim();
-    var modelo=cellF(g(4)).trim();
+    var modelo=_mod;
     var obs=isHist?'':col21, mesRef=isHist?col21:'';
     out.push({
-      dataFech:parseDate(g(0)), vendedor:cellF(g(1)).trim(), cliente:nome,
+      dataFech:_fech, vendedor:_vend, cliente:nome,
       whats:cellF(g(3)).trim(), tel:tel4(g(3)), cadeirinha:cellF(g(5)).trim(),
       modelo:modelo, cat:categoryOf(modelo,obs),
       entrega:entrega, devolucao:parseDate(g(7)),
@@ -23926,36 +23921,43 @@ function mesclarReservas(rows){
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   VÍNCULO COM A PLANILHA — ligado/desligado
+   VÍNCULO COM A PLANILHA — sempre ligado
    ───────────────────────────────────────────────────────────────────
-   Com o vínculo DESLIGADO o app não lê mais a planilha FECHAMENTO: as
-   reservas passam a ser só as cadastradas aqui.
-   Desligar sem antes IMPORTAR apagaria da tela toda reserva que só existe
-   na planilha — e com ela o faturamento. Por isso desligar só é possível
-   pelo botão, que importa antes e se recusa a agir com a planilha ainda
-   não carregada. O interruptor é da empresa (sincroniza).
+   Existia um interruptor que desligava a leitura da planilha FECHAMENTO:
+   as reservas passavam a ser só as cadastradas aqui. Ele saiu da tela na
+   limpeza da barra de Reservas e virou uma armadilha — quem tivesse o
+   estado desligado gravado (e ele SINCRONIZA entre os aparelhos) ficava
+   sem planilha e sem botão para religar.
+   Hoje o app é espelho da planilha e a leitura não desliga: loadPlan()
+   encontra o interruptor desligado, liga de volta e regrava.
    ═══════════════════════════════════════════════════════════════════ */
 var PLANILHA_K='gs_planilha_v1';
 var PLAN={ligada:true, importadaEm:null, importadas:0, auto:true, autoEm:null, autoN:0};
 function loadPlan(){
   try{ var s=localStorage.getItem(PLANILHA_K);
     if(s){ var p=JSON.parse(s); if(p&&typeof p==='object') PLAN=Object.assign(PLAN,p); } }catch(e){}
+  if(PLAN.ligada===false){ PLAN.ligada=true; try{ localStorage.setItem(PLANILHA_K, JSON.stringify(PLAN)); }catch(e){} }
 }
 function savePlan(){
   try{ localStorage.setItem(PLANILHA_K, JSON.stringify(PLAN)); }catch(e){}
 }
-function planilhaLigada(){ return PLAN.ligada!==false; }
+/* ── O vínculo com a planilha não desliga mais ──────────────────────
+   O botão que cortava o vínculo saiu da barra de Reservas. Ficou um
+   estado que só sabia se apagar: quem tivesse ligada:false gravado —
+   no navegador ou vindo da nuvem, porque este interruptor sincroniza —
+   ficava sem planilha e sem nenhum lugar na tela para religar.
+   Agora o app é espelho da planilha e ponto: se achar o interruptor
+   desligado, liga de volta e apaga o registro para não voltar a
+   propagar. cortarPlanilha() continua existindo para o console. */
+function planilhaLigada(){ return true; }
+function religarSeDesligada(){
+  if(PLAN.ligada===false){ PLAN.ligada=true; savePlan(); }
+}
 function autoLigado(){ loadPlan(); return PLAN.auto!==false; }
 
 function loadAll(force){
   if(LOADING) return;
-  /* Vínculo cortado: nada de rede. Só o que foi cadastrado no app. */
-  if(!planilhaLigada()){
-    DATA=processarReservas(locaisDo());
-    LOADED=true; assignCars(); renderAll();
-    setStatuses('🔌 Planilha desconectada — mostrando '+DATA.length+' reserva(s) cadastrada(s) no app.',false);
-    return;
-  }
+  religarSeDesligada();   /* nunca sair daqui sem ler a planilha */
   LOADING=true; setStatuses('⏳ Lendo a planilha de fechamento…',false);
   /* INCREMENTAL: parte do que já conhecemos e só AGREGA reservas novas.
      Reservas já existentes são preservadas (com seus remanejamentos e marcações). */
@@ -24005,7 +24007,7 @@ function loadAll(force){
       : '';
     setStatuses('✓ '+DATA.length+' reservas na base'+conta+(added?(' · +'+added+' nova(s)'):' · nenhuma nova')
       +(autoN?(' · 🔗 '+autoN+' do mês trazida(s) da planilha para o app'):'')
-      +(_recusadas?(' · ⚠ '+_recusadas+' linha(s) da planilha sem data, vendedor, cliente ou valor — não entraram'):'')
+      +(_recusadas?(' · '+_recusadas+' linha(s) de total/rodapé da planilha ignorada(s)'):'')
       +' · atualizado '+when+(overN?(' · ⚠ '+overN+' em overbooking'):'')+(warns.length?(' · ⚠ '+warns.join('; ')):''),false);
   }
   SOURCE_TABS.forEach(function(t){
@@ -25383,53 +25385,33 @@ function pintarBotaoAuto(){
     : 'As reservas do mês só entram quando você clicar em TRAZER O MÊS EM VIGÊNCIA. Clique para ligar o automático.';
 }
 
-/* Botão: corta o vínculo com a planilha, importando antes. */
+/* Console: copia para dentro do app as reservas que hoje só existem na
+   planilha. NÃO corta mais o vínculo — o app é espelho da planilha e a
+   leitura não desliga. */
 function cortarPlanilha(){
   loadPlan();
-  if(!planilhaLigada()){
-    if(typeof toast==='function') toast('A planilha já está desconectada','orange');
-    return;
-  }
-  /* Trava de segurança: sem os dados na tela, importar traria zero e o corte
-     apagaria o histórico inteiro da visão do app. */
   var daPlanilha=DATA.filter(function(r){ return !r._local; }).length;
   if(!LOADED || !daPlanilha){
-    alert('Não dá para cortar agora: a planilha ainda não foi lida nesta sessão.\n\n'+
-          'Clique em "↻ Atualizar", espere as reservas aparecerem e tente de novo.\n\n'+
-          'Cortar sem ler primeiro apagaria da tela todas as reservas que só existem na planilha.');
+    alert('A planilha ainda não foi lida nesta sessão.\n\n'+
+          'Clique em "↻ Atualizar", espere as reservas aparecerem e tente de novo.');
     return;
   }
-  if(!confirm('Cortar o vínculo com a planilha FECHAMENTO?\n\n'+
-      'Antes de cortar eu vou COPIAR para dentro do app as '+daPlanilha+' reserva(s) que hoje só existem na planilha — nenhuma se perde.\n\n'+
-      'Depois disso:\n'+
-      '• o app para de ler a planilha;\n'+
-      '• toda reserva nova passa a ser cadastrada aqui;\n'+
-      '• o que você mudar na planilha NÃO chega mais no app.\n\n'+
-      'Dá para religar depois, no mesmo botão. Continuar?')) return;
+  if(!confirm('Copiar para dentro do app as '+daPlanilha+' reserva(s) que hoje vêm da planilha?\n\n'+
+      'A leitura da planilha CONTINUA ligada — as reservas copiadas podem aparecer '+
+      'em duplicidade até você apagar as cópias. Continuar?')) return;
 
   var n=0;
   try{ n=importarDaPlanilha(); }
   catch(e){ alert('Não consegui importar ('+(e.message||e)+'). Nada foi alterado.'); return; }
 
-  PLAN.ligada=false; PLAN.importadaEm=new Date().toISOString(); PLAN.importadas=n;
+  PLAN.importadaEm=new Date().toISOString(); PLAN.importadas=n;
   savePlan();
-  DATA=processarReservas(locaisDo());
-  LOADED=true; assignCars(); renderAll();
-  try{ if(typeof window.mgwAposReservas==='function') window.mgwAposReservas(); }catch(e){}
-  setStatuses('🔌 Planilha desconectada · '+n+' reserva(s) importada(s) para o app. Total agora: '+DATA.length+'.',false);
-  atualizarBotaoPlanilha();
-  alert('Pronto.\n\n'+n+' reserva(s) foram copiadas da planilha para o app.\n'+
-        'Total de reservas agora: '+DATA.length+'.\n\n'+
-        'Confira a aba Reservas e o seu faturamento antes de fechar. Se algo estiver faltando, religue no mesmo botão.');
+  loadAll(true);
+  alert(n+' reserva(s) copiadas da planilha para o app. A planilha segue conectada.');
 }
 
 function religarPlanilha(){
-  loadPlan();
-  if(!confirm('Religar a leitura da planilha?\n\n'+
-      'As reservas importadas continuam no app. As da planilha voltam a ser lidas — '+
-      'se alguma virou cópia, ela aparece duplicada na aba Reservas e você exclui a que sobrar.\n\nContinuar?')) return;
-  PLAN.ligada=true; savePlan();
-  atualizarBotaoPlanilha();
+  loadPlan(); religarSeDesligada();
   loadAll(true);
 }
 
@@ -25630,6 +25612,7 @@ window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, rend
   carregarRemanejamentos:loadOverrides, disponibilidade:disponibilidadePeriodo,
   dispQuadro:renderDisponibilidade, dispDetalhe:dispDetalhe,
   processar:processarReservas,   /* exposto para teste do pipeline de mesclagem */
+  linhasDaResposta:rowsFromResp, /* exposto para teste da leitura crua da aba */
   cortarPlanilha:cortarPlanilha, religarPlanilha:religarPlanilha,
   importarDaPlanilha:importarDaPlanilha, importarAgora:importarAgora,
   importarCiclo:importarCiclo, previaCiclo:reservasDaPlanilhaNoCiclo, planilhaLigada:planilhaLigada,
