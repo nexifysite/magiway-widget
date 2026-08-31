@@ -1609,7 +1609,8 @@ select.ffi option{background:#000020;color:#FF0000}
 <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">EMITIR DOCUMENTOS · CONTRATO + VOUCHER</span><div class="sec-line"></div></div>
 <div class="card" style="margin-bottom:16px">
   <div class="card-title">✍️ Reserva · Contrato &amp; Voucher</div>
-  <div class="card-sub">Esta tela tem <strong>todos os campos da aba 📦 HISTÓRICO</strong> da planilha. Ao clicar em <strong>SALVAR RESERVA</strong>, o registro entra completo na aba <strong>Reservas</strong> (que alimenta o Calendário e a Agenda) e também no <strong>Controle de Vendas</strong> (que alimenta o Dashboard). Os valores em <span style="color:var(--ice)">verde</span> são calculados sozinhos.</div>
+  <div class="card-sub">Esta tela emite <strong>voucher</strong>, <strong>contrato</strong> e o <strong>link de assinatura</strong> do DocuSign. Os valores em <span style="color:var(--ice)">verde</span> são calculados sozinhos.<br>
+  <span style="color:var(--gold)">A reserva em si não é salva aqui.</span> Ela é lançada na aba <strong>📋 FECHAMENTOS</strong> da planilha e entra sozinha no mês em vigência do app na próxima leitura — uma fonte só, sem risco de a mesma reserva existir em dois lugares com valores diferentes.</div>
   <div class="ff" style="margin-top:14px;max-width:420px">
     <label class="eml">Carregar de uma cotação (opcional)</label>
     <select class="ffi" id="em-cot" onchange="emitirLoadFromCot(this.value)"><option value="">— preencher manualmente —</option></select>
@@ -1753,7 +1754,6 @@ select.ffi option{background:#000020;color:#FF0000}
   </div>
 
   <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
-    <button class="form-btn" style="background:linear-gradient(135deg,#FF0000,#b30000)" onclick="emitirCadastrarVenda()">💾 SALVAR RESERVA (Reservas + Controle de Vendas)</button>
     <button class="form-btn" style="background:linear-gradient(135deg,#FFD11A,#FF9500);color:#04101e" onclick="gerarVoucherDoc()">🎟️ Gerar Voucher (PDF)</button>
     <button class="form-btn" style="background:linear-gradient(135deg,#1FA9A6,#0d7a77)" onclick="gerarContratoPDF()">📝 Gerar Contrato (PDF)</button>
     <button class="form-btn" style="background:linear-gradient(135deg,#25D366,#128C7E)" onclick="dsEnviarContratoWhats()">✍️ ASSINAR NO DOCUSIGN + ENVIAR NO WHATSAPP</button>
@@ -18480,7 +18480,21 @@ function criarReservaDaVenda(s, extra){
 
 // Cadastra a venda a partir dos dados preenchidos na tela Emitir Documentos.
 // O valor é digitado em R$ e convertido para US$ (padrão do restante do app).
+/* Saiu da tela em 31/08: a reserva do mes passou a vir SO da aba 📋
+   FECHAMENTOS da planilha. Duas portas de entrada para o mesmo dado
+   significavam a mesma reserva existindo em dois lugares, com valores
+   que podiam divergir - foi o que gerou linha duplicada e reserva
+   incompleta que ninguem sabia de onde tinha vindo.
+   A funcao fica porque outros pontos do arquivo ainda a mencionam em
+   texto de ajuda; se for chamada, avisa em vez de gravar calada. */
 function emitirCadastrarVenda(){
+  alert('A reserva não é mais salva por aqui.\n\n'+
+        'Lance na aba 📋 FECHAMENTOS da planilha — ela entra sozinha no mês '+
+        'em vigência do app na próxima leitura.\n\n'+
+        'Esta tela continua emitindo voucher, contrato e o link do DocuSign.');
+  return;
+}
+function _emitirCadastrarVendaAntigo(){
   const nome=_emVal('em-nome');
   const valBRL=(typeof _dsParseBRL==='function')?_dsParseBRL(_emVal('em-valor')):(parseFloat(_emVal('em-valor'))||0);
   if(!nome){ if(typeof toast==='function')toast('Preencha o nome do cliente','orange'); return; }
@@ -23063,7 +23077,11 @@ function forCalendar(){
       formaPag:r.formaPag, parc:r.parc,
       qualidade:r.qualidade, mesRef:r.mesRef, obs:r.obs, voucher:r.voucher
     };
-  }).filter(function(r){ return r.entrega && r.cliente; });
+  /* Reserva sem data de entrega continua existindo: entra na tabela, no
+     faturamento e na comissao. So nao e desenhada no calendario, que
+     precisa de um dia para posicionar a barra. Descarta-la aqui fazia a
+     reserva sumir do app depois de importada. */
+  }).filter(function(r){ return r.cliente && (r.entrega || r.dataFech); });
 }
 
 /* ---------- CSV no padrão da planilha ----------
@@ -23174,7 +23192,11 @@ function toggleManut(catKey,idx){
 }
 function loadFlags(){ try{ FLAGS=JSON.parse(localStorage.getItem(FLAGS_KEY)||'{}')||{}; }catch(e){ FLAGS={}; } }
 function saveFlags(){ try{ localStorage.setItem(FLAGS_KEY, JSON.stringify(FLAGS)); }catch(e){} }
-function getFlags(r){ return FLAGS[dedupeKey(r)]||{}; }
+function getFlags(r){
+  var f=FLAGS[dedupeKey(r)];
+  if(f) return f;
+  try{ return FLAGS[dedupeKeyLegado(r)]||{}; }catch(e){ return {}; }
+}
 function quemMarcou(){
   try{ if(typeof getActiveVendor==='function'){ var v=getActiveVendor(); if(v&&v.nome) return String(v.nome).split(' ')[0]; } }catch(e){}
   return '';
@@ -23360,6 +23382,7 @@ function numOf(c){ if(!c) return 0; var v=cellV(c); if(typeof v==='number') retu
   else s=s.replace(/,/g,'');
   var f=parseFloat(s); return isFinite(f)?f:0; }
 /* isHist=true → coluna V é MÊS REFERÊNCIA; false → V é OBSERVAÇÕES e W é o voucher */
+var _recusadas=0;   /* linhas que pareciam reserva e nao passaram no criterio */
 function rowsFromResp(resp,isHist){
   var out=[];
   if(!resp||!resp.table||!resp.table.rows) return out;
@@ -23367,7 +23390,23 @@ function rowsFromResp(resp,isHist){
   for(var i=0;i<rows.length;i++){
     var c=rows[i].c||[]; var g=function(j){ return c[j]||null; };
     var entrega=parseDate(g(6)); var nome=cellF(g(2)).trim();
-    if(!entrega || !nome) continue; /* pula título / cabeçalho / linhas vazias / totais */
+    /* ── o que faz uma linha ser reserva ──────────────────────────────
+       Antes exigia DATA DE ENTREGA. Reserva lançada sem a entrega ainda
+       definida — que na aba de fechamento acontece o tempo todo — era
+       descartada em silêncio: não aparecia na tela, não entrava no
+       faturamento e ninguém ficava sabendo que existia.
+
+       O critério agora é o que a operação usa de verdade: alguma data,
+       vendedor, cliente e valor. O resto pode faltar e a reserva entra
+       assim mesmo, com o que tiver. Cabeçalho e linha de total não
+       passam: não têm as quatro juntas. */
+    var _fech=parseDate(g(0));
+    var _vend=cellF(g(1)).trim();
+    var _val =numOf(g(13));
+    if(!nome || !_vend || !(_val>0) || !(entrega||_fech)){
+      if(nome||_vend||_val) _recusadas++;
+      continue;
+    }
     var col21=cellF(g(21)).trim();
     var modelo=cellF(g(4)).trim();
     var obs=isHist?'':col21, mesRef=isHist?col21:'';
@@ -23481,7 +23520,22 @@ function nomeChaveTol(nome){
      letra continua distinguindo. */
   return t.length===1 ? t[0] : (t[0]+'|'+t[t.length-1]);
 }
-function dedupeKey(r){ return r.tel+'|'+(r.entrega?r.entrega.getTime():0)+'|'+nomeChaveTol(r.cliente); }
+/* A chave que diz "estas duas linhas sao a mesma reserva".
+   A data usada era so a de ENTREGA. Reserva sem entrega caia em 0, e a
+   mesma reserva com a entrega ja preenchida numa aba e vazia na outra
+   gerava DUAS chaves diferentes - e aparecia duplicada na tela. Agora a
+   entrega e a preferida e a data de fechamento e a reserva, entao a
+   linha incompleta e a completa continuam se reconhecendo. */
+function dedupeKey(r){
+  var d=r.dataFech||r.entrega;
+  return r.tel+'|'+(d?d.getTime():0)+'|'+nomeChaveTol(r.cliente);
+}
+/* A chave de antes, ancorada na ENTREGA. Só serve para achar marcações e
+   observações gravadas antes de 31/08 — sem isto, a nota que alguém
+   escreveu na Agenda ficaria órfã quando a âncora mudou. */
+function dedupeKeyLegado(r){
+  return r.tel+'|'+(r.entrega?r.entrega.getTime():0)+'|'+nomeChaveTol(r.cliente);
+}
 window.nomeChaveTol=nomeChaveTol;   /* usado pelos testes e pelo pareamento cotação↔reserva */
 
 /* Assinatura da LINHA (tudo que importa). Duas linhas com a mesma assinatura são
@@ -23855,6 +23909,7 @@ function loadAll(force){
      fragmentos de pagamento (2 linhas = 1 reserva, valores que se somam).
      Quem separa cópia literal de fragmento é mesclarReservas(). */
   locaisDo().forEach(function(r){ merged.push(r); });
+  _recusadas=0;
   function finish(){
     LOADING=false;
     if(ok===0){
@@ -23888,7 +23943,9 @@ function loadAll(force){
         +')')
       : '';
     setStatuses('✓ '+DATA.length+' reservas na base'+conta+(added?(' · +'+added+' nova(s)'):' · nenhuma nova')
-      +(autoN?(' · 🔗 '+autoN+' do mês trazida(s) da planilha para o app'):'')+' · atualizado '+when+(overN?(' · ⚠ '+overN+' em overbooking'):'')+(warns.length?(' · ⚠ '+warns.join('; ')):''),false);
+      +(autoN?(' · 🔗 '+autoN+' do mês trazida(s) da planilha para o app'):'')
+      +(_recusadas?(' · ⚠ '+_recusadas+' linha(s) da planilha sem data, vendedor, cliente ou valor — não entraram'):'')
+      +' · atualizado '+when+(overN?(' · ⚠ '+overN+' em overbooking'):'')+(warns.length?(' · ⚠ '+warns.join('; ')):''),false);
   }
   SOURCE_TABS.forEach(function(t){
     loadTab(t.cands, t.hist).then(function(res){
@@ -23989,7 +24046,9 @@ function assignCars(){
     if(r.endDT && r.startDT && r.endDT<r.startDT) r.endDT=r.startDT;
   });
   var byCat={};
-  DATA.forEach(function(r){ (byCat[r.cat]=byCat[r.cat]||[]).push(r); });
+  /* sem dia de retirada nao da para reservar carro: fica fora da alocacao
+     (e do calendario), mas continua na tabela e no faturamento */
+  DATA.forEach(function(r){ if(r.startDT) (byCat[r.cat]=byCat[r.cat]||[]).push(r); });
 
   CATS.forEach(function(cfg){
     var list=(byCat[cfg.key]||[]).slice().sort(function(a,b){ return a.startDT-b.startDT; });
@@ -25015,6 +25074,14 @@ function importarDaPlanilha(filtro){
     });
     /* A marca de origem vai DEPOIS do normalize: ele só mantém os campos que
        conhece, então dentro do objeto ela seria descartada em silêncio. */
+    /* O normalize carimba a data de HOJE quando a de fechamento vem
+       vazia — faz sentido para reserva criada à mão, mas aqui inventaria
+       um dado que a planilha não tem. E não era só cosmético: a chave de
+       deduplicação se ancora nessa data, então a cópia importada passava
+       a ter uma data que a linha da planilha não tinha, as duas deixavam
+       de se reconhecer e a reserva aparecia DUAS vezes, dobrando o
+       faturamento do mês. Vazio na planilha continua vazio aqui. */
+    if(!r.dataFech) novo.dataFech='';
     novo._daPlanilha=true;
     /* De QUAL aba ela veio, e não só "veio da planilha".
        Sem isto a importação tinha um efeito colateral silencioso: a linha
