@@ -953,9 +953,9 @@ select.ffi option{background:#000020;color:#FF0000}
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
         Histórico Reservas
       </div>
-      <div class="sb-item" onclick="nav('trafego',this)">
-        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-        Tráfego × Comercial
+      <div class="sb-item" onclick="nav('rentab',this)">
+        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        Rentabilidade
       </div>
       <div class="sb-sec">Sistema</div>
       <div class="sb-item active" onclick="nav('vendedores',this)">
@@ -5591,82 +5591,6 @@ select.ffi option{background:#000020;color:#FF0000}
 </div>
 </div>
 
-      <!-- ═══════════════════════════════════════════════════════════════
-           TRÁFEGO × COMERCIAL
-           A pergunta que esta aba responde: entre o dinheiro que entra no
-           anúncio e a reserva que sai assinada, ONDE o funil vaza — e de
-           quem é a alavanca para tapar.
-
-           Os números de tráfego não chegam sozinhos: o painel do CRM é
-           outro sistema, com login próprio, e o navegador não consegue
-           lê-lo daqui por causa da política de origem. Então eles são
-           colados, do mesmo jeito que o diagnóstico recebe os dados do
-           app. Cotações e vendas o app já tem — essas saem sozinhas.
-           ═══════════════════════════════════════════════════════════════ -->
-      <div class="panel" id="panel-trafego">
-        <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">TRÁFEGO × COMERCIAL</span><div class="sec-line"></div></div>
-
-        <div class="mgw-hint">
-          🔗 O funil inteiro numa tela: <b>investimento → leads → cotações → reservas</b>.
-          As cotações e as reservas saem do próprio app, recortadas pelo ciclo em vigência (dia 13 → dia 12).
-          Os números de tráfego você cola do
-          <a href="https://painelmagiway.nexflowcrm.com.br/" target="_blank" rel="noopener" style="color:var(--ice)">painel do CRM</a>
-          — clique em <b>LANÇAR DADOS DE TRÁFEGO</b>.<br>
-          <span style="color:var(--gold)">Todo gráfico abre grande ao clicar, com a leitura escrita embaixo.</span>
-        </div>
-
-        <div class="mgrsv-toolbar" style="margin-bottom:14px">
-          <button class="mgw-btn mgw-btn-csv" onclick="MGW_TRAF.lancar()">✍️ LANÇAR DADOS DE TRÁFEGO</button>
-          <button class="mgw-btn" onclick="MGW_TRAF.render()">↻ Recalcular</button>
-          <button class="mgw-btn" onclick="MGW_TRAF.exportar()">📤 Exportar leitura (texto)</button>
-          <span id="tf-periodo" class="mgw-status" style="margin-left:auto;color:var(--chalk2)"></span>
-        </div>
-
-        <div id="tf-vazio"></div>
-
-        <!-- indicadores do funil -->
-        <div class="kpi-grid" id="tf-kpis" style="margin-bottom:14px"></div>
-
-        <!-- gráficos -->
-        <div class="ch-grid2" style="margin-bottom:14px">
-          <div class="card"><div class="card-title">O FUNIL, ETAPA POR ETAPA</div>
-            <div class="card-sub">quantos sobrevivem de uma etapa para a seguinte</div>
-            <div style="height:240px;position:relative"><canvas id="tf-funil"></canvas></div></div>
-          <div class="card"><div class="card-title">ONDE O FUNIL VAZA</div>
-            <div class="card-sub">% perdido em cada passagem · a maior barra é o gargalo</div>
-            <div style="height:240px;position:relative"><canvas id="tf-vaza"></canvas></div></div>
-        </div>
-
-        <div class="ch-grid2" style="margin-bottom:14px">
-          <div class="card"><div class="card-title">CUSTO POR ETAPA</div>
-            <div class="card-sub">quanto custa um lead, uma cotação e uma reserva</div>
-            <div style="height:240px;position:relative"><canvas id="tf-custo"></canvas></div></div>
-          <div class="card"><div class="card-title">INVESTIMENTO × RECEITA</div>
-            <div class="card-sub">o que entrou no anúncio contra o que saiu em reserva</div>
-            <div style="height:240px;position:relative"><canvas id="tf-roas"></canvas></div></div>
-        </div>
-
-        <div class="ch-grid2" style="margin-bottom:14px">
-          <div class="card"><div class="card-title">LEAD × COTAÇÃO × VENDA NO TEMPO</div>
-            <div class="card-sub">as três séries lado a lado · descasamento entre elas é diagnóstico</div>
-            <div style="height:240px;position:relative"><canvas id="tf-tempo"></canvas></div></div>
-          <div class="card"><div class="card-title">QUALIDADE DO QUE ENTRA</div>
-            <div class="card-sub">cotações dentro e fora do perfil ideal · é a régua do tráfego</div>
-            <div style="height:240px;position:relative"><canvas id="tf-qualidade"></canvas></div></div>
-        </div>
-
-        <!-- pontos críticos -->
-        <div class="sec-head" style="margin-top:26px"><div class="sec-dot" style="background:var(--fire)"></div><span class="sec-ttl">O QUE ESTÁ CERTO E O QUE ESTÁ ERRADO</span><div class="sec-line"></div></div>
-        <div id="tf-pontos"></div>
-
-        <!-- plano de ação -->
-        <div class="sec-head" style="margin-top:26px"><div class="sec-dot" style="background:var(--gold)"></div><span class="sec-ttl">PLANO DE AÇÃO · O QUE MUDAR E QUEM RESPONDE</span><div class="sec-line"></div></div>
-        <div id="tf-plano"></div>
-
-        <!-- responsabilidade -->
-        <div class="sec-head" style="margin-top:26px"><div class="sec-dot" style="background:var(--ice)"></div><span class="sec-ttl">DE QUEM É A ALAVANCA</span><div class="sec-line"></div></div>
-        <div id="tf-resp"></div>
-      </div>
 
 
       <!-- ═══ HISTÓRICO DE RESERVAS ═══
@@ -5707,6 +5631,52 @@ select.ffi option{background:#000020;color:#FF0000}
           </table>
         </div>
       </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           RENTABILIDADE & OCUPAÇÃO
+           ───────────────────────────────────────────────────────────────
+           Faturamento o app já mostrava em três telas. O que faltava era
+           o que sobra: a planilha traz CUSTO REAL e VALOR INTEGRAL em
+           todas as reservas, e ninguém estava lendo essas duas colunas.
+           Sem elas dá para saber quanto se vendeu e não dá para saber se
+           valeu a pena — que é a pergunta que decide comprar carro,
+           vender carro e onde apertar o desconto.
+           Nada aqui é digitado: sai tudo da mesma base das outras abas.
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="panel" id="panel-rentab">
+        <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">RENTABILIDADE &amp; OCUPAÇÃO</span><div class="sec-line"></div></div>
+        <div class="mgrsv-toolbar">
+          <select id="rt-periodo" class="mgw-input" onchange="MGW_RENTAB.render()">
+            <option value="ciclo">Mês em vigência</option>
+            <option value="90">Últimos 90 dias (por fechamento)</option>
+            <option value="ano">Ano corrente</option>
+            <option value="tudo">Toda a base</option>
+          </select>
+          <select id="rt-vend" class="mgw-input" onchange="MGW_RENTAB.render()"><option value="">Todos os vendedores</option></select>
+          <button class="mgw-btn" onclick="MGW_RENTAB.render()">↻ Recalcular</button>
+          <button class="mgw-btn mgw-btn-csv" onclick="MGW_RENTAB.copiar()">📋 Copiar leitura</button>
+          <span id="rt-periodo-lbl" class="mgw-status" style="margin-left:auto;color:var(--chalk2)"></span>
+        </div>
+        <div class="mgw-hint">💰 <b>Lucro bruto</b> = valor da venda − custo real, das duas colunas que a planilha já tem. Reserva sem custo preenchido entra na receita e fica <b>fora</b> da margem — não é margem de 100%, é margem não medida, e o rodapé de cada tabela diz quantas são.</div>
+        <div id="rt-aviso"></div>
+        <div class="kpi-grid" id="rt-kpis" style="margin:14px 0"></div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-title">POR CATEGORIA — O QUE SOBRA E O QUANTO RODA</div>
+          <div class="card-sub">DIÁRIAS VENDIDAS é a duração inteira das reservas fechadas no período. OCUPAÇÃO conta só os dias que caem <b>dentro</b> do período ÷ (carros na frota × dias do período) — reserva vendida agora para dezembro entra na receita de hoje e na ocupação de dezembro, por isso as duas colunas não andam juntas.</div>
+          <div class="mgrsv-tablewrap"><table class="mgrsv-table"><thead id="rt-cat-head"></thead><tbody id="rt-cat-body"></tbody></table></div>
+        </div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-title">POR VENDEDOR</div>
+          <div class="card-sub">Quem traz volume e quem traz margem nem sempre é a mesma pessoa.</div>
+          <div class="mgrsv-tablewrap"><table class="mgrsv-table"><thead id="rt-vend-head"></thead><tbody id="rt-vend-body"></tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="card-title">ANTECEDÊNCIA — DA VENDA À RETIRADA</div>
+          <div class="card-sub">Quantos dias entre fechar e entregar o carro. Curto demais aperta a operação; longo demais é dinheiro parado esperando.</div>
+          <div class="mgrsv-tablewrap"><table class="mgrsv-table"><thead id="rt-ant-head"></thead><tbody id="rt-ant-body"></tbody></table></div>
+        </div>
+      </div>
+
 
 
 
@@ -6236,29 +6206,48 @@ Data de retirada = din"></textarea>
        planilha baixada resolve sem depender de compartilhamento, de gviz
        nem de cache. Fica fechado para não virar mais um botão na barra. -->
   <details style="margin:10px 0">
-    <summary style="cursor:pointer;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--chalk3)">🧹 Zerar e carregar da planilha baixada</summary>
-    <div class="card" style="margin-top:8px">
-      <div class="card-sub" style="margin-bottom:10px">
-        Apaga <b>todas</b> as reservas do app e reconstrói a base só com o que vier daqui — linha por linha, sem critério nenhum. Use quando o número da tela não bater com o da planilha.<br>
-        <b>De onde tirar:</b> na planilha, <i>Arquivo → Fazer download → Valores separados por vírgula (.csv)</i> — uma vez com a aba 📋 FECHAMENTOS aberta, outra com a 📦 HISTÓRICO. Ou selecione as linhas na aba, copie e cole no campo de baixo.
+    <summary style="cursor:pointer;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--chalk3)">📥 Carregar da planilha baixada (histórico e mês, separados)</summary>
+    <div style="margin-top:8px">
+      <div class="mgw-hint">
+        Duas gavetas <b>independentes</b>: carregar uma substitui só ela, a outra fica como está — dá para atualizar o mês sem recarregar mil linhas de histórico, e vice-versa. A base do app é a soma das duas.<br>
+        <b>De onde tirar:</b> na planilha, <i>Arquivo → Fazer download → Valores separados por vírgula (.csv)</i>, uma vez com cada aba aberta. Ou selecione as linhas na aba, copie e cole.<br>
+        Enquanto qualquer uma das duas tiver conteúdo, a leitura pela internet fica suspensa.
       </div>
-      <div class="ff" style="max-width:520px">
-        <label class="eml">1. Arquivos CSV baixados (pode escolher os dois de uma vez)</label>
-        <input type="file" id="mgrsv-arqfile" class="ffi" accept=".csv,text/csv,text/plain" multiple>
-        <div class="mgw-hint" style="margin:4px 0 12px">O app reconhece a aba pelo nome do arquivo: o que tiver <b>HIST</b> no nome entra como histórico, o resto como fechamento do mês.</div>
-
-        <label class="eml">2. Ou cole aqui o conteúdo copiado da aba</label>
-        <textarea id="mgrsv-arqtxt" class="ffi" rows="5" placeholder="Cole aqui as linhas copiadas da planilha (Ctrl+C na aba, Ctrl+V aqui)"></textarea>
-        <label class="eml" style="margin-top:8px">O que você colou é de qual aba?</label>
-        <select id="mgrsv-arqaba" class="ffi">
-          <option value="fech">📋 FECHAMENTOS — reservas do mês em vigência</option>
-          <option value="hist">📦 HISTÓRICO — meses anteriores</option>
-        </select>
+      <div class="card" style="margin-top:8px">
+        <div class="card-title">📦 HISTÓRICO — meses anteriores</div>
+        <div class="card-sub" style="margin-bottom:10px">Alimenta a aba <b>Histórico de Reservas</b> e o calendário. Não mexe no mês em vigência.</div>
+        <div class="ff" style="max-width:520px">
+          <label class="eml">Arquivo CSV baixado dessa aba</label>
+          <input type="file" id="mgrsv-hist-file" class="ffi" accept=".csv,text/csv,text/plain" multiple>
+          <label class="eml" style="margin-top:10px">Ou cole aqui as linhas copiadas dessa aba</label>
+          <textarea id="mgrsv-hist-txt" class="ffi" rows="4" placeholder="Ctrl+C na aba da planilha, Ctrl+V aqui"></textarea>
+        </div>
+        <div id="mgrsv-hist-preview" class="mgw-hint" style="margin-top:10px"></div>
+        <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+          <button class="mgw-btn" onclick="MGW_RESV.conferirArquivo('hist')">👁️ Conferir antes</button>
+          <button class="form-btn" style="background:linear-gradient(135deg,#1FA9A6,#0d7a77)" onclick="MGW_RESV.carregarAba('hist')">📥 CARREGAR SÓ ESTA ABA</button>
+          <button class="mgw-btn" onclick="MGW_RESV.limparAba('hist')" title="Tira da base as reservas desta aba, sem tocar na outra">🗑️ Esvaziar esta aba</button>
+        </div>
       </div>
-      <div id="mgrsv-arqpreview" class="mgw-hint" style="margin-top:10px"></div>
-      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
-        <button class="mgw-btn" onclick="MGW_RESV.conferirArquivo()">👁️ Conferir antes (não apaga nada)</button>
-        <button class="form-btn" style="background:linear-gradient(135deg,#FF0000,#b30000)" onclick="MGW_RESV.zerarECarregar()">🧹 ZERAR TUDO E CARREGAR</button>
+      <div class="card" style="margin-top:8px">
+        <div class="card-title">📋 FECHAMENTOS — mês em vigência</div>
+        <div class="card-sub" style="margin-bottom:10px">Alimenta a aba <b>Reservas</b>, o Dashboard, as Metas e o relatório de comissionamento. Não mexe no histórico.</div>
+        <div class="ff" style="max-width:520px">
+          <label class="eml">Arquivo CSV baixado dessa aba</label>
+          <input type="file" id="mgrsv-fech-file" class="ffi" accept=".csv,text/csv,text/plain" multiple>
+          <label class="eml" style="margin-top:10px">Ou cole aqui as linhas copiadas dessa aba</label>
+          <textarea id="mgrsv-fech-txt" class="ffi" rows="4" placeholder="Ctrl+C na aba da planilha, Ctrl+V aqui"></textarea>
+        </div>
+        <div id="mgrsv-fech-preview" class="mgw-hint" style="margin-top:10px"></div>
+        <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+          <button class="mgw-btn" onclick="MGW_RESV.conferirArquivo('fech')">👁️ Conferir antes</button>
+          <button class="form-btn" style="background:linear-gradient(135deg,#1FA9A6,#0d7a77)" onclick="MGW_RESV.carregarAba('fech')">📥 CARREGAR SÓ ESTA ABA</button>
+          <button class="mgw-btn" onclick="MGW_RESV.limparAba('fech')" title="Tira da base as reservas desta aba, sem tocar na outra">🗑️ Esvaziar esta aba</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;align-items:center">
+        <button class="form-btn" style="background:linear-gradient(135deg,#FF0000,#b30000)" onclick="MGW_RESV.zerarTudo()">🧹 ZERAR TUDO</button>
+        <span class="mgw-hint" style="margin:0">Apaga as duas abas e tudo o que o app guardou por cima das reservas — edições, exclusões, remanejamentos e viradas de mês. É o botão de emergência.</span>
       </div>
     </div>
   </details>
@@ -8801,8 +8790,8 @@ const NAV={
   analitico:['ANÁLISE AVANÇADA','Métricas calculadas'],
   historico:['HISTÓRICO DE COTAÇÕES','Todas as cotações registradas automaticamente'],
   dashcot:['DASHBOARD COTAÇÕES','KPIs e análise completa das cotações geradas'],
-  trafego:['TRÁFEGO × COMERCIAL','Do anúncio à reserva · onde o funil vaza, de quem é a alavanca e o que fazer'],
   histresv:['HISTÓRICO DE RESERVAS','Reservas de outros meses · a aba 📦 HISTÓRICO da planilha'],
+  rentab:['RENTABILIDADE & OCUPAÇÃO','O que sobra de cada reserva, quanto a frota roda e com que antecedência a venda fecha'],
   comparativo:['COMPARATIVO','O que cotamos × o que fechamos · cliente ideal e cliente complexo'],
   vendedores:['CONTROLE DE ACESSO','Usuário único · gerente Luciano · dados sincronizados no Supabase'],
   config:['CONFIGURAÇÕES','Parâmetros do sistema · Login · Comandos'],
@@ -12610,166 +12599,7 @@ var MGW_VERBETES={
 'cp-gauge':d=>`Participação do cliente ideal no total da base. Quanto menor a proporção, maior a dificuldade intrínseca do período — e menor o poder explicativo da taxa de conversão agregada sobre a atuação da equipe.`,
 'cp-tend':d=>`Evolução temporal da conversão. A <b>tendência</b> tem maior valor informativo que o nível de um período isolado: oscilação de um mês é ruído amostral; três períodos em declínio configuram deterioração de processo.`,
 
-/* ── TRÁFEGO × COMERCIAL ── */
-'tf-funil':d=>`Cada barra é uma etapa do caminho entre o dinheiro que entra no anúncio e a reserva que sai assinada. A escala é <b>logarítmica</b> de propósito: em escala normal a impressão esmaga todo o resto e as etapas que interessam viram um traço.
-  A leitura útil não é a altura de nenhuma barra isolada — é a <b>distância entre barras vizinhas</b>. Onde o degrau é mais alto, está a perda. De ${d.lMax} para a etapa seguinte é onde mais gente desaparece, e é lá que o esforço rende.
-  Etapa que não aparece é etapa não medida, não etapa zerada: sem o número lançado, o app prefere omitir a inventar.`,
-
-'tf-vaza':d=>`Percentual perdido em cada passagem do funil. Aqui barra alta é ruim: <b>${d.lMax}</b> perde ${d.vMax}% do que chegou nela, e é o maior vazamento medido.
-  Perda alta no topo é normal e não assusta — anúncio é assim, a maioria de quem vê não clica. O que precisa de resposta é perda alta <b>embaixo</b>, onde cada unidade já custou dinheiro: um lead perdido custa o valor do lead; uma cotação perdida custa o lead mais o tempo de quem atendeu.
-  Regra de decisão: ataque um elo por vez, sempre o de maior perda. Melhorar o que não é a restrição não muda o resultado do conjunto — só produz atividade.`,
-
-'tf-custo':d=>`Quanto custa cada etapa e o que a reserva devolve. As três primeiras barras são custo; a última é receita por reserva.
-  A conta que decide é <b>CAC contra ticket</b>: enquanto o custo de aquisição couber com folga dentro do ticket, escalar verba aumenta lucro. Quando o CAC passa de um quarto do ticket, a aquisição come a margem e escalar verba aumenta faturamento e diminui resultado — que é o erro mais caro e mais fácil de cometer, porque o faturamento sobe e parece que está dando certo.
-  Duas saídas, ambas de gestão: elevar o ticket (mix e diárias) ou reduzir o custo de aquisição construindo marca. Só a segunda cai com o tempo em vez de subir.`,
-
-'tf-roas':d=>`O que entrou em anúncio contra o que saiu em reserva, no mesmo ciclo.
-  Uma ressalva que evita conclusão errada: a receita da reserva não é lucro. Dela ainda saem custo do carro, operação e comissão. O retorno aqui serve para comparar <b>ciclos entre si</b> e para dizer se o anúncio está pagando a si mesmo — não para dizer se a empresa deu lucro.
-  E há defasagem: o lead de hoje pode virar reserva no mês que vem. Ciclo isolado com retorno baixo é sinal, não veredito; três ciclos seguidos em queda é veredito.`,
-
-'tf-tempo':d=>`As três séries que importam, lado a lado: leads, cotações e reservas do ciclo.
-  O valor está no <b>descasamento</b>. Lead subindo com cotação parada indica lead que não está sendo atendido, ou lead fora do perfil — e o gráfico de qualidade separa as duas. Cotação subindo com reserva parada indica preço ou disponibilidade, não conversa: o cliente pediu, foi cotado, e recusou o número.
-  Cada um desses dois diagnósticos aponta para uma mesa diferente. Confundi-los é o que mantém a discussão girando.`,
-
-'tf-qualidade':d=>`Composição do que entra, medida contra os quatro critérios do cliente ideal: mais de 10 diárias, Orlando→Orlando, minivan e retirada em até três meses. Todos obrigatórios — falhar em um já classifica como complexo.
-  Esta é a <b>régua do tráfego</b>, e é diferente de volume. Lead fora do perfil consome exatamente o mesmo tempo de atendimento de um lead bom e entrega recusa no fim: é custo dobrado, invisível no relatório de mídia e visível na agenda de quem atende.
-  Enquanto a meta do tráfego for volume de lead, o incentivo continua premiando o número errado. A meta precisa ser lead <b>dentro do perfil</b>.`
 };
-
-
-/* Monta o contexto e escolhe: verbete próprio do gráfico, ou o resumo
-   estatístico de sempre para quem ainda não tem verbete. */
-function mgwExplicarGrafico(chart, titulo, idCanvas){
-  try{
-    var ds=(chart.data.datasets||[])[0]; if(!ds) return '';
-    var _lab=chart.data.labels||[];
-    var _v=(ds.data||[]).map(function(x){ return (x&&typeof x==='object')?(x.y!=null?x.y:0):(Number(x)||0); });
-    var verbete=MGW_VERBETES[idCanvas];
-    if(verbete && _v.length){
-      var _t=_v.reduce(function(a,b){return a+b;},0);
-      var _iM=_v.indexOf(Math.max.apply(null,_v));
-      var d={
-        labels:_lab, vals:_v, n:_v.length, total:_t,
-        iMax:_iM, lMax:String(_lab[_iM]!=null?_lab[_iM]:'—'), vMax:mgwFmtNum(_v[_iM]),
-        pctMax:_t>0?(_v[_iM]/_t*100).toFixed(0):'0',
-        zeros:_v.filter(function(x){return x===0;}).length,
-        pct:function(i){ return _t>0?(_v[i]/_t*100).toFixed(1):'0'; }
-      };
-      try{
-        var txt=verbete(d);
-        if(txt) return String(txt).replace(/\s*\n\s*/g,' ');
-      }catch(e){ console.warn('[zoom] verbete de '+idCanvas,e); }
-    }
-    /* rede: gráfico sem verbete, ou verbete que falhou */
-    var labels=chart.data.labels||[];
-    var vals=(ds.data||[]).map(function(v){ return (v&&typeof v==='object')?(v.y!=null?v.y:0):(Number(v)||0); });
-    if(!vals.length) return 'Este gráfico ainda não tem dados no período escolhido.';
-    var total=vals.reduce(function(a,b){return a+b;},0);
-    var iMax=vals.indexOf(Math.max.apply(null,vals));
-    var positivos=vals.filter(function(v){return v>0;});
-    var iMin=positivos.length?vals.indexOf(Math.min.apply(null,positivos)):-1;
-    var media=total/vals.length;
-    var zerados=vals.filter(function(v){return v===0;}).length;
-    var negativos=vals.filter(function(v){return v<0;});
-
-    var p=[];
-    p.push('<b>'+labels.length+'</b> item(ns) somando <b>'+mgwFmtNum(total)+'</b>'
-          +' — média de <b>'+mgwFmtNum(media)+'</b> por item.');
-    if(iMax>=0 && total>0){
-      var fatia=vals[iMax]/total*100;
-      p.push('O maior é <b>'+String(labels[iMax])+'</b>, com <b>'+mgwFmtNum(vals[iMax])+'</b>'
-            +(isFinite(fatia)?(' — <b>'+fatia.toFixed(1)+'%</b> de tudo'):'')+'.');
-      /* concentração: quantos itens fazem 80% do total */
-      var ord=vals.slice().sort(function(a,b){return b-a;}), soma=0, k=0;
-      while(k<ord.length && soma<total*0.8){ soma+=ord[k]; k++; }
-      if(labels.length>2 && k>0){
-        p.push('<b>'+k+'</b> de '+labels.length+' item(ns) já respondem por 80% do total'
-              +(k<=Math.ceil(labels.length/3)?' — a concentração é alta.':'.'));
-      }
-    }
-    if(iMin>=0 && iMin!==iMax) p.push('O menor com movimento é <b>'+String(labels[iMin])+'</b> ('+mgwFmtNum(vals[iMin])+').');
-    if(zerados) p.push('<b>'+zerados+'</b> item(ns) ficaram em zero no período.');
-    if(negativos.length) p.push('<span style="color:var(--fire)"><b>'+negativos.length+'</b> item(ns) estão negativos.</span>');
-    return p.join(' ');
-  }catch(e){ return 'Não consegui resumir este gráfico.'; }
-}
-
-function mgwFecharZoom(){
-  var m=document.getElementById('mgw-zoom'); if(m) m.classList.remove('on');
-  /* Destrói pelo CANVAS, não pela variável: a instância fica registrada no
-     Chart.js e depender de uma referência solta já deixou o gráfico vivo
-     depois de fechar (vazamento a cada abertura). O canvas é a fonte certa. */
-  try{
-    var cv=document.getElementById('mgwz-canvas');
-    var c=(cv && Chart.getChart) ? Chart.getChart(cv) : null;
-    if(c) c.destroy();
-  }catch(e){}
-  if(_mgwZoomChart){ try{ _mgwZoomChart.destroy(); }catch(e){} }
-  _mgwZoomChart=null;
-}
-
-function mgwAbrirZoom(canvas){
-  if(typeof Chart==='undefined') return;
-  var orig=Chart.getChart ? Chart.getChart(canvas) : (canvas._ch||null);
-  if(!orig) return;
-  var card=canvas.closest('.card');
-  var titulo=card?(card.querySelector('.card-title')||{}).textContent||'Gráfico':'Gráfico';
-  var sub=card?((card.querySelector('.card-sub')||{}).textContent||''):'';
-
-  var m=document.getElementById('mgw-zoom');
-  if(!m){
-    m=document.createElement('div'); m.id='mgw-zoom';
-    m.innerHTML='<div class="mgwz-fundo" onclick="mgwFecharZoom()"></div>'
-      +'<div class="mgwz-cx" role="dialog" aria-modal="true">'
-      +'<div class="mgwz-hd"><div><div class="mgwz-ttl" id="mgwz-ttl"></div>'
-      +'<div class="mgwz-sub" id="mgwz-sub"></div></div>'
-      +'<button class="mgwz-x" onclick="mgwFecharZoom()" aria-label="Fechar">✕</button></div>'
-      +'<div class="mgwz-tela"><canvas id="mgwz-canvas"></canvas></div>'
-      +'<div class="mgwz-exp"><div class="mgwz-exp-t">O QUE ESTE GRÁFICO DIZ</div>'
-      +'<div id="mgwz-exp-c"></div></div></div>';
-    document.body.appendChild(m);
-  }
-  document.getElementById('mgwz-ttl').textContent=titulo;
-  document.getElementById('mgwz-sub').textContent=sub;
-
-  mgwFecharZoom();
-  /* ⚠️ NÃO reaproveitar `orig.options`.
-     Depois que um gráfico é criado, o Chart.js guarda ali estruturas internas
-     já resolvidas (proxies "scriptable"). Passar esse objeto para uma segunda
-     instância gera "Recursion detected: _scriptable->_scriptable" — e o pior
-     é que o erro só aparece no destroy(), deixando o gráfico ampliado vivo
-     para sempre a cada abertura. Por isso montamos opções LIMPAS aqui e
-     carregamos só valores simples do original. */
-  var tipo=orig.config.type;
-  var ehPizza=(tipo==='doughnut'||tipo==='pie'||tipo==='polarArea');
-  var eixoY=(orig.options&&orig.options.indexAxis)==='y';
-  var TT={backgroundColor:'rgba(4,8,15,.97)',borderColor:'rgba(255,0,0,.3)',borderWidth:1,
-          titleColor:'#F5FBFF',bodyColor:'#9AB4CC',padding:11,cornerRadius:8,
-          titleFont:{size:13},bodyFont:{size:13}};
-  var EIXO={grid:{color:'rgba(255,255,255,.05)'},
-            ticks:{color:'#9AB4CC',font:{size:12,family:'DM Mono'}}};
-  var opcoes={responsive:true,maintainAspectRatio:false,animation:{duration:420},
-    plugins:{legend:{display:ehPizza||(orig.data.datasets||[]).length>1,
-                     position:ehPizza?'bottom':'top',
-                     labels:{color:'#9AB4CC',font:{size:12},padding:14,boxWidth:12}},
-             tooltip:TT}};
-  if(ehPizza){ opcoes.cutout=(orig.options&&orig.options.cutout)||'60%'; }
-  else { opcoes.indexAxis=eixoY?'y':'x'; opcoes.scales={x:EIXO,y:EIXO}; }
-
-  var cfg={type:tipo,
-           data:{labels:(orig.data.labels||[]).slice(),
-                 datasets:(orig.data.datasets||[]).map(function(d){
-                   return {label:d.label, data:(d.data||[]).slice(),
-                           backgroundColor:d.backgroundColor, borderColor:d.borderColor,
-                           borderRadius:d.borderRadius, borderWidth:d.borderWidth,
-                           type:d.type, fill:d.fill, tension:d.tension,
-                           pointRadius:d.pointRadius, pointBackgroundColor:d.pointBackgroundColor};
-                 })},
-           options:opcoes};
-  m.classList.add('on');
-  try{ _mgwZoomChart=new Chart(document.getElementById('mgwz-canvas'),cfg); }catch(e){ console.warn('[zoom]',e); }
-  document.getElementById('mgwz-exp-c').innerHTML=mgwExplicarGrafico(orig,titulo,canvas.id);
-}
 
 /* ── Aviso de série vazia ──
    Gráfico sem dado desenhava a grade e os eixos e mais nada: o cartão ficava
@@ -24354,16 +24184,49 @@ function refresh(){ LOADING=false; syncLocais(); loadAll(true); }
    aviso na tela e um botão para voltar. Sem isso as reservas apareceriam
    duas vezes: uma do arquivo, outra da internet.
    ═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   DUAS GAVETAS INDEPENDENTES: HISTÓRICO e MÊS
+   ───────────────────────────────────────────────────────────────────
+   Antes era uma gaveta só: carregar arquivo apagava tudo e refazia a
+   base inteira. Quem quisesse só atualizar o mês tinha de carregar o
+   histórico de novo junto, e um histórico de mil linhas era recarregado
+   para trocar uma reserva.
+
+   Agora são duas, guardadas separadas e trocadas separadas:
+     ARQ.hist  → o que veio da aba 📦 HISTÓRICO
+     ARQ.fech  → o que veio da aba 📋 FECHAMENTOS
+   A base é a soma das duas. Carregar uma substitui SÓ ela; a outra fica
+   exatamente como estava, com data e nome do arquivo de origem.
+
+   Enquanto QUALQUER uma tiver conteúdo, a leitura online fica suspensa:
+   se metade viesse do arquivo e metade da internet, a mesma reserva
+   apareceria duas vezes e ninguém saberia qual das duas era a boa.
+   ═══════════════════════════════════════════════════════════════════ */
 var ARQ_K='gs_arquivo_v1';
-var ARQ=null;   /* {ts, nomes:[], linhas:[serializadas]} */
+var ARQ={hist:null, fech:null};   /* cada gaveta: {ts, nome, linhas:[serializadas]} */
+function _gavetaOk(g){ return !!(g && g.linhas && g.linhas.length); }
 function loadArq(){
-  try{ var s=localStorage.getItem(ARQ_K); ARQ=s?JSON.parse(s):null;
-       if(ARQ&&(!ARQ.linhas||!ARQ.linhas.length)) ARQ=null; }catch(e){ ARQ=null; }
+  try{
+    var s=localStorage.getItem(ARQ_K); var o=s?JSON.parse(s):null;
+    if(o && (o.hist!==undefined || o.fech!==undefined)){
+      ARQ={hist:_gavetaOk(o.hist)?o.hist:null, fech:_gavetaOk(o.fech)?o.fech:null};
+    }else if(o && o.linhas && o.linhas.length){
+      /* formato antigo (gaveta única): entra como FECHAMENTOS, que é de
+         onde vinha a maior parte, e o histórico fica vazio até ser
+         carregado. Migra na primeira leitura e regrava no formato novo. */
+      ARQ={hist:null, fech:{ts:o.ts||Date.now(), nome:(o.nomes||['arquivo']).join(' + '), linhas:o.linhas}};
+      saveArq();
+    }else ARQ={hist:null, fech:null};
+  }catch(e){ ARQ={hist:null, fech:null}; }
   return ARQ;
 }
-function arqAtivo(){ return !!(ARQ&&ARQ.linhas&&ARQ.linhas.length); }
-function arqRows(){
-  return (ARQ.linhas||[]).map(function(r){
+function saveArq(){
+  try{ localStorage.setItem(ARQ_K, JSON.stringify(ARQ)); }
+  catch(e){ throw new Error('A base não coube no armazenamento do navegador.'); }
+}
+function arqAtivo(){ return _gavetaOk(ARQ.hist) || _gavetaOk(ARQ.fech); }
+function _reidrata(linhas){
+  return (linhas||[]).map(function(r){
     r=Object.assign({},r);
     r.dataFech=r.dataFech?new Date(r.dataFech):null;
     r.entrega=r.entrega?new Date(r.entrega):null;
@@ -24371,6 +24234,12 @@ function arqRows(){
     r.cat=categoryOf(r.modelo,r.obs);
     return r;
   });
+}
+function arqRows(){
+  var out=[];
+  if(_gavetaOk(ARQ.hist)) out=out.concat(_reidrata(ARQ.hist.linhas));
+  if(_gavetaOk(ARQ.fech)) out=out.concat(_reidrata(ARQ.fech.linhas));
+  return out;
 }
 
 /* Texto → matriz. Aceita o CSV baixado do Sheets e o TSV do copiar-colar.
@@ -24404,17 +24273,37 @@ function reservasDeTabela(mat,isHist){
   return rowsFromResp(resp,isHist);
 }
 
-function zerarECarregar(textos){
-  /* textos: [{texto, hist:bool, nome}] */
-  var novas=[], nomes=[];
-  textos.forEach(function(t){
-    var linhas=reservasDeTabela(tabelaDeTexto(t.texto), !!t.hist);
+/* Carrega UMA gaveta. aba='hist' ou 'fech'. A outra não é tocada. */
+function carregarGaveta(aba, textos){
+  var novas=[], nomes=[], isHist=(aba==='hist');
+  (textos||[]).forEach(function(t){
+    var linhas=reservasDeTabela(tabelaDeTexto(t.texto), isHist);
     linhas.forEach(function(r){ r._local=false; novas.push(r); });
     nomes.push((t.nome||'colado')+' ('+linhas.length+')');
   });
   if(!novas.length) throw new Error('Não achei nenhuma reserva nesse conteúdo.');
-
-  /* ── apaga o que existia ── */
+  loadArq();
+  var antes=ARQ[aba];
+  ARQ[aba]={ts:Date.now(), nome:nomes.join(' + '), linhas:serialize(novas)};
+  try{ saveArq(); }catch(e){ ARQ[aba]=antes; throw e; }
+  LOADING=false;
+  loadAll(true);
+  return novas.length;
+}
+/* Esvazia UMA gaveta. */
+function limparGaveta(aba){
+  loadArq();
+  if(!_gavetaOk(ARQ[aba])) return 0;
+  var n=ARQ[aba].linhas.length;
+  ARQ[aba]=null;
+  saveArq();
+  LOADING=false; loadAll(true);
+  return n;
+}
+/* O reset completo: as duas gavetas mais tudo o que o app guardou por
+   cima das reservas. É o botão de emergência, separado do carregamento
+   normal justamente para não ser apertado sem querer. */
+function zerarTudoResv(){
   try{ if(window.MGW_RES) MGW_RES.save([]); }catch(e){}       /* reservas criadas no app */
   try{ localStorage.removeItem(CACHE_KEY); }catch(e){}         /* cópia em cache */
   try{ localStorage.removeItem(OVR_RESV_KEY); }catch(e){}      /* edições manuais */
@@ -24423,31 +24312,41 @@ function zerarECarregar(textos){
   try{ localStorage.removeItem(FLAGS_KEY); }catch(e){}         /* marcações */
   try{ localStorage.removeItem(ARQV_KEY); }catch(e){}          /* viradas de mês */
   try{ loadOverrides(); loadFlags(); }catch(e){}
-
-  ARQ={ts:Date.now(), nomes:nomes, linhas:serialize(novas)};
-  try{ localStorage.setItem(ARQ_K, JSON.stringify(ARQ)); }catch(e){
-    ARQ=null; throw new Error('A base não coube no armazenamento do navegador.');
-  }
-  LOADING=false;
-  loadAll(true);
-  return novas.length;
+  ARQ={hist:null, fech:null};
+  try{ localStorage.removeItem(ARQ_K); }catch(e){}
+  /* Esvazia a memória também. Sem isto, loadAll() sem rede reaproveita o
+     que já estava carregado como "o que eu tinha antes" e a tela continua
+     mostrando as mesmas reservas logo depois de dizer que apagou tudo. */
+  DATA=[]; LOADED=false;
+  LOADING=false; loadAll(true);
+}
+/* Compatibilidade: quem chamar o nome antigo carrega as duas gavetas de
+   uma vez, cada texto na sua, depois de zerar. Os testes usam isso. */
+function zerarECarregar(textos){
+  zerarTudoResv();
+  var n=0;
+  ['hist','fech'].forEach(function(aba){
+    var t=(textos||[]).filter(function(x){ return (aba==='hist')===!!x.hist; });
+    if(t.length) n+=carregarGaveta(aba,t);
+  });
+  if(!n) throw new Error('Não achei nenhuma reserva nesse conteúdo.');
+  return n;
 }
 
-/* Junta o que está nos campos da tela num só lote. Devolve Promise porque
-   ler arquivo é assíncrono; colar não é. */
-function coletarTextos(){
+/* ── a tela ──────────────────────────────────────────────────────── */
+/* Lê os campos de UMA aba. ids: mgrsv-<aba>-file e mgrsv-<aba>-txt. */
+function coletarTextos(aba){
   var lote=[];
-  var ta=document.getElementById('mgrsv-arqtxt');
-  var sel=document.getElementById('mgrsv-arqaba');
+  var ta=document.getElementById('mgrsv-'+aba+'-txt');
   var txt=ta?String(ta.value||'').trim():'';
-  if(txt) lote.push({texto:txt, hist:(sel&&sel.value==='hist'), nome:'colado'});
-  var inp=document.getElementById('mgrsv-arqfile');
+  if(txt) lote.push({texto:txt, nome:'colado'});
+  var inp=document.getElementById('mgrsv-'+aba+'-file');
   var files=(inp&&inp.files)?Array.prototype.slice.call(inp.files):[];
   if(!files.length) return Promise.resolve(lote);
   return Promise.all(files.map(function(f){
     return new Promise(function(res){
       var fr=new FileReader();
-      fr.onload=function(){ res({texto:String(fr.result||''), hist:/hist/i.test(f.name), nome:f.name}); };
+      fr.onload=function(){ res({texto:String(fr.result||''), nome:f.name}); };
       fr.onerror=function(){ res(null); };
       fr.readAsText(f,'utf-8');
     });
@@ -24456,63 +24355,98 @@ function coletarTextos(){
     return lote;
   });
 }
-/* Mostra o que ENTRARIA, antes de apagar qualquer coisa. */
-function conferirArquivo(){
-  var el=document.getElementById('mgrsv-arqpreview'); if(el) el.textContent='Lendo…';
-  return coletarTextos().then(function(lote){
-    if(!lote.length){ if(el) el.textContent='Escolha um arquivo CSV ou cole o conteúdo de uma aba.'; return; }
+function _rotuloAba(aba){ return aba==='hist' ? '📦 HISTÓRICO' : '📋 FECHAMENTOS (mês)'; }
+/* Mostra o que ENTRARIA naquela gaveta, sem trocar nada. */
+function conferirArquivo(aba){
+  var el=document.getElementById('mgrsv-'+aba+'-preview');
+  if(el) el.textContent='Lendo…';
+  return coletarTextos(aba).then(function(lote){
+    if(!lote.length){ if(el) el.textContent='Escolha um arquivo CSV ou cole o conteúdo da aba.'; return; }
     var html='', totalN=0, totalV=0;
     lote.forEach(function(t){
-      var rs=reservasDeTabela(tabelaDeTexto(t.texto), t.hist);
+      var rs=reservasDeTabela(tabelaDeTexto(t.texto), aba==='hist');
       var v=rs.reduce(function(a,r){ return a+(+r.valor||0); },0);
       totalN+=rs.length; totalV+=v;
-      html+='• <b>'+esc(t.nome)+'</b> → '+(t.hist?'📦 HISTÓRICO':'📋 FECHAMENTOS')+' · '+rs.length+
-            ' linha(s) · R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'<br>';
+      html+='• <b>'+esc(t.nome)+'</b> · '+rs.length+' linha(s) · R$ '+
+            v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'<br>';
     });
-    html+='<b>Total que entraria: '+totalN+' reserva(s) · R$ '+
+    loadArq();
+    var atual=_gavetaOk(ARQ[aba])?ARQ[aba].linhas.length:0;
+    html+='<b>Entraria em '+_rotuloAba(aba)+': '+totalN+' reserva(s) · R$ '+
           totalV.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'</b>'+
-          '<br>Confira contra a planilha. Se bater, clique em ZERAR TUDO E CARREGAR.';
+          '<br>Substitui as '+atual+' que estão nessa gaveta hoje. A outra aba não é tocada.';
     if(el) el.innerHTML=html;
   });
 }
-function zerarECarregarDaTela(){
-  return coletarTextos().then(function(lote){
-    if(!lote.length){ alert('Escolha um arquivo CSV ou cole o conteúdo de uma aba antes.'); return; }
-    var n=lote.reduce(function(a,t){ return a+reservasDeTabela(tabelaDeTexto(t.texto),t.hist).length; },0);
+function carregarGavetaDaTela(aba){
+  return coletarTextos(aba).then(function(lote){
+    if(!lote.length){ alert('Escolha um arquivo CSV ou cole o conteúdo da aba '+_rotuloAba(aba)+' antes.'); return; }
+    var n=lote.reduce(function(a,t){ return a+reservasDeTabela(tabelaDeTexto(t.texto),aba==='hist').length; },0);
     if(!n){ alert('Não achei nenhuma reserva nesse conteúdo. Confira se copiou as linhas da tabela.'); return; }
-    if(!confirm('APAGAR todas as reservas do app e recarregar do zero?\n\n'+
-        'Entram '+n+' reserva(s) do que você forneceu.\n\n'+
-        'Some tudo o que existe hoje: reservas cadastradas aqui, cache, edições manuais, '+
-        'exclusões, remanejamentos de carro e as viradas de mês já dadas. Não dá para desfazer.\n\nContinuar?')) return;
+    loadArq();
+    var atual=_gavetaOk(ARQ[aba])?ARQ[aba].linhas.length:0;
+    var outra=(aba==='hist')?'fech':'hist';
+    var qOutra=_gavetaOk(ARQ[outra])?ARQ[outra].linhas.length:0;
+    if(!confirm('Carregar '+n+' reserva(s) em '+_rotuloAba(aba)+'?\n\n'+
+        (atual?('Substitui as '+atual+' que estão nessa aba hoje.\n'):'Essa aba está vazia hoje.\n')+
+        (qOutra?('As '+qOutra+' de '+_rotuloAba(outra)+' NÃO são tocadas.\n'):'')+
+        '\nContinuar?')) return;
     var q;
-    try{ q=zerarECarregar(lote); }
+    try{ q=carregarGaveta(aba,lote); }
     catch(e){ alert('Não deu: '+(e.message||e)); return; }
-    var ta=document.getElementById('mgrsv-arqtxt'); if(ta) ta.value='';
-    var inp=document.getElementById('mgrsv-arqfile'); if(inp) inp.value='';
-    var soma=DATA.reduce(function(a,r){ return a+(+r.valor||0); },0);
-    alert('Base refeita.\n\n'+DATA.length+' reserva(s) · R$ '+
-      soma.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+
-      '\n\nConfira o total contra a planilha antes de seguir.');
+    var ta=document.getElementById('mgrsv-'+aba+'-txt'); if(ta) ta.value='';
+    var inp=document.getElementById('mgrsv-'+aba+'-file'); if(inp) inp.value='';
+    var el=document.getElementById('mgrsv-'+aba+'-preview'); if(el) el.innerHTML='';
+    alert(q+' reserva(s) carregada(s) em '+_rotuloAba(aba)+'.\n\n'+
+      'Base agora: '+DATA.length+' reserva(s).');
   });
 }
+function limparGavetaDaTela(aba){
+  loadArq();
+  if(!_gavetaOk(ARQ[aba])){ alert(_rotuloAba(aba)+' já está vazia.'); return; }
+  var n=ARQ[aba].linhas.length;
+  if(!confirm('Esvaziar '+_rotuloAba(aba)+'?\n\n'+n+' reserva(s) saem da base. A outra aba não é tocada.')) return;
+  limparGaveta(aba);
+  alert(n+' reserva(s) removida(s). Base agora: '+DATA.length+'.');
+}
+function zerarTudoDaTela(){
+  if(!confirm('APAGAR TUDO e começar do zero?\n\n'+
+      'Some as duas abas carregadas, as reservas cadastradas aqui, o cache, as edições '+
+      'manuais, as exclusões, os remanejamentos de carro e as viradas de mês já dadas.\n\n'+
+      'Não dá para desfazer. Continuar?')) return;
+  zerarTudoResv();
+  alert('Tudo apagado. O app volta a ler a planilha online.');
+}
+/* Nome antigo, mantido para o console e os testes. */
+function zerarECarregarDaTela(){ return carregarGavetaDaTela('fech'); }
 
 function voltarParaOnline(){
   if(!confirm('Voltar a ler a planilha pela internet?\n\n'+
-      'A base carregada do arquivo é descartada e o app passa a mostrar o que a '+
+      'As duas abas carregadas do arquivo são descartadas e o app passa a mostrar o que a '+
       'planilha responder online. Continuar?')) return;
-  ARQ=null; try{ localStorage.removeItem(ARQ_K); localStorage.removeItem(CACHE_KEY); }catch(e){}
+  ARQ={hist:null, fech:null};
+  try{ localStorage.removeItem(ARQ_K); localStorage.removeItem(CACHE_KEY); }catch(e){}
   LOADING=false; loadAll(true);
 }
 
 function avisoArquivo(){
   var el=document.getElementById('mgrsv-arqaviso'); if(!el) return;
   if(!arqAtivo()){ el.innerHTML=''; return; }
+  function linha(aba){
+    var g=ARQ[aba];
+    if(!_gavetaOk(g)) return '<span style="display:block">• '+_rotuloAba(aba)+': <span style="opacity:.6">vazia — nada carregado</span></span>';
+    var rs=_reidrata(g.linhas);
+    var v=rs.reduce(function(a,r){ return a+(+r.valor||0); },0);
+    return '<span style="display:block">• '+_rotuloAba(aba)+': <b>'+rs.length+'</b> reserva(s) · R$ '+
+      v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+
+      ' · '+esc(g.nome)+' · '+new Date(g.ts).toLocaleString('pt-BR')+'</span>';
+  }
   var soma=DATA.reduce(function(a,r){ return a+(+r.valor||0); },0);
   el.innerHTML='<div class="mgw-hint" style="border-left:3px solid var(--gold);background:rgba(255,209,26,.07)">'+
-    '📄 <b>Base carregada do arquivo</b> — '+esc(ARQ.nomes.join(' + '))+' · '+
-    DATA.length+' reserva(s) · R$ '+soma.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+' · carregado em '+
-    new Date(ARQ.ts).toLocaleString('pt-BR')+'.<br>'+
-    '<span style="display:block;margin-top:4px">A leitura pela internet está suspensa enquanto este arquivo estiver carregado — é o que evita cada reserva aparecer duas vezes.</span>'+
+    '📄 <b>Base carregada de arquivo</b> — '+DATA.length+' reserva(s) · R$ '+
+    soma.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'<br>'+
+    linha('hist')+linha('fech')+
+    '<span style="display:block;margin-top:4px">A leitura pela internet fica suspensa enquanto qualquer uma das duas tiver conteúdo — é o que evita a mesma reserva aparecer duas vezes.</span>'+
     '<span style="display:block;margin-top:8px"><button class="mgw-btn" onclick="MGW_RESV.voltarOnline()">🌐 Voltar a ler a planilha online</button></span>'+
     '</div>';
 }
@@ -26181,10 +26115,16 @@ window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, rend
   toggleManut:toggleManut, carregarManutencao:loadManut, carregarFlags:loadFlags,
   carregarRemanejamentos:loadOverrides, disponibilidade:disponibilidadePeriodo,
   dispQuadro:renderDisponibilidade, dispDetalhe:dispDetalhe,
+  categorias:function(){ return CATS.slice(); },   /* usado pela aba Rentabilidade (carros por categoria) */
   processar:processarReservas,   /* exposto para teste do pipeline de mesclagem */
   linhasDaResposta:rowsFromResp, /* exposto para teste da leitura crua da aba */
   zerarECarregar:zerarECarregarDaTela, conferirArquivo:conferirArquivo,
+  carregarAba:carregarGavetaDaTela, limparAba:limparGavetaDaTela, zerarTudo:zerarTudoDaTela,
   voltarOnline:voltarParaOnline, arqAtivo:arqAtivo,
+  gavetas:function(){ loadArq(); return {
+    hist:_gavetaOk(ARQ.hist)?{n:ARQ.hist.linhas.length, nome:ARQ.hist.nome, ts:ARQ.hist.ts}:null,
+    fech:_gavetaOk(ARQ.fech)?{n:ARQ.fech.linhas.length, nome:ARQ.fech.nome, ts:ARQ.fech.ts}:null }; },
+  carregarGaveta:carregarGaveta, limparGaveta:limparGaveta,
   zerarComTextos:zerarECarregar, deTabela:reservasDeTabela, tabela:tabelaDeTexto,
   cortarPlanilha:cortarPlanilha, religarPlanilha:religarPlanilha,
   importarDaPlanilha:importarDaPlanilha, importarAgora:importarAgora,
@@ -28635,670 +28575,341 @@ thead th,.mgdisp-tab thead th,.mgrsv-table thead th{ background:#070f1a !importa
 .tf-tabwrap{overflow-x:auto}
 @media(max-width:640px){.tf-acao{flex-direction:column;gap:6px}}
 </style><!--/mgw-skin-v2-->
-<script id="mgw-trafego-js">
+
+
+<script id="mgw-rentab-js">
 /* ═══════════════════════════════════════════════════════════════════
-   MAGIWAY — TRÁFEGO × COMERCIAL
+   MAGIWAY — RENTABILIDADE & OCUPAÇÃO
    ───────────────────────────────────────────────────────────────────
-   O funil da Magiway atravessa duas casas: o dinheiro entra no anúncio
-   (tráfego) e a reserva sai assinada (comercial). Cada lado enxerga só
-   a própria metade, e é exatamente no meio que a discussão trava —
-   "mandei lead", "o lead é ruim", e ninguém tem o número da passagem.
+   Lê a MESMA base das outras abas (MGW_RESV.dados()) e não guarda nada
+   próprio: não há o que digitar aqui, e por isso não há como divergir.
 
-   Esta aba junta as duas metades numa conta só e, mais importante,
-   ATRIBUI cada perda a quem tem a alavanca para consertá-la. Atribuir
-   não é acusar: é dizer a quem perguntar.
+   As duas colunas que ninguém estava lendo:
+     CUSTO REAL R$     → lucro bruto = valor − custo
+     VALOR INTEGRAL R$ → desconto concedido = integral − valor
 
-   DE ONDE VÊM OS DADOS
-     · cotações e reservas → do próprio app, recortadas pelo ciclo em
-       vigência (dia 13 → dia 12), como todo o resto
-     · investimento, impressões, cliques e leads → colados do painel do
-       CRM. O painel é outro sistema, com login próprio: o navegador não
-       consegue lê-lo daqui por causa da política de origem, e fingir
-       que consegue seria entregar tela que quebra no primeiro uso.
+   Três decisões que valem a leitura:
 
-   O QUE ESTA ABA NÃO FAZ
-     Não estima o que não foi informado. Sem o número de leads, a
-     passagem lead→cotação aparece como "não medida", e não como zero.
-     Zero inventado vira decisão errada.
+   • Reserva SEM custo preenchido não vira margem de 100%. Ela conta na
+     receita e fica fora do cálculo de margem, e o rodapé diz quantas
+     ficaram. Margem inventada é pior do que margem ausente.
+
+   • Ocupação usa dias-carro, não reservas: uma reserva de 12 diárias
+     ocupa doze vezes mais frota do que uma de 1. E conta só a parte do
+     aluguel que cai DENTRO do período — reserva que atravessa a virada
+     do mês entra pela fatia de cada lado.
+
+   • Antecedência é fechamento → entrega. É o número que diz com quanto
+     tempo o dinheiro entra antes de o carro sair, e é a base para saber
+     quando anunciar.
    ═══════════════════════════════════════════════════════════════════ */
 (function(){
 'use strict';
 
-var TRAF_K='gs_trafego_v1';
-var T={ periodos:[] };   /* [{ym, invest, impressoes, cliques, leads, obs}] */
-var charts={};
+var DIA=86400000;
+function dados(){ try{ return (window.MGW_RESV&&MGW_RESV.dados())||[]; }catch(e){ return []; } }
+function n0(v){ return Math.round(+v||0).toLocaleString('pt-BR'); }
+function n1(v){ return (+v||0).toFixed(1).replace('.',','); }
+function brl(v){ return 'R$ '+(+v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function brl0(v){ return 'R$ '+Math.round(+v||0).toLocaleString('pt-BR'); }
+function pct(v){ return (v==null)?'—':(n1(v)+'%'); }
+function esc3(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function dOnly2(d){ return new Date(d.getFullYear(),d.getMonth(),d.getDate()); }
 
-/* ── armazenamento ───────────────────────────────────────────────── */
-function carregar(){
-  try{ var s=localStorage.getItem(TRAF_K); if(s){ var p=JSON.parse(s);
-    if(p && Array.isArray(p.periodos)) T=p; } }catch(e){}
-  return T;
-}
-function gravar(){
-  try{ localStorage.setItem(TRAF_K, JSON.stringify(T)); }
-  catch(e){ if(typeof toast==='function') toast('Não consegui salvar os dados de tráfego','red'); }
-}
-var n0=function(v){ return Math.round(+v||0).toLocaleString('pt-BR'); };
-var n1=function(v){ return (+v||0).toFixed(1).replace('.',','); };
-var brl=function(v){ return 'R$ '+(+v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}); };
-var esc2=function(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;'); };
-
-/* ── o ciclo em vigência, igual ao resto do app ──────────────────── */
-function cicloAtual(){
-  try{ return MGW_CICLO.cicloAtivo(); }catch(e){ return null; }
-}
-function ymDoCiclo(c){ return c? c.ym : ''; }
-
-/* ── comercial: o que o app já sabe ──────────────────────────────── */
-function dadosComerciais(c){
-  var out={cotacoes:0, cotIdeal:0, vendas:0, receita:0, medido:false};
-  if(!c) return out;
-  try{
-    var cots=(typeof HIST_COT!=='undefined'&&HIST_COT)?HIST_COT.slice():[];
-    var de=c.ini, ate=c.fim;
-    var dentro=function(iso){
-      var m=String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})/); if(!m) return false;
-      var d=new Date(+m[1],+m[2]-1,+m[3]);
-      return d>=new Date(de.getFullYear(),de.getMonth(),de.getDate())
-          && d<=new Date(ate.getFullYear(),ate.getMonth(),ate.getDate());
-    };
-    var noCiclo=cots.filter(function(h){ return dentro(h.dtISO); });
-    out.cotacoes=noCiclo.length;
-    try{ out.cotIdeal=noCiclo.filter(function(h){ return cpClassificar(h).ideal; }).length; }catch(e){}
-    out.medido=true;
-  }catch(e){}
-  try{
-    var rs=MGW_CICLO.reservasDoCiclo(c);
-    out.vendas=rs.length;
-    out.receita=rs.reduce(function(a,r){ return a+(+r.valor||0); },0);
-  }catch(e){}
-  return out;
-}
-
-/* ── o funil consolidado ─────────────────────────────────────────── */
-function montar(){
-  carregar();
-  var c=cicloAtual(), ym=ymDoCiclo(c);
-  var tf=T.periodos.filter(function(p){ return p.ym===ym; })[0]
-      || {ym:ym, invest:null, impressoes:null, cliques:null, leads:null};
-  var com=dadosComerciais(c);
-
-  var F={
-    ciclo:c, ym:ym,
-    invest:(tf.invest!=null&&tf.invest!=='')?+tf.invest:null,
-    impressoes:(tf.impressoes!=null&&tf.impressoes!=='')?+tf.impressoes:null,
-    cliques:(tf.cliques!=null&&tf.cliques!=='')?+tf.cliques:null,
-    leads:(tf.leads!=null&&tf.leads!=='')?+tf.leads:null,
-    cotacoes:com.cotacoes, cotIdeal:com.cotIdeal,
-    vendas:com.vendas, receita:com.receita,
-    temTrafego:false
-  };
-  F.temTrafego = (F.invest!=null || F.leads!=null);
-
-  /* passagens — null quando não dá para medir, nunca zero de mentira */
-  F.pLeadCot = (F.leads>0) ? (F.cotacoes/F.leads*100) : null;
-  F.pCotVen  = (F.cotacoes>0) ? (F.vendas/F.cotacoes*100) : null;
-  F.pCliqLead= (F.cliques>0 && F.leads!=null) ? (F.leads/F.cliques*100) : null;
-  F.pImpCliq = (F.impressoes>0 && F.cliques!=null) ? (F.cliques/F.impressoes*100) : null;
-  F.pGeral   = (F.leads>0) ? (F.vendas/F.leads*100) : null;
-
-  /* custos */
-  F.cpl = (F.invest!=null && F.leads>0) ? (F.invest/F.leads) : null;
-  F.cpc = (F.invest!=null && F.cotacoes>0) ? (F.invest/F.cotacoes) : null;
-  F.cac = (F.invest!=null && F.vendas>0) ? (F.invest/F.vendas) : null;
-  F.roas= (F.invest>0) ? (F.receita/F.invest) : null;
-  F.ticket = F.vendas>0 ? (F.receita/F.vendas) : null;
-  F.pctIdeal = F.cotacoes>0 ? (F.cotIdeal/F.cotacoes*100) : null;
-  return F;
-}
-
-/* ═══ RÉGUAS ═══
-   Cada limite abaixo é um número declarado, não um palpite escondido no
-   código. Estão todos aqui, num lugar só, para poderem ser discutidos e
-   mudados quando a operação mudar. */
-var REGUA={
-  leadCotBom:35,     /* % de leads que viram cotação — abaixo disso, atendimento ou qualificação */
-  leadCotRuim:15,
-  cotVenBom:20,      /* % de cotações que fecham */
-  cotVenRuim:8,
-  idealBom:25,       /* % das cotações dentro do perfil ideal */
-  idealRuim:10,
-  roasBom:8,         /* receita por real investido */
-  roasRuim:3,
-  cacSobreTicket:0.25 /* CAC não deveria passar de 25% do ticket */
-};
-
-/* ── quem responde por cada etapa ──────────────────────────────────
-   A regra é uma só, e vale sem exceção: responde quem decide.
-   · impressão e clique   → TRÁFEGO (criativo, público, verba)
-   · clique → lead        → TRÁFEGO (promessa do anúncio) + GESTÃO (verba de marca)
-   · lead → cotação       → COMERCIAL (tempo de resposta, follow-up)
-                             com ressalva: lead fora do perfil é TRÁFEGO
-   · cotação → venda      → COMERCIAL (condução), com ressalva de PREÇO → GESTÃO
-   · perfil do que entra  → TRÁFEGO (segmentação) + GESTÃO (verba e posicionamento)
-   · CAC acima do ticket  → GESTÃO (preço e orçamento) */
-var DONO={
-  trafego:{rot:'TRÁFEGO', cor:'#FFD11A'},
-  comercial:{rot:'COMERCIAL', cor:'#1FA9A6'},
-  gestao:{rot:'GESTÃO', cor:'#FF4757'}
-};
-function selo(k){ var d=DONO[k]||DONO.gestao;
-  return '<span class="tf-dono" style="border-color:'+d.cor+';color:'+d.cor+'">'+d.rot+'</span>'; }
-
-/* ═══ PONTOS CRÍTICOS — o que está certo e o que está errado ═══
-   Cada ponto carrega o número que o sustenta e o dono da alavanca. Um
-   ponto sem número é opinião, e opinião não entra em reunião de
-   orçamento. */
-function pontos(F){
-  var P=[];
-  var add=function(tipo,dono,titulo,prova,porque){
-    P.push({tipo:tipo,dono:dono,titulo:titulo,prova:prova,porque:porque}); };
-
-  /* ── passagem lead → cotação ── */
-  if(F.pLeadCot==null){
-    add('cinza','trafego','Passagem lead → cotação não medida',
-      'nenhum número de leads lançado para '+(F.ciclo?F.ciclo.label:'o ciclo'),
-      'Sem o volume de leads, não há como separar "chegou pouco" de "chegou e não foi atendido". '+
-      'É a informação que decide se o problema é de tráfego ou de comercial, e ela custa um lançamento por mês.');
-  }else if(F.pLeadCot>=REGUA.leadCotBom){
-    add('bom','comercial','O lead que chega está sendo trabalhado',
-      n1(F.pLeadCot)+'% dos '+n0(F.leads)+' leads viraram cotação',
-      'Acima de '+REGUA.leadCotBom+'% indica atendimento respondendo e qualificando. Este elo não é o gargalo.');
-  }else if(F.pLeadCot<REGUA.leadCotRuim){
-    add('ruim','comercial','A maior parte do lead morre antes da cotação',
-      'só '+n1(F.pLeadCot)+'% dos '+n0(F.leads)+' leads viraram cotação'+
-      (F.cpl!=null?' · cada lead custou '+brl(F.cpl):''),
-      'Abaixo de '+REGUA.leadCotRuim+'% há duas causas possíveis, e elas têm donos diferentes: '+
-      'tempo de primeira resposta alto (comercial) ou lead fora do perfil (tráfego). '+
-      'A régua do perfil ideal, no gráfico ao lado, separa as duas — não trate como uma coisa só.');
-  }else{
-    add('atencao','comercial','Passagem lead → cotação abaixo do alvo',
-      n1(F.pLeadCot)+'% contra alvo de '+REGUA.leadCotBom+'%',
-      'Zona intermediária: ainda dá para recuperar com tempo de resposta e follow-up, sem mexer em verba.');
+/* ── o período escolhido ────────────────────────────────────────── */
+function periodo(){
+  var v=(document.getElementById('rt-periodo')||{}).value||'ciclo';
+  var hoje=dOnly2(new Date());
+  if(v==='ciclo'){
+    try{ var c=MGW_CICLO.cicloAtivo(); return {ini:dOnly2(c.ini), fim:dOnly2(c.fim), rot:c.label+' · '+c.periodo}; }
+    catch(e){ v='90'; }
   }
-
-  /* ── qualidade do que entra ── */
-  if(F.pctIdeal==null){
-    add('cinza','trafego','Perfil do que entra não medido','sem cotações no ciclo',
-      'Sem cotação registrada não há como avaliar segmentação.');
-  }else if(F.pctIdeal>=REGUA.idealBom){
-    add('bom','trafego','O anúncio está trazendo o cliente certo',
-      n1(F.pctIdeal)+'% das '+n0(F.cotacoes)+' cotações cumprem os quatro critérios do perfil ideal',
-      'Segmentação funcionando. Nesse cenário, perda adiante é condução ou preço — não é público.');
-  }else if(F.pctIdeal<REGUA.idealRuim){
-    add('ruim','trafego','O anúncio está trazendo o cliente errado',
-      'só '+n1(F.pctIdeal)+'% das cotações são do perfil ideal ('+n0(F.cotIdeal)+' de '+n0(F.cotacoes)+')',
-      'Este é o ponto mais caro do funil e o menos visível: lead fora do perfil consome o MESMO tempo de '+
-      'atendimento de um lead bom e entrega recusa no fim. Cobrar conversão do comercial sem corrigir isto é '+
-      'cobrar o efeito de uma decisão que não é dele. Tráfego sem marketing acerta volume e erra segmento.');
-  }else{
-    add('atencao','trafego','Perfil do que entra abaixo do alvo',
-      n1(F.pctIdeal)+'% de cliente ideal, alvo '+REGUA.idealBom+'%',
-      'Metade do esforço de atendimento está indo para pedido que dificilmente fecha.');
-  }
-
-  /* ── cotação → venda ── */
-  if(F.pCotVen==null){
-    add('cinza','comercial','Conversão de cotação não medida','sem cotações no ciclo','');
-  }else if(F.pCotVen>=REGUA.cotVenBom){
-    add('bom','comercial','A cotação está fechando bem',
-      n1(F.pCotVen)+'% das cotações viraram reserva',
-      'Acima de '+REGUA.cotVenBom+'%. A condução da venda não é o gargalo deste ciclo.');
-  }else if(F.pCotVen<REGUA.cotVenRuim){
-    add('ruim','gestao','A cotação chega e não fecha',
-      'só '+n1(F.pCotVen)+'% das '+n0(F.cotacoes)+' cotações viraram reserva',
-      'Quando o pedido chega, é cotado e mesmo assim não fecha, a causa raramente é a conversa: é o número. '+
-      'Preço fora da faixa em que o cliente compara faz a recusa acontecer antes de qualquer argumento. '+
-      'Esta linha é da gestão porque a alavanca — tabela e política de desconto — está com ela.');
-  }else{
-    add('atencao','gestao','Conversão de cotação abaixo do alvo',
-      n1(F.pCotVen)+'% contra alvo de '+REGUA.cotVenBom+'%','');
-  }
-
-  /* ── dinheiro ── */
-  if(F.roas!=null){
-    if(F.roas>=REGUA.roasBom)
-      add('bom','gestao','O investimento está se pagando',
-        'cada R$ 1 em anúncio devolveu '+n1(F.roas)+' em reserva'+
-        (F.invest!=null?' · '+brl(F.invest)+' investidos, '+brl(F.receita)+' fechados':''),
-        'Retorno saudável. O limite aqui deixa de ser eficiência e passa a ser capacidade de frota.');
-    else if(F.roas<REGUA.roasRuim)
-      add('ruim','gestao','Cada real investido volta pouco',
-        'retorno de '+n1(F.roas)+'× · '+brl(F.invest)+' investidos para '+brl(F.receita)+' em reserva',
-        'Abaixo de '+REGUA.roasRuim+'× o anúncio deixa de ser aquisição e vira custo fixo. Antes de cortar a '+
-        'verba, veja qual etapa está vazando: cortar tráfego com funil furado só reduz o volume da perda, '+
-        'não corrige a causa.');
-    else
-      add('atencao','gestao','Retorno do investimento na faixa intermediária',
-        n1(F.roas)+'× por real investido','');
-  }
-  if(F.cac!=null && F.ticket!=null){
-    var r=F.cac/F.ticket;
-    if(r>REGUA.cacSobreTicket)
-      add('ruim','gestao','Custo de aquisição alto para o ticket',
-        'CAC '+brl(F.cac)+' contra ticket médio de '+brl(F.ticket)+' — '+n1(r*100)+'% do valor da reserva',
-        'Acima de '+Math.round(REGUA.cacSobreTicket*100)+'% do ticket, a aquisição come a margem. Duas saídas, e '+
-        'as duas são decisão de gestão: elevar o ticket (mix e diárias) ou reduzir o custo de aquisição '+
-        'construindo marca, que é o único caminho em que o custo cai com o tempo em vez de subir.');
-    else
-      add('bom','gestao','Custo de aquisição cabe no ticket',
-        'CAC '+brl(F.cac)+' = '+n1(r*100)+'% do ticket de '+brl(F.ticket),'');
-  }
-  if(!F.temTrafego){
-    add('cinza','gestao','Nenhum dado de tráfego lançado neste ciclo',
-      'investimento, cliques e leads em branco',
-      'Metade do funil está invisível. Enquanto ficar assim, toda discussão sobre "de quem é a culpa" é '+
-      'opinião contra opinião — e reunião assim se decide por quem fala mais alto, não por quem tem razão.');
-  }
-  return P;
+  if(v==='90'){ var i=new Date(hoje.getTime()-89*DIA); return {ini:i, fim:hoje, rot:'últimos 90 dias'}; }
+  if(v==='ano'){ return {ini:new Date(hoje.getFullYear(),0,1), fim:new Date(hoje.getFullYear(),11,31), rot:'ano de '+hoje.getFullYear()}; }
+  return {ini:null, fim:null, rot:'toda a base'};
+}
+/* Uma reserva pertence ao período pela DATA DE FECHAMENTO — é quando a
+   receita foi feita. Sem data de fechamento, cai pela entrega; sem as
+   duas, só entra em "toda a base". */
+function noPeriodo(r,p){
+  if(!p.ini) return true;
+  var d=r.dataFech||r.entrega; if(!d) return false;
+  d=dOnly2(d);
+  return d>=p.ini && d<=p.fim;
+}
+function filtradas(){
+  var p=periodo();
+  var fv=(document.getElementById('rt-vend')||{}).value||'';
+  var rs=dados().filter(function(r){ return r && r.cliente && noPeriodo(r,p); });
+  if(fv) rs=rs.filter(function(r){ return (r.vendedor||'—')===fv; });
+  return rs;
+}
+/* diárias da reserva; 0 quando faltam as datas */
+function diarias(r){
+  if(!r.entrega||!r.devolucao) return 0;
+  var d=Math.round((dOnly2(r.devolucao)-dOnly2(r.entrega))/DIA);
+  return d>0?d:0;
+}
+/* diárias que caem DENTRO do período (para ocupação) */
+function diariasNoPeriodo(r,p){
+  if(!r.entrega||!r.devolucao) return 0;
+  var a=dOnly2(r.entrega), b=dOnly2(r.devolucao);
+  if(p.ini){ if(a<p.ini) a=p.ini; if(b>p.fim) b=new Date(p.fim.getTime()+DIA); }
+  var d=Math.round((b-a)/DIA);
+  return d>0?d:0;
+}
+function diasDoPeriodo(p,rs){
+  if(p.ini) return Math.round((p.fim-p.ini)/DIA)+1;
+  /* "toda a base": do primeiro ao último dia com carro na rua */
+  var min=null,max=null;
+  rs.forEach(function(r){ if(!r.entrega||!r.devolucao) return;
+    var a=dOnly2(r.entrega), b=dOnly2(r.devolucao);
+    if(!min||a<min) min=a; if(!max||b>max) max=b; });
+  return (min&&max)?(Math.round((max-min)/DIA)+1):0;
+}
+/* carros por categoria, da frota cadastrada */
+function frotaPorCat(){
+  var m={};
+  try{ (MGW_RESV.categorias?MGW_RESV.categorias():[]).forEach(function(c){ m[c.key]=+c.cars||0; }); }catch(e){}
+  return m;
 }
 
-/* ═══ PLANO DE AÇÃO ═══
-   Ordenado por tamanho do vazamento: primeiro o elo que perde mais.
-   Melhorar o que não é a restrição não muda o resultado do conjunto —
-   só gera atividade. */
-function plano(F){
-  var A=[];
-  var perdas=[];
-  if(F.pLeadCot!=null) perdas.push({etapa:'lead → cotação', perda:100-F.pLeadCot, dono:'comercial'});
-  if(F.pCotVen!=null)  perdas.push({etapa:'cotação → venda', perda:100-F.pCotVen, dono:'gestao'});
-  if(F.pctIdeal!=null) perdas.push({etapa:'perfil do que entra', perda:100-F.pctIdeal, dono:'trafego'});
-  perdas.sort(function(a,b){ return b.perda-a.perda; });
-  var gargalo=perdas[0]||null;
-
-  if(gargalo) A.push({dono:gargalo.dono, prazo:'esta semana',
-    t:'Tratar o gargalo antes de qualquer outra coisa: '+gargalo.etapa,
-    d:'É onde se perde mais ('+n1(gargalo.perda)+'% do que entra nesta passagem). Toda melhoria fora daqui '+
-      'não muda o resultado do conjunto — é a teoria das restrições aplicada ao funil: melhorar o que não é a '+
-      'restrição só produz atividade.'});
-
-  if(F.pctIdeal!=null && F.pctIdeal<REGUA.idealBom) A.push({dono:'trafego', prazo:'15 dias',
-    t:'Reescrever público e criativo em cima dos quatro critérios do cliente ideal',
-    d:'Mais de 10 diárias, Orlando→Orlando, minivan e retirada em até 3 meses. Hoje só '+n1(F.pctIdeal)+'% do '+
-      'que entra cumpre os quatro. A meta do tráfego deixa de ser volume de lead e passa a ser <b>lead dentro '+
-      'do perfil</b> — sem trocar a régua, o incentivo continua premiando o número errado.'});
-
-  if(F.pLeadCot!=null && F.pLeadCot<REGUA.leadCotBom) A.push({dono:'comercial', prazo:'imediato',
-    t:'Medir e publicar o tempo de primeira resposta, por atendente e por dia',
-    d:'É a variável mais barata do funil e a que mais mexe na passagem lead→cotação. Sem medir, a discussão '+
-      'volta a ser "eu respondo rápido" contra "demora muito", que não se resolve.'});
-
-  if(F.pCotVen!=null && F.pCotVen<REGUA.cotVenBom) A.push({dono:'gestao', prazo:'30 dias',
-    t:'Testar preço em uma categoria, com resultado combinado por escrito ANTES de começar',
-    d:'Cotação que chega e não fecha é sinal de número, não de conversa. Combinar o critério antes evita que a '+
-      'leitura do resultado dependa de quem a fizer. Trinta dias, uma categoria, uma decisão.'});
-
-  if(F.roas!=null && F.roas<REGUA.roasBom) A.push({dono:'gestao', prazo:'no orçamento do mês',
-    t:'Separar verba de marca da verba de performance, com percentual declarado',
-    d:'Tráfego compra atenção enquanto se paga e para no dia em que o pagamento para. Marca acumula e faz o '+
-      'custo de aquisição cair com o tempo. Enquanto forem a mesma linha de orçamento, a de marca é sempre '+
-      'cortada primeiro, porque o retorno dela é diferido.'});
-
-  if(!F.temTrafego) A.push({dono:'trafego', prazo:'toda segunda-feira',
-    t:'Lançar investimento, cliques e leads da semana nesta aba',
-    d:'Cinco minutos. É o que transforma a reunião de tráfego de opinião em conta.'});
-
-  A.push({dono:'gestao', prazo:'mensal',
-    t:'Levar este quadro para a reunião com as três colunas visíveis',
-    d:'Cada linha vermelha tem um dono declarado. Reunião em que a perda não tem dono termina sem decisão, e o '+
-      'mesmo número reaparece no mês seguinte.'});
-  return A;
+/* ── a conta ─────────────────────────────────────────────────────── */
+function agregar(rs,chave){
+  var m={};
+  rs.forEach(function(r){
+    var k=chave(r)||'—';
+    if(!m[k]) m[k]={k:k, n:0, receita:0, custo:0, integral:0, diarias:0, comCusto:0, semCusto:0};
+    var g=m[k];
+    g.n++;
+    g.receita+=(+r.valor||0);
+    g.integral+=(+r.valorIntegral||0);
+    g.diarias+=diarias(r);
+    var c=+r.custoReal||0;
+    if(c>0){ g.custo+=c; g.comCusto++; } else g.semCusto++;
+  });
+  return Object.keys(m).map(function(k){
+    var g=m[k];
+    g.receitaComCusto=0; g.lucro=null; g.margem=null;
+    return g;
+  });
+}
+/* segunda passada: receita SÓ das reservas que têm custo, para a margem
+   sair de bases iguais dos dois lados */
+function comporMargem(rs,chave,linhas){
+  var porK={}; linhas.forEach(function(g){ porK[g.k]=g; });
+  rs.forEach(function(r){
+    var g=porK[chave(r)||'—']; if(!g) return;
+    if((+r.custoReal||0)>0) g.receitaComCusto+=(+r.valor||0);
+  });
+  linhas.forEach(function(g){
+    if(g.comCusto>0){ g.lucro=g.receitaComCusto-g.custo;
+      g.margem=g.receitaComCusto>0?(g.lucro/g.receitaComCusto*100):null; }
+  });
+  return linhas;
 }
 
-/* ═══ DESENHO ═══ */
-function temChart(){ return typeof Chart!=='undefined' && Chart && Chart.defaults; }
-function graf(id,cfg){
-  if(!temChart()) return;
-  var el=document.getElementById(id); if(!el) return;
-  try{ if(charts[id]) charts[id].destroy(); }catch(e){}
-  try{ var c=Chart.getChart?Chart.getChart(el):null; if(c) c.destroy(); }catch(e){}
-  try{ charts[id]=new Chart(el,cfg); }catch(e){ console.warn('[trafego] '+id,e); }
-}
-var VERDE='rgba(26,255,157,.85)', VERM='rgba(255,71,87,.85)',
-    AMAR='rgba(255,209,26,.85)', AZUL='rgba(59,158,255,.85)', TEAL='rgba(31,169,166,.85)';
-var EIXO={grid:{color:'rgba(255,255,255,.05)'},
-          ticks:{color:'#7B93B5',font:{size:10,family:'DM Mono'},precision:0}};
-var BASE={responsive:true,maintainAspectRatio:false,
-  plugins:{legend:{labels:{color:'#C9D8EA',font:{size:11}}}},
-  scales:{x:EIXO,y:Object.assign({beginAtZero:true},EIXO)}};
-
-function desenhar(F){
-  /* 1 · funil */
-  var etapas=[], vals=[], cores=[];
-  if(F.impressoes!=null){ etapas.push('Impressões'); vals.push(F.impressoes); cores.push('rgba(122,92,255,.85)'); }
-  if(F.cliques!=null){ etapas.push('Cliques'); vals.push(F.cliques); cores.push(AZUL); }
-  if(F.leads!=null){ etapas.push('Leads'); vals.push(F.leads); cores.push(AMAR); }
-  etapas.push('Cotações'); vals.push(F.cotacoes); cores.push(TEAL);
-  etapas.push('Reservas'); vals.push(F.vendas); cores.push(VERDE);
-  graf('tf-funil',{type:'bar',data:{labels:etapas,datasets:[{label:'quantidade',data:vals,
-    backgroundColor:cores,borderRadius:0,minBarLength:4}]},
-    options:Object.assign({indexAxis:'y'},BASE,{plugins:{legend:{display:false}},
-      scales:{x:Object.assign({beginAtZero:true,type:'logarithmic'},EIXO),y:EIXO}})});
-
-  /* 2 · onde vaza */
-  var vl=[], vv=[], vc=[];
-  if(F.pImpCliq!=null){ vl.push('Impressão → clique'); vv.push(100-F.pImpCliq); vc.push('rgba(122,92,255,.85)'); }
-  if(F.pCliqLead!=null){ vl.push('Clique → lead'); vv.push(100-F.pCliqLead); vc.push(AZUL); }
-  if(F.pLeadCot!=null){ vl.push('Lead → cotação'); vv.push(100-F.pLeadCot); vc.push(AMAR); }
-  if(F.pCotVen!=null){ vl.push('Cotação → reserva'); vv.push(100-F.pCotVen); vc.push(VERM); }
-  graf('tf-vaza',{type:'bar',data:{labels:vl,datasets:[{label:'% perdido',data:vv,
-    backgroundColor:vc,borderRadius:0,minBarLength:4}]},
-    options:Object.assign({indexAxis:'y'},BASE,{plugins:{legend:{display:false}},
-      scales:{x:Object.assign({beginAtZero:true,max:100},EIXO),y:EIXO}})});
-
-  /* 3 · custo por etapa */
-  var cl=[], cv=[];
-  if(F.cpl!=null){ cl.push('Por lead'); cv.push(+F.cpl.toFixed(2)); }
-  if(F.cpc!=null){ cl.push('Por cotação'); cv.push(+F.cpc.toFixed(2)); }
-  if(F.cac!=null){ cl.push('Por reserva (CAC)'); cv.push(+F.cac.toFixed(2)); }
-  if(F.ticket!=null){ cl.push('Ticket médio'); cv.push(+F.ticket.toFixed(2)); }
-  graf('tf-custo',{type:'bar',data:{labels:cl,datasets:[{label:'R$',data:cv,
-    backgroundColor:cl.map(function(x){ return /Ticket/.test(x)?VERDE:AMAR; }),
-    borderRadius:0,minBarLength:4}]},
-    options:Object.assign({},BASE,{plugins:{legend:{display:false}}})});
-
-  /* 4 · investimento × receita */
-  graf('tf-roas',{type:'bar',data:{labels:['Investido no anúncio','Fechado em reserva'],
-    datasets:[{label:'R$',data:[F.invest||0,F.receita||0],
-      backgroundColor:[VERM,VERDE],borderRadius:0,minBarLength:4}]},
-    options:Object.assign({},BASE,{plugins:{legend:{display:false}}})});
-
-  /* 5 · as três séries */
-  graf('tf-tempo',{type:'bar',data:{labels:['Leads','Cotações','Reservas'],
-    datasets:[{label:'no ciclo',data:[F.leads||0,F.cotacoes,F.vendas],
-      backgroundColor:[AMAR,TEAL,VERDE],borderRadius:0,minBarLength:4}]},
-    options:Object.assign({},BASE,{plugins:{legend:{display:false}}})});
-
-  /* 6 · qualidade */
-  var fora=Math.max(0,F.cotacoes-F.cotIdeal);
-  graf('tf-qualidade',{type:'doughnut',
-    data:{labels:['Dentro do perfil ideal','Fora do perfil'],
-      datasets:[{data:[F.cotIdeal,fora],backgroundColor:[VERDE,VERM],borderWidth:0}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'bottom',labels:{color:'#C9D8EA',font:{size:11}}}}}});
-}
-
-/* ═══ TELA ═══ */
-function kpi(tag,val,sub,cls){
-  return '<div class="kpi '+(cls||'kpi-o')+'"><div class="kg"></div>'
-    +'<div class="kpi-tag">'+tag+'</div><div class="kpi-val">'+val+'</div>'
-    +'<div class="kpi-sub">'+sub+'</div><div class="kpi-bar"></div></div>';
-}
 function render(){
-  var F=montar();
-  var el=function(id){ return document.getElementById(id); };
-  var per=el('tf-periodo');
-  if(per) per.textContent=F.ciclo? ('ciclo '+F.ciclo.label+' · '+F.ciclo.periodo) : '';
+  var box=document.getElementById('rt-kpis'); if(!box) return;
+  var p=periodo(), rs=filtradas();
+  var lbl=document.getElementById('rt-periodo-lbl');
+  if(lbl) lbl.textContent=rs.length+' reserva(s) · '+p.rot;
 
-  var vz=el('tf-vazio');
-  if(vz) vz.innerHTML = F.temTrafego ? '' :
-    '<div class="mgw-status" style="color:var(--gold);border-left:3px solid var(--gold);padding:12px 14px;margin-bottom:14px">'
-    +'⚠️ Sem dados de tráfego lançados para este ciclo. As colunas de cotação e reserva já estão certas — '
-    +'falta a metade de cima do funil. Clique em <b>LANÇAR DADOS DE TRÁFEGO</b> e cole os números do painel.</div>';
-
-  var K=el('tf-kpis');
-  if(K){
-    var h='';
-    h+=kpi('Investido', F.invest!=null?brl(F.invest):'—',
-           F.invest!=null?'em anúncio no ciclo':'não lançado', F.invest!=null?'kpi-o':'kpi-o');
-    h+=kpi('Leads', F.leads!=null?n0(F.leads):'—',
-           F.cpl!=null?(brl(F.cpl)+' cada'):'não lançado', 'kpi-y');
-    h+=kpi('Cotações', n0(F.cotacoes),
-           F.pLeadCot!=null?(n1(F.pLeadCot)+'% dos leads'):'do histórico do app', 'kpi-t');
-    h+=kpi('Reservas', n0(F.vendas),
-           F.pCotVen!=null?(n1(F.pCotVen)+'% das cotações'):'no ciclo', 'kpi-g');
-    h+=kpi('Receita', brl(F.receita), F.ticket!=null?('ticket '+brl(F.ticket)):'no ciclo', 'kpi-g');
-    h+=kpi('Retorno', F.roas!=null?(n1(F.roas)+'×'):'—',
-           F.roas!=null?'por real investido':'precisa do investimento', 'kpi-t');
-    h+=kpi('CAC', F.cac!=null?brl(F.cac):'—',
-           (F.cac!=null&&F.ticket)?(n1(F.cac/F.ticket*100)+'% do ticket'):'custo por reserva', 'kpi-y');
-    h+=kpi('Cliente ideal', F.pctIdeal!=null?(n1(F.pctIdeal)+'%'):'—',
-           F.cotacoes?(n0(F.cotIdeal)+' de '+n0(F.cotacoes)+' cotações'):'sem cotações', 'kpi-o');
-    K.innerHTML=h;
-  }
-
-  desenhar(F);
-
-  var ICO={bom:'✅', ruim:'⛔', atencao:'⚠️', cinza:'◻️'};
-  var COR={bom:'#1AFF9D', ruim:'#FF4757', atencao:'#FFD11A', cinza:'#7B93B5'};
-  var P=pontos(F), pe=el('tf-pontos');
-  if(pe) pe.innerHTML=P.map(function(p){
-    return '<div class="tf-ponto" style="border-left-color:'+COR[p.tipo]+'">'
-      +'<div class="tf-ponto-h"><span class="tf-ico">'+ICO[p.tipo]+'</span>'
-      +'<span class="tf-ponto-t">'+esc2(p.titulo)+'</span>'+selo(p.dono)+'</div>'
-      +(p.prova?'<div class="tf-prova">'+esc2(p.prova)+'</div>':'')
-      +(p.porque?'<div class="tf-porque">'+p.porque+'</div>':'')
-      +'</div>';
-  }).join('');
-
-  var A=plano(F), ae=el('tf-plano');
-  if(ae) ae.innerHTML=A.map(function(a,i){
-    return '<div class="tf-acao">'
-      +'<div class="tf-acao-n">'+(i+1)+'</div>'
-      +'<div><div class="tf-acao-h">'+esc2(a.t)+' '+selo(a.dono)
-      +'<span class="tf-prazo">'+esc2(a.prazo)+'</span></div>'
-      +'<div class="tf-porque">'+a.d+'</div></div></div>';
-  }).join('');
-
-  var re=el('tf-resp');
-  if(re) re.innerHTML=
-    '<div class="mgw-hint" style="margin-bottom:10px">A regra é uma só e vale sem exceção: '
-    +'<b>responde quem decide</b>. Quem não decide não pode ser cobrado pelo efeito da decisão alheia — '
-    +'cobrar assim não é rigor, é erro de atribuição virando política.</div>'
-    +'<div class="tf-tabwrap"><table class="mgrsv-table"><thead><tr>'
-    +'<th>Etapa do funil</th><th>Quem decide</th><th>O que a alavanca é</th><th>Como se mede</th>'
-    +'</tr></thead><tbody>'
-    +[['Impressão e clique','trafego','Criativo, público, verba diária','CTR e custo por clique'],
-      ['Clique → lead','trafego','Promessa do anúncio e página de destino','% de cliques que viram conversa'],
-      ['Perfil do que entra','trafego','Segmentação contra os 4 critérios','% de cotação dentro do perfil ideal'],
-      ['Verba de marca','gestao','Orçamento separado do de performance','custo de aquisição ao longo dos meses'],
-      ['Lead → cotação','comercial','Tempo de resposta e follow-up','% de leads que viram cotação'],
-      ['Qualidade do atendimento','comercial','Roteiro, objeção, retorno','conversão dentro do perfil ideal'],
-      ['Cotação → reserva','gestao','Preço de tabela e política de desconto','% de cotações que fecham'],
-      ['Mix da frota','gestao','O que existe para vender','ocupação por categoria'],
-      ['CAC contra ticket','gestao','Preço e orçamento','CAC ÷ ticket médio']
-     ].map(function(r){
-      return '<tr><td>'+r[0]+'</td><td>'+selo(r[1])+'</td><td style="font-size:.72rem">'+r[2]
-        +'</td><td style="font-size:.72rem;color:var(--chalk2)">'+r[3]+'</td></tr>';
-     }).join('')
-    +'</tbody></table></div>';
-  return F;
-}
-
-/* ═══ LANÇAMENTO DOS NÚMEROS DE TRÁFEGO ═══
-   Formulário curto de propósito. Quatro campos, e todos podem ficar em
-   branco: o que faltar aparece como "não medido", nunca como zero. */
-function lancar(){
-  carregar();
-  var c=cicloAtual(); if(!c){ alert('Não consegui identificar o ciclo em vigência.'); return; }
-  var p=T.periodos.filter(function(x){ return x.ym===c.ym; })[0] || {};
-  var v=function(x){ return (x==null||x==='')?'':x; };
-  var html=
-     '<h3 style="margin:0 0 4px">DADOS DE TRÁFEGO</h3>'
-    +'<div style="font-size:.72rem;color:var(--chalk3);line-height:1.55;margin-bottom:14px">'
-    +'Ciclo <b>'+c.label+'</b> · '+c.periodo+'.<br>'
-    +'Copie do <a href="https://painelmagiway.nexflowcrm.com.br/" target="_blank" rel="noopener" '
-    +'style="color:var(--ice)">painel do CRM</a>. Campo em branco fica como <b>não medido</b> — o app não '
-    +'inventa zero, porque zero inventado vira decisão errada.</div>'
-    +'<div class="ff"><label class="fl">Cole aqui o que você copiou do painel</label>'
-    +'<textarea class="ffi" id="tf-i-colar" rows="4" placeholder="Abra o painel, selecione o bloco de números do período, Ctrl+C e cole aqui. O app procura investimento, leads, cliques e impressões pelos rótulos e preenche os campos abaixo — você confere antes de salvar."></textarea></div>'
-    +'<div style="display:flex;gap:8px;margin:-4px 0 12px"><button class="tbtn" onclick="MGW_TRAF.lerColado()">📥 LER O QUE COLEI</button></div>'
-    +'<div id="tf-i-leitura" style="font-size:.7rem;color:var(--chalk3);line-height:1.5;margin-bottom:10px"></div>'
-    +'<div class="ff"><label class="fl">Investimento no período (R$)</label>'
-    +'<input class="ffi" id="tf-i-invest" type="number" step="0.01" placeholder="ex.: 4200" value="'+v(p.invest)+'"></div>'
-    +'<div class="ff"><label class="fl">Leads / conversas iniciadas</label>'
-    +'<input class="ffi" id="tf-i-leads" type="number" placeholder="ex.: 180" value="'+v(p.leads)+'"></div>'
-    +'<div class="ff"><label class="fl">Cliques no anúncio (opcional)</label>'
-    +'<input class="ffi" id="tf-i-cliques" type="number" placeholder="ex.: 1400" value="'+v(p.cliques)+'"></div>'
-    +'<div class="ff"><label class="fl">Impressões (opcional)</label>'
-    +'<input class="ffi" id="tf-i-impr" type="number" placeholder="ex.: 96000" value="'+v(p.impressoes)+'"></div>'
-    +'<div class="ff"><label class="fl">Observação (campanha, canal, o que mudou)</label>'
-    +'<input class="ffi" id="tf-i-obs" placeholder="opcional" value="'+esc2(v(p.obs)).replace(/"/g,'&quot;')+'"></div>'
-    +'<div style="display:flex;gap:8px;margin-top:14px">'
-    +'<button class="tbtn tbtn-g" onclick="MGW_TRAF.salvar()">SALVAR</button>'
-    +'<button class="tbtn" onclick="MGW_FROTA.fechar()">CANCELAR</button></div>';
-  MGW_FROTA.abrirModal(html);
-}
-/* ═══════════════════════════════════════════════════════════════════
-   LER O PAINEL SEM DIGITAR
-   ───────────────────────────────────────────────────────────────────
-   O app não busca no painel sozinho: para isso ele precisaria de um
-   endereço de API, de uma chave e de o painel autorizar a origem do app
-   (CORS). Nada disso existe hoje, e inventar não adianta.
-
-   O que existe é o texto: o que aparece na tela do painel pode ser
-   copiado e colado aqui. Esta rotina acha os quatro números pelos
-   rótulos, em qualquer ordem, e MOSTRA o que entendeu de cada um antes
-   de preencher — leitura de texto erra, e erro que aparece é erro que
-   se corrige. O que não for encontrado fica em branco: não medido, e
-   não zero.
-   ═══════════════════════════════════════════════════════════════════ */
-var TF_ROTULOS=[
-  {campo:'tf-i-invest', rot:'Investimento',
-   pats:[/invest(?:imento|ido)?/i,/valor\s+gasto/i,/\bgasto\b/i,/\bverba\b/i,/custo\s+total/i,/amount\s+spent/i,/\bspend\b/i]},
-  {campo:'tf-i-leads', rot:'Leads',
-   pats:[/\bleads?\b/i,/conversas?\s+iniciadas?/i,/\bconversas?\b/i,/\bcontatos?\b/i,/mensagens?\s+iniciadas?/i,/oportunidades?/i]},
-  {campo:'tf-i-cliques', rot:'Cliques',
-   pats:[/\bcliques?\b/i,/\bclicks?\b/i]},
-  {campo:'tf-i-impr', rot:'Impressões',
-   pats:[/impress(?:o|õ|oe)es|impressao|impressões|impressoes/i,/\bimpressions\b/i,/alcance/i,/\breach\b/i]}
-];
-/* pt-BR e en-US no mesmo texto: 1.400 e 1,400 são os dois mil e
-   quatrocentos, e 4.200,50 e 4,200.50 também. Decide pelo separador
-   que vem por último. */
-function tfNumero(s){
-  s=String(s||'').replace(/[R$\s%]/g,'');
-  if(!s) return null;
-  var temV=s.indexOf(',')>-1, temP=s.indexOf('.')>-1;
-  if(temV&&temP) s=(s.lastIndexOf(',')>s.lastIndexOf('.')) ? s.replace(/\./g,'').replace(',','.') : s.replace(/,/g,'');
-  else if(temV) s=(/,\d{1,2}$/.test(s)) ? s.replace(',','.') : s.replace(/,/g,'');
-  else if(temP && !/\.\d{1,2}$/.test(s)) s=s.replace(/\./g,'');
-  var n=parseFloat(s);
-  return isFinite(n)?n:null;
-}
-function lerColado(){
-  var ta=document.getElementById('tf-i-colar');
-  var out=document.getElementById('tf-i-leitura');
-  var txt=ta?String(ta.value||''):'';
-  if(!txt.trim()){ if(out) out.innerHTML='<span style="color:var(--gold)">Cole o texto do painel primeiro.</span>'; return; }
-  /* achata em linhas: rótulo e número podem estar na mesma linha
-     ("Leads 180"), em linhas seguidas, ou separados por tab/dois-pontos */
-  var linhas=txt.split(/\r?\n/).map(function(l){ return l.replace(/\s+/g,' ').trim(); }).filter(Boolean);
-  var achados=[];
-  TF_ROTULOS.forEach(function(f){
-    var val=null, de='';
-    for(var i=0;i<linhas.length && val===null;i++){
-      var bate=f.pats.some(function(p){ return p.test(linhas[i]); });
-      if(!bate) continue;
-      /* número na mesma linha, depois do rótulo */
-      var resto=linhas[i];
-      f.pats.forEach(function(p){ var m=resto.match(p); if(m) resto=resto.slice(resto.indexOf(m[0])+m[0].length); });
-      var m1=resto.match(/-?[\d][\d.,]*/);
-      if(m1){ val=tfNumero(m1[0]); de=linhas[i]; }
-      /* senão, primeiro número das duas linhas seguintes */
-      if(val===null){
-        for(var j=i+1;j<Math.min(i+3,linhas.length) && val===null;j++){
-          /* o número sozinho na linha de baixo, com ou sem moeda na frente:
-             "212", "R$ 3.750,90", "$5,480.25", "US$ 1.200" */
-          var m2=linhas[j].match(/^(?:R\$|US\$|\$|€)?\s*-?[\d][\d.,]*$/);
-          if(m2){ val=tfNumero(m2[0]); de=linhas[i]+' → '+linhas[j]; }
-        }
-      }
+  /* seletor de vendedor monta-se do que existe */
+  var sel=document.getElementById('rt-vend');
+  if(sel){
+    var vs={}; dados().forEach(function(r){ if(r&&r.cliente) vs[r.vendedor||'—']=1; });
+    var ordem=Object.keys(vs).sort(), assin=ordem.join(',');
+    if(sel.getAttribute('data-assin')!==assin){
+      var atual=sel.value;
+      sel.innerHTML='<option value="">Todos os vendedores</option>'+
+        ordem.map(function(v){ return '<option value="'+esc3(v)+'">'+esc3(v)+'</option>'; }).join('');
+      sel.setAttribute('data-assin',assin);
+      if(atual) sel.value=atual;
     }
-    achados.push({campo:f.campo, rot:f.rot, val:val, de:de});
-  });
-  var n=0;
-  achados.forEach(function(a){
-    if(a.val===null) return;
-    var el=document.getElementById(a.campo); if(el){ el.value=a.val; n++; }
-  });
-  if(out){
-    out.innerHTML=achados.map(function(a){
-      return a.val===null
-        ? ('• <b>'+a.rot+'</b>: <span style="color:var(--gold)">não achei no que você colou</span> — digite abaixo, ou deixe em branco para ficar como não medido.')
-        : ('• <b>'+a.rot+'</b>: <span style="color:var(--ice)">'+a.val.toLocaleString('pt-BR')+'</span>'+
-           (a.de?(' <span style="opacity:.6">— li de "'+esc2(a.de).slice(0,70)+'"</span>'):''));
-    }).join('<br>')+'<br><b>Confira os quatro antes de salvar.</b>';
   }
-  if(typeof toast==='function') toast(n?('📥 '+n+' campo(s) preenchido(s) do painel'):'Não achei os rótulos no texto colado', n?'':'orange');
-  return n;
-}
 
-function salvar(){
-  var c=cicloAtual(); if(!c) return;
-  var g=function(id){ var e=document.getElementById(id); if(!e) return null;
-    var s=String(e.value||'').trim(); return s===''?null:s; };
-  var num=function(id){ var s=g(id); if(s==null) return null; var n=parseFloat(String(s).replace(',','.'));
-    return isFinite(n)?n:null; };
-  carregar();
-  T.periodos=T.periodos.filter(function(x){ return x.ym!==c.ym; });
-  T.periodos.push({ ym:c.ym, invest:num('tf-i-invest'), leads:num('tf-i-leads'),
-    cliques:num('tf-i-cliques'), impressoes:num('tf-i-impr'),
-    obs:g('tf-i-obs')||'', em:new Date().toISOString() });
-  gravar();
-  try{ MGW_FROTA.fechar(); }catch(e){}
-  render();
-  if(typeof toast==='function') toast('📈 Dados de tráfego salvos para '+c.label);
+  var aviso=document.getElementById('rt-aviso');
+  if(!rs.length){
+    box.innerHTML='';
+    ['rt-cat-body','rt-vend-body','rt-ant-body'].forEach(function(id){
+      var t=document.getElementById(id); if(t) t.innerHTML=''; });
+    if(aviso) aviso.innerHTML='<div class="mgw-hint" style="border-left:3px solid var(--gold)">Nenhuma reserva em '+esc3(p.rot)+'. Troque o período ou carregue a planilha na aba Reservas.</div>';
+    return;
+  }
+
+  var receita=0, custo=0, integral=0, dias=0, semCusto=0, comCusto=0, receitaCC=0, antSoma=0, antN=0;
+  rs.forEach(function(r){
+    receita+=(+r.valor||0);
+    integral+=(+r.valorIntegral||0);
+    dias+=diarias(r);
+    var c=+r.custoReal||0;
+    if(c>0){ custo+=c; comCusto++; receitaCC+=(+r.valor||0); } else semCusto++;
+    if(r.dataFech&&r.entrega){
+      var a=Math.round((dOnly2(r.entrega)-dOnly2(r.dataFech))/DIA);
+      if(a>=0&&a<400){ antSoma+=a; antN++; }
+    }
+  });
+  var lucro=comCusto?(receitaCC-custo):null;
+  var margem=(comCusto&&receitaCC>0)?(lucro/receitaCC*100):null;
+  var ticket=rs.length?(receita/rs.length):0;
+  var diaria=dias?(receita/dias):null;
+  var desconto=(integral>0)?(integral-receita):null;
+
+  function kpi(rot,val,sub){
+    return '<div class="kpi"><div class="kpi-tag">'+rot+'</div><div class="kpi-val">'+val+'</div>'+
+           (sub?('<div style="font-size:.6rem;color:var(--chalk3);margin-top:2px">'+sub+'</div>'):'')+'</div>';
+  }
+  box.innerHTML=
+     kpi('Receita', brl0(receita), rs.length+' reserva(s)')
+    +kpi('Custo real', comCusto?brl0(custo):'não medido', comCusto+' de '+rs.length+' com custo')
+    +kpi('Lucro bruto', lucro==null?'não medido':brl0(lucro), lucro==null?'falta o custo':'sobre as '+comCusto+' medidas')
+    +kpi('Margem', pct(margem), margem==null?'falta o custo':'lucro ÷ receita medida')
+    +kpi('Ticket médio', brl0(ticket), 'por reserva')
+    +kpi('Diária média', diaria==null?'—':brl0(diaria), n0(dias)+' diária(s) vendida(s)')
+    +kpi('Antecedência', antN?(n1(antSoma/antN)+' dias'):'—', antN?('média de '+antN+' reserva(s)'):'sem datas')
+    +kpi('Desconto dado', desconto==null?'—':brl0(desconto), (desconto!=null&&integral>0)?(n1(desconto/integral*100)+'% da tabela cheia'):'sem valor integral');
+
+  /* Reserva que custou mais do que rendeu. Diluída na média ela some;
+     nomeada, é a lista do que precisa ser conferido na planilha ou
+     renegociado. Sempre uma das duas coisas — nunca nenhuma. */
+  var negativas=rs.filter(function(r){
+    var c=+r.custoReal||0; return c>0 && c>(+r.valor||0);
+  }).sort(function(a,b){ return ((+a.valor||0)-(+a.custoReal||0))-((+b.valor||0)-(+b.custoReal||0)); });
+  var prejuizo=negativas.reduce(function(a,r){ return a+((+r.custoReal||0)-(+r.valor||0)); },0);
+
+  if(aviso){
+    var partes=[];
+    if(semCusto) partes.push('<div class="mgw-hint" style="border-left:3px solid var(--gold);background:rgba(255,209,26,.07)">⚠ <b>'+
+      semCusto+' de '+rs.length+' reserva(s) sem CUSTO REAL na planilha</b> — R$ '+
+      (receita-receitaCC).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+
+      ' de receita que não entra em nenhuma conta de margem desta tela. Preencha a coluna CUSTO REAL R$ e a margem passa a valer para a base inteira.</div>');
+    if(negativas.length) partes.push('<div class="mgw-hint" style="border-left:3px solid var(--fire);background:rgba(255,0,0,.06)">🔴 <b>'+
+      negativas.length+' reserva(s) com custo MAIOR que o valor da venda</b> — '+brl(prejuizo)+' de prejuízo, que puxa a margem de todas as outras para baixo:<br>'+
+      negativas.slice(0,8).map(function(r){
+        return '• <b>'+esc3(r.cliente)+'</b> · '+esc3(r.cat||r.modelo||'—')+' · vendeu '+brl(r.valor)+
+               ' · custou '+brl(r.custoReal)+' · <span style="color:var(--fire)">'+brl((+r.valor||0)-(+r.custoReal||0))+'</span>';
+      }).join('<br>')+
+      (negativas.length>8?('<br>… e mais '+(negativas.length-8)+'.'):'')+
+      '<br>Ou o custo foi digitado errado na planilha, ou essa venda saiu no prejuízo. Vale conferir uma por uma.</div>');
+    aviso.innerHTML=partes.join('');
+  }
+
+  /* ── por categoria, com ocupação ── */
+  var frota=frotaPorCat(), diasP=diasDoPeriodo(p,rs);
+  var cats=comporMargem(rs,function(r){ return r.cat; }, agregar(rs,function(r){ return r.cat; }));
+  cats.forEach(function(g){ g.diariasP=0; g.carros=frota[g.k]||0; g.ocup=null; });
+  rs.forEach(function(r){
+    var g=cats.filter(function(x){ return x.k===(r.cat||'—'); })[0];
+    if(g) g.diariasP+=diariasNoPeriodo(r,p);
+  });
+  cats.forEach(function(g){
+    var cap=g.carros*diasP;
+    if(cap>0) g.ocup=g.diariasP/cap*100;
+  });
+  cats.sort(function(a,b){ return b.receita-a.receita; });
+  var th=document.getElementById('rt-cat-head');
+  if(th) th.innerHTML='<tr><th>CATEGORIA</th><th>RESERVAS</th><th>DIÁRIAS VENDIDAS</th><th>RECEITA</th><th>CUSTO</th><th>LUCRO BRUTO</th><th>MARGEM</th><th>DIÁRIA MÉDIA</th><th>CARROS</th><th>OCUPAÇÃO</th></tr>';
+  var tb=document.getElementById('rt-cat-body');
+  if(tb) tb.innerHTML=cats.map(function(g){
+    var dm=g.diarias?(g.receita/g.diarias):null;
+    var cor=(g.margem==null)?'var(--chalk3)':(g.margem>=30?'var(--ice)':(g.margem>=15?'var(--gold)':'var(--fire)'));
+    var corOc=(g.ocup==null)?'var(--chalk3)':(g.ocup>=70?'var(--ice)':(g.ocup>=40?'var(--gold)':'var(--fire)'));
+    return '<tr><td class="mgrsv-nome">'+esc3(g.k)+'</td><td>'+g.n+'</td><td>'+n0(g.diarias)+'</td>'+
+      '<td class="mgrsv-val">'+brl(g.receita)+'</td>'+
+      '<td class="mgrsv-mono">'+(g.comCusto?brl(g.custo):'—')+'</td>'+
+      '<td class="mgrsv-val">'+(g.lucro==null?'—':brl(g.lucro))+'</td>'+
+      '<td class="mgrsv-mono" style="color:'+cor+'">'+pct(g.margem)+(g.semCusto?(' <span style="color:var(--chalk3)">('+g.semCusto+' s/ custo)</span>'):'')+'</td>'+
+      '<td class="mgrsv-mono">'+(dm==null?'—':brl(dm))+'</td>'+
+      '<td class="mgrsv-mono">'+(g.carros||'—')+'</td>'+
+      '<td class="mgrsv-mono" style="color:'+corOc+'">'+(g.ocup==null?'—':pct(g.ocup))+'</td></tr>';
+  }).join('')+'<tr style="border-top:2px solid var(--edge);font-weight:700"><td>TOTAL</td><td>'+rs.length+'</td><td>'+n0(dias)+
+    '</td><td class="mgrsv-val">'+brl(receita)+'</td><td class="mgrsv-mono">'+(comCusto?brl(custo):'—')+
+    '</td><td class="mgrsv-val">'+(lucro==null?'—':brl(lucro))+'</td><td class="mgrsv-mono">'+pct(margem)+
+    '</td><td class="mgrsv-mono">'+(diaria==null?'—':brl(diaria))+'</td><td></td><td></td></tr>';
+
+  /* ── por vendedor ── */
+  var vends=comporMargem(rs,function(r){ return r.vendedor||'—'; }, agregar(rs,function(r){ return r.vendedor||'—'; }));
+  vends.sort(function(a,b){ return b.receita-a.receita; });
+  var thv=document.getElementById('rt-vend-head');
+  if(thv) thv.innerHTML='<tr><th>VENDEDOR</th><th>RESERVAS</th><th>RECEITA</th><th>% DA RECEITA</th><th>TICKET MÉDIO</th><th>LUCRO BRUTO</th><th>MARGEM</th></tr>';
+  var tbv=document.getElementById('rt-vend-body');
+  if(tbv) tbv.innerHTML=vends.map(function(g){
+    var cor=(g.margem==null)?'var(--chalk3)':(g.margem>=30?'var(--ice)':(g.margem>=15?'var(--gold)':'var(--fire)'));
+    return '<tr><td class="mgrsv-nome">'+esc3(g.k)+'</td><td>'+g.n+'</td>'+
+      '<td class="mgrsv-val">'+brl(g.receita)+'</td>'+
+      '<td class="mgrsv-mono">'+(receita>0?pct(g.receita/receita*100):'—')+'</td>'+
+      '<td class="mgrsv-mono">'+brl(g.n?g.receita/g.n:0)+'</td>'+
+      '<td class="mgrsv-val">'+(g.lucro==null?'—':brl(g.lucro))+'</td>'+
+      '<td class="mgrsv-mono" style="color:'+cor+'">'+pct(g.margem)+(g.semCusto?(' <span style="color:var(--chalk3)">('+g.semCusto+' s/ custo)</span>'):'')+'</td></tr>';
+  }).join('');
+
+  /* ── antecedência ── */
+  var faixas=[{r:'Mesmo dia / até 3 dias',a:0,b:3},{r:'4 a 7 dias',a:4,b:7},{r:'8 a 15 dias',a:8,b:15},
+              {r:'16 a 30 dias',a:16,b:30},{r:'31 a 60 dias',a:31,b:60},{r:'61 a 90 dias',a:61,b:90},
+              {r:'mais de 90 dias',a:91,b:9999}];
+  faixas.forEach(function(f){ f.n=0; f.receita=0; f.dias=0; });
+  var semAnt=0;
+  rs.forEach(function(r){
+    if(!r.dataFech||!r.entrega){ semAnt++; return; }
+    var a=Math.round((dOnly2(r.entrega)-dOnly2(r.dataFech))/DIA);
+    if(a<0){ semAnt++; return; }
+    for(var i=0;i<faixas.length;i++){ if(a>=faixas[i].a&&a<=faixas[i].b){
+      faixas[i].n++; faixas[i].receita+=(+r.valor||0); faixas[i].dias+=diarias(r); break; } }
+  });
+  var tha=document.getElementById('rt-ant-head');
+  if(tha) tha.innerHTML='<tr><th>ANTECEDÊNCIA</th><th>RESERVAS</th><th>% DO TOTAL</th><th>RECEITA</th><th>TICKET MÉDIO</th><th>DIÁRIAS MÉDIAS</th></tr>';
+  var tba=document.getElementById('rt-ant-body');
+  var comAnt=rs.length-semAnt;
+  if(tba) tba.innerHTML=faixas.map(function(f){
+    if(!f.n) return '';
+    return '<tr><td class="mgrsv-nome">'+f.r+'</td><td>'+f.n+'</td>'+
+      '<td class="mgrsv-mono">'+(comAnt?pct(f.n/comAnt*100):'—')+'</td>'+
+      '<td class="mgrsv-val">'+brl(f.receita)+'</td>'+
+      '<td class="mgrsv-mono">'+brl(f.receita/f.n)+'</td>'+
+      '<td class="mgrsv-mono">'+n1(f.dias/f.n)+'</td></tr>';
+  }).join('')+(semAnt?('<tr><td colspan="6" style="color:var(--chalk3);font-size:.7rem;padding-top:10px">'+
+    semAnt+' reserva(s) sem data de fechamento ou de entrega — fora desta conta.</td></tr>'):'');
 }
 
 /* Leitura em texto, para colar na reunião ou no WhatsApp. */
-function exportar(){
-  var F=render();
-  var L=[];
-  L.push('MAGIWAY · TRÁFEGO × COMERCIAL');
-  L.push(F.ciclo? (F.ciclo.label+' · '+F.ciclo.periodo) : '');
-  L.push('');
-  L.push('FUNIL');
-  if(F.impressoes!=null) L.push('  impressões .... '+n0(F.impressoes));
-  if(F.cliques!=null)    L.push('  cliques ....... '+n0(F.cliques));
-  if(F.leads!=null)      L.push('  leads ......... '+n0(F.leads));
-  L.push('  cotações ...... '+n0(F.cotacoes)+(F.pLeadCot!=null?('  ('+n1(F.pLeadCot)+'% dos leads)'):''));
-  L.push('  reservas ...... '+n0(F.vendas)+(F.pCotVen!=null?('  ('+n1(F.pCotVen)+'% das cotações)'):''));
-  L.push('');
-  L.push('DINHEIRO');
-  if(F.invest!=null) L.push('  investido ..... '+brl(F.invest));
-  L.push('  receita ....... '+brl(F.receita));
-  if(F.roas!=null)   L.push('  retorno ....... '+n1(F.roas)+'x por real');
-  if(F.cac!=null)    L.push('  CAC ........... '+brl(F.cac));
-  if(F.ticket!=null) L.push('  ticket médio .. '+brl(F.ticket));
-  L.push('');
-  L.push('PONTOS');
-  pontos(F).forEach(function(p){
-    L.push('  ['+(DONO[p.dono]||DONO.gestao).rot+'] '+
-      (p.tipo==='bom'?'OK   ':p.tipo==='ruim'?'GRAVE':p.tipo==='atencao'?'ATEN ':'—    ')+' '+p.titulo);
-    if(p.prova) L.push('         '+p.prova);
-  });
-  L.push('');
-  L.push('PLANO');
-  plano(F).forEach(function(a,i){
-    L.push('  '+(i+1)+'. ['+(DONO[a.dono]||DONO.gestao).rot+' · '+a.prazo+'] '+a.t);
-  });
-  var txt=L.join('\n');
-  MGW_FROTA.abrirModal(
-    '<h3 style="margin:0 0 10px">LEITURA DO FUNIL</h3>'
-   +'<textarea class="fi" readonly style="width:100%;height:340px;font-family:\'DM Mono\',monospace;'
-   +'font-size:.68rem;line-height:1.6;resize:vertical" id="tf-txt">'+esc2(txt)+'</textarea>'
-   +'<div style="display:flex;gap:8px;margin-top:12px">'
-   +'<button class="tbtn tbtn-g" onclick="MGW_TRAF.copiar()">📋 COPIAR</button>'
-   +'<button class="tbtn" onclick="MGW_FROTA.fechar()">FECHAR</button></div>');
-}
 function copiar(){
-  var t=document.getElementById('tf-txt'); if(!t) return;
-  t.select(); t.setSelectionRange(0,99999);
-  var ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
-  if(typeof toast==='function') toast(ok?'Copiado':'Selecione e copie com Ctrl+C');
+  var p=periodo();
+  var linhas=['MAGIWAY · RENTABILIDADE — '+p.rot, ''];
+  var kp=document.getElementById('rt-kpis');
+  if(kp) Array.prototype.forEach.call(kp.querySelectorAll('.kpi'), function(k){
+    var t=(k.querySelector('.kpi-tag')||{}).textContent||'';
+    var v=(k.querySelector('.kpi-val')||{}).textContent||'';
+    linhas.push(t+': '+v);
+  });
+  linhas.push('');
+  ['rt-cat','rt-vend','rt-ant'].forEach(function(pre){
+    var h=document.getElementById(pre+'-head'), b=document.getElementById(pre+'-body');
+    if(!h||!b||!b.innerHTML.trim()) return;
+    linhas.push(Array.prototype.map.call(h.querySelectorAll('th'),function(x){return x.textContent;}).join(' · '));
+    Array.prototype.forEach.call(b.querySelectorAll('tr'), function(tr){
+      var tds=Array.prototype.map.call(tr.querySelectorAll('td'),function(x){return x.textContent.trim();});
+      if(tds.length>1) linhas.push(tds.join(' · '));
+    });
+    linhas.push('');
+  });
+  var txt=linhas.join('\n');
+  try{ navigator.clipboard.writeText(txt);
+       if(typeof toast==='function') toast('📋 Leitura copiada'); }
+  catch(e){ alert(txt); }
+  return txt;
 }
 
-window.MGW_TRAF={ render:render, lancar:lancar, salvar:salvar, exportar:exportar,
-  lerColado:lerColado, lerTexto:tfNumero,
-                  copiar:copiar, dados:montar, regua:REGUA };
+window.MGW_RENTAB={ render:render, copiar:copiar,
+  /* expostos para teste */
+  periodo:periodo, filtradas:filtradas, diarias:diarias, diariasNoPeriodo:diariasNoPeriodo };
 
-/* Encadeia no roteador sem apagar quem já estava lá. */
-window.onNavChange=(function(){
+/* entra na navegação sem mexer no roteador: encadeia no handler existente */
+(function(){
   var prev=window.onNavChange;
-  return function(id){
-    if(typeof prev==='function'){ try{ prev(id); }catch(e){ console.warn('[trafego] handler anterior',e); } }
-    if(id==='trafego'){ try{ render(); }catch(e){ console.warn('[trafego] render',e); } }
+  window.onNavChange=function(id){
+    if(typeof prev==='function'){ try{ prev(id); }catch(e){ console.warn('[rentab] handler anterior',e); } }
+    if(id==='rentab'){ try{ render(); }catch(e){ console.warn('[rentab] render',e); } }
   };
 })();
 })();
