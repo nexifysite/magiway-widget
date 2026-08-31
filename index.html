@@ -6211,6 +6211,37 @@ Data de retirada = din"></textarea>
   <div class="mgw-hint">📋 Colunas idênticas à aba <b>📦 HISTÓRICO</b> da planilha FECHAMENTO MAGIWAY, ordenadas pela <b>data de fechamento</b> (mais antiga primeiro). Atualiza sozinha a partir das abas <b>HISTÓRICO</b> e <b>FECHAMENTOS</b>.<br>
     <span style="color:#8CC8FF">Linhas em azul</span> = fechadas no mês em vigência (dia 13 → dia 12), as que contam no Dashboard e nas Metas. <b>APP</b> = criada aqui.<br>
     Cada linha da planilha é uma linha aqui — em branco ou não, repetida ou não. O que a planilha tem, o app mostra.</div>
+  <div id="mgrsv-arqaviso"></div>
+  <!-- Caminho de emergência: quando a leitura online não confere, a
+       planilha baixada resolve sem depender de compartilhamento, de gviz
+       nem de cache. Fica fechado para não virar mais um botão na barra. -->
+  <details style="margin:10px 0">
+    <summary style="cursor:pointer;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--chalk3)">🧹 Zerar e carregar da planilha baixada</summary>
+    <div class="card" style="margin-top:8px">
+      <div class="card-sub" style="margin-bottom:10px">
+        Apaga <b>todas</b> as reservas do app e reconstrói a base só com o que vier daqui — linha por linha, sem critério nenhum. Use quando o número da tela não bater com o da planilha.<br>
+        <b>De onde tirar:</b> na planilha, <i>Arquivo → Fazer download → Valores separados por vírgula (.csv)</i> — uma vez com a aba 📋 FECHAMENTOS aberta, outra com a 📦 HISTÓRICO. Ou selecione as linhas na aba, copie e cole no campo de baixo.
+      </div>
+      <div class="ff" style="max-width:520px">
+        <label class="eml">1. Arquivos CSV baixados (pode escolher os dois de uma vez)</label>
+        <input type="file" id="mgrsv-arqfile" class="ffi" accept=".csv,text/csv,text/plain" multiple>
+        <div class="mgw-hint" style="margin:4px 0 12px">O app reconhece a aba pelo nome do arquivo: o que tiver <b>HIST</b> no nome entra como histórico, o resto como fechamento do mês.</div>
+
+        <label class="eml">2. Ou cole aqui o conteúdo copiado da aba</label>
+        <textarea id="mgrsv-arqtxt" class="ffi" rows="5" placeholder="Cole aqui as linhas copiadas da planilha (Ctrl+C na aba, Ctrl+V aqui)"></textarea>
+        <label class="eml" style="margin-top:8px">O que você colou é de qual aba?</label>
+        <select id="mgrsv-arqaba" class="ffi">
+          <option value="fech">📋 FECHAMENTOS — reservas do mês em vigência</option>
+          <option value="hist">📦 HISTÓRICO — meses anteriores</option>
+        </select>
+      </div>
+      <div id="mgrsv-arqpreview" class="mgw-hint" style="margin-top:10px"></div>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+        <button class="mgw-btn" onclick="MGW_RESV.conferirArquivo()">👁️ Conferir antes (não apaga nada)</button>
+        <button class="form-btn" style="background:linear-gradient(135deg,#FF0000,#b30000)" onclick="MGW_RESV.zerarECarregar()">🧹 ZERAR TUDO E CARREGAR</button>
+      </div>
+    </div>
+  </details>
   <div id="mgrsv-espelho-aviso"></div>
   <div id="mgrsv-regra"></div>
   <div id="mgrsv-status" class="mgw-status"></div>
@@ -23386,12 +23417,39 @@ function numOf(c){ if(!c) return 0; var v=cellV(c); if(typeof v==='number') retu
   var f=parseFloat(s); return isFinite(f)?f:0; }
 /* isHist=true → coluna V é MÊS REFERÊNCIA; false → V é OBSERVAÇÕES e W é o voucher */
 var _recusadas=0;   /* linhas sem nada que as identifique (total/rodapé) */
+/* ── Onde a tabela realmente começa ─────────────────────────────────
+   As duas abas NÃO começam na linha 1. Em cima há um título e um aviso
+   ("Campos com fundo dourado são calculados automaticamente…"), e o
+   CABEÇALHO de verdade — DATA FECH. · VENDEDOR · NOME DO CLIENTE — está
+   na linha 3. O gviz é chamado com headers=1: ele toma a linha 1 como
+   cabeçalho e devolve o aviso e o cabeçalho verdadeiro como se fossem
+   reserva. Pior: com a coluna A cheia de texto nessas duas linhas, o
+   gviz tipa a coluna inteira como TEXTO e as datas voltam sem tipo.
+   Enquanto existia peneira isso passava batido — as duas linhas caíam
+   por falta de valor. Sem peneira, o cabeçalho entraria como um cliente
+   chamado "NOME DO CLIENTE". Então achamos a linha de cabeçalho pelo que
+   ela diz e só lemos o que vem depois dela. */
+function ehLinhaCabecalho(g){
+  var a=norm(cellF(g(0))).replace(/\s+/g,' ');
+  var b=norm(cellF(g(1))).replace(/\s+/g,' ');
+  var c2=norm(cellF(g(2))).replace(/\s+/g,' ');
+  if(b==='vendedor' && c2.indexOf('nome do cliente')===0) return true;
+  if(a.indexOf('data')===0 && a.indexOf('fech')>0 && b==='vendedor') return true;
+  return false;
+}
 function rowsFromResp(resp,isHist){
   var out=[];
   if(!resp||!resp.table||!resp.table.rows) return out;
   var rows=resp.table.rows;
-  for(var i=0;i<rows.length;i++){
+  /* Se o cabeçalho aparecer entre as linhas, tudo até ele é enfeite. */
+  var inicio=0;
+  for(var h=0; h<rows.length && h<15; h++){
+    var ch=rows[h].c||[];
+    if(ehLinhaCabecalho(function(j){ return ch[j]||null; })){ inicio=h+1; break; }
+  }
+  for(var i=inicio;i<rows.length;i++){
     var c=rows[i].c||[]; var g=function(j){ return c[j]||null; };
+    if(ehLinhaCabecalho(g)) continue;   /* cabeçalho repetido no meio da aba */
     var entrega=parseDate(g(6)); var nome=cellF(g(2)).trim();
     /* ── o que faz uma linha ser reserva ──────────────────────────────
        Não faz mais peneira. O app é ESPELHO da aba: a linha entra como
@@ -23957,6 +24015,19 @@ function autoLigado(){ loadPlan(); return PLAN.auto!==false; }
 
 function loadAll(force){
   if(LOADING) return;
+  /* Arquivo carregado manda: a base é ele, e a internet fica de fora.
+     Nada de rede aqui — é justamente o ponto de ter baixado a planilha. */
+  loadArq();
+  if(arqAtivo()){
+    DATA=processarReservas(arqRows());
+    LOADED=true; assignCars(); renderAll();
+    try{ avisoArquivo(); }catch(e){}
+    var somaA=DATA.reduce(function(a,r){ return a+(+r.valor||0); },0);
+    setStatuses('📄 Base do arquivo — '+DATA.length+' reserva(s) · R$ '+
+      somaA.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+
+      ' · leitura online suspensa.',false);
+    return;
+  }
   religarSeDesligada();   /* nunca sair daqui sem ler a planilha */
   LOADING=true; setStatuses('⏳ Lendo a planilha de fechamento…',false);
   /* INCREMENTAL: parte do que já conhecemos e só AGREGA reservas novas.
@@ -24038,6 +24109,186 @@ function ordenarPorFechamento(rows){
 }
 
 function refresh(){ LOADING=false; syncLocais(); loadAll(true); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   ZERAR E CARREGAR DA PLANILHA BAIXADA
+   ───────────────────────────────────────────────────────────────────
+   Ler a planilha pela internet depende de três coisas que o app não
+   controla: o compartilhamento continuar em "qualquer pessoa com o
+   link", o gviz devolver a aba inteira e o navegador não estar servindo
+   uma cópia velha do cache. Quando qualquer uma falha, a tela mostra um
+   número antigo e não há como saber que ele é antigo.
+
+   Este caminho não depende de nenhuma das três. A planilha é baixada em
+   CSV (ou copiada e colada direto da aba), o app APAGA tudo o que tem de
+   reserva e reconstrói a base só com o que veio no arquivo — linha por
+   linha, em branco ou não, repetida ou não.
+
+   Enquanto houver arquivo carregado a leitura online fica suspensa, com
+   aviso na tela e um botão para voltar. Sem isso as reservas apareceriam
+   duas vezes: uma do arquivo, outra da internet.
+   ═══════════════════════════════════════════════════════════════════ */
+var ARQ_K='gs_arquivo_v1';
+var ARQ=null;   /* {ts, nomes:[], linhas:[serializadas]} */
+function loadArq(){
+  try{ var s=localStorage.getItem(ARQ_K); ARQ=s?JSON.parse(s):null;
+       if(ARQ&&(!ARQ.linhas||!ARQ.linhas.length)) ARQ=null; }catch(e){ ARQ=null; }
+  return ARQ;
+}
+function arqAtivo(){ return !!(ARQ&&ARQ.linhas&&ARQ.linhas.length); }
+function arqRows(){
+  return (ARQ.linhas||[]).map(function(r){
+    r=Object.assign({},r);
+    r.dataFech=r.dataFech?new Date(r.dataFech):null;
+    r.entrega=r.entrega?new Date(r.entrega):null;
+    r.devolucao=r.devolucao?new Date(r.devolucao):null;
+    r.cat=categoryOf(r.modelo,r.obs);
+    return r;
+  });
+}
+
+/* Texto → matriz. Aceita o CSV baixado do Sheets e o TSV do copiar-colar.
+   O separador é decidido pela primeira linha: o que aparecer mais. */
+function tabelaDeTexto(txt){
+  txt=String(txt||'').replace(/^﻿/,'');
+  var prim=txt.split('\n')[0]||'';
+  var sep=((prim.match(/\t/g)||[]).length > (prim.match(/,/g)||[]).length) ? '\t' : ',';
+  var rows=[],row=[],cur='',q=false;
+  for(var i=0;i<txt.length;i++){
+    var c=txt[i];
+    if(q){ if(c==='"'){ if(txt[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=c; }
+    else if(c==='"') q=true;
+    else if(c===sep){ row.push(cur); cur=''; }
+    else if(c==='\n'){ row.push(cur); cur=''; rows.push(row); row=[]; }
+    else if(c!=='\r') cur+=c;
+  }
+  row.push(cur); rows.push(row);
+  return rows;
+}
+/* Matriz → reservas, pelas MESMAS colunas de rowsFromResp. Uma célula de
+   texto vira {f:...} para reaproveitar parseDate/parseTime/numOf tal e
+   qual, sem uma segunda leitura que possa divergir da primeira. */
+function reservasDeTabela(mat,isHist){
+  function cel(v){ v=(v==null?'':String(v)); return v.trim()===''?null:{v:v,f:v}; }
+  var resp={table:{rows:mat.map(function(l){
+    var n=Math.max(23,l.length), c=[];
+    for(var j=0;j<n;j++) c.push(cel(l[j]));
+    return {c:c};
+  })}};
+  return rowsFromResp(resp,isHist);
+}
+
+function zerarECarregar(textos){
+  /* textos: [{texto, hist:bool, nome}] */
+  var novas=[], nomes=[];
+  textos.forEach(function(t){
+    var linhas=reservasDeTabela(tabelaDeTexto(t.texto), !!t.hist);
+    linhas.forEach(function(r){ r._local=false; novas.push(r); });
+    nomes.push((t.nome||'colado')+' ('+linhas.length+')');
+  });
+  if(!novas.length) throw new Error('Não achei nenhuma reserva nesse conteúdo.');
+
+  /* ── apaga o que existia ── */
+  try{ if(window.MGW_RES) MGW_RES.save([]); }catch(e){}       /* reservas criadas no app */
+  try{ localStorage.removeItem(CACHE_KEY); }catch(e){}         /* cópia em cache */
+  try{ localStorage.removeItem(OVR_RESV_KEY); }catch(e){}      /* edições manuais */
+  try{ localStorage.removeItem(EXCL_RESV_KEY); }catch(e){}     /* exclusões */
+  try{ localStorage.removeItem(OVR_KEY); }catch(e){}           /* remanejamento de carro */
+  try{ localStorage.removeItem(FLAGS_KEY); }catch(e){}         /* marcações */
+  try{ loadOverrides(); loadFlags(); }catch(e){}
+
+  ARQ={ts:Date.now(), nomes:nomes, linhas:serialize(novas)};
+  try{ localStorage.setItem(ARQ_K, JSON.stringify(ARQ)); }catch(e){
+    ARQ=null; throw new Error('A base não coube no armazenamento do navegador.');
+  }
+  LOADING=false;
+  loadAll(true);
+  return novas.length;
+}
+
+/* Junta o que está nos campos da tela num só lote. Devolve Promise porque
+   ler arquivo é assíncrono; colar não é. */
+function coletarTextos(){
+  var lote=[];
+  var ta=document.getElementById('mgrsv-arqtxt');
+  var sel=document.getElementById('mgrsv-arqaba');
+  var txt=ta?String(ta.value||'').trim():'';
+  if(txt) lote.push({texto:txt, hist:(sel&&sel.value==='hist'), nome:'colado'});
+  var inp=document.getElementById('mgrsv-arqfile');
+  var files=(inp&&inp.files)?Array.prototype.slice.call(inp.files):[];
+  if(!files.length) return Promise.resolve(lote);
+  return Promise.all(files.map(function(f){
+    return new Promise(function(res){
+      var fr=new FileReader();
+      fr.onload=function(){ res({texto:String(fr.result||''), hist:/hist/i.test(f.name), nome:f.name}); };
+      fr.onerror=function(){ res(null); };
+      fr.readAsText(f,'utf-8');
+    });
+  })).then(function(lidos){
+    lidos.forEach(function(x){ if(x&&x.texto.trim()) lote.push(x); });
+    return lote;
+  });
+}
+/* Mostra o que ENTRARIA, antes de apagar qualquer coisa. */
+function conferirArquivo(){
+  var el=document.getElementById('mgrsv-arqpreview'); if(el) el.textContent='Lendo…';
+  return coletarTextos().then(function(lote){
+    if(!lote.length){ if(el) el.textContent='Escolha um arquivo CSV ou cole o conteúdo de uma aba.'; return; }
+    var html='', totalN=0, totalV=0;
+    lote.forEach(function(t){
+      var rs=reservasDeTabela(tabelaDeTexto(t.texto), t.hist);
+      var v=rs.reduce(function(a,r){ return a+(+r.valor||0); },0);
+      totalN+=rs.length; totalV+=v;
+      html+='• <b>'+esc(t.nome)+'</b> → '+(t.hist?'📦 HISTÓRICO':'📋 FECHAMENTOS')+' · '+rs.length+
+            ' linha(s) · R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'<br>';
+    });
+    html+='<b>Total que entraria: '+totalN+' reserva(s) · R$ '+
+          totalV.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'</b>'+
+          '<br>Confira contra a planilha. Se bater, clique em ZERAR TUDO E CARREGAR.';
+    if(el) el.innerHTML=html;
+  });
+}
+function zerarECarregarDaTela(){
+  return coletarTextos().then(function(lote){
+    if(!lote.length){ alert('Escolha um arquivo CSV ou cole o conteúdo de uma aba antes.'); return; }
+    var n=lote.reduce(function(a,t){ return a+reservasDeTabela(tabelaDeTexto(t.texto),t.hist).length; },0);
+    if(!n){ alert('Não achei nenhuma reserva nesse conteúdo. Confira se copiou as linhas da tabela.'); return; }
+    if(!confirm('APAGAR todas as reservas do app e recarregar do zero?\n\n'+
+        'Entram '+n+' reserva(s) do que você forneceu.\n\n'+
+        'Some tudo o que existe hoje: reservas cadastradas aqui, cache, edições manuais, '+
+        'exclusões e remanejamentos de carro. Não dá para desfazer.\n\nContinuar?')) return;
+    var q;
+    try{ q=zerarECarregar(lote); }
+    catch(e){ alert('Não deu: '+(e.message||e)); return; }
+    var ta=document.getElementById('mgrsv-arqtxt'); if(ta) ta.value='';
+    var inp=document.getElementById('mgrsv-arqfile'); if(inp) inp.value='';
+    var soma=DATA.reduce(function(a,r){ return a+(+r.valor||0); },0);
+    alert('Base refeita.\n\n'+DATA.length+' reserva(s) · R$ '+
+      soma.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+
+      '\n\nConfira o total contra a planilha antes de seguir.');
+  });
+}
+
+function voltarParaOnline(){
+  if(!confirm('Voltar a ler a planilha pela internet?\n\n'+
+      'A base carregada do arquivo é descartada e o app passa a mostrar o que a '+
+      'planilha responder online. Continuar?')) return;
+  ARQ=null; try{ localStorage.removeItem(ARQ_K); localStorage.removeItem(CACHE_KEY); }catch(e){}
+  LOADING=false; loadAll(true);
+}
+
+function avisoArquivo(){
+  var el=document.getElementById('mgrsv-arqaviso'); if(!el) return;
+  if(!arqAtivo()){ el.innerHTML=''; return; }
+  var soma=DATA.reduce(function(a,r){ return a+(+r.valor||0); },0);
+  el.innerHTML='<div class="mgw-hint" style="border-left:3px solid var(--gold);background:rgba(255,209,26,.07)">'+
+    '📄 <b>Base carregada do arquivo</b> — '+esc(ARQ.nomes.join(' + '))+' · '+
+    DATA.length+' reserva(s) · R$ '+soma.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+' · carregado em '+
+    new Date(ARQ.ts).toLocaleString('pt-BR')+'.<br>'+
+    '<span style="display:block;margin-top:4px">A leitura pela internet está suspensa enquanto este arquivo estiver carregado — é o que evita cada reserva aparecer duas vezes.</span>'+
+    '<span style="display:block;margin-top:8px"><button class="mgw-btn" onclick="MGW_RESV.voltarOnline()">🌐 Voltar a ler a planilha online</button></span>'+
+    '</div>';
+}
 
 /* Reservas gravadas pelo próprio app (base local MGW_RES) no formato do calendário */
 function locaisDo(){
@@ -25613,6 +25864,9 @@ window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, rend
   dispQuadro:renderDisponibilidade, dispDetalhe:dispDetalhe,
   processar:processarReservas,   /* exposto para teste do pipeline de mesclagem */
   linhasDaResposta:rowsFromResp, /* exposto para teste da leitura crua da aba */
+  zerarECarregar:zerarECarregarDaTela, conferirArquivo:conferirArquivo,
+  voltarOnline:voltarParaOnline, arqAtivo:arqAtivo,
+  zerarComTextos:zerarECarregar, deTabela:reservasDeTabela, tabela:tabelaDeTexto,
   cortarPlanilha:cortarPlanilha, religarPlanilha:religarPlanilha,
   importarDaPlanilha:importarDaPlanilha, importarAgora:importarAgora,
   importarCiclo:importarCiclo, previaCiclo:reservasDaPlanilhaNoCiclo, planilhaLigada:planilhaLigada,
@@ -25629,7 +25883,7 @@ window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, rend
   verFora:function(v){ _soFora=(v===undefined)?true:!!v; renderReservas(); },
   conferir:conferirResv, reabrirConferidas:reabrirConferidas };
 
-loadOverrides(); loadFlags(); loadManut(); loadRegra(); loadPlan();
+loadOverrides(); loadFlags(); loadManut(); loadRegra(); loadPlan(); loadArq();
 try{ atualizarBotaoPlanilha(); }catch(e){}
 
 /* Sobe as reservas da planilha: o Dashboard, as Metas e a aba Vendas do Mês
