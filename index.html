@@ -6218,6 +6218,10 @@ Data de retirada = din"></textarea>
 <div class="panel" id="panel-vendasmes">
   <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">💰 VENDAS DO MÊS</span><div class="sec-line"></div></div>
   <div class="vm-ciclo" id="vm-ciclo-label"></div>
+  <div class="mgrsv-toolbar" style="margin-bottom:12px">
+    <button class="mgw-btn mgw-btn-csv" onclick="imprimirComissionamento()" title="Uma folha A4 com as reservas do ciclo e a conta do pagamento linha a linha, pronta para imprimir ou salvar em PDF.">🖨️ IMPRIMIR RELATÓRIO DE COMISSIONAMENTO</button>
+    <button class="mgw-btn" onclick="MGW_RESV.refresh()">↻ Atualizar</button>
+  </div>
   <div class="mgw-hint">📌 O mês vai do <b>dia 13 ao dia 12</b> do mês seguinte. Entra tudo que tem <b>DATA DE FECHAMENTO</b> nesse intervalo, direto da aba <b>Reservas</b>. Pagamento = <b>R$ 5.000 fixos + 5%</b> das reservas feitas por você.</div>
   <div id="vm-content"></div>
 </div>
@@ -22422,6 +22426,117 @@ function kpi(tag,val,sub,cor){
     +'<div class="vm-kpi-val"'+(cor?(' style="color:'+cor+'"'):'')+'>'+val+'</div>'
     +'<div class="vm-kpi-sub">'+(sub||'')+'</div></div>';
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   RELATÓRIO DE COMISSIONAMENTO — para imprimir
+   ───────────────────────────────────────────────────────────────────
+   Uma folha por ciclo, com as reservas do mês e a conta do pagamento
+   linha a linha. Sai da mesma fonte da tela (MGW_CICLO.resumo), então
+   não há como o papel discordar do app.
+
+   O mês aqui é o ciclo do dia 13 ao 12, alimentado pela aba 📋
+   FECHAMENTOS. Na virada, essas reservas passam a ser histórico e o
+   ciclo recomeça vazio — o relatório de cada mês continua reproduzível
+   depois, porque é gerado do ciclo escolhido na barra lateral.
+
+   Abre em janela nova e manda imprimir. Se o bloqueador de pop-up
+   barrar, avisa em vez de falhar calado.
+   ═══════════════════════════════════════════════════════════════════ */
+function imprimirComissionamento(){
+  var M=(window.MGW_CICLO)?MGW_CICLO:null;
+  if(!M){ alert('Módulo de ciclo não carregado.'); return; }
+  if(window.MGW_SIGILO && !MGW_SIGILO.aberto()){
+    alert('O relatório de comissionamento mostra valores de pagamento.\n\n'+
+          'Abra o cadeado na aba Vendas do Mês antes de imprimir.');
+    return;
+  }
+  var R=M.resumo(), c=R.ciclo;
+  if(!R.n){ alert('Nenhuma reserva no ciclo '+c.label+'. Nada para imprimir.'); return; }
+
+  var brl=function(v){ return 'R$ '+(+v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); };
+  var dt=function(d){ try{ return M.fmtBR(d); }catch(e){ return ''; } };
+  var esc3=function(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+
+  var linhas=R.reservas.map(function(r,i){
+    var minha=M.ehDoLuciano(r);
+    var com=M.comissaoDaReserva(r);
+    return '<tr>'
+      +'<td class="n">'+(i+1)+'</td>'
+      +'<td class="d">'+dt(r.dataFech)+'</td>'
+      +'<td>'+esc3(r.cliente||'')+'</td>'
+      +'<td>'+esc3(r.vendedor||'')+'</td>'
+      +'<td>'+esc3(r.modelo||'')+'</td>'
+      +'<td class="d">'+dt(r.entrega)+'</td>'
+      +'<td class="d">'+dt(r.devolucao)+'</td>'
+      +'<td class="v">'+brl(r.valor)+'</td>'
+      +'<td class="p">'+(minha?R.pct:R.pctOutros)+'%</td>'
+      +'<td class="v">'+brl(com)+'</td>'
+      +'</tr>';
+  }).join('');
+
+  var html='<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">'
+   +'<title>Comissionamento · '+esc3(c.label)+' · Magiway</title><style>'
+   +'@page{size:A4;margin:12mm}'
+   +'*{box-sizing:border-box}'
+   +'body{font-family:"Segoe UI",system-ui,sans-serif;color:#111;font-size:11px;margin:0}'
+   +'h1{font-size:17px;margin:0 0 2px;letter-spacing:-.01em}'
+   +'.sub{font-size:11px;color:#555;margin-bottom:14px}'
+   +'.topo{display:flex;justify-content:space-between;align-items:flex-start;'
+   +'border-bottom:2px solid #111;padding-bottom:8px;margin-bottom:14px}'
+   +'.marca{font-size:19px;font-weight:800;letter-spacing:-.02em}'
+   +'table{width:100%;border-collapse:collapse;font-size:10px}'
+   +'th{text-align:left;background:#f0f0f0;border-bottom:1px solid #999;padding:5px 6px;'
+   +'font-size:8.5px;letter-spacing:.06em;text-transform:uppercase}'
+   +'td{padding:4px 6px;border-bottom:1px solid #e2e2e2}'
+   +'td.n,td.p{text-align:center;color:#666}'
+   +'td.d{white-space:nowrap;font-variant-numeric:tabular-nums}'
+   +'td.v{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}'
+   +'tr:nth-child(even) td{background:#fafafa}'
+   +'.conta{margin-top:16px;width:340px;margin-left:auto;font-size:11px}'
+   +'.conta div{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #e2e2e2}'
+   +'.conta .tot{border-top:2px solid #111;border-bottom:none;font-weight:800;font-size:13px;padding-top:7px}'
+   +'.rod{margin-top:20px;padding-top:8px;border-top:1px solid #ccc;font-size:9px;color:#666;line-height:1.6}'
+   +'.ass{margin-top:34px;display:flex;gap:50px}'
+   +'.ass div{flex:1;border-top:1px solid #111;padding-top:5px;font-size:9.5px;text-align:center;color:#444}'
+   +'@media print{.noprint{display:none}}'
+   +'.noprint{margin-bottom:14px}'
+   +'.noprint button{font:inherit;padding:9px 18px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}'
+   +'</style></head><body>'
+   +'<div class="noprint"><button onclick="window.print()">Imprimir</button></div>'
+   +'<div class="topo"><div><div class="marca">MAGIWAY</div>'
+   +'<h1>Relatório de comissionamento</h1>'
+   +'<div class="sub">'+esc3(c.label)+' · '+esc3(c.periodo)+' · '+c.dias+' dias</div></div>'
+   +'<div style="text-align:right;font-size:10px;color:#555">Emitido em<br><b>'
+   + new Date().toLocaleString('pt-BR')+'</b></div></div>'
+   +'<table><thead><tr>'
+   +'<th style="width:22px">#</th><th>Fech.</th><th>Cliente</th><th>Vendedor</th><th>Modelo</th>'
+   +'<th>Entrega</th><th>Devolução</th><th style="text-align:right">Valor</th>'
+   +'<th style="text-align:center">%</th><th style="text-align:right">Comissão</th>'
+   +'</tr></thead><tbody>'+linhas+'</tbody></table>'
+   +'<div class="conta">'
+   +'<div><span>Reservas no ciclo</span><b>'+R.n+'</b></div>'
+   +'<div><span>Faturamento total</span><b>'+brl(R.faturamento)+'</b></div>'
+   +'<div><span>Feitas por mim ('+R.nMinhas+')</span><b>'+brl(R.meuFaturamento)+'</b></div>'
+   +'<div><span>Demais vendedores ('+R.nOutros+')</span><b>'+brl(R.outrosFaturamento)+'</b></div>'
+   +'<div><span>Comissão '+R.pct+'% sobre as minhas</span><b>'+brl(R.comissaoPropria)+'</b></div>'
+   +'<div><span>Comissão '+R.pctOutros+'% sobre as demais</span><b>'+brl(R.comissaoOutros)+'</b></div>'
+   +'<div><span>Fixo mensal</span><b>'+brl(R.fixo)+'</b></div>'
+   +'<div class="tot"><span>Total a receber</span><span>'+brl(R.aReceber)+'</span></div>'
+   +'</div>'
+   +'<div class="rod">O ciclo vai do dia 13 ao dia 12 do mês seguinte. Entram as reservas da aba '
+   +'📋 FECHAMENTOS da planilha e as lançadas no aplicativo dentro desse intervalo. '
+   +'Comissão de '+R.pct+'% sobre as reservas próprias e '+R.pctOutros+'% sobre as dos demais vendedores, '
+   +'somadas ao fixo mensal. Ticket médio do ciclo: '+brl(R.ticket)+'.</div>'
+   +'<div class="ass"><div>Luciano Lira · Gerente Comercial</div><div>Diretoria</div></div>'
+   +'</body></html>';
+
+  var w=window.open('','_blank');
+  if(!w){ alert('O navegador bloqueou a janela do relatório.\n\nLibere os pop-ups para este endereço e tente de novo.'); return; }
+  w.document.write(html); w.document.close();
+  setTimeout(function(){ try{ w.focus(); w.print(); }catch(e){} },400);
+}
+window.imprimirComissionamento=imprimirComissionamento;
 
 function renderVendasMes(){
   var box=document.getElementById('vm-content'); if(!box) return;
