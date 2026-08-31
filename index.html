@@ -949,6 +949,10 @@ select.ffi option{background:#000020;color:#FF0000}
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
         Dashboard Cotações
       </div>
+      <div class="sb-item" onclick="nav('histresv',this)">
+        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        Histórico Reservas
+      </div>
       <div class="sb-item" onclick="nav('trafego',this)">
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
         Tráfego × Comercial
@@ -5663,6 +5667,28 @@ select.ffi option{background:#000020;color:#FF0000}
       </div>
 
 
+      <!-- ═══ HISTÓRICO DE RESERVAS ═══
+           O que não é do mês em vigência. Vem da aba 📦 HISTÓRICO da
+           planilha, que é o arquivo dos meses já fechados. Mesmas
+           colunas da aba Reservas, mesma leitura — muda só o recorte. -->
+      <div class="panel" id="panel-histresv">
+        <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">HISTÓRICO DE RESERVAS</span><div class="sec-line"></div></div>
+        <div class="mgrsv-toolbar">
+          <input id="mghr-search" class="mgw-input" style="flex:1;min-width:200px" placeholder="🔎 Buscar por nome, WhatsApp, modelo, cidade, vendedor…" oninput="MGW_RESV.renderHistorico()">
+          <select id="mghr-mes" class="mgw-input" onchange="MGW_RESV.renderHistorico()"><option value="">Todos os meses</option></select>
+          <button class="mgw-btn" onclick="MGW_RESV.refresh()">↻ Atualizar</button>
+          <span id="mghr-resumo" class="mgw-status" style="margin-left:auto;color:var(--chalk2)"></span>
+        </div>
+        <div class="mgw-hint">📦 Reservas de <b>outros meses</b>. O mês em vigência fica na aba <b>Reservas</b>, alimentado pela aba 📋 FECHAMENTOS da planilha.</div>
+        <div class="mgrsv-tablewrap">
+          <table class="mgrsv-table mgrsv-wide">
+            <thead id="mghr-thead"></thead>
+            <tbody id="mghr-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+
 
 
       <!-- (aba GERAL — EMPRESA removida: sistema com usuário único) -->
@@ -6169,6 +6195,9 @@ Data de retirada = din"></textarea>
     <button class="mgw-btn mgw-btn-csv" onclick="MGW_RESV.importarCiclo()" title="Traz da aba de fechamento só as reservas do mês em vigência (dia 13 → dia 12), com as 22 colunas exatamente como estão na tabela. Mostra o que vai entrar antes de gravar.">📆 TRAZER O MÊS EM VIGÊNCIA</button>
     <button class="mgw-btn" onclick="MGW_RESV.importarAgora()" title="Traz o histórico INTEIRO da aba de fechamento que ainda não está aqui — não só o mês em vigência. Reserva repetida na planilha entra as duas vezes; o que já está no app não entra de novo.">📥 Importar tudo</button>
     <button class="mgw-btn" id="mgrsv-auto" onclick="MGW_RESV.alternarAuto()"></button>
+    <label class="mgw-btn" style="display:flex;align-items:center;gap:7px;cursor:pointer" title="Marcado, a tabela volta a mostrar a base inteira — inclusive as de outros meses, que normalmente ficam na aba Histórico de Reservas.">
+      <input type="checkbox" id="mgrsv-tudo" onchange="MGW_RESV.filterTable()" style="accent-color:var(--fire)"> ver todos os meses
+    </label>
     <button class="mgw-btn" id="mgrsv-planilha">🔌 Cortar vínculo com a planilha</button>
   </div>
   <div class="mgw-hint">📋 Colunas idênticas à aba <b>📦 HISTÓRICO</b> da planilha FECHAMENTO MAGIWAY, ordenadas pela <b>data de fechamento</b> (mais antiga primeiro). Atualiza sozinha a partir das abas <b>HISTÓRICO</b> e <b>FECHAMENTOS</b>.<br>
@@ -8707,6 +8736,7 @@ const NAV={
   historico:['HISTÓRICO DE COTAÇÕES','Todas as cotações registradas automaticamente'],
   dashcot:['DASHBOARD COTAÇÕES','KPIs e análise completa das cotações geradas'],
   trafego:['TRÁFEGO × COMERCIAL','Do anúncio à reserva · onde o funil vaza, de quem é a alavanca e o que fazer'],
+  histresv:['HISTÓRICO DE RESERVAS','Reservas de outros meses · a aba 📦 HISTÓRICO da planilha'],
   comparativo:['COMPARATIVO','O que cotamos × o que fechamos · cliente ideal e cliente complexo'],
   vendedores:['CONTROLE DE ACESSO','Usuário único · gerente Luciano · dados sincronizados no Supabase'],
   config:['CONFIGURAÇÕES','Parâmetros do sistema · Login · Comandos'],
@@ -16507,6 +16537,11 @@ function dbSwitchMes(ym){
   dashInited=false;analiticoInited=false;metasChartsInited=false;dashCotInited=false;
   if(typeof initDashboard==='function'){dashInited=true;initDashboard();}
   renderVendas();renderVouchers();
+  /* A aba Reservas mostra o mês em vigência e a de Histórico mostra o
+     resto — as duas dependem de qual mês está selecionado aqui. Sem este
+     redesenho a tabela ficava com o recorte do mês anterior, e trocar de
+     mês parecia esvaziar as reservas. */
+  try{ if(window.MGW_RESV){ MGW_RESV.filterTable(); MGW_RESV.renderHistorico(); } }catch(e){}
   buildMesSidebar();
   updateMesLabels();
   toast(`Mês ${ym.replace('_','/')} carregado`);
@@ -24083,14 +24118,103 @@ function rsvBRL(v){ v=rsvNum(v); return v?('R$ '+v.toLocaleString('pt-BR',{minim
 function rsvUSD(v){ v=rsvNum(v); return v?('$ '+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})):''; }
 
 var _soFora=false;   /* "ver quais" — mostra só as reservas do lado errado */
+/* ── as duas metades da base ──────────────────────────────────────
+   A aba Reservas passou a ser O MÊS EM VIGÊNCIA, e só ele. Tudo o que
+   está na aba 📋 FECHAMENTOS entra, independentemente da data — estar
+   naquela aba já é a declaração de que a venda é do mês corrente, que é
+   como a operação trabalha. Entram junto as que a data coloca no ciclo.
+
+   O resto — as de outros meses, que vivem na aba 📦 HISTÓRICO — vai para
+   a aba Histórico de Reservas. Nada some: muda de lugar.
+
+   `mgrsv-tudo` é a válvula de escape: marcado, a aba Reservas volta a
+   mostrar a base inteira. Existe porque tela que esconde dado sem
+   oferecer o caminho de volta é tela em que se perde confiança. */
+function ehDoMesEmVigencia(r){
+  try{
+    var c=(window.MGW_CICLO)?MGW_CICLO.cicloAtivo():null;
+    if(!c) return true;
+    return MGW_CICLO.ehDoCicloCorrente ? MGW_CICLO.ehDoCicloCorrente(r,c)
+                                       : MGW_CICLO.dentro(r.dataFech,c);
+  }catch(e){ return true; }
+}
+function reservasDoMes(){ return DATA.filter(ehDoMesEmVigencia); }
+function reservasDeOutrosMeses(){ return DATA.filter(function(r){ return !ehDoMesEmVigencia(r); }); }
+
 function rsvFiltradas(){
   var q=norm((document.getElementById('mgrsv-search')||{}).value||'');
   var fc=(document.getElementById('mgrsv-filtcat')||{}).value||'';
-  var rows=DATA.slice();
+  var tudo=!!(document.getElementById('mgrsv-tudo')||{}).checked;
+  var rows=tudo ? DATA.slice() : reservasDoMes();
   if(_soFora) rows=rows.filter(function(r){ return r._foraDaRegra; });
   if(fc) rows=rows.filter(function(r){ return r.cat===fc; });
   if(q) rows=rows.filter(function(r){ return norm(r.cliente).indexOf(q)>=0||String(r.tel).indexOf(q)>=0||norm(r.whats).indexOf(q)>=0||norm(r.modelo).indexOf(q)>=0||norm(r.localEnt).indexOf(q)>=0||norm(r.vendedor).indexOf(q)>=0||norm(cityOf(r.localEnt).city).indexOf(q)>=0; });
   return rows;
+}
+
+/* ═══ HISTÓRICO DE RESERVAS ═══
+   As de outros meses. Mesmas colunas da aba Reservas — quem conhece uma
+   lê a outra sem aprender nada novo. */
+function _mesChave(r){
+  var d=r.dataFech||r.entrega; if(!d) return '';
+  return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2);
+}
+function _mesRotulo(k){
+  var M=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  var p=String(k).split('-'); if(p.length!==2) return k;
+  return M[(+p[1]||1)-1]+'/'+p[0];
+}
+function renderHistoricoResv(){
+  var tb=document.getElementById('mghr-tbody'); if(!tb) return;
+  var th=document.getElementById('mghr-thead');
+  if(th && !th.getAttribute('data-built')){
+    th.innerHTML='<tr>'+RSV_COLS.map(function(c){ return '<th>'+esc(c.h)+'</th>'; }).join('')+'</tr>';
+    th.setAttribute('data-built','1');
+  }
+  var todas=reservasDeOutrosMeses();
+
+  /* o seletor de mês se monta do que existe, não de uma lista fixa */
+  var sel=document.getElementById('mghr-mes');
+  if(sel){
+    var meses={}; todas.forEach(function(r){ var k=_mesChave(r); if(k) meses[k]=(meses[k]||0)+1; });
+    var ordem=Object.keys(meses).sort().reverse();
+    var assinatura=ordem.join(',');
+    if(sel.getAttribute('data-assin')!==assinatura){
+      var atual=sel.value;
+      sel.innerHTML='<option value="">Todos os meses</option>'+ordem.map(function(k){
+        return '<option value="'+k+'">'+_mesRotulo(k)+' · '+meses[k]+'</option>'; }).join('');
+      sel.setAttribute('data-assin',assinatura);
+      if(atual) sel.value=atual;
+    }
+  }
+
+  var q=norm((document.getElementById('mghr-search')||{}).value||'');
+  var mes=(document.getElementById('mghr-mes')||{}).value||'';
+  var rows=todas;
+  if(mes) rows=rows.filter(function(r){ return _mesChave(r)===mes; });
+  if(q) rows=rows.filter(function(r){
+    return norm(r.cliente).indexOf(q)>=0||String(r.tel).indexOf(q)>=0||norm(r.whats).indexOf(q)>=0
+        ||norm(r.modelo).indexOf(q)>=0||norm(r.localEnt).indexOf(q)>=0||norm(r.vendedor).indexOf(q)>=0; });
+
+  var res=document.getElementById('mghr-resumo');
+  if(res){
+    var soma=rows.reduce(function(a,r){ return a+(+r.valor||0); },0);
+    res.textContent=rows.length+' reserva(s) · R$ '
+      +soma.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+  if(!rows.length){
+    tb.innerHTML='<tr><td colspan="'+RSV_COLS.length+'" style="text-align:center;color:var(--chalk3);padding:26px">'
+      +(todas.length?'Nenhuma reserva com esse filtro.'
+        :'Nenhuma reserva de outros meses ainda. Tudo o que existe é do mês em vigência e está na aba Reservas.')
+      +'</td></tr>';
+    return;
+  }
+  tb.innerHTML=rows.map(function(r){
+    return '<tr>'+RSV_COLS.map(function(c){
+      var v=c.g(r); if(v==='—') v='';
+      return '<td'+(c.cls?(' class="'+c.cls+'"'):'')+'>'+esc(v)+'</td>';
+    }).join('')+'</tr>';
+  }).join('');
 }
 
 /* O acordo escrito, dentro do app — para não depender de ninguém lembrar. */
@@ -24207,7 +24331,17 @@ function renderReservas(){
         +'<button class="mgrsv-del" title="Excluir esta reserva" onclick="MGW_RESV.excluir('+idx+')">🗑</button>'
       +'</td></tr>';
   });
-  tb.innerHTML=html || '<tr><td colspan="'+(RSV_COLS.length+2)+'" class="mgrsv-empty">Nenhuma reserva encontrada.</td></tr>';
+  /* Vazio com a base cheia não é "não encontrei": é recorte. Dizer qual
+     recorte, e onde está o resto, evita a leitura de que os dados sumiram. */
+  var vazio='Nenhuma reserva encontrada.';
+  if(!html && DATA.length){
+    var _outros=0; try{ _outros=reservasDeOutrosMeses().length; }catch(e){}
+    var _cic=''; try{ _cic=MGW_CICLO.cicloAtivo().label; }catch(e){}
+    vazio='Nenhuma reserva em <b>'+esc(_cic||'no mês em vigência')+'</b>.'
+      +(_outros?('<br>Há <b>'+_outros+'</b> reserva(s) de outros meses — elas estão na aba <b>Histórico Reservas</b>.'):'')
+      +'<br>Para ver a base inteira aqui, marque <b>ver todos os meses</b> na barra acima.';
+  }
+  tb.innerHTML=html || '<tr><td colspan="'+(RSV_COLS.length+2)+'" class="mgrsv-empty" style="line-height:1.9">'+vazio+'</td></tr>';
   var cnt=document.getElementById('mgrsv-count');
   /* Deixa explícito quando a tabela está filtrada — senão o número parece
      "contagem errada" quando na verdade é um recorte da base. */
@@ -25169,17 +25303,19 @@ function renderAll(){
   try{ renderDisponibilidade(); }catch(e){ console.warn('[disponibilidade]',e); }
   try{ atualizarBotaoPlanilha(); }catch(e){}
   try{ pintarBotaoAuto(); }catch(e){}
+  try{ renderHistoricoResv(); }catch(e){ console.warn('[histórico de reservas]',e); }
   /* as reservas são a fonte das vendas: avisa o resto do app */
   try{ if(typeof window.mgwAposReservas==='function') window.mgwAposReservas(); }catch(e){}
 }
 
 function onNav(id){
-  if(id!=='calendario' && id!=='reservas' && id!=='agenda' && id!=='vendasmes') return;
+  if(id!=='calendario' && id!=='reservas' && id!=='agenda' && id!=='vendasmes' && id!=='histresv') return;
   if(!window.MGW_AUTENTICADO) return;   /* sem login, não lê a planilha */
   loadOverrides(); loadFlags(); loadRegra(); populateCatFilter(); startAutoRefresh();
   /* o rótulo do interruptor tem de estar certo ao ABRIR a aba, e não só
      depois que a planilha responder — renderAll pode demorar ou nem vir */
   try{ pintarBotaoAuto(); }catch(e){}
+  if(id==='histresv'){ try{ renderHistoricoResv(); }catch(e){} }
   if(id==='agenda') ensureAgDate();
   /* ao abrir o Calendário, sempre volta pro dia de hoje (linha vermelha visível) */
   if(id==='calendario'){ setTimeout(goTodayInternal,60); setTimeout(goTodayInternal,320); }
@@ -25211,6 +25347,7 @@ window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, rend
   importarDaPlanilha:importarDaPlanilha, importarAgora:importarAgora,
   importarCiclo:importarCiclo, previaCiclo:reservasDaPlanilhaNoCiclo, planilhaLigada:planilhaLigada,
   alternarAuto:alternarAuto, autoLigado:autoLigado, autoPreencher:autoPreencherCiclo,
+  renderHistorico:renderHistoricoResv, doMes:reservasDoMes, deOutrosMeses:reservasDeOutrosMeses,
   pintarAuto:pintarBotaoAuto,
   estadoPlanilha:function(){ loadPlan(); return JSON.parse(JSON.stringify(PLAN)); },
   regraCorte:function(v){ if(!v) return; REGRA.corte=v; saveRegra(); classificarOrigem(DATA); renderReservas();
