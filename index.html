@@ -5681,6 +5681,24 @@ select.ffi option{background:#000020;color:#FF0000}
           <span id="mghr-resumo" class="mgw-status" style="margin-left:auto;color:var(--chalk2)"></span>
         </div>
         <div class="mgw-hint">📦 Reservas de <b>outros meses</b>. O mês em vigência fica na aba <b>Reservas</b>, alimentado pela aba 📋 FECHAMENTOS da planilha.</div>
+        <!-- A virada do mês, do lado do app. Na planilha é copiar tudo de
+             FECHAMENTOS para HISTÓRICO e preencher MÊS REFERÊNCIA; aqui é
+             este campo. A reserva não é apagada nem movida: ganha a marca
+             do mês em que fechou, sai da aba Reservas e do relatório de
+             comissionamento, e passa a viver aqui. Dá para desfazer. -->
+        <div class="card" style="margin:10px 0">
+          <div class="card-title">📦 MANDAR AS RESERVAS DO MÊS PARA O HISTÓRICO</div>
+          <div class="card-sub" id="mghr-virada-sub">—</div>
+          <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+            <div class="ff" style="max-width:200px;margin:0">
+              <label class="eml">Mês referência</label>
+              <input id="mghr-mesref" class="ffi" placeholder="AGO/2026">
+            </div>
+            <button class="form-btn" style="background:linear-gradient(135deg,#1FA9A6,#0d7a77)" onclick="MGW_RESV.arquivarMes()">📦 MANDAR TODAS PARA O HISTÓRICO</button>
+            <button class="mgw-btn" onclick="MGW_RESV.desarquivar()">↩️ Desfazer a última virada</button>
+          </div>
+          <div id="mghr-arquivados" class="mgw-hint" style="margin-top:10px"></div>
+        </div>
         <div class="mgrsv-tablewrap">
           <table class="mgrsv-table mgrsv-wide">
             <thead id="mghr-thead"></thead>
@@ -9218,7 +9236,7 @@ function _cloudRawSet(k,v){ try{ localStorage.__proto__.setItem.call(localStorag
    qualquer usuário pode gravar. */
 /* Pendências, marcações de entrega/devolução e relatórios emitidos são operação
    do dia a dia: quem executa precisa poder confirmar sem depender do gerente. */
-const SHARED_WRITABLE_BY_ALL = ['gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1','gs_planilha_v1'];
+const SHARED_WRITABLE_BY_ALL = ['gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1','gs_planilha_v1','gs_resv_arquivadas_v1'];
 function _cloudBucket(fullKey){
   if(!fullKey || typeof fullKey!=='string') return null;
   if(CLOUD.uid && fullKey.indexOf('mgv_'+CLOUD.uid+'__')===0) return 'own';
@@ -20084,7 +20102,7 @@ function ehVendedor(v){ return !!v && v.role==='admin'; }
    são da EMPRESA: a pendência que o Luciano lança na reunião tem de aparecer
    para o Dickson, e o carro que a Mariana marcou como entregue tem de aparecer
    entregue para todo mundo. */
-const VENDOR_SHARED_KEYS = ['gs_espelho_v1','gs_trafego_v1','gs_cfg_v1','gs_ai_keys','gs_frota_v2','gs_shortcuts','gs_cambio_modal','gs_focus_mode','gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1','gs_planilha_v1'];
+const VENDOR_SHARED_KEYS = ['gs_espelho_v1','gs_trafego_v1','gs_cfg_v1','gs_ai_keys','gs_frota_v2','gs_shortcuts','gs_cambio_modal','gs_focus_mode','gs_reservas_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1','gs_planilha_v1','gs_resv_arquivadas_v1'];
 /* 'gs_cot_' entrou aqui em 08/08/2026: as cotações eram guardadas por usuário
    (mgv_<uid>__gs_cot_2026_08), então cada computador tinha as suas e nada
    aparecia no outro. Como cotação é dado da empresa — e aqui só existe uma
@@ -22086,7 +22104,7 @@ function exportarAppAtualizado(){
 (function(){
 'use strict';
 
-var CHAVES=['gs_reservas_v1','gs_cfg_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1','gs_planilha_v1'];   // o que é da empresa
+var CHAVES=['gs_reservas_v1','gs_cfg_v1','gs_resv_overrides_v1','gs_resv_excluidas_v1','gs_resv_conferidas_v1','gs_frota_manut_v1','gs_nps_v1','gs_tarefas_v1','gs_resv_flags_v1','gs_relatorios_v1','gs_fluxo_v1','gs_resv_caroverrides_v1','gs_regra_origem_v1','gs_frota_v3','gs_suporte_v1','gs_planilha_v1','gs_resv_arquivadas_v1'];   // o que é da empresa
 var ultimoValor={};                          // último valor conhecido por chave
 var canal=null, timerPoll=null, ligado=false, aplicando=false;
 
@@ -22369,6 +22387,9 @@ function todasReservas(){
    barra lateral estiver num mês passado, a aba de fechamento não pode
    ser arrastada para dentro dele — lá o que manda continua sendo a data. */
 function ehDoCicloCorrente(r,c){
+  /* Reserva já mandada para o Histórico saiu do ciclo — é o que faz o
+     relatório de comissionamento recomeçar do zero na virada do mês. */
+  if(r && r._arquivada) return false;
   if(dentro(r.dataFech,c)) return true;
   if(r && r._src==='fech'){
     var hoje=cicloAtual();
@@ -23700,6 +23721,116 @@ function restaurarReservaResv(chave){
   saveExcluidasResv(excl);
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   VIRADA DO MÊS — mandar as reservas do mês para o Histórico
+   ───────────────────────────────────────────────────────────────────
+   Na planilha a virada é manual: copia-se tudo de 📋 FECHAMENTOS para
+   📦 HISTÓRICO e preenche-se a coluna MÊS REFERÊNCIA. Enquanto isso não
+   acontece, a aba de fechamento continua sendo lida como o mês corrente
+   — é a regra de ehDoCicloCorrente() — e o mês novo começa somado ao
+   anterior.
+
+   Este arquivo é o mesmo gesto, do lado do app: a reserva não é apagada
+   nem movida de lugar nenhum, ganha só uma marca dizendo "esta já
+   fechou, o mês dela é este". A marca vence a aba de origem: reserva
+   arquivada sai da aba Reservas, sai do faturamento do ciclo e do
+   relatório de comissionamento, e passa a viver na aba Histórico.
+
+   Guardamos o MÊS REFERÊNCIA junto da marca porque é ele que agrupa as
+   reservas no seletor do Histórico — e porque sem ele, no dia em que a
+   linha sumir da planilha, ninguém saberia de que mês ela era.
+
+   É reversível: desarquivar devolve tudo. A marca é da empresa
+   (sincroniza), senão a virada valeria só no aparelho de quem clicou. */
+var ARQV_KEY='gs_resv_arquivadas_v1';
+function loadArquivadas(){
+  try{ return JSON.parse(localStorage.getItem(ARQV_KEY)||'{}')||{}; }catch(e){ return {}; }
+}
+function saveArquivadas(o){
+  try{ localStorage.setItem(ARQV_KEY, JSON.stringify(o)); }catch(e){}
+}
+/* Marca SEMPRE, inclusive quando o arquivo está vazio: a reserva carrega
+   _arquivada de uma passada anterior, e sair cedo aqui deixava a marca
+   velha grudada — desarquivar não trazia nada de volta. */
+function aplicarArquivadas(rows){
+  var arq=loadArquivadas();
+  var vazio=!Object.keys(arq).length;
+  rows.forEach(function(r){
+    if(!r) return;
+    var a=vazio?null:(arq[dedupeKey(r)] || arq[dedupeKeyLegado(r)]);
+    if(a){ r._arquivada=true; r._arquivadaEm=a.ts||0; if(a.mesRef && !r.mesRef) r.mesRef=a.mesRef; }
+    else { r._arquivada=false; r._arquivadaEm=0; }
+  });
+  return rows;
+}
+/* Rótulo padrão da virada: o mês em vigência, no formato da planilha. */
+function mesRefPadrao(){
+  var M=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+  try{
+    var c=MGW_CICLO.cicloAtivo();
+    var p=String(c.ym).split('_');
+    return M[(+p[1]||1)-1]+'/'+p[0];
+  }catch(e){
+    var d=new Date(); return M[d.getMonth()]+'/'+d.getFullYear();
+  }
+}
+/* Arquiva as reservas que hoje estão na aba Reservas (o mês em vigência).
+   Devolve quantas foram. */
+function arquivarMes(mesRef){
+  var alvo=reservasDoMes();
+  if(!alvo.length) return 0;
+  var arq=loadArquivadas(), ts=Date.now();
+  alvo.forEach(function(r){ arq[dedupeKey(r)]={ts:ts, mesRef:mesRef||mesRefPadrao()}; });
+  saveArquivadas(arq);
+  DATA=processarReservas(DATA);
+  assignCars(); renderAll();
+  /* Conta RESERVAS, não chaves: duas linhas idênticas dividem a mesma
+     chave e as duas foram para o histórico — dizer "40" quando saíram 42
+     da tela faria o número da virada não bater com o do relatório. */
+  return alvo.length;
+}
+/* Traz de volta: sem argumento, desfaz a última virada; com mesRef,
+   desfaz só aquele mês. */
+function desarquivar(mesRef){
+  var arq=loadArquivadas(), chaves=Object.keys(arq);
+  if(!chaves.length) return 0;
+  var alvo;
+  if(mesRef){ alvo=chaves.filter(function(k){ return arq[k].mesRef===mesRef; }); }
+  else{
+    var ultimo=chaves.reduce(function(m,k){ return Math.max(m, arq[k].ts||0); },0);
+    alvo=chaves.filter(function(k){ return (arq[k].ts||0)===ultimo; });
+  }
+  var antes=DATA.filter(function(r){ return r._arquivada; }).length;
+  alvo.forEach(function(k){ delete arq[k]; });
+  saveArquivadas(arq);
+  DATA=processarReservas(DATA);
+  assignCars(); renderAll();
+  return antes-DATA.filter(function(r){ return r._arquivada; }).length;
+}
+/* Os meses já arquivados, do mais novo para o mais antigo. A contagem sai
+   das RESERVAS na base, não das chaves guardadas — cópias idênticas
+   dividem chave e seriam contadas uma vez só. */
+function mesesArquivados(){
+  var arq=loadArquivadas();
+  if(!Object.keys(arq).length) return [];
+  var por={};
+  function poe(m,ts){
+    if(!por[m]) por[m]={mesRef:m, n:0, ts:0};
+    por[m].n++; por[m].ts=Math.max(por[m].ts, ts||0);
+  }
+  var vistas={};
+  DATA.forEach(function(r){
+    if(!r||!r._arquivada) return;
+    var k=dedupeKey(r), a=arq[k]||arq[dedupeKeyLegado(r)]||{};
+    vistas[k]=1; poe(a.mesRef||'—', a.ts);
+  });
+  /* chave arquivada que não está mais na base (linha saiu da planilha):
+     ainda conta, senão o mês some da lista e não há como desfazer */
+  Object.keys(arq).forEach(function(k){ if(!vistas[k]) poe(arq[k].mesRef||'—', arq[k].ts); });
+  return Object.keys(por).map(function(m){ return por[m]; })
+    .sort(function(a,b){ return b.ts-a.ts; });
+}
+
 /* "Totalmente duplicada" = mesmo telefone + mesma entrega + mesmo valor,
    mas com CHAVES diferentes (normalmente porque o nome do cliente foi
    digitado de um jeito na primeira reserva e de outro jeito na segunda —
@@ -23877,6 +24008,7 @@ function processarReservas(rows){
   }
   r=aplicarOverridesResv(r);
   r=aplicarExclusoesResv(r);
+  r=aplicarArquivadas(r);
   r=marcarPossiveisDuplicatasResv(r);
   r=classificarOrigem(r);
   return ordenarPorFechamento(r);
@@ -24195,6 +24327,7 @@ function zerarECarregar(textos){
   try{ localStorage.removeItem(EXCL_RESV_KEY); }catch(e){}     /* exclusões */
   try{ localStorage.removeItem(OVR_KEY); }catch(e){}           /* remanejamento de carro */
   try{ localStorage.removeItem(FLAGS_KEY); }catch(e){}         /* marcações */
+  try{ localStorage.removeItem(ARQV_KEY); }catch(e){}          /* viradas de mês */
   try{ loadOverrides(); loadFlags(); }catch(e){}
 
   ARQ={ts:Date.now(), nomes:nomes, linhas:serialize(novas)};
@@ -24256,7 +24389,7 @@ function zerarECarregarDaTela(){
     if(!confirm('APAGAR todas as reservas do app e recarregar do zero?\n\n'+
         'Entram '+n+' reserva(s) do que você forneceu.\n\n'+
         'Some tudo o que existe hoje: reservas cadastradas aqui, cache, edições manuais, '+
-        'exclusões e remanejamentos de carro. Não dá para desfazer.\n\nContinuar?')) return;
+        'exclusões, remanejamentos de carro e as viradas de mês já dadas. Não dá para desfazer.\n\nContinuar?')) return;
     var q;
     try{ q=zerarECarregar(lote); }
     catch(e){ alert('Não deu: '+(e.message||e)); return; }
@@ -24619,6 +24752,9 @@ var _soFora=false;   /* "ver quais" — mostra só as reservas do lado errado */
    mostrar a base inteira. Existe porque tela que esconde dado sem
    oferecer o caminho de volta é tela em que se perde confiança. */
 function ehDoMesEmVigencia(r){
+  /* Virada do mês já dada: a reserva mudou de aba e não volta sozinha,
+     nem pelo fato de ainda estar na aba de fechamento da planilha. */
+  if(r && r._arquivada) return false;
   try{
     var c=(window.MGW_CICLO)?MGW_CICLO.cicloAtivo():null;
     if(!c) return true;
@@ -24652,7 +24788,63 @@ function _mesRotulo(k){
   var p=String(k).split('-'); if(p.length!==2) return k;
   return M[(+p[1]||1)-1]+'/'+p[0];
 }
+/* O cartão da virada: quantas estão prontas para ir, quanto somam e o
+   que já foi arquivado antes. Sem esses números o botão seria um salto
+   no escuro — e ele mexe no faturamento do mês. */
+function renderViradaResv(){
+  var sub=document.getElementById('mghr-virada-sub');
+  var inp=document.getElementById('mghr-mesref');
+  var box=document.getElementById('mghr-arquivados');
+  if(inp && !inp.value) inp.value=mesRefPadrao();
+  if(sub){
+    var doMes=reservasDoMes();
+    var soma=doMes.reduce(function(a,r){ return a+(+r.valor||0); },0);
+    var ciclo='';
+    try{ ciclo=' ('+MGW_CICLO.cicloAtivo().periodo+')'; }catch(e){}
+    sub.innerHTML = doMes.length
+      ? ('A aba <b>Reservas</b> tem hoje <b>'+doMes.length+' reserva(s)</b> · R$ '+
+         soma.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+ciclo+'. '+
+         'Mandar para o histórico tira todas elas do mês em vigência e do relatório de comissionamento — '+
+         'a aba Reservas recomeça vazia, é a virada do mês. Nada é apagado e dá para desfazer.')
+      : 'A aba <b>Reservas</b> está vazia — não há nada para mandar para o histórico.';
+  }
+  if(box){
+    var ms=mesesArquivados();
+    box.innerHTML = ms.length
+      ? ('Já no histórico por virada: '+ms.map(function(m){
+           return '<b>'+esc(m.mesRef)+'</b> ('+m.n+') <a href="#" onclick="MGW_RESV.desarquivar(\''+
+                  esc(m.mesRef).replace(/'/g,'')+'\');return false;" style="color:var(--chalk3)">trazer de volta</a>';
+         }).join(' · '))
+      : 'Nenhuma virada dada ainda. O que está aqui embaixo veio da aba 📦 HISTÓRICO da planilha ou tem data de outro mês.';
+  }
+}
+function arquivarMesDaTela(){
+  var doMes=reservasDoMes();
+  if(!doMes.length){ alert('A aba Reservas está vazia — não há nada para mandar para o histórico.'); return; }
+  var inp=document.getElementById('mghr-mesref');
+  var ref=String((inp&&inp.value)||'').trim() || mesRefPadrao();
+  var soma=doMes.reduce(function(a,r){ return a+(+r.valor||0); },0);
+  if(!confirm('Mandar '+doMes.length+' reserva(s) para o histórico como '+ref+'?\n\n'+
+      'Valor: R$ '+soma.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'\n\n'+
+      'Elas saem da aba Reservas e do relatório de comissionamento do mês — a aba Reservas recomeça vazia.\n'+
+      'Nada é apagado: continuam no calendário e na aba Histórico, e dá para desfazer.\n\n'+
+      'Imprima o relatório de comissionamento ANTES, se ainda não imprimiu.\n\nContinuar?')) return;
+  var n=arquivarMes(ref);
+  alert(n+' reserva(s) mandada(s) para o histórico como '+ref+'.');
+}
+function desarquivarDaTela(mesRef){
+  var arq=loadArquivadas();
+  if(!Object.keys(arq).length){ alert('Nenhuma virada foi dada ainda — não há o que desfazer.'); return; }
+  var texto=mesRef
+    ? ('Trazer as reservas de '+mesRef+' de volta para a aba Reservas?')
+    : 'Desfazer a última virada e trazer aquelas reservas de volta para a aba Reservas?';
+  if(!confirm(texto+'\n\nElas voltam a contar no mês em vigência e no relatório de comissionamento.')) return;
+  var n=desarquivar(mesRef);
+  alert(n+' reserva(s) de volta na aba Reservas.');
+}
+
 function renderHistoricoResv(){
+  try{ renderViradaResv(); }catch(e){}
   var tb=document.getElementById('mghr-tbody'); if(!tb) return;
   var th=document.getElementById('mghr-thead');
   if(th && !th.getAttribute('data-built')){
@@ -25873,6 +26065,8 @@ window.MGW_RESV={ onNav:onNav, refresh:refresh, filterTable:renderReservas, rend
   alternarAuto:alternarAuto, autoLigado:autoLigado, autoPreencher:autoPreencherCiclo,
   alternarEspelho:alternarEspelho, espelhoLigado:espelhoLigado, espelhoDiferenca:espelhoDiferenca,
   renderHistorico:renderHistoricoResv, doMes:reservasDoMes, deOutrosMeses:reservasDeOutrosMeses,
+  arquivarMes:arquivarMesDaTela, desarquivar:desarquivarDaTela,
+  arquivar:arquivarMes, desarquivarChaves:desarquivar, mesesArquivados:mesesArquivados,
   pintarAuto:pintarBotaoAuto,
   estadoPlanilha:function(){ loadPlan(); return JSON.parse(JSON.stringify(PLAN)); },
   regraCorte:function(v){ if(!v) return; REGRA.corte=v; saveRegra(); classificarOrigem(DATA); renderReservas();
