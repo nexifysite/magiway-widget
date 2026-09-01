@@ -957,6 +957,10 @@ select.ffi option{background:#000020;color:#FF0000}
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         Rentabilidade
       </div>
+      <div class="sb-item" onclick="nav('comparativo',this)">
+        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        Cotações × Vendas
+      </div>
       <div class="sb-sec">Sistema</div>
       <div class="sb-item active" onclick="nav('vendedores',this)">
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 11-4 0 2 2 0 014 0zm6 7a2 2 0 11-4 0 2 2 0 014 0zm-9 0a2 2 0 11-4 0 2 2 0 014 0zM7 16a3 3 0 016 0M13 16a3 3 0 016 0"></path></svg>
@@ -1104,12 +1108,131 @@ select.ffi option{background:#000020;color:#FF0000}
   </div>
 </div>
 </div>
-      <!-- A aba COMPARATIVO saiu do aplicativo em 12/08/2026.
-           Virou documento de apresentação, fora daqui:
-             apresentacao/MAGIWAY-DIAGNOSTICO.html
-           Arquivo único, sem internet, para abrir e projetar. Aqui dentro
-           ele não fazia sentido: é um documento de uma reunião específica,
-           não uma tela de operação diária. -->
+      <!-- COTAÇÕES × VENDAS — a aba voltou em 31/08/2026.
+           Saiu em 12/08 para virar documento de reunião. Voltou porque a
+           pergunta que ela responde é diária, não de reunião: por que
+           tanta cotação e tão pouco fechamento. O motor nunca saiu do
+           arquivo — cliente ideal (10+ diárias, Orlando→Orlando, minivan,
+           retirada em até 3 meses), a régua de preço do nicho B/C e a
+           leitura do desgaste da equipe continuaram aqui o tempo todo,
+           sem tela que os mostrasse. -->
+      <div class="panel" id="panel-comparativo">
+<div style="padding:4px 0 0">
+  <!-- ═══ A VERDADE DE ABERTURA ═══ -->
+  <div class="cp-hero" id="cp-hero">
+    <div class="cp-hero-eyebrow">SEM RODEIOS</div>
+    <div class="cp-hero-n" id="cp-hero-n">—</div>
+    <div class="cp-hero-t" id="cp-hero-t">Carregando os números…</div>
+    <div class="cp-hero-s" id="cp-hero-s"></div>
+    <div class="cp-hero-pulse"></div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px;border-color:rgba(255,209,26,.28)">
+    <div class="card-title">O QUE COTAMOS × O QUE FECHAMOS</div>
+    <div class="card-sub">Cada quadro junta o mesmo assunto nos dois lados. Clique em qualquer gráfico para ampliar com a explicação.</div>
+    <div class="kpi-grid" id="cp-kpis" style="margin-top:14px"></div>
+  </div>
+
+  <div class="ch-grid2" style="margin-bottom:14px">
+    <div class="card"><div class="card-title">POR CATEGORIA — COTADO × FECHADO</div><div class="card-sub">onde o pedido vira venda e onde ele morre</div><div style="height:260px;position:relative"><canvas id="cp-cat"></canvas></div></div>
+    <div class="card"><div class="card-title">POR LOCAL — COTADO × FECHADO</div><div class="card-sub">o ponto de retirada muda a chance de fechar?</div><div style="height:260px;position:relative"><canvas id="cp-loc"></canvas></div></div>
+  </div>
+
+  <div class="ch-grid2" style="margin-bottom:14px">
+    <div class="card"><div class="card-title">POR MÊS — COTADO × FECHADO</div><div class="card-sub">volume lado a lado, em ordem crescente</div><div style="height:240px;position:relative"><canvas id="cp-mes"></canvas></div></div>
+    <div class="card"><div class="card-title">CONVERSÃO POR MÊS</div><div class="card-sub">% das cotações que viraram venda</div><div style="height:240px;position:relative"><canvas id="cp-conv"></canvas></div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px;border-color:rgba(26,255,157,.28)">
+    <div class="card-title">CLIENTE IDEAL × CLIENTE COMPLEXO</div>
+    <div class="card-sub" id="cp-def-sub">definição abaixo · muda o julgamento do time, então está escrita na tela</div>
+    <div class="cp-def" id="cp-def"></div>
+    <div class="ch-grid2" style="margin-top:14px">
+      <div class="card" style="background:transparent"><div class="card-title">COMPOSIÇÃO DA CARTEIRA</div><div class="card-sub">quanto do que chega é fácil e quanto é difícil</div><div style="height:230px;position:relative"><canvas id="cp-perfil"></canvas></div></div>
+      <div class="card" style="background:transparent"><div class="card-title">CONVERSÃO: IDEAL × COMPLEXO</div><div class="card-sub">a diferença de dificuldade, medida</div><div style="height:230px;position:relative"><canvas id="cp-perfil-conv"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ ÍNDICE DE CONTRACORRENTE ═══ -->
+  <div class="card cp-corrente cp-ampliar" id="cp-corrente-card" data-quadro="cp-corrente-card">
+    <div class="card-title">🌊 ÍNDICE DE CONTRACORRENTE</div>
+    <div class="card-sub">Quanta força o vendedor precisa fazer para vender aqui. 0 = a favor · 100 = tudo contra.</div>
+    <div class="cp-gauge-wrap">
+      <div class="cp-gauge"><canvas id="cp-gauge"></canvas><div class="cp-gauge-n" id="cp-gauge-n">—</div></div>
+      <div class="cp-forcas" id="cp-forcas"></div>
+    </div>
+    <div id="cp-corrente-txt"></div>
+  </div>
+
+  <!-- ═══ ESFORÇO POR VENDA ═══ -->
+  <div class="ch-grid2" style="margin-bottom:14px">
+    <div class="card"><div class="card-title">QUAL CATEGORIA CONVERTE</div><div class="card-sub">% do que foi cotado virou venda · a barra enche até o resultado</div><div style="height:250px;position:relative"><canvas id="cp-conv-cat"></canvas></div></div>
+    <div class="card"><div class="card-title">DIÁRIAS — COTADO × FECHADO</div><div class="card-sub">locação longa fecha mais que locação curta?</div><div style="height:250px;position:relative"><canvas id="cp-dias"></canvas></div></div>
+  </div>
+
+  <div class="ch-grid2" style="margin-bottom:14px">
+    <div class="card"><div class="card-title">ONDE O PEDIDO SE PERDE</div><div class="card-sub">cotado, e o que sobrou depois de cada filtro do cliente ideal</div><div style="height:250px;position:relative"><canvas id="cp-funil"></canvas></div></div>
+    <div class="card"><div class="card-title">EVOLUÇÃO DA CONVERSÃO</div><div class="card-sub">mês a mês, com linha de tendência</div><div style="height:250px;position:relative"><canvas id="cp-tend"></canvas></div></div>
+  </div>
+
+  <div class="ch-grid2" style="margin-bottom:14px">
+    <div class="card cp-ampliar" data-quadro="cp-esforco"><div class="card-title">O CUSTO DE UMA VENDA <span class="cp-lupa">⤢</span></div><div class="card-sub">quanto trabalho cabe dentro de cada fechamento</div><div id="cp-esforco"></div></div>
+    <div class="card cp-ampliar" data-quadro="cp-preco"><div class="card-title">PREÇO × MERCADO <span class="cp-lupa">⤢</span></div><div class="card-sub">de onde vem a resistência antes de o vendedor abrir a boca</div><div id="cp-preco"></div></div>
+  </div>
+
+  <!-- ═══ DESGASTE ═══ -->
+  <div class="card cp-desgaste cp-ampliar" data-quadro="cp-desgaste">
+    <div class="card-title">🧠 O QUE ISSO FAZ COM QUEM VENDE</div>
+    <div class="card-sub">Leitura do desgaste físico e psicológico a partir dos seus próprios números</div>
+    <div id="cp-desgaste"></div>
+  </div>
+
+  <!-- ═══ O IMPASSE ═══ -->
+  <div class="card cp-impasse cp-ampliar" data-quadro="cp-impasse">
+    <div class="card-title">⛓️ O IMPASSE — VENDEDOR, DIRETORIA E O LAÇO QUE SE ALIMENTA SOZINHO</div>
+    <div class="card-sub">Por que a discussão de preço não avança, por que o tráfego vira o culpado, e onde isso termina</div>
+    <div id="cp-impasse"></div>
+  </div>
+
+  <div class="card" id="cp-relatorio-card" style="border-color:rgba(255,0,0,.25)">
+    <div class="card-title" style="color:var(--fire)">📋 LEITURA DOS NÚMEROS — A FAVOR OU CONTRA O VENDEDOR?</div>
+    <div class="card-sub">Relatório gerado dos dados do período, sem opinião de fora</div>
+    <div id="cp-relatorio"></div>
+  </div>
+
+  <!-- ═══ ANÁLISE PELA IA ═══ -->
+  <div class="card cp-ia">
+    <div class="cp-ia-hd">
+      <div>
+        <div class="card-title">🤖 ANÁLISE DA IA</div>
+        <div class="card-sub">Leitura interpretativa dos mesmos números · gerada sob demanda</div>
+      </div>
+      <button class="tbtn tbtn-o" id="cp-ia-btn" onclick="cpAnaliseIA()">↻ Atualizar análise</button>
+    </div>
+    <div id="cp-ia-txt" class="cp-ia-txt">
+      <span class="cp-ia-vazio">Clique em <b>Atualizar análise</b> quando quiser uma leitura nova — por exemplo depois de um mês fechado, de uma mudança de preço ou da compra de carros.</span>
+    </div>
+    <div class="cp-ia-rodape" id="cp-ia-rodape"></div>
+  </div>
+
+  <!-- ═══ O QUE ISSO COBRA EM 12 MESES ═══
+       O desgaste olha para hoje; o impasse, para o sistema. Faltava o
+       eixo do TEMPO: nada aqui explode de uma vez, e é justamente por
+       isso que passa despercebido até ser tarde. -->
+  <div class="card cp-longo cp-ampliar" data-quadro="cp-longo" style="margin-bottom:14px;border-color:rgba(255,0,0,.3)">
+    <div class="card-title">⏳ O QUE ISSO COBRA EM 12 MESES</div>
+    <div class="card-sub">Nada aqui acontece de uma vez — e é por isso que não se vê acontecer</div>
+    <div id="cp-longo"></div>
+  </div>
+
+  <!-- ═══ PLANO DE AÇÃO ═══ -->
+  <div class="card cp-plano cp-ampliar" data-quadro="cp-plano">
+    <div class="card-title">🎯 PLANO DE AÇÃO</div>
+    <div class="card-sub">Ordenado por quanto alivia o vendedor dividido por quanto custa fazer</div>
+    <div id="cp-plano"></div>
+  </div>
+</div>
+      </div>
       <div class="panel" id="panel-cotacao">
 <div class="cot-wrap">
   <!-- COTAÇÃO AUTOMÁTICA IA -->
@@ -8792,7 +8915,7 @@ const NAV={
   dashcot:['DASHBOARD COTAÇÕES','KPIs e análise completa das cotações geradas'],
   histresv:['HISTÓRICO DE RESERVAS','Reservas de outros meses · a aba 📦 HISTÓRICO da planilha'],
   rentab:['RENTABILIDADE & OCUPAÇÃO','O que sobra de cada reserva, quanto a frota roda e com que antecedência a venda fecha'],
-  comparativo:['COMPARATIVO','O que cotamos × o que fechamos · cliente ideal e cliente complexo'],
+  comparativo:['COTAÇÕES × VENDAS','Por que tanta cotação e tão pouco fechamento · preço acima do mercado, nicho de Orlando e o que isso cobra da equipe'],
   vendedores:['CONTROLE DE ACESSO','Usuário único · gerente Luciano · dados sincronizados no Supabase'],
   config:['CONFIGURAÇÕES','Parâmetros do sistema · Login · Comandos'],
 };
@@ -14812,6 +14935,7 @@ function cpContracorrente(d){
   cpPreco(detPreco,excMedio,d);
   cpDesgaste(d,indice,porVenda,forcas,pctFora,excMedio);
   cpImpasse(d,indice,porVenda,forcas,pctFora,excMedio,detPreco,cotMes);
+  cpLongoPrazo(d,indice,porVenda,forcas,pctFora,excMedio,cotMes);
   cpPlano(d,forcas,detPreco,excMedio,porVenda,pctFora);
   return indice;
 }
@@ -15226,6 +15350,80 @@ function cpImpasse(d,indice,porVenda,forcas,pctFora,excMedio,det,cotMes){
 }
 
 /* ── Plano de ação, ordenado por alívio ÷ custo ── */
+/* ═══════════════════════════════════════════════════════════════════
+   O QUE ISSO COBRA EM 12 MESES
+   ───────────────────────────────────────────────────────────────────
+   O bloco do desgaste mede hoje; o do impasse, o sistema. Faltava o
+   eixo do tempo — e é nele que este cenário faz o estrago, porque nada
+   aqui acontece de uma vez. Cotação sem fechar não gera crise: gera uma
+   erosão que só aparece quando o vendedor pede demissão, e aí a leitura
+   fácil é "ele não aguentou o ritmo", não "o cenário o gastou".
+
+   Os números saem todos dos dados da tela — nenhuma projeção inventada.
+   Onde é estimativa, está escrito que é, e a conta aparece.
+   ═══════════════════════════════════════════════════════════════════ */
+function cpLongoPrazo(d,indice,porVenda,forcas,pctFora,excMedio,cotMes){
+  var box=document.getElementById('cp-longo'); if(!box) return;
+  var n=d.cots.length, v=d.vendas.length;
+  if(!n){ box.innerHTML='<div class="cp-vazio">Sem cotações no período.</div>'; return; }
+  var B=[];
+  var recusas=(porVenda!=null)?(porVenda-1):null;
+  var porAno=(cotMes>0)?Math.round(cotMes*12):null;
+  var recAno=(porAno!=null&&porVenda)?Math.round(porAno*(1-1/porVenda)):null;
+
+  B.push('<div class="cp-des-topo">'
+    +'Nenhuma das coisas abaixo acontece num dia ruim. Elas acontecem por acúmulo, e o acúmulo não '
+    +'dispara alarme — quando o efeito fica visível, ele já está inteiro. É por isso que operação '
+    +'com muita cotação e pouco fechamento raramente morre de crise: ela morre de desgaste, e a '
+    +'conta chega com o nome errado na etiqueta.</div>');
+
+  if(recAno!=null){
+    B.push('<div class="cp-des"><div class="cp-des-t">1 · O tamanho do que se repete</div>'
+      +'<p>No ritmo atual são cerca de <b>'+porAno.toLocaleString('pt-BR')+' cotações</b> em doze meses, '
+      +'das quais aproximadamente <b>'+recAno.toLocaleString('pt-BR')+'</b> não viram venda. '
+      +'Isso é a estimativa direta do que a tela mede hoje, projetada no ano — não é previsão de mercado.</p>'
+      +'<p>Cada uma dessas custou pesquisa de tarifa, montagem de proposta, resposta, follow-up. '
+      +'O trabalho foi feito inteiro; só o desfecho não veio. Repetido '+recAno.toLocaleString('pt-BR')+' vezes, '
+      +'deixa de ser estatística e vira a experiência cotidiana de quem atende.</p></div>');
+  }
+
+  B.push('<div class="cp-des"><div class="cp-des-t">2 · A erosão que não avisa</div>'
+    +'<p>O primeiro a ir embora não é o vendedor — é o <b>esforço marginal</b>. Ninguém decide parar de '
+    +'insistir; a insistência só vai ficando mais curta. O follow-up que era três vezes vira duas. '
+    +'A proposta que era personalizada vira modelo. A conversa de descoberta encolhe.</p>'
+    +'<p>E aqui está a armadilha: <b>a conversão cai por causa disso, e a queda é lida como falha de quem atende</b>. '
+    +'A cobrança aumenta, o esforço marginal encolhe mais, a conversão cai de novo. '
+    +'O ciclo se alimenta sozinho e cada volta é pior que a anterior — sem que nada tenha mudado no preço, '
+    +'no lead ou no produto.</p></div>');
+
+  B.push('<div class="cp-des"><div class="cp-des-t">3 · A saída, e o que ela leva junto</div>'
+    +'<p>O desfecho previsível é a troca de vendedor. E o que se perde não é a vaga: é a <b>carteira na cabeça da pessoa</b> — '
+    +'quem já cotou e não fechou, quem pediu para chamar em dezembro, quem indicou o cunhado, qual objeção cada família fez. '
+    +'Nada disso está na planilha. Vai embora inteiro.</p>'
+    +'<p>Vem então o custo do substituto: seleção, treino, e os meses em que ele converte menos que o anterior — '
+    +'porque não tem a carteira, não conhece as praças e ainda vai descobrir sozinho que o preço é alto. '
+    +'<b>E o cenário que gastou o primeiro continua exatamente igual para o segundo.</b> '
+    +'Trocar a pessoa sem mexer na condição é repetir o ciclo com um nome novo — e é isso que transforma '
+    +'um problema de posicionamento numa sangria permanente de gente.</p></div>');
+
+  B.push('<div class="cp-des"><div class="cp-des-t">4 · Por que volume piora</div>'
+    +'<p>A reação instintiva a pouca venda é pedir mais lead. Com <b>'+(porVenda?porVenda.toFixed(0):'muitas')+' cotações por venda</b> '
+    +'e <b>'+excMedio.toFixed(0)+'%</b> acima do nicho, dobrar a entrada dobra a recusa: a mesma taxa sobre uma base maior. '
+    +'Mais orçamentos, mais silêncio, mais fadiga — e o percentual na tela sem se mover um ponto.</p>'
+    +'<p>Volume é a alavanca de quem compete por preço. Quem cobra acima do mercado tem outra: '
+    +'fazer o cliente <b>chegar sabendo por que custa mais</b>. Reconhecimento de marca não traz mais gente — '
+    +'traz a mesma gente já convencida, e age onde interessa, que é a <b>taxa de conversão</b>. '
+    +'É a diferença entre encher o funil e estreitar o vazamento.</p></div>');
+
+  B.push('<div class="cp-des cp-des-aviso"><div class="cp-des-t">O que fazer com esta tela</div>'
+    +'<p>Mostrá-la ao time. Saber que o cenário é duro por característica — preço, nicho e composição da carteira — '
+    +'e não por incompetência, é o que separa "eu sou ruim nisso" de "isto aqui está difícil". '
+    +'A primeira leitura adoece a pessoa; a segunda organiza a discussão. '
+    +'E a discussão que resolve não é sobre esforço: é sobre preço, sobre quem chega e sobre a marca.</p></div>');
+
+  box.innerHTML=B.join('');
+}
+
 function cpPlano(d,forcas,det,excMedio,porVenda,pctFora){
   var box=document.getElementById('cp-plano'); if(!box) return;
   var acoes=[];
@@ -15259,11 +15457,25 @@ function cpPlano(d,forcas,det,excMedio,porVenda,pctFora){
       p:'A cotação automática por IA já existe no app (cole a conversa do cliente). Com a chave ligada, o tempo por orçamento despenca. '
         +'Não aumenta a conversão — mas devolve horas e corta a fadiga de decisão, que é o que faz a cotação da tarde sair pior que a da manhã.'});
   }
+  /* Antes esta ação dizia "aumentar o volume de leads". Estava errada para
+     esta operação, e a própria tela prova por quê: com 5% de carteira ideal
+     e preço +60% acima do nicho, dobrar o volume dobra a recusa — mais
+     cotações, a mesma conversão, o dobro do desgaste em quem atende.
+     Volume é a alavanca de quem compete por preço. Quem cobra acima do
+     mercado tem uma alavanca só: fazer o cliente chegar já sabendo por que
+     custa mais. Isso é reconhecimento de marca, e ele age na CONVERSÃO. */
   if(fVolume>=50){
-    acoes.push({prazo:'ESTE MÊS',forca:'Volume',impacto:4,custo:4,
-      t:'Aumentar o volume de leads',
-      p:'Com poucas cotações entrando, uma venda a mais ou a menos vira uma variação enorme no percentual — e o vendedor é cobrado por ruído. '
-        +'Volume maior estabiliza o resultado e reduz a pressão sobre cada atendimento individual.'});
+    acoes.push({prazo:'ESTE MÊS',forca:'Marketing',impacto:5,custo:3,
+      t:'Marketing de reconhecimento — não de volume',
+      p:'A tentação aqui é pedir mais leads. Com <b>'+(porVenda?porVenda.toFixed(0):'tantas')+' cotações por venda</b>, '
+        +'dobrar a entrada dobra a recusa: o mesmo percentual sobre uma base maior, o dobro de orçamentos feitos, '
+        +'o dobro de silêncio para quem atende. Volume é a alavanca de quem compete por preço — e não é o nosso caso.<br><br>'
+        +'A verba precisa ir para o cliente <b>chegar já sabendo quem somos</b>: prova social de brasileiro em Orlando, '
+        +'vídeo de retirada sem fila, depoimento de quem foi socorrido no domingo, o carro reserva, o suporte em português. '
+        +'Quem chega reconhecendo a marca não usa o preço como primeiro filtro — e é exatamente aí que a conversão sobe '
+        +'sem que ninguém precise baixar o número.<br><br>'
+        +'<b>Como medir:</b> a régua não é lead nem impressão, é <b>taxa de conversão</b> e <b>% de carteira ideal</b>. '
+        +'Se a verba subir e essas duas não se moverem, o dinheiro está comprando volume outra vez.'});
   }
   acoes.push({prazo:'ESTE MÊS',forca:'Gestão',impacto:4,custo:1,
     t:'Cobrar o que é do vendedor, separado do que não é',
@@ -24074,6 +24286,7 @@ function loadAll(force){
   /* Arquivo carregado manda: a base é ele, e a internet fica de fora.
      Nada de rede aqui — é justamente o ponto de ter baixado a planilha. */
   loadArq();
+  plantarSemente();
   if(arqAtivo()){
     DATA=processarReservas(arqRows());
     LOADED=true; assignCars(); renderAll();
@@ -24225,6 +24438,27 @@ function saveArq(){
   catch(e){ throw new Error('A base não coube no armazenamento do navegador.'); }
 }
 function arqAtivo(){ return _gavetaOk(ARQ.hist) || _gavetaOk(ARQ.fech); }
+/* ── Histórico de partida ──────────────────────────────────────────
+   Planta o MGW_HIST_SEED na gaveta do histórico UMA vez, e só se ela
+   estiver vazia. A marca de plantio é o que garante o "uma vez": sem
+   ela, esvaziar o histórico de propósito faria a semente voltar na
+   abertura seguinte, e não haveria como se livrar dela.
+   Roda dentro de loadAll(), que só acontece depois do login — o script
+   da semente está no fim do arquivo e ainda não existe na hora em que
+   este módulo é montado. */
+var SEMENTE_K='gs_hist_semeado_v1';
+function plantarSemente(){
+  try{
+    if(localStorage.getItem(SEMENTE_K)) return 0;
+    var seed=window.MGW_HIST_SEED;
+    if(!seed || !seed.length) return 0;
+    if(_gavetaOk(ARQ.hist)){ localStorage.setItem(SEMENTE_K,'1'); return 0; }
+    ARQ.hist={ts:Date.now(), nome:'histórico de partida (abr–ago/2026)', linhas:seed.slice()};
+    saveArq();
+    localStorage.setItem(SEMENTE_K,'1');
+    return seed.length;
+  }catch(e){ return 0; }
+}
 function _reidrata(linhas){
   return (linhas||[]).map(function(r){
     r=Object.assign({},r);
@@ -28574,8 +28808,1281 @@ thead th,.mgdisp-tab thead th,.mgrsv-table thead th{ background:#070f1a !importa
   border:1px solid var(--edge);padding:2px 7px;margin-left:8px;white-space:nowrap}
 .tf-tabwrap{overflow-x:auto}
 @media(max-width:640px){.tf-acao{flex-direction:column;gap:6px}}
+#panel-comparativo{ --c-sup:rgba(255,255,255,.062); --c-sup2:rgba(255,255,255,.085); }
+#panel-comparativo .card,
+#panel-comparativo .cpx-sec{
+  background:var(--c-sup) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.11) !important;
+  padding:24px 26px !important;
+}
+#panel-comparativo .kpi{ background:var(--c-sup) !important; padding:16px 18px !important }
+#panel-comparativo .card-title{ font-size:16px !important; color:#F2F7FC !important }
+#panel-comparativo .card-sub{ font-size:.78rem !important; color:#A9C0D6 !important; line-height:1.6 }
+/* o texto corrido sobe dois pontos e clareia — é documento para ler */
+#panel-comparativo .cpx-p,
+#panel-comparativo .cpx-verb-c p,
+#panel-comparativo .cpx-saida p,
+#panel-comparativo .cpx-imp-p,
+#panel-comparativo .cpx-erro p,
+#panel-comparativo .cp-des p,
+#panel-comparativo .cp-vies{ font-size:.94rem !important; line-height:1.85 !important; color:#C7D8E8 !important }
+#panel-comparativo .cpx-p b,
+#panel-comparativo .cpx-verb-c b,
+#panel-comparativo .cpx-erro p b{ color:#FFFFFF !important }
+#panel-comparativo .cpx-h{ font-size:1.2rem !important; color:#FFFFFF !important }
+#panel-comparativo .cpx-sub{ font-size:.8rem !important; color:#A9C0D6 !important }
+#panel-comparativo .cpx-erro{ background:rgba(120,10,10,.28) !important; padding:20px 22px !important }
+#panel-comparativo .cpx-erro-t{ font-size:1rem !important; color:#FFB4B4 !important }
+#panel-comparativo .cpx-erro-l{ font-size:.6rem !important; color:#93AABF !important }
+#panel-comparativo .cpx-erro .prova{ font-size:.86rem !important; color:#FFD98A !important }
+#panel-comparativo .cpx-erro .fazer{ color:#B6F7D6 !important }
+#panel-comparativo .cpx-verb summary{ font-size:.95rem !important; padding:15px 18px !important }
+#panel-comparativo .cpx-verb{ background:rgba(255,255,255,.05) !important }
+#panel-comparativo .cpx-verb-c{ padding:2px 18px 18px 18px !important }
+#panel-comparativo .cpx-n{ background:rgba(255,255,255,.075) !important; padding:18px 20px !important }
+#panel-comparativo .cpx-n-v{ font-size:2rem !important }
+#panel-comparativo .cpx-n-t{ font-size:.63rem !important; color:#A9C0D6 !important }
+#panel-comparativo .cpx-n-s{ font-size:.73rem !important; color:#93AABF !important }
+#panel-comparativo .cpx-tab{ font-size:.88rem !important }
+#panel-comparativo .cpx-tab td{ padding:12px 13px !important; color:#C7D8E8 !important }
+#panel-comparativo .cpx-tab th{ font-size:.62rem !important; color:#A9C0D6 !important;
+  background:rgba(255,255,255,.075) !important }
+#panel-comparativo .cpx-golpe{ font-size:1.08rem !important; padding:22px 24px !important }
+#panel-comparativo .cpx-golpe small{ font-size:.84rem !important; color:#C7D8E8 !important }
+#panel-comparativo .cpx-graf>div{ background:rgba(255,255,255,.05) !important; padding:18px 20px !important }
+#panel-comparativo .cpx-graf .gt{ font-size:.84rem !important; color:#F2F7FC !important }
+#panel-comparativo .cpx-graf .gs{ font-size:.72rem !important; color:#A9C0D6 !important }
+#panel-comparativo .cpx-graf .cx{ height:270px }
+#panel-comparativo .cpx-perg>div{ background:rgba(255,255,255,.075) !important; padding:22px 20px !important }
+#panel-comparativo .cpx-perg .q{ font-size:1.06rem !important }
+#panel-comparativo .cpx-perg .a{ font-size:.87rem !important; color:#C7D8E8 !important }
+#panel-comparativo .cp-hero-t,#panel-comparativo .cp-def,
+#panel-comparativo .cp-corr-txt,#panel-comparativo .cp-forca-s{ font-size:.9rem !important; color:#C7D8E8 !important }
+#panel-comparativo .cpx-ctrl{ background:rgba(255,255,255,.06) !important; padding:16px 18px !important }
+#panel-comparativo .cpx-ctrl label{ font-size:.63rem !important; color:#A9C0D6 !important }
+#panel-comparativo .cpx-ctrl .val{ font-size:1.05rem !important }
+/* aviso de gráfico sem dado fica legível também */
+#panel-comparativo .mgw-vazio{ font-size:.86rem !important; color:#A9C0D6 !important }
+@media(max-width:640px){
+  #panel-comparativo .card,#panel-comparativo .cpx-sec{ padding:16px 15px !important }
+  #panel-comparativo .cpx-p,#panel-comparativo .cpx-verb-c p{ font-size:.87rem !important }
+}
+
+/* blocos novos do relatorio */
+.cpx-assum{display:flex;gap:14px;align-items:flex-start;padding:13px 15px;margin-bottom:2px;
+  background:rgba(89,2,2,.18);border-left:2px solid var(--p-verm)}
+.cpx-assum-n{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:800;color:rgba(242,5,5,.55);
+  min-width:22px;line-height:1.3}
+.cpx-assum-t{font-size:.92rem;font-weight:700;color:#FFB4B4;margin-bottom:5px;line-height:1.3}
+.cpx-assum p{font-size:.86rem;line-height:1.78;color:var(--chalk2);margin:0}
+.cpx-decl{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--p-ouro);
+  border:1px solid rgba(242,186,82,.4);padding:1px 6px;margin-left:5px;white-space:nowrap}
+.cpx-tri{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px;margin:12px 0}
+.cpx-tri>div{padding:14px 16px;background:rgba(255,255,255,.04);border-top:2px solid var(--p-ouro)}
+.cpx-tri-t{font-size:.8rem;font-weight:700;color:var(--p-ouro);margin-bottom:7px}
+.cpx-tri p{font-size:.83rem;line-height:1.75;color:var(--chalk2);margin:0}
+#panel-comparativo .cpx-assum{background:rgba(120,10,10,.28) !important;padding:17px 19px !important}
+#panel-comparativo .cpx-assum p,#panel-comparativo .cpx-tri p{font-size:.92rem !important;color:#C7D8E8 !important}
+#panel-comparativo .cpx-assum-t{font-size:1rem !important}
+#panel-comparativo .cpx-tri>div{background:rgba(255,255,255,.07) !important;padding:18px 20px !important}
+
 </style><!--/mgw-skin-v2-->
 
+
+<script id="mgw-comparativo-relatorio">
+/* ═══════════════════════════════════════════════════════════════════
+   COMPARATIVO — RELATÓRIO EXECUTIVO  (10/08/2026)
+   ───────────────────────────────────────────────────────────────────
+   O painel do Comparativo mostrava os números. Faltava o documento: o
+   que os números provam, por que a situação se mantém, de quem é a
+   decisão de cada peça, e o que a literatura de economia e de psicologia
+   do trabalho diz sobre cada erro.
+
+   Duas regras que este arquivo segue e que não são estilo, são o que
+   faz o documento ter valor numa reunião:
+
+   1) TODO NÚMERO É RASTREÁVEL. Ou sai dos dados do app, ou é um campo
+      que o usuário preenche e que aparece marcado como declarado. Não
+      existe número inventado aqui — um dado frouxo derruba o argumento
+      inteiro, e o argumento é bom demais para ser derrubado assim.
+
+   2) NÃO HÁ VILÃO. A diretoria erra por vieses que qualquer pessoa
+      naquela cadeira teria, e eles estão nomeados um a um. Acusar
+      pessoas transforma auditoria em queixa, e queixa é descartada.
+      Descrever mecanismo obriga a responder.
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+'use strict';
+
+var CPX={ injetado:false, obs:null, cv:null, raf:null, pontos:[], fase:0, charts:{} };
+
+/* ── parâmetros declarados (o app não mede estes) ───────────────────
+   Ficam em localStorage para o relatório abrir do mesmo jeito na
+   próxima vez e para a equipe ver os mesmos números. */
+var CPX_PAD={ papeis:8, horasVenda:35, sublocPct:40, leadsMes:0, custoTrafego:0, invMkt:0, diasMeta:11 };
+function cpxCfg(){
+  try{ var o=JSON.parse(localStorage.getItem('gs_cpx_v1')||'{}');
+       return Object.assign({},CPX_PAD,o); }catch(e){ return Object.assign({},CPX_PAD); }
+}
+function cpxSalvar(o){
+  try{ localStorage.setItem('gs_cpx_v1', JSON.stringify(o)); }catch(e){}
+}
+
+var esc=function(v){ return String(v==null?'':v)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); };
+var n0=function(v){ return Math.round(+v||0).toLocaleString('pt-BR'); };
+var n1=function(v){ return (+v||0).toFixed(1).replace('.',','); };
+
+/* ═══ 1. A CAPA — a esfera da dificuldade ═══
+   O anel de nós que estava aqui não funcionou: lido de longe parecia um
+   diagrama qualquer, e o movimento circular sugeria "processo rodando",
+   que é o contrário do que o relatório diz. Vira a mesma esfera de
+   pontos das outras telas — que já é a linguagem visual do app — girando
+   devagar, com o número da dificuldade no meio.
+
+   A diferença para a esfera do Dash de Cotações é o nono fator: as
+   FUNÇÕES ACUMULADAS. Vender acumulando oito papéis não é o mesmo
+   trabalho que vender só vendendo, e a bola precisa dizer isso. */
+var ESF={pontos:[], viz:null, vizQuadro:0, ang:0, raf:null, timer:null, nivel:0, cor:'#FC2877'};
+
+function cpxNivel(o){
+  /* Reaproveita os oito fatores da esfera do Dash de Cotações e soma o
+     nono. O peso de 0,12 sai dos outros proporcionalmente — o que muda é
+     a ênfase, não a escala. */
+  var base=null;
+  try{
+    if(typeof mgdCalcular==='function'){
+      var d=(typeof _cpUltimo!=='undefined'&&_cpUltimo)?_cpUltimo:null;
+      var resv=[];
+      try{ if(window.MGW_CICLO) resv=MGW_CICLO.reservasDoCiclo()||[]; }catch(e){}
+      base=mgdCalcular(d?d.cots:[], resv);
+    }
+  }catch(e){}
+  var fatores=base?base.fatores.slice():[];
+  /* nono fator: quanto do tempo NÃO é venda, e quantos papéis se acumula.
+     Um papel além de vender já pesa; oito é outra profissão. */
+  var papeis=o.cfg.papeis||1, foraVenda=100-(o.cfg.horasVenda||100);
+  var vFun=Math.max(0,Math.min(100, (Math.min(papeis,10)/10*60) + (foraVenda/100*40) ));
+  fatores.forEach(function(f){ f.peso=f.peso*0.88; });
+  fatores.push({t:'Funções acumuladas', peso:.12, v:vFun,
+    d:papeis+' papéis · '+foraVenda+'% do tempo fora da venda',
+    txt:'Vender acumulando função não é o mesmo trabalho que vender. Cada papel a mais consome '
+       +'atenção, decisão e o tempo que iria para o follow-up.'});
+  var idx=Math.round(fatores.reduce(function(a,f){ return a+f.v*f.peso; },0));
+  return {indice:Math.max(0,Math.min(100,idx)), fatores:fatores};
+}
+
+function cpxEsferaAnimar(){
+  var cv=document.getElementById('cpx-esfera-cv'); if(!cv) return;
+  if(!ESF.pontos.length){
+    try{ ESF.pontos=mgsCriarPontos(120); }catch(e){ return; }
+  }
+  try{ _esfVizinhos(ESF); }catch(e){ return; }
+  if(ESF.raf) cancelAnimationFrame(ESF.raf);
+  if(ESF.timer) clearInterval(ESF.timer);
+  var ctx=cv.getContext('2d'), ultimo=0;
+
+  var desenhar=function(){
+    var dpr=Math.min(2,window.devicePixelRatio||1);
+    var L=cv.clientWidth||260, H=cv.clientHeight||260;
+    if(cv.width!==L*dpr||cv.height!==H*dpr){ cv.width=L*dpr; cv.height=H*dpr; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,L,H);
+    var cx=L/2, cy=H/2, R=Math.min(L,H)*0.36, FOC=2.6;
+    var inc=-0.30, ci=Math.cos(inc), si=Math.sin(inc);
+    var ca=Math.cos(ESF.ang), sa=Math.sin(ESF.ang);
+    var proj=ESF.pontos.map(function(p){
+      var rr=p.rad, px=p.x*rr, py=p.y*rr, pz=p.z*rr;
+      var x=px*ca-pz*sa, z0=px*sa+pz*ca;
+      var y=py*ci-z0*si, z=py*si+z0*ci;
+      var e=FOC/(FOC-z);
+      return {sx:cx+x*R*e, sy:cy+y*R*e, z:z, carga:p.carga};
+    });
+    var LIM=0.46;
+    for(var i=0;i<ESF.pontos.length;i++){
+      for(var j=i+1;j<ESF.pontos.length;j++){
+        var A=ESF.pontos[i], B=ESF.pontos[j];
+        var dx=A.x-B.x, dy=A.y-B.y, dz=A.z-B.z;
+        var dd=Math.sqrt(dx*dx+dy*dy+dz*dz);
+        if(dd>LIM) continue;
+        var P=proj[i], Q=proj[j];
+        var f=((P.z+Q.z)/2+1)/2;
+        var op=(0.10+0.40*f)*(1-dd/LIM);
+        var c=Math.max(A.carga,B.carga);
+        if(c>0.03){ ctx.lineWidth=1+2.2*c; ctx.strokeStyle='rgba(120,200,255,'+Math.min(1,0.34+0.66*c).toFixed(3)+')'; }
+        else{ ctx.lineWidth=0.8; ctx.strokeStyle='rgba(252,40,119,'+op.toFixed(3)+')'; }
+        ctx.beginPath(); ctx.moveTo(P.sx,P.sy); ctx.lineTo(Q.sx,Q.sy); ctx.stroke();
+      }
+    }
+    proj.slice().sort(function(a,b){ return a.z-b.z; }).forEach(function(P){
+      var f=(P.z+1)/2, c=P.carga, r=(0.9+2.1*f)*(1+1.3*c);
+      ctx.beginPath(); ctx.arc(P.sx,P.sy,r,0,6.2832);
+      ctx.fillStyle=c>0.03?'rgba(180,225,255,'+Math.min(1,.45+.55*c).toFixed(3)+')'
+                          :'rgba(255,'+Math.round(120+90*f)+','+Math.round(160+70*f)+','+(0.35+0.6*f).toFixed(3)+')';
+      ctx.shadowColor=c>0.03?'#78C8FF':ESF.cor; ctx.shadowBlur=c>0.03?12:(f>0.85?10:0);
+      ctx.fill(); ctx.shadowBlur=0;
+    });
+  };
+
+  (function laco(t){
+    ESF.raf=requestAnimationFrame(laco);
+    if(!document.body.contains(cv)){ cancelAnimationFrame(ESF.raf); ESF.raf=null; return; }
+    if(t-ultimo<16) return;
+    ultimo=t;
+    ESF.ang+=0.0011;                       /* devagar: ~95 s por volta */
+    try{ _esfMover(ESF, 0.03+0.05*(ESF.nivel/100)); }catch(e){}
+    desenhar();
+  })(0);
+  ESF.timer=setInterval(function(){
+    if(document.hidden) return;
+    if(performance.now()-ultimo>240){ ESF.ang+=0.004; try{ _esfMover(ESF,0.04); }catch(e){} desenhar(); }
+  },140);
+}
+
+/* ── contador que sobe ── */
+function cpxContar(el, alvo, sufixo, casas){
+  if(!el) return;
+  var t0=performance.now(), dur=1100;
+  (function tick(now){
+    var q=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-q,3);
+    var v=alvo*e;
+    el.textContent=(casas?v.toFixed(casas).replace('.',','):Math.round(v).toLocaleString('pt-BR'))+(sufixo||'');
+    if(q<1) requestAnimationFrame(tick);
+  })(t0);
+}
+
+/* ── revelar ao rolar ── */
+function cpxObservar(){
+  if(CPX.obs) CPX.obs.disconnect();
+  if(!('IntersectionObserver' in window)){
+    document.querySelectorAll('.cpx-rv').forEach(function(e){ e.classList.add('on'); });
+    return;
+  }
+  CPX.obs=new IntersectionObserver(function(itens){
+    itens.forEach(function(it){
+      if(!it.isIntersecting) return;
+      it.target.classList.add('on');
+      /* o contador só dispara quando o bloco aparece — subir número que
+         ninguém está vendo é desperdiçar o efeito */
+      it.target.querySelectorAll('[data-conta]').forEach(function(el){
+        if(el.dataset.feito) return; el.dataset.feito='1';
+        cpxContar(el, parseFloat(el.dataset.conta)||0, el.dataset.suf||'', +el.dataset.casas||0);
+      });
+      CPX.obs.unobserve(it.target);
+    });
+  },{threshold:.15});
+  document.querySelectorAll('.cpx-rv').forEach(function(e){ CPX.obs.observe(e); });
+}
+
+
+/* ═══ 2. OS DADOS QUE O RELATÓRIO USA ═══
+   Tudo daqui sai do que já está no app. Onde o app não mede, o número
+   vem de um campo que o usuário preenche — e o texto diz que é
+   declarado. Ver a regra 1 no topo do arquivo. */
+function cpxDados(){
+  var d=(typeof _cpUltimo!=='undefined' && _cpUltimo)?_cpUltimo:null;
+  var cfg=cpxCfg();
+  var o={ cfg:cfg, temDados:!!d };
+
+  o.cots      = d?d.cots.length:0;
+  o.vendas    = d?d.vendas.length:0;
+  o.ideais    = d?d.ideais.length:0;
+  o.complexos = d?d.complexos.length:0;
+  o.convGeral = d?(+d.convGeral||0):0;
+  o.pctIdeal  = d?(+d.pctIdeal||0):0;
+  o.convIdeal = d?(+d.convIdeal||0):0;
+  o.convComplexo = d?(+d.convComplexo||0):0;
+  o.indice    = d?(+d.indice||0):0;
+  o.porVenda  = o.vendas>0?(o.cots/o.vendas):null;
+  o.motivos   = d?(d.motivos||{}):{};
+
+  /* frota: quantos carros e o quanto é minivan */
+  o.frota={total:0, porCat:{}, minivanPct:0};
+  try{
+    var carros=(window.MGW_FROTA&&MGW_FROTA.carros)?MGW_FROTA.carros():[];
+    o.frota.total=carros.length;
+    /* Passa pela mesma canonização das cotações. Sem isto, "Minivan" da
+       frota e "Minivan 7L" das cotações viravam duas categorias e o
+       gráfico de frota × demanda comparava coisa com ela mesma dividida
+       em duas. São a mesma categoria. */
+    carros.forEach(function(c){
+      var k='Outros';
+      try{ k=cpCatCanon(c.cat||c.modelo)||'Outros'; }catch(e){ k=c.cat||'Outros'; }
+      o.frota.porCat[k]=(o.frota.porCat[k]||0)+1;
+    });
+    var mv=carros.filter(function(c){ return cpEhMinivan(c.cat)||cpEhMinivan(c.modelo); }).length;
+    o.frota.minivanPct=o.frota.total?(mv/o.frota.total*100):0;
+    o.frota.minivan=mv;
+  }catch(e){}
+
+  /* preço: excesso ponderado sobre o nicho */
+  o.preco={itens:[], excMedio:0};
+  try{
+    var sp=0, se=0;
+    CP_PRECOS.cats.forEach(function(c){
+      var qtd=0;
+      if(d) d.cots.forEach(function(h){
+        var ref=cpPrecoDaCategoria(h.cat); if(ref&&ref.chave===c.chave) qtd++;
+      });
+      var exc=(c.nicho!=null)?((c.magiway/c.nicho-1)*100):null;
+      o.preco.itens.push({nome:c.nome, mag:c.magiway, nicho:c.nicho, sug:c.sugerido,
+                          topo:c.topo, exc:exc, qtd:qtd});
+      if(exc!=null&&qtd>0){ sp+=qtd; se+=exc*qtd; }
+    });
+    if(sp>0) o.preco.excMedio=se/sp;
+    else{
+      var comRef=o.preco.itens.filter(function(x){ return x.exc!=null; });
+      o.preco.excMedio=comRef.length?comRef.reduce(function(a,x){return a+x.exc;},0)/comRef.length:0;
+    }
+  }catch(e){}
+
+  /* desconto: quanto se dá, e quanto faltaria para entrar na faixa */
+  o.desc={dado:0, preciso:0};
+  try{
+    if(d&&d.cots.length){
+      var sub=0, dsc=0;
+      d.cots.forEach(function(h){ sub+=(+h.subtotal||0); dsc+=(+h.disc||0); });
+      o.desc.dado=sub>0?(dsc/sub*100):0;
+    }
+    /* para chegar ao teto do nicho: 1 - topo/magiway */
+    var alvos=o.preco.itens.filter(function(x){ return x.topo&&x.mag; });
+    o.desc.preciso=alvos.length
+      ? alvos.reduce(function(a,x){ return a+(1-x.topo/x.mag)*100; },0)/alvos.length : 0;
+  }catch(e){}
+
+  /* constância: vendas por dia no ciclo, e o coeficiente de variação.
+     É o número que separa sorte de método — sorte é irregular. */
+  o.const={dias:[], cv:null, media:0, ativos:0};
+  try{
+    var C=window.MGW_CICLO;
+    if(C&&d){
+      var cic=C.cicloAtivo(), rs=C.reservasDoCiclo(cic)||[];
+      var porDia={};
+      rs.forEach(function(r){
+        if(!r.dataFech) return;
+        var k=r.dataFech.toISOString().slice(0,10);
+        porDia[k]=(porDia[k]||0)+1;
+      });
+      var ini=cic.ini.getTime(), fim=cic.fim.getTime(), DIA=86400000;
+      var hoje=Date.now(), lista=[];
+      for(var t=ini;t<=Math.min(fim,hoje);t+=DIA){
+        var k2=new Date(t).toISOString().slice(0,10);
+        lista.push(porDia[k2]||0);
+      }
+      o.const.dias=lista;
+      o.const.ativos=lista.filter(function(x){ return x>0; }).length;
+      if(lista.length){
+        var m=lista.reduce(function(a,b){return a+b;},0)/lista.length;
+        var v=lista.reduce(function(a,b){ return a+Math.pow(b-m,2); },0)/lista.length;
+        o.const.media=m;
+        o.const.cv=m>0?(Math.sqrt(v)/m*100):null;
+      }
+      o.const.ciclo=cic;
+    }
+  }catch(e){}
+
+  /* meta: a curva até o Diamante */
+  o.meta={valores:[], atingido:0, diasAte:null, alvo:0};
+  try{
+    var M=window.MGW_CICLO;
+    if(M){
+      var metas=M.metas(), diam=metas[metas.length-1];
+      o.meta.alvo=diam;
+      var cic2=M.cicloAtivo(), rs2=M.reservasDoCiclo(cic2)||[];
+      rs2.sort(function(a,b){ return (a.dataFech?a.dataFech:0)-(b.dataFech?b.dataFech:0); });
+      var acc=0, DIA2=86400000, serie=[], quando=null;
+      var ini2=cic2.ini.getTime();
+      var porDia2={};
+      rs2.forEach(function(r){
+        if(!r.dataFech) return;
+        var idx=Math.max(0,Math.round((r.dataFech.getTime()-ini2)/DIA2));
+        porDia2[idx]=(porDia2[idx]||0)+(+r.valor||0);
+      });
+      var totalDias=cic2.dias;
+      for(var i=0;i<totalDias;i++){
+        acc+=(porDia2[i]||0);
+        serie.push(acc);
+        if(quando===null && diam>0 && acc>=diam) quando=i+1;
+      }
+      o.meta.valores=serie;
+      o.meta.atingido=acc;
+      o.meta.diasAte=quando;
+      o.meta.totalDias=totalDias;
+    }
+  }catch(e){}
+  /* se o ciclo em exibição ainda não bateu, vale o feito declarado */
+  o.meta.diasDeclarado=cfg.diasMeta;
+
+  return o;
+}
+window.MGW_CPX_DADOS=cpxDados;
+
+/* ═══ 3. A CAPA E O DIAGNÓSTICO ═══ */
+function cpxCapa(o){
+  var exc=o.preco.excMedio, cv=o.const.cv;
+  var diasMeta=(o.meta.diasAte!=null)?o.meta.diasAte:o.cfg.diasMeta;
+  var fonteMeta=(o.meta.diasAte!=null)?'medido no ciclo atual':'declarado';
+  return ''
+  +'<div class="cpx-sec cpx-capa cpx-rv">'
+  +  '<div class="cpx-esf"><canvas id="cpx-esfera-cv"></canvas>'
+  +    '<div class="cpx-esf-c"><div class="cpx-esf-n" id="cpx-esf-n">—</div>'
+  +      '<div class="cpx-esf-l">DIFICULDADE DE VENDER</div>'
+  +      '<div class="cpx-esf-s">com '+o.cfg.papeis+' papéis acumulados</div></div></div>'
+  +  '<div class="cpx-capa-txt">'
+  +    '<div class="cpx-eyebrow">RELATÓRIO EXECUTIVO · SEM RODEIOS</div>'
+  +    '<div class="cpx-tit">O problema não é <span>quem vende</span>.<br>É o que foi entregue <span>para vender</span>.</div>'
+  +    '<p class="cpx-lead">Este documento mostra, com os números desta tela, que a maior parte da '
+  +      'dificuldade de vender aqui foi criada <b>antes</b> de qualquer atendimento começar — e que '
+  +      'continuar cobrando conversão sem mexer nessas causas é um erro de desenho, não de esforço.</p>'
+  +  '</div>'
+  +'</div>'
+
+  +'<div class="cpx-nums cpx-rv">'
+  +  '<div class="cpx-n mau"><div class="cpx-n-v"><span data-conta="'+exc.toFixed(0)+'" data-suf="%">0%</span></div>'
+  +    '<div class="cpx-n-t">Acima do nicho</div>'
+  +    '<div class="cpx-n-s">média ponderada pelo que se cota, contra a faixa B/C</div></div>'
+  +  '<div class="cpx-n mau"><div class="cpx-n-v"><span data-conta="'+o.indice+'">0</span></div>'
+  +    '<div class="cpx-n-t">Índice de contracorrente</div>'
+  +    '<div class="cpx-n-s">0 = a favor · 100 = tudo contra</div></div>'
+  +  '<div class="cpx-n mau"><div class="cpx-n-v"><span data-conta="'+o.frota.minivanPct.toFixed(0)+'" data-suf="%">0%</span></div>'
+  +    '<div class="cpx-n-t">Da frota é minivan</div>'
+  +    '<div class="cpx-n-s">'+o.frota.minivan+' de '+o.frota.total+' carros na mesma categoria</div></div>'
+  +  '<div class="cpx-n ok"><div class="cpx-n-v"><span data-conta="'+diasMeta+'">0</span></div>'
+  +    '<div class="cpx-n-t">Dias até o Diamante</div>'
+  +    '<div class="cpx-n-s">'+fonteMeta+' · o ciclo tem '+(o.meta.totalDias||30)+' dias</div></div>'
+  +'</div>';
+}
+
+/* ═══ 4. OS ERROS DA GESTÃO ═══
+   Cada cartão tem quatro linhas: o erro, a PROVA (número do app), o
+   conceito econômico que explica por que é erro, e o que fazer. Sem a
+   prova vira opinião; sem o conceito vira desabafo; sem o "o que fazer"
+   vira acusação. Os três juntos viram pauta de reunião. */
+function cpxErros(o){
+  var exc=o.preco.excMedio;
+  var mv=o.preco.itens[0]||{}, su=o.preco.itens[1]||{};
+  var motTop=Object.keys(o.motivos||{}).sort(function(a,b){ return o.motivos[b]-o.motivos[a]; })[0]||'';
+  var E=[
+   {t:'Preço fora da faixa em que o cliente compara',
+    prova:'+'+exc.toFixed(0)+'% sobre o nicho B/C · Minivan $'+n0(mv.mag)+' contra $'+n0(mv.nicho)+' da faixa',
+    conc:'<b>Elasticidade-preço da demanda.</b> Em mercado com substituto fácil e comparação em um clique, '
+        +'a demanda é elástica: variação pequena de preço muda muito a quantidade vendida. Tratar demanda '
+        +'elástica como se fosse inelástica — manter preço e esperar volume — é o erro clássico descrito desde Marshall.',
+    fazer:'Levar Minivan para $'+n0(mv.sug)+' e SUV para $'+n0(su.sug)+' — topo do nicho, ainda acima da média. '
+        +'E medir: 30 dias, uma categoria, resultado combinado antes.'},
+
+   {t:'Frota concentrada numa categoria só',
+    prova:n1(o.frota.minivanPct)+'% da frota é minivan · '+o.frota.minivan+' de '+o.frota.total+' carros',
+    conc:'<b>Risco não diversificado e custo de oportunidade.</b> Frota de categoria única amarra a receita '
+        +'a um único segmento de demanda: quando ele esfria, não há para onde remanejar. Cada carro parado '
+        +'não é custo zero — é o retorno que aquele capital deixaria de render em outro uso.',
+    fazer:'Medir ocupação por categoria antes de comprar o próximo carro, e comprar onde há demanda cotada '
+        +'e não atendida — não onde o desconto do fornecedor foi maior.'},
+
+   {t:'Tráfego sem marketing',
+    prova:'investimento em marca declarado: '+(o.cfg.invMkt>0?('R$ '+n0(o.cfg.invMkt)+'/mês'):'nenhum'),
+    conc:'<b>Marca é ativo; tráfego é despesa recorrente.</b> Mídia de resposta direta compra atenção hoje e '
+        +'para de entregar no dia em que o pagamento para. Marca (Keller) acumula: reduz o custo de aquisição '
+        +'ao longo do tempo porque parte da decisão já foi tomada antes do anúncio. Rodar só tráfego é pagar '
+        +'aluguel de atenção para sempre, sem nunca comprar o imóvel.',
+    fazer:'Separar orçamento de marca do de performance. Sem marca, o tráfego é uma arma na mão de quem não '
+        +'enxerga o alvo: acerta volume, não acerta o cliente certo.'},
+
+   {t:'Sublocado vendido a preço de frota própria',
+    prova:'participação declarada de sublocado: '+n0(o.cfg.sublocPct)+'%',
+    conc:'<b>Assimetria de informação (Akerlof) e sinalização (Spence).</b> Quando o comprador não distingue '
+        +'qualidade e descobre depois, ele passa a desconfiar de toda a oferta — e a disposição a pagar cai '
+        +'para o pior caso imaginado. É o mercado de limões: a informação escondida hoje derruba o preço que '
+        +'se consegue cobrar amanhã, inclusive pelo carro bom.',
+    fazer:'Ou sinalizar (linha própria, preço próprio, promessa própria) ou não vender como se fosse frota '
+        +'própria. Preço alto em sublocado não é margem: é dívida de reputação com juros.'},
+
+   {t:'Nenhum plano de negócio e nenhum plano de ação',
+    prova:(o.porVenda?n1(o.porVenda)+' cotações por venda':'sem venda no período')+' · '
+         +(motTop?('o motivo que mais tira cliente da régua é "'+esc(motTop)+'"'):''),
+    conc:'<b>Teoria das restrições (Goldratt).</b> Todo sistema tem uma restrição, e melhorar qualquer coisa '
+        +'que não seja ela não muda o resultado do conjunto. Sem plano, não se identifica a restrição — e o '
+        +'esforço vai para onde é mais fácil medir, não para onde trava. É por isso que se aperta o vendedor: '
+        +'é a parte visível do sistema.',
+    fazer:'Escrever qual é a restrição do trimestre, em uma frase, com o número que a mede. Tudo que não '
+        +'atacar aquela restrição sai da pauta até ela cair.'},
+
+   {t:'Cobrar de quem não tem a alavanca',
+    prova:'conversão do ideal '+n1(o.convIdeal)+'% contra '+n1(o.convComplexo)+'% do complexo · '
+         +n1(o.pctIdeal)+'% da carteira é ideal',
+    conc:'<b>Lei de Goodhart e justiça organizacional (Adams).</b> Quando uma medida vira meta, ela deixa de '
+        +'ser boa medida. E cobrar resultado de quem não controla a causa produz percepção de injustiça, que '
+        +'na literatura de equidade é o preditor mais direto de desengajamento e saída — antes de qualquer '
+        +'queda de esforço aparecer no número.',
+    fazer:'Separar a régua: o vendedor responde por tempo de resposta, follow-up e conversão <b>dentro do '
+        +'perfil ideal</b>. Preço, mix e volume de lead respondem com quem decide preço, mix e verba.'}
+  ];
+  return '<div class="cpx-sec grave cpx-rv">'
+    +'<span class="cpx-num">§ 2</span>'
+    +'<div class="cpx-h">Os seis erros que criam a dificuldade</div>'
+    +'<div class="cpx-sub">Cada um com a prova tirada desta tela, o conceito econômico que explica por que é '
+    +'erro, e a providência. Nenhum deles está nas mãos de quem atende.</div>'
+    +'<div class="cpx-erros">'
+    + E.map(function(e,i){
+        return '<div class="cpx-erro"><div class="cpx-erro-n">'+(i+1)+'</div>'
+          +'<div class="cpx-erro-t">'+e.t+'</div>'
+          +'<div class="cpx-erro-l">A prova, nos seus números</div><p class="prova">'+e.prova+'</p>'
+          +'<div class="cpx-erro-l">Por que é erro</div><p>'+e.conc+'</p>'
+          +'<div class="cpx-erro-l">O que fazer</div><p class="fazer">'+e.fazer+'</p></div>';
+      }).join('')
+    +'</div></div>';
+}
+
+/* ═══ 5. OS CONTROLES DO QUE O APP NÃO MEDE ═══ */
+function cpxControles(o){
+  var c=o.cfg;
+  var campo=function(id,rot,min,max,val,suf,ajuda){
+    return '<div><label>'+rot+'</label>'
+      +'<input type="range" id="'+id+'" min="'+min+'" max="'+max+'" value="'+val+'" '
+      +'oninput="MGW_CPX_SET(\''+id+'\',this.value)">'
+      +'<div class="val" id="'+id+'-v">'+val+(suf||'')+'</div>'
+      +(ajuda?'<div style="font-size:.62rem;color:var(--chalk3);line-height:1.5;margin-top:3px">'+ajuda+'</div>':'')
+      +'</div>';
+  };
+  return '<div class="cpx-sec cpx-rv">'
+    +'<span class="cpx-num">§ 3</span>'
+    +'<div class="cpx-h">O que o app não mede — preencha e os gráficos respondem</div>'
+    +'<div class="cpx-sub">Estes quatro números não saem de nenhuma tela: são declarados. Ficam salvos e '
+    +'aparecem marcados como declarados em todo lugar onde entram, para ninguém confundir com dado apurado.</div>'
+    +'<div class="cpx-ctrl">'
+    + campo('cpx-papeis','Papéis acumulados',1,12,c.papeis,'','vendas, gestão, marketing, tráfego, operação, app, KPI, pesquisa…')
+    + campo('cpx-horasVenda','% do tempo em venda',5,100,c.horasVenda,'%','o resto é tudo o que não é vender')
+    + campo('cpx-sublocPct','% da frota sublocada',0,100,c.sublocPct,'%','entra no erro nº 4')
+    + campo('cpx-diasMeta','Dias até o Diamante',1,31,c.diasMeta,'','usado quando o ciclo atual ainda não bateu')
+    +'</div>'
+    +'<div class="cpx-aviso-dado">Marcado como <b>declarado</b> em todo o relatório. Se um dia o app passar a '
+    +'medir algum destes, o campo sai daqui e vira número apurado.</div>'
+    +'</div>';
+}
+/* ═══ 8. CULPA × RESPONSABILIDADE ═══
+   A distinção que sustenta o documento inteiro. Sem ela o relatório
+   vira acusação; com ela vira atribuição de decisão, que é o que se
+   pode discutir numa reunião. */
+function cpxCulpa(o){
+  var L=[
+   ['Preço de tabela','Diretoria','—','Define se a conversa começa ou termina no primeiro número.'],
+   ['Política de desconto','Diretoria','Aplica','O vendedor escolhe dentro da faixa; quem define a faixa é a direção.'],
+   ['Composição da frota','Diretoria','—','Determina o que existe para vender e para quem.'],
+   ['Verba de marketing','Diretoria','—','Sem marca, todo lead entra frio e caro.'],
+   ['Plano de negócio e de ação','Diretoria','Contribui','Define a restrição do período. Sem ele, aperta-se o visível.'],
+   ['Sublocação e sinalização','Diretoria','—','Decide o risco de marca que a operação assume.'],
+   ['Tempo de primeira resposta','—','Vendedor','Controlável, mensurável, cobrável.'],
+   ['Follow-up executado','—','Vendedor','Controlável, mensurável, cobrável.'],
+   ['Qualidade do atendimento','—','Vendedor','Controlável, mensurável, cobrável.'],
+   ['Conversão dentro do perfil ideal','—','Vendedor','A única taxa que isola o desempenho da composição da carteira.'],
+   ['Conversão total','Diretoria','Vendedor','Mista: carrega preço, mix e qualidade de lead junto. Não serve de régua individual.']
+  ];
+  return '<div class="cpx-sec grave cpx-rv">'
+   +'<span class="cpx-num">§ 7</span>'
+   +'<div class="cpx-h">Culpa é uma coisa. Responsabilidade é outra.</div>'
+   +'<div class="cpx-sub">A confusão entre as duas é o que mantém a discussão girando.</div>'
+   +'<p class="cpx-p"><b>Culpa olha para trás e procura uma pessoa.</b> É barata de distribuir, dá sensação de '
+   +'resolução e não muda nada — porque a causa continua onde estava no dia seguinte.</p>'
+   +'<p class="cpx-p"><b>Responsabilidade olha para a frente e procura uma decisão.</b> Ela é de quem tem a '
+   +'alavanca. E a regra é simples, sem exceção: <em>quem decide responde; quem não decide não pode ser cobrado '
+   +'pelo efeito da decisão alheia.</em></p>'
+   +'<table class="cpx-tab"><thead><tr><th>Peça</th><th>Decide</th><th>Executa</th><th>Observação</th></tr></thead><tbody>'
+   + L.map(function(r){
+       return '<tr><td>'+r[0]+'</td>'
+        +'<td class="dec-dir">'+r[1]+'</td>'
+        +'<td class="dec-vend">'+r[2]+'</td>'
+        +'<td style="font-size:.76rem">'+r[3]+'</td></tr>';
+     }).join('')
+   +'</tbody></table>'
+   +'<div class="cpx-golpe">Das onze peças que determinam o resultado, o vendedor decide zero e executa quatro.'
+   +'<small>Cobrar dele o efeito das outras sete não é rigor: é erro de atribuição transformado em política de '
+   +'gestão. E erro de gestão custa mais caro que erro de venda, porque se repete com todo mundo que passar '
+   +'por aquela cadeira.</small></div>'
+   +'<p class="cpx-p">Isto não isenta ninguém. O vendedor responde — inteiramente — pelas quatro que executa. '
+   +'O que não se sustenta é a conta em que ele responde também pelas sete que nunca esteve autorizado a tocar.</p>'
+   +'</div>';
+}
+
+/* ═══ 8b. O QUE A GESTÃO PRECISA ASSUMIR ═══
+   O § 7 diz de quem é cada decisão. Este diz o que acontece quando ela
+   não é assumida — porque "responsabilidade" sem consequência escrita é
+   só uma palavra bonita no organograma. */
+function cpxAssumir(o){
+  var A=[
+   ['Assumir que o preço está fora da faixa',
+    'Enquanto a hipótese não for testada, todo mês repete o mesmo resultado e a explicação recai sobre quem atende. '
+   +'Testar custa 30 dias em uma categoria. Não testar custa a diferença, todo mês, para sempre.'],
+   ['Assumir que a frota foi comprada sem casar com a demanda',
+    'Frota concentrada não é azar de mercado: é decisão de compra. Quem decidiu comprar responde pelo mix, '
+   +'não quem tenta vender o que existe.'],
+   ['Assumir que não há investimento em marca',
+    'Sem marca, todo lead entra frio e o custo por venda sobe com o tempo. Cobrar conversão de lead frio é '
+   +'cobrar de terceiro o efeito de uma verba que nunca foi aprovada.'],
+   ['Assumir o risco de reputação do sublocado',
+    'Vender sublocado ao preço da frota própria é antecipar receita contra a reputação futura. É uma decisão '
+   +'legítima de negócio — desde que quem a toma assuma a conta quando ela chegar.'],
+   ['Assumir que não existe plano de negócio',
+    'Sem plano, não há restrição declarada; sem restrição declarada, o esforço vai para o que é fácil medir. '
+   +'É por isso que se aperta a venda: é a parte visível do sistema, não a que trava.'],
+   ['Assumir que a régua de cobrança está errada',
+    'Cobrar conversão total de quem não decide preço, mix nem verba é erro de desenho. Manter a régua depois '
+   +'de saber disso deixa de ser erro e passa a ser escolha.'],
+   ['Assumir que o intelecto da equipe está sendo usado para tapar buraco',
+    'Usar quem tem visão de negócio para cobrir caixa é gastar capital caro em tarefa barata. O custo não '
+   +'aparece na folha: aparece no que deixou de ser construído enquanto isso.'],
+   ['Assumir que a data de pagamento foi mudada por conveniência de quem paga',
+    'Mudar unilateralmente o dia do pagamento transloca custo de capital de giro para quem recebe. Pode ser '
+   +'necessário — mas é uma transferência de custo, e chamar isso de "ajuste operacional" não muda o que é.']
+  ];
+  return '<div class="cpx-sec grave cpx-rv">'
+   +'<span class="cpx-num">§ 8</span>'
+   +'<div class="cpx-h">O que a gestão precisa assumir — e o que custa não assumir</div>'
+   +'<div class="cpx-sub">Assumir não é pedir desculpa. É registrar de quem é a decisão, para que a próxima '
+   +'seja tomada com a conta na mesa.</div>'
+   + A.map(function(x,i){
+       return '<div class="cpx-assum"><div class="cpx-assum-n">'+(i+1)+'</div>'
+        +'<div><div class="cpx-assum-t">'+x[0]+'</div><p>'+x[1]+'</p></div></div>';
+     }).join('')
+   +'<div class="cpx-golpe">Nada disto exige admitir incompetência. Exige admitir <b>autoria</b>.'
+   +'<small>A diferença entre as duas é o que separa uma empresa que corrige de uma que repete. '
+   +'Decisão sem dono não é revista, porque não há a quem perguntar por que ela continua de pé.</small></div>'
+   +'</div>';
+}
+
+/* ═══ 8c. CAPITAL INTELECTUAL ═══
+   O ponto mais delicado do documento, e por isso o mais cuidadoso: aqui
+   se afirma que uma pessoa específica é excepcional. Afirmação assim só
+   se sustenta com critério — senão é elogio, e elogio não entra em ata.
+   Por isso cada parágrafo se prende ou a um número desta tela, ou a um
+   fato datado, ou a um dado declarado que aparece marcado como tal. */
+function cpxCapital(o){
+  var diasMeta=(o.meta.diasAte!=null)?o.meta.diasAte:o.cfg.diasMeta;
+  var totalDias=o.meta.totalDias||30;
+  return '<div class="cpx-sec luz cpx-rv">'
+   +'<span class="cpx-num">§ 9</span>'
+   +'<div class="cpx-h">Capital intelectual não se gasta tapando buraco</div>'
+   +'<div class="cpx-sub">O que se está usando, para quê, e o que isso custa.</div>'
+
+   +'<p class="cpx-p"><b>Um vendedor não move o orçamento de uma empresa.</b> Ele move a conversão dentro do '
+   +'que lhe foi entregue. Quando a empresa passa a depender do vendedor para compensar preço fora de faixa, '
+   +'frota mal casada e ausência de marketing, ela não está extraindo desempenho: está <b>consumindo um ativo '
+   +'que não recompõe</b>. Em contabilidade isso teria nome — despesa lançada como se fosse receita.</p>'
+
+   +'<p class="cpx-p"><b>O que está sendo consumido tem perfil raro.</b> Capacidade declarada de <b>QI 141</b>, '
+   +'execução simultânea de <b>'+o.cfg.papeis+' frentes</b>, e facilidade alta de aprender e de ensinar — que é '
+   +'a característica que mais importa aqui, porque quem ensina multiplica e quem só executa soma. '
+   +'<span class="cpx-decl">declarado</span></p>'
+
+   +'<p class="cpx-p">Vender assim não é dom de conversa. É <b>cognição social aplicada em tempo real</b>: ler '
+   +'a pessoa nos primeiros segundos, prever a objeção antes dela ser dita, escolher o argumento certo entre '
+   +'vários e reordenar a conversa no meio dela. Exige aptidão, previsibilidade e velocidade de raciocínio '
+   +'acima da média — e, principalmente, <b>conhecimento profundo do mercado</b>, que não se contrata pronto '
+   +'e não se ensina em treinamento de duas semanas.</p>'
+
+   +'<div class="cpx-golpe verde">Luciano não é a régua. É a exceção.'
+   +'<small>E aqui está um erro estatístico que a gestão comete sem perceber: usar o resultado de um outlier '
+   +'como padrão para todos. O outlier define o <b>teto</b> do que é possível naquele cenário — nunca a '
+   +'linha de base do que é esperado. Quem transforma exceção em meta padrão garante duas coisas: que todo o '
+   +'resto da equipe falhe permanentemente, e que a própria exceção seja cobrada por não se superar '
+   +'indefinidamente. É a receita conhecida para perder os dois.</small></div>'
+
+   +'<p class="cpx-p">A meta Diamante saiu em <b>'+diasMeta+' dias</b> de um ciclo de '+totalDias+' — enquanto '
+   +'se resolvia operação, aplicativo, tráfego, indicadores e pesquisa de mercado. O feito não prova que a '
+   +'condição é boa. Prova o contrário: <b>mostra o tamanho do que está sendo desperdiçado ao manter a '
+   +'condição ruim.</b> Se esse desempenho aparece com tudo contra, a pergunta que interessa é quanto '
+   +'apareceria com o preço na faixa e a frota casada com a demanda.</p>'
+   +'</div>';
+}
+
+/* ═══ 8d. BONIFICAÇÃO ═══ */
+function cpxBonus(o){
+  return '<div class="cpx-sec grave cpx-rv">'
+   +'<span class="cpx-num">§ 10</span>'
+   +'<div class="cpx-h">Bonificação: onde está o erro de cálculo</div>'
+   +'<div class="cpx-sub">Três teorias clássicas, e as três apontam para o mesmo ponto.</div>'
+
+   +'<p class="cpx-p"><b>O argumento que se ouve:</b> "ele já tem salário fixo maior e comissão maior, então '
+   +'não precisa de bônus por bater a meta". Traduzido, isso diz: <em>por ser bom demais, já tem o que precisa; '
+   +'logo, não merece mais.</em></p>'
+
+   +'<p class="cpx-p"><b>Onde o cálculo quebra:</b> confunde <b>nível de remuneração</b> com <b>recompensa '
+   +'marginal</b>. O salário paga o cargo. O bônus paga o resultado <em>extra</em> daquele ciclo. São contas '
+   +'diferentes, e usar a primeira para anular a segunda é dizer que o esforço adicional vale zero — que é '
+   +'exatamente o que a pessoa vai calcular no ciclo seguinte.</p>'
+
+   +'<div class="cpx-tri">'
+   +'<div><div class="cpx-tri-t">Expectância (Vroom)</div><p>O esforço depende de acreditar que ele leva ao '
+   +'resultado, e que o resultado leva à recompensa. Quebrar o segundo elo zera a equação inteira — não '
+   +'importa o quanto o primeiro esteja intacto.</p></div>'
+   +'<div><div class="cpx-tri-t">Equidade (Adams)</div><p>As pessoas comparam a razão esforço/retorno com a '
+   +'dos outros. Entregar muito acima e receber o mesmo reconhecimento produz percepção de injustiça — que é '
+   +'o preditor mais direto de saída, antes de qualquer queda de esforço aparecer no número.</p></div>'
+   +'<div><div class="cpx-tri-t">Higiene × motivação (Herzberg)</div><p>Salário é fator de higiene: quando '
+   +'falta, desmotiva; quando está lá, não motiva. Reconhecimento e conquista são fatores de motivação. '
+   +'Salário alto <b>não substitui</b> reconhecimento — atuam em dimensões diferentes.</p></div>'
+   +'</div>'
+
+   +'<p class="cpx-p"><b>E há o custo de não parabenizar, que é separado do dinheiro.</b> Reconhecimento '
+   +'público custa zero e é o único item desta lista que não sai do caixa. Deixar de dar quando o feito é '
+   +'inédito não economiza nada — apenas informa à equipe inteira que desempenho excepcional passa em branco.</p>'
+
+   +'<p class="cpx-p"><b>Sobre "o nível dos outros":</b> quando um entrega muito acima e o resto não acompanha, '
+   +'a leitura correta não é rebaixar o teto — é perguntar por que a base não sobe. Nivelar pela média nunca '
+   +'puxou ninguém para cima; só empurra quem está acima para fora.</p>'
+
+   +'<p class="cpx-p"><b>Sobre a data de pagamento.</b> Mover o pagamento para o intervalo do dia 5 ao 10 '
+   +'transfere custo de capital de giro de quem paga para quem recebe: as contas do recebedor não mudaram de '
+   +'data. Pode ser necessário para o caixa — mas é uma <b>transferência de custo</b>, e é assim que precisa '
+   +'ser chamada. Quando uma decisão que beneficia um lado é apresentada como conveniência neutra, o que se '
+   +'perde não é o dinheiro: é a confiança de que as próximas serão negociadas de boa-fé.</p>'
+
+   +'<div class="cpx-golpe">Quem quer vendedor estimulado bonifica e parabeniza. Não é filosofia: é o desenho '
+   +'do incentivo.'
+   +'<small>Vendedor trabalha por dinheiro e por reconhecimento, nessa ordem e nos dois. Quem retira os dois '
+   +'de quem mais entrega está, na prática, escolhendo qual pessoa vai embora primeiro — e será a que tem mais '
+   +'opções fora, que é sempre a melhor.</small></div>'
+   +'</div>';
+}
+
+/* ═══ 9. O QUE OS NÚMEROS DIZEM SOBRE QUEM VENDE ═══ */
+function cpxVendedor(o){
+  var diasMeta=(o.meta.diasAte!=null)?o.meta.diasAte:o.cfg.diasMeta;
+  var totalDias=o.meta.totalDias||30;
+  var vezes=(diasMeta>0)?(totalDias/diasMeta):0;
+  var cv=o.const.cv;
+  var leituraCV = (cv==null)?'sem dado suficiente no ciclo'
+    : (cv<60?'distribuição regular — é método, não sorte'
+      : (cv<100?'distribuição moderadamente irregular'
+        :'distribuição concentrada em poucos dias'));
+  return '<div class="cpx-sec luz cpx-rv">'
+   +'<span class="cpx-num">§ 11</span>'
+   +'<div class="cpx-h">O que os números dizem sobre quem vende</div>'
+   +'<div class="cpx-sub">Sem adjetivo. Só o que dá para medir.</div>'
+   +'<div class="cpx-nums" style="margin-bottom:14px">'
+   +'<div class="cpx-n ok"><div class="cpx-n-v"><span data-conta="'+diasMeta+'">0</span></div>'
+   +  '<div class="cpx-n-t">Dias até o Diamante</div><div class="cpx-n-s">num ciclo de '+totalDias+' dias</div></div>'
+   +'<div class="cpx-n ok"><div class="cpx-n-v"><span data-conta="'+vezes.toFixed(1)+'" data-casas="1" data-suf="×">0</span></div>'
+   +  '<div class="cpx-n-t">Ritmo sobre o exigido</div><div class="cpx-n-s">a meta pedia o mês inteiro</div></div>'
+   +'<div class="cpx-n ok"><div class="cpx-n-v"><span data-conta="'+o.cfg.papeis+'">0</span></div>'
+   +  '<div class="cpx-n-t">Papéis acumulados</div><div class="cpx-n-s">declarado · § 3</div></div>'
+   +'<div class="cpx-n mau"><div class="cpx-n-v"><span data-conta="'+o.indice+'">0</span></div>'
+   +  '<div class="cpx-n-t">Contracorrente enfrentada</div><div class="cpx-n-s">quanto o cenário empurrava contra</div></div>'
+   +'</div>'
+   +'<p class="cpx-p">A meta Diamante foi batida em <b>'+diasMeta+' dias</b> de um ciclo de '+totalDias+'. '
+   +'Isso é <b>'+vezes.toFixed(1)+'×</b> o ritmo que a própria empresa definiu como suficiente — e foi feito '
+   +'com preço <b>+'+n1(o.preco.excMedio)+'%</b> acima da faixa de comparação, frota concentrada em uma '
+   +'categoria e sem verba de marca.</p>'
+   +'<p class="cpx-p"><b>Sorte não tem cadência.</b> A distribuição das vendas ao longo do ciclo mostra '
+   +(cv!=null?('coeficiente de variação de <b>'+n1(cv)+'%</b> — '+leituraCV):('<b>'+leituraCV+'</b>'))
+   +'. Resultado que aparece em muitos dias diferentes, e não em dois picos, é assinatura de método: '
+   +'prospecção contínua, follow-up feito e leitura de mercado — não de um golpe de sorte que se repetiu.</p>'
+   +'<p class="cpx-p">E foi feito <b>enquanto</b> se acumulava o que o § 3 declara: gestão comercial, apoio a '
+   +'marketing e tráfego, operação, aplicativo, controle de indicadores e pesquisa de mercado. '
+   +'Vender com constância é difícil. Vender com constância <em>sendo simultaneamente a área comercial '
+   +'inteira</em> é outra coisa — e não é uma coisa que se consiga por talento de improviso. Consegue-se por '
+   +'conhecimento acumulado do mercado, que leva anos e não se contrata pronto.</p>'
+   +'<div class="cpx-golpe verde">Quem entrega isso não é alguém com sorte, nem alguém que "sabe vender".'
+   +'<small>É alguém que conhece o mercado, opera nele há tempo suficiente para saber onde a venda está, e '
+   +'sustenta resultado em terreno adverso. O risco específico desse perfil está descrito na literatura de '
+   +'equidade: quem sustenta resultado em condição ruim passa a ser cobrado <b>como se a condição fosse boa</b>. '
+   +'A meta sobe, a régua sobe, e o esforço extra que segurou o número vira o novo mínimo esperado. '
+   +'É assim que se perde exatamente a pessoa que estava segurando a operação.</small></div>'
+   +'</div>';
+}
+
+/* ═══ 10. AS TRÊS PERGUNTAS ═══ */
+function cpxPerguntas(o){
+  return '<div class="cpx-sec cpx-rv">'
+   +'<span class="cpx-num">§ 12</span>'
+   +'<div class="cpx-h">Três perguntas, e o critério para respondê-las</div>'
+   +'<div class="cpx-sub">Não são retóricas. Cada uma tem um critério objetivo embaixo.</div>'
+   +'<div class="cpx-perg">'
+   +'<div><div class="q">Quem deve ser ouvido?</div><div class="a">Quem traz <b>evidência</b>, não quem tem o '
+   +'cargo mais alto. O critério é verificável: quem apresenta número, fonte e previsão que dá para testar. '
+   +'Convicção sem previsão testável não é informação — é preferência.</div></div>'
+   +'<div><div class="q">Quem deve guiar?</div><div class="a">Quem tem <b>modelo do negócio</b>, não quem tem '
+   +'opinião sobre ele. Guiar exige saber qual é a restrição, o que a mede e o que a move. Quem não sabe '
+   +'nomear a restrição do trimestre não está guiando: está reagindo.</div></div>'
+   +'<div><div class="q">Quem sabe o que está fazendo?</div><div class="a">Quem <b>acerta antes</b>. O teste é '
+   +'simples e barato: cada lado escreve a previsão, combina o prazo, e o resultado decide. Quem acerta mais '
+   +'vezes ganha o direito de decidir mais — por mérito medido, não por hierarquia.</div></div>'
+   +'</div>'
+   +'<p class="cpx-p" style="margin-top:14px">O único jeito de encerrar uma disputa entre duas convicções é '
+   +'transformá-la em <b>previsão testável</b>. Enquanto for opinião contra opinião, os dois lados são '
+   +'coerentes dentro da própria lógica e a reunião vira quem fala mais alto — e quem fala mais alto costuma '
+   +'ser quem tem o cargo, não quem tem razão.</p>'
+   +'<div class="cpx-golpe">Chorar o passado não muda o presente, e presente não mudado é futuro perdido.'
+   +'<small>Operação que insiste no que não funciona não fica parada: ela afunda devagar e leva junto os '
+   +'profissionais que ainda estavam segurando o resultado. A conta desse tipo de decisão não chega em forma '
+   +'de prejuízo — chega em forma de rotatividade, e quando chega já custou o dobro.</small></div>'
+   +'</div>';
+}
+
+/* ═══ 7. BASE ECONÔMICA E BASE PSICOLÓGICA ═══
+   Verbete tem quatro partes: conceito, de onde vem, o que diz, e como
+   se aplica AQUI com o número desta tela. A última parte é a que
+   importa — teoria sem o número vira citação decorativa. */
+function cpxVerbete(v){
+  return '<details class="cpx-verb"><summary><span class="cpx-verb-tag">'+esc(v.tag)+'</span>'
+    +esc(v.t)+'</summary><div class="cpx-verb-c">'
+    +'<p>'+v.d+'</p>'
+    +'<div class="aplic"><p><b>Aqui:</b> '+v.a+'</p></div>'
+    +'</div></details>';
+}
+
+function cpxEconomia(o){
+  var exc=o.preco.excMedio;
+  var V=[
+   {tag:'MICRO', t:'Elasticidade-preço da demanda',
+    d:'Mede quanto a quantidade vendida muda quando o preço muda. Onde há substituto próximo e comparação '
+     +'barata — exatamente o aluguel de carro em Orlando, com cinco concorrentes a um clique — a demanda é '
+     +'<b>elástica</b>: subir preço reduz a receita total, não aumenta. O erro recorrente da gestão é tratar '
+     +'demanda elástica como inelástica e concluir que o problema foi o esforço de venda.',
+    a:'A operação está <b>+'+n1(exc)+'%</b> acima da faixa em que o cliente compara. Em demanda elástica, '
+     +'essa diferença não é "um pouco mais caro": é o motivo pelo qual a conversa acaba antes de começar.'},
+
+   {tag:'MICRO', t:'Custo afundado e o erro de precificar para recuperá-lo',
+    d:'Custo afundado é o que já foi gasto e não volta, decida-se o que se decidir. A teoria da decisão é '
+     +'categórica: custo afundado <b>não deve entrar</b> na decisão de preço. Preço se define pela demanda e '
+     +'pelo custo marginal, nunca por quanto se pagou no carro. Precificar para "recuperar o investimento" é '
+     +'a falácia do custo afundado — e ela costuma vir com a frase "mas eu paguei caro nesse carro".',
+    a:'Se o preço da Minivan está no nível em que está por causa do que a frota custou, o número foi definido '
+     +'por uma variável que o cliente não conhece e não aceita pagar.'},
+
+   {tag:'GESTÃO', t:'Margem por reserva × margem total',
+    d:'Otimizar a margem de cada venda e otimizar o lucro do mês são objetivos diferentes, e frequentemente '
+     +'opostos. Com ativo de capacidade perecível — a diária que não foi vendida hoje não se vende amanhã — '
+     +'o que maximiza resultado é <b>margem de contribuição × ocupação</b>, não a margem unitária.',
+    a:'Carro parado tem custo cheio e receita zero. Uma diária vendida com margem menor domina qualquer '
+     +'diária não vendida com margem alta.'},
+
+   {tag:'SETOR', t:'Revenue management: preço é instrumento, não constante',
+    d:'O padrão do setor de locação, aviação e hotelaria desde os anos 80 (Littlewood, e depois EMSR) é '
+     +'variar o preço conforme ocupação, antecedência e perfil. Preço fixo alto é abrir mão do único '
+     +'instrumento que o setor inteiro usa para encher capacidade perecível.',
+    a:'Sem faixa de preço por antecedência e por ocupação, cada cotação é tratada como se todas fossem '
+     +'iguais — e as de última hora, que são as mais fáceis de fechar com desconto, saem pelo mesmo número.'},
+
+   {tag:'OPERAÇÃO', t:'Teoria das restrições',
+    d:'Todo sistema tem uma restrição que determina o resultado do conjunto. Melhorar qualquer etapa que '
+     +'não seja a restrição não muda o total — só acumula estoque antes dela. A providência é identificar a '
+     +'restrição, explorá-la ao máximo e subordinar todo o resto a ela.',
+    a:'A restrição aqui é preço e mix, não esforço de venda. Aumentar tráfego, cobrar mais follow-up ou '
+     +'trocar de vendedor são melhorias fora da restrição: custam dinheiro e não movem o resultado.'},
+
+   {tag:'OPERAÇÃO', t:'Lei de Little e o funil que não escoa',
+    d:'Numa fila estável, o número de itens em processo é igual à taxa de chegada vezes o tempo de '
+     +'permanência. Aumentar a chegada sem aumentar a vazão apenas engorda o estoque em processo e alonga a '
+     +'espera — não aumenta a saída.',
+    a:'Com conversão em <b>'+n1(o.convGeral)+'%</b>, dobrar o tráfego dobra o que entra e dobra o que fica '
+     +'parado no meio. A saída não dobra, e a fila de recusas a absorver, sim.'},
+
+   {tag:'MARCA', t:'Assimetria de informação e o mercado de limões',
+    d:'Quando o comprador não consegue distinguir a qualidade antes de comprar, ele oferece um preço que '
+     +'reflete a média — e, se descobrir depois que levou o pior, passa a descontar toda a oferta. Akerlof '
+     +'mostrou que a informação escondida derruba o preço de equilíbrio do mercado inteiro, inclusive do '
+     +'produto bom. A saída é <b>sinalizar</b> (Spence): tornar a diferença visível e verificável.',
+    a:'Sublocado vendido ao preço da frota própria é exatamente esse mecanismo. O ganho é imediato e a conta '
+     +'chega depois, na forma de avaliação ruim e disposição a pagar menor — para todos os carros.'},
+
+   {tag:'MARCA', t:'Marca é ativo; tráfego é despesa',
+    d:'Mídia de resposta direta compra atenção enquanto se paga; marca acumula valor que reduz o custo de '
+     +'aquisição ao longo do tempo, porque parte da decisão do cliente já está tomada antes do anúncio '
+     +'aparecer. Sem marca, o custo por venda tende a subir à medida que a concorrência disputa o mesmo '
+     +'leilão de atenção.',
+    a:'Tráfego sem marketing é arma na mão de quem não enxerga o alvo: acerta volume, não acerta o cliente. '
+     +'É por isso que "o tráfego está bom" e "as vendas estão difíceis" convivem sem contradição.'},
+
+   {tag:'MÉTODO', t:'Efeito de composição (paradoxo de Simpson)',
+    d:'Comparar a taxa total de dois períodos com composições diferentes leva a conclusões invertidas. Se a '
+     +'mistura de perfis muda, a taxa agregada muda mesmo sem nenhuma mudança de desempenho.',
+    a:'A conversão total mistura ideal e complexo. Com <b>'+n1(o.pctIdeal)+'%</b> de carteira ideal, comparar '
+     +'a taxa deste mês com a de um mês de composição diferente não diz nada sobre quem atendeu.'},
+
+   {tag:'MÉTODO', t:'Lei de Goodhart',
+    d:'Quando uma medida se torna meta, ela deixa de ser uma boa medida. A pressão sobre o indicador produz '
+     +'otimização do indicador — inclusive por caminhos que pioram o resultado real.',
+    a:'Cobrar conversão total como meta empurra para recusar o cliente difícil e inflar o denominador com '
+     +'cotação fácil. O número melhora; a operação, não.'}
+  ];
+  return '<div class="cpx-sec cpx-rv">'
+    +'<span class="cpx-num">§ 5</span>'
+    +'<div class="cpx-h">Base econômica: por que cada erro é erro</div>'
+    +'<div class="cpx-sub">Dez conceitos, cada um com a aplicação direta aos números desta tela. Clique para abrir.</div>'
+    + V.map(cpxVerbete).join('')
+    +'</div>';
+}
+
+function cpxPsicologia(o){
+  var pv=o.porVenda, rec=pv?(pv-1):null;
+  var V=[
+   {tag:'ATRIBUIÇÃO', t:'Erro fundamental de atribuição',
+    d:'Ao explicar o comportamento de outra pessoa, superestimamos a disposição dela e subestimamos a '
+     +'situação em que está. A situação alheia é invisível; a pessoa está bem na frente.',
+    a:'É o que faz o mesmo resultado ser lido como "preço" por quem atende e como "empenho" por quem observa. '
+     +'Não é má-fé: é o funcionamento padrão da percepção social.'},
+
+   {tag:'DECISÃO', t:'Aversão à perda e assimetria do visível',
+    d:'Perdas pesam mais que ganhos equivalentes (Kahneman e Tversky). E só entra na conta a perda que tem '
+     +'número: a que não é registrada não é sentida.',
+    a:'Baixar preço é perda visível e imediata — margem por reserva, na planilha, hoje. A reserva que não '
+     +'aconteceu não entra em relatório nenhum. A decisão compara uma perda medida com uma perda invisível, '
+     +'e a invisível sempre perde a discussão.'},
+
+   {tag:'DECISÃO', t:'Escalada de compromisso',
+    d:'Quem tomou uma decisão tende a investir mais nela diante de evidência contrária, para não admitir '
+     +'erro publicamente. O custo social de rever é maior, no curto prazo, que o custo material de insistir.',
+    a:'Quem definiu o preço tem o nome nele. Rever vira admitir erro na frente da equipe — e por isso se '
+     +'prefere esperar o mercado mudar.'},
+
+   {tag:'DECISÃO', t:'Viés de confirmação',
+    d:'Procuramos e lembramos preferencialmente o que confirma o que já achamos, e a evidência contrária '
+     +'exige esforço deliberado para ser registrada.',
+    a:(rec!=null?('Cada venda fechada vira prova de que o preço funciona. As <b>'+n1(rec)+'</b> cotações que '
+      +'morreram no caminho de cada uma delas não deixam recibo — ninguém arquiva o cliente que não respondeu.')
+      :'Cada venda fechada vira prova de que o preço funciona; as que não fecharam não deixam registro.')},
+
+   {tag:'TRABALHO', t:'Desequilíbrio esforço–recompensa (modelo ERI)',
+    d:'Siegrist mostrou que a combinação de esforço alto com recompensa baixa — em dinheiro, reconhecimento '
+     +'ou estabilidade — é preditor consistente de adoecimento e de saída. O corpo responde à assimetria, '
+     +'não ao esforço em si.',
+    a:'Esforço alto e resultado que não responde ao esforço é a definição exata do cenário medido aqui.'},
+
+   {tag:'TRABALHO', t:'Demanda–controle (Karasek)',
+    d:'O que adoece não é a demanda alta; é demanda alta com <b>baixo controle</b> sobre as variáveis que '
+     +'determinam o resultado. Demanda alta com autonomia produz engajamento; sem autonomia, produz tensão.',
+    a:'Preço, mix de frota, verba de marketing e plano são as variáveis que decidem o resultado — e nenhuma '
+     +'delas está com quem é cobrado por ele.'},
+
+   {tag:'TRABALHO', t:'Desamparo aprendido',
+    d:'Depois de repetidas experiências em que a ação não altera o desfecho, o organismo para de tentar — '
+     +'mesmo quando a ação volta a funcionar. Visto de fora parece desmotivação; por dentro é conclusão '
+     +'aprendida a partir da evidência disponível.',
+    a:'É o estágio seguinte, se nada mudar. E ele não se resolve com meta nem com discurso: só se resolve '
+     +'devolvendo uma alavanca que funcione.'},
+
+   {tag:'TRABALHO', t:'Trabalho emocional',
+    d:'Hochschild descreveu o custo de sustentar por fora um estado emocional que não se tem por dentro. '
+     +'Manter voz animada no vigésimo orçamento do dia, sabendo que a maioria não vai dar em nada, é esforço '
+     +'físico — e cobra em sono, atenção e saúde.',
+    a:'Cada cotação sem chance real consome a mesma energia emocional de uma com chance. A carteira '
+     +'complexa não custa só tempo: custa reserva emocional.'},
+
+   {tag:'COGNIÇÃO', t:'Fadiga de decisão',
+    d:'A qualidade da decisão cai ao longo de uma sequência de escolhas, independentemente da motivação. '
+     +'Não é preguiça: é esgotamento de um recurso finito.',
+    a:'Somando os papéis acumulados — <b>'+o.cfg.papeis+'</b> declarados — as decisões do fim do dia saem '
+     +'piores que as da manhã por razão fisiológica, não por descuido.'},
+
+   {tag:'ORGANIZAÇÃO', t:'Silêncio organizacional',
+    d:'Morrison e Milliken descreveram como organizações produzem sistematicamente o próprio silêncio: '
+     +'quando levantar um problema tem custo pessoal, as pessoas param de levantar — e a direção passa a '
+     +'decidir com um retrato incompleto, acreditando que está completo.',
+    a:'Quem diz "o preço está alto" duas vezes vira "o que reclama". Na terceira, cala. A informação não '
+     +'some porque não existe: some porque dizê-la é caro.'}
+  ];
+  return '<div class="cpx-sec cpx-rv">'
+    +'<span class="cpx-num">§ 6</span>'
+    +'<div class="cpx-h">Base psicológica: por que continua acontecendo</div>'
+    +'<div class="cpx-sub">Dez mecanismos que explicam a permanência do quadro — dos dois lados da mesa. '
+    +'Nenhum deles exige má-fé de ninguém, e é justamente isso que os torna difíceis de romper.</div>'
+    + V.map(cpxVerbete).join('')
+    +'</div>';
+}
+
+/* ═══ 6. OS COMPARATIVOS NOVOS ═══ */
+var ROSA='#FC2877', OURO='#F2BA52', VERM='#F20505', VERDE='#1AFF9D', PETRO='#1FA9A6', AZUL='#3B9EFF';
+function cpxBase(){
+  var eixo={grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#7C90A8',font:{size:10}}};
+  return {responsive:true,maintainAspectRatio:false,
+    animation:{duration:900,easing:'easeOutCubic'},
+    plugins:{legend:{display:true,position:'bottom',
+      labels:{color:'#9AB4CC',font:{size:10},padding:10,boxWidth:10}}},
+    scales:{x:eixo,y:Object.assign({},eixo,{beginAtZero:true})}};
+}
+function cpxChart(id,cfg){
+  var el=document.getElementById(id); if(!el||typeof Chart==='undefined') return;
+  if(CPX.charts[id]){ try{ CPX.charts[id].destroy(); }catch(e){} }
+  try{ CPX.charts[id]=new Chart(el,cfg); }catch(e){ console.warn('[cpx]',id,e); }
+}
+
+function cpxGraficos(o){
+  return '<div class="cpx-sec cpx-rv">'
+   +'<span class="cpx-num">§ 4</span>'
+   +'<div class="cpx-h">Os comparativos que faltavam</div>'
+   +'<div class="cpx-sub">Seis leituras que o painel não fazia. Cada uma responde a uma objeção que costuma '
+   +'aparecer na reunião.</div>'
+   +'<div class="cpx-graf">'
+   +'<div><div class="gt">FROTA × DEMANDA</div><div class="gs">o que temos para alugar contra o que o cliente pede</div><div class="cx"><canvas id="cpx-g-frota"></canvas></div></div>'
+   +'<div><div class="gt">PREÇO: NÓS × O NICHO × O SUGERIDO</div><div class="gs">de onde vem a recusa antes da conversa</div><div class="cx"><canvas id="cpx-g-preco"></canvas></div></div>'
+   +'<div><div class="gt">RITMO ATÉ A META</div><div class="gs">o acumulado real contra o ritmo que a meta exigia</div><div class="cx"><canvas id="cpx-g-ritmo"></canvas></div></div>'
+   +'<div><div class="gt">CONSTÂNCIA, DIA A DIA</div><div class="gs">sorte é irregular; método é constante</div><div class="cx"><canvas id="cpx-g-const"></canvas></div></div>'
+   +'<div><div class="gt">O FUNIL, ATÉ O IDEAL</div><div class="gs">qualificado não é a mesma coisa que ideal</div><div class="cx"><canvas id="cpx-g-funil"></canvas></div></div>'
+   +'<div><div class="gt">ONDE O TEMPO DO VENDEDOR VAI</div><div class="gs">declarado · § 3</div><div class="cx"><canvas id="cpx-g-carga"></canvas></div></div>'
+   +'</div></div>';
+}
+
+function cpxDesenhar(o){
+  var B=cpxBase();
+
+  /* 1 — frota × demanda: o descasamento estrutural.
+     Responde a "o problema é o vendedor não oferecer o que temos". */
+  (function(){
+    var cats=Object.keys(o.frota.porCat);
+    if(!cats.length) return;
+    var totalF=o.frota.total||1;
+    var cotPorCat={}; var totalC=0;
+    try{
+      var d=(typeof _cpUltimo!=='undefined'&&_cpUltimo)?_cpUltimo:null;
+      if(d) d.cots.forEach(function(h){
+        var k=cpCatCanon(h.cat); cotPorCat[k]=(cotPorCat[k]||0)+1; totalC++;
+      });
+    }catch(e){}
+    var rot=cats.slice();
+    Object.keys(cotPorCat).forEach(function(k){ if(rot.indexOf(k)<0) rot.push(k); });
+    var achaCot=function(nome){
+      var alvo=String(nome).toLowerCase();
+      var soma=0;
+      Object.keys(cotPorCat).forEach(function(k){
+        var kk=String(k).toLowerCase();
+        if(kk===alvo||kk.indexOf(alvo)>=0||alvo.indexOf(kk)>=0) soma+=cotPorCat[k];
+      });
+      return soma;
+    };
+    var opt=JSON.parse(JSON.stringify(B));
+    opt.scales.y.ticks={color:'#7C90A8',font:{size:10}};
+    cpxChart('cpx-g-frota',{type:'bar',
+      data:{labels:rot,datasets:[
+        {label:'% da frota',   data:rot.map(function(k){ return +((o.frota.porCat[k]||0)/totalF*100).toFixed(1); }), backgroundColor:'rgba(59,158,255,.75)'},
+        {label:'% do que é cotado', data:rot.map(function(k){ return totalC?+(achaCot(k)/totalC*100).toFixed(1):0; }), backgroundColor:'rgba(252,40,119,.8)'}
+      ]},options:opt});
+  })();
+
+  /* 2 — preço: três barras por categoria. É o gráfico que encerra a
+     discussão de "o nosso preço está normal". */
+  (function(){
+    var it=o.preco.itens.filter(function(x){ return x.nicho!=null; });
+    if(!it.length) return;
+    cpxChart('cpx-g-preco',{type:'bar',
+      data:{labels:it.map(function(x){ return x.nome; }),datasets:[
+        {label:'Magiway hoje', data:it.map(function(x){ return Math.round(x.mag); }), backgroundColor:'rgba(242,5,5,.8)'},
+        {label:'Teto do nicho', data:it.map(function(x){ return Math.round(x.topo||x.nicho); }), backgroundColor:'rgba(242,186,82,.8)'},
+        {label:'Média do nicho', data:it.map(function(x){ return Math.round(x.nicho); }), backgroundColor:'rgba(31,169,166,.8)'},
+        {label:'Sugerido', data:it.map(function(x){ return Math.round(x.sug); }), backgroundColor:'rgba(26,255,157,.75)'}
+      ]},options:B});
+  })();
+
+  /* 3 — ritmo: acumulado real contra a reta que a meta exigia.
+     A distância entre as duas curvas é o feito, medido. */
+  (function(){
+    if(!o.meta.valores.length) return;
+    var dias=o.meta.valores.length, alvo=o.meta.alvo||0;
+    var reta=[]; for(var i=0;i<dias;i++) reta.push(Math.round(alvo*(i+1)/dias));
+    var opt=JSON.parse(JSON.stringify(B));
+    opt.plugins.tooltip={callbacks:{}};
+    cpxChart('cpx-g-ritmo',{type:'line',
+      data:{labels:o.meta.valores.map(function(_,i){ return 'd'+(i+1); }),datasets:[
+        {label:'Faturamento acumulado', data:o.meta.valores, borderColor:VERDE,
+         backgroundColor:'rgba(26,255,157,.10)', fill:true, pointRadius:0, tension:.25, borderWidth:2.5},
+        {label:'Ritmo exigido pela meta', data:reta, borderColor:'rgba(255,255,255,.35)',
+         borderDash:[5,4], pointRadius:0, fill:false, borderWidth:1.5}
+      ]},options:opt});
+  })();
+
+  /* 4 — constância: uma barra por dia. Vendedor de sorte tem picos e
+     buracos; vendedor de método tem barra em quase todo dia. */
+  (function(){
+    if(!o.const.dias.length) return;
+    var opt=JSON.parse(JSON.stringify(B));
+    opt.plugins.legend={display:false};
+    cpxChart('cpx-g-const',{type:'bar',
+      data:{labels:o.const.dias.map(function(_,i){ return 'd'+(i+1); }),
+        datasets:[{data:o.const.dias,
+          backgroundColor:o.const.dias.map(function(v){ return v>0?'rgba(26,255,157,.8)':'rgba(255,255,255,.07)'; })}]},
+      options:opt});
+  })();
+
+  /* 5 — funil até o ideal. Mostra que "trazer lead" e "trazer o lead
+     certo" são dois problemas, não um. */
+  (function(){
+    var leads=o.cfg.leadsMes>0?o.cfg.leadsMes:o.cots;
+    var etapas=['Chegaram','Viraram cotação','Perfil ideal','Fecharam'];
+    var vals=[leads, o.cots, o.ideais, o.vendas];
+    var opt=JSON.parse(JSON.stringify(B));
+    opt.indexAxis='y'; opt.plugins.legend={display:false};
+    cpxChart('cpx-g-funil',{type:'bar',
+      data:{labels:etapas,datasets:[{data:vals,
+        backgroundColor:['rgba(59,158,255,.75)','rgba(31,169,166,.8)','rgba(242,186,82,.85)','rgba(26,255,157,.85)']}]},
+      options:opt});
+  })();
+
+  /* Gráfico sem série não fica com a grade nua: ou ganha o aviso dizendo
+     de onde viria o dado, ou some da tela. Grade vazia num relatório que
+     vai para reunião passa a impressão de que o app está quebrado. */
+  setTimeout(function(){
+    try{ if(typeof mgwMarcarVazios==='function')
+      mgwMarcarVazios(['cpx-g-frota','cpx-g-preco','cpx-g-ritmo','cpx-g-const','cpx-g-funil','cpx-g-carga']);
+    }catch(e){}
+    ['cpx-g-frota','cpx-g-preco','cpx-g-ritmo','cpx-g-const','cpx-g-funil'].forEach(function(id){
+      var el=document.getElementById(id); if(!el) return;
+      var ch=CPX.charts[id];
+      var vazio=!ch || !(ch.data&&ch.data.datasets||[]).some(function(ds){
+        return (ds.data||[]).some(function(v){ return (+v||0)>0; }); });
+      var caixa=el.closest?el.closest('.cpx-graf > div'):null;
+      if(vazio && caixa) caixa.style.display='none';
+      else if(caixa) caixa.style.display='';
+    });
+  },260);
+
+  /* 6 — carga: quanto do tempo é venda de verdade. Declarado. */
+  (function(){
+    var venda=o.cfg.horasVenda, resto=100-venda;
+    var opt=JSON.parse(JSON.stringify(B));
+    delete opt.scales;
+    opt.cutout='62%';
+    cpxChart('cpx-g-carga',{type:'doughnut',
+      data:{labels:['Vendendo','Tudo o que não é vender ('+o.cfg.papeis+' papéis)'],
+        datasets:[{data:[venda,resto],
+          backgroundColor:['rgba(26,255,157,.85)','rgba(242,5,5,.7)'],borderWidth:0}]},
+      options:opt});
+  })();
+}
+
+window.MGW_CPX_SET=function(id,v){
+  var cfg=cpxCfg();
+  var chave=id.replace('cpx-','');
+  cfg[chave]=+v;
+  cpxSalvar(cfg);
+  var el=document.getElementById(id+'-v');
+  if(el) el.textContent=v+((/Pct|horasVenda/.test(chave))?'%':'');
+  clearTimeout(window.__cpxT);
+  window.__cpxT=setTimeout(function(){ try{ window.MGW_CPX_RENDER(true); }catch(e){} },260);
+};
+
+
+/* ═══ 11. O DIAGNÓSTICO DE ABERTURA ═══ */
+function cpxDiagnostico(o){
+  var exc=o.preco.excMedio, pv=o.porVenda;
+  return '<div class="cpx-sec grave cpx-rv">'
+   +'<span class="cpx-num">§ 1</span>'
+   +'<div class="cpx-h">O que estes números provam</div>'
+   +'<div class="cpx-sub">Quatro afirmações. Todas verificáveis nesta mesma tela.</div>'
+   +'<p class="cpx-p"><b>1. A recusa acontece antes do atendimento.</b> Com preço <b>+'+n1(exc)+'%</b> acima da '
+   +'faixa em que o cliente compara, a decisão do cliente já está tomada quando o número aparece. Nenhuma '
+   +'técnica de venda opera antes disso.</p>'
+   +'<p class="cpx-p"><b>2. A carteira que chega é majoritariamente difícil.</b> <b>'+n1(o.pctIdeal)+'%</b> do '
+   +'que entra cumpre os quatro critérios do perfil ideal. O resto falha em pelo menos um — e converte '
+   +'<b>'+n1(o.convComplexo)+'%</b> contra <b>'+n1(o.convIdeal)+'%</b> do ideal.</p>'
+   +'<p class="cpx-p"><b>3. O esforço por venda é alto e não é escolha de quem atende.</b> '
+   +(pv?('São <b>'+n1(pv)+'</b> orçamentos por fechamento, ou seja <b>'+n1(pv-1)+'</b> recusas absorvidas por '
+   +'venda.'):'Sem venda no período para calcular.')+'</p>'
+   +'<p class="cpx-p"><b>4. A maior parte da dificuldade não tem alavanca no atendimento.</b> O índice de '
+   +'contracorrente está em <b>'+o.indice+'</b>, e a parcela dele que vem de preço, carteira e volume — três '
+   +'coisas decididas fora da mesa de quem vende — é a dominante.</p>'
+   +'<div class="cpx-golpe">Nenhuma dessas quatro se resolve com mais empenho.'
+   +'<small>Todas as quatro se resolvem com decisão. É essa a diferença entre um problema de desempenho e um '
+   +'problema de desenho — e tratar o segundo como se fosse o primeiro é o erro que este relatório documenta.</small></div>'
+   +'</div>';
+}
+
+/* ═══ 12. MONTAGEM E LIGAÇÃO COM A ABA ═══ */
+function cpxInjetar(){
+  var painel=document.getElementById('panel-comparativo'); if(!painel) return false;
+  if(document.getElementById('cpx-raiz')) return true;
+  var caixa=document.createElement('div');
+  caixa.id='cpx-raiz'; caixa.className='cpx';
+  var alvo=painel.firstElementChild||painel;
+  alvo.appendChild(caixa);
+  CPX.injetado=true;
+  return true;
+}
+
+function cpxRender(soRedesenhar){
+  if(!cpxInjetar()) return;
+  var raiz=document.getElementById('cpx-raiz'); if(!raiz) return;
+  var o=cpxDados();
+
+  raiz.innerHTML =
+      cpxCapa(o)
+    + cpxDiagnostico(o)
+    + cpxErros(o)
+    + cpxControles(o)
+    + cpxGraficos(o)
+    + cpxEconomia(o)
+    + cpxPsicologia(o)
+    + cpxCulpa(o)
+    + cpxAssumir(o)
+    + cpxCapital(o)
+    + cpxBonus(o)
+    + cpxVendedor(o)
+    + cpxPerguntas(o);
+
+  /* desenhar depois do HTML existir, senão o canvas ainda não tem tamanho */
+  setTimeout(function(){
+    try{ cpxDesenhar(o); }catch(e){ console.warn('[cpx graficos]',e); }
+    try{
+      var nv=cpxNivel(o);
+      ESF.nivel=nv.indice;
+      ESF.cor = nv.indice>=70?'#F20505' : (nv.indice>=45?'#FC2877' : '#F2BA52');
+      var el=document.getElementById('cpx-esf-n');
+      if(el){ el.style.color=ESF.cor; cpxContar(el, nv.indice, '', 0); }
+      cpxEsferaAnimar();
+      CPX.nivel=nv;
+    }catch(e){ console.warn('[cpx esfera]',e); }
+    try{ cpxObservar(); }catch(e){}
+  }, 60);
+}
+window.MGW_CPX_RENDER=cpxRender;
+
+/* Entra depois do renderComparativo, que é quem calcula _cpUltimo — sem
+   ele o relatório abriria zerado na primeira visita à aba. */
+(function(){
+  var tentar=function(){
+    if(typeof window.renderComparativo!=='function') return false;
+    var antes=window.renderComparativo;
+    if(antes.__cpx) return true;
+    var novo=function(){
+      var r=antes.apply(this,arguments);
+      try{ cpxRender(); }catch(e){ console.warn('[cpx]',e); }
+      return r;
+    };
+    novo.__cpx=true;
+    window.renderComparativo=novo;
+    return true;
+  };
+  if(!tentar()){
+    var n=0, t=setInterval(function(){ if(tentar()||++n>40) clearInterval(t); },150);
+  }
+})();
+
+window.MGW_CPX={ cfg:cpxCfg, salvar:cpxSalvar, capa:cpxEsferaAnimar, nivel:cpxNivel, contar:cpxContar,
+                 observar:cpxObservar, est:CPX, esc:esc, n0:n0, n1:n1 };
+})();
+</script>
+<script id="mgw-hist-seed">
+/* ═══════════════════════════════════════════════════════════════════
+   HISTÓRICO DE PARTIDA — 99 reservas de meses anteriores
+   ───────────────────────────────────────────────────────────────────
+   Extraído da aba 📦 HISTÓRICO da planilha FECHAMENTO MAGIWAY
+   (abril a agosto de 2026). Existe para que a aba Histórico de Reservas
+   e o Calendário já nasçam cheios, sem depender de o app conseguir ler
+   a planilha na primeira abertura.
+
+   É SEMENTE, não dado fixo:
+     • entra uma vez só, e só se a gaveta do histórico estiver vazia;
+     • depois de entrar, marca-se como plantada e nunca mais volta —
+       esvaziar ou substituir o histórico é definitivo;
+     • qualquer importação de arquivo passa por cima dela.
+
+   ATENÇÃO, e isto é uma escolha com consequência: são nomes e telefones
+   de clientes reais dentro de um arquivo servido publicamente. Antes,
+   esses dados só desciam da planilha DEPOIS do login; agora estão no
+   próprio index.html e podem ser lidos por quem abrir o endereço e ver
+   o código-fonte, sem entrar na conta. Para desfazer, basta apagar este
+   bloco inteiro e voltar a carregar o histórico pela aba Reservas.
+   ═══════════════════════════════════════════════════════════════════ */
+window.MGW_HIST_SEED=[{"dataFech":1776124800000,"vendedor":"OUTROS","cliente":"Cleber Roriz Ferreira Filho","whats":"5573988074099","tel":"4099","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1776297600000,"devolucao":1777075200000,"hEnt":{"h":6,"mm":30},"hDev":{"h":18,"mm":0},"localEnt":"MIA","localDev":"MCO","aerea":"LATAM","valor":4179,"diariaUSD":89.29487179,"diariaBRL":464.3333333,"valorIntegral":4217.2,"custoReal":3229.2,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776297600000,"vendedor":"OUTROS","cliente":"Josafá Cândido","whats":"(61) 99847-3606","tel":"3606","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1776729600000,"devolucao":1777852800000,"hEnt":{"h":16,"mm":0},"hDev":{"h":20,"mm":0},"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":4843,"diariaUSD":71.64201183,"diariaBRL":372.5384615,"valorIntegral":4664.4,"custoReal":3988.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1776384000000,"vendedor":"OUTROS","cliente":"Hellen Miyamoto","whats":"(21) 99734-7371","tel":"7371","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1776384000000,"devolucao":1777161600000,"hEnt":{"h":14,"mm":0},"hDev":{"h":14,"mm":0},"localEnt":"MCO ENDERECO","localDev":"MIA","aerea":"NÃO INFORMADO","valor":4482,"diariaUSD":95.76923077,"diariaBRL":498,"valorIntegral":4477.2,"custoReal":3229.2,"formaPag":"CARTAO DE CREDITO","parc":"1x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1776384000000,"vendedor":"OUTROS","cliente":"Alexandre Valentino da Silva Peres","whats":"(62) 99202-6682","tel":"6682","cadeirinha":"NÃO","modelo":"SEDAN","cat":"Sedan","entrega":1778716800000,"devolucao":1779321600000,"hEnt":{"h":9,"mm":0},"localEnt":"MCO ENDERECO","localDev":"MCO","aerea":"COPA Airlines","valor":2230,"diariaUSD":61.26373626,"diariaBRL":318.5714286,"valorIntegral":2626,"custoReal":2002,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776384000000,"vendedor":"OUTROS","cliente":"PASTOR NEANDER Cândido","whats":"(21) 99661-1616","tel":"1616","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1785283200000,"devolucao":1785974400000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":2976,"diariaUSD":71.53846154,"diariaBRL":372,"valorIntegral":3286.4,"custoReal":2870.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776470400000,"vendedor":"LUCIANO","cliente":"FELIPE COSTA DE ALMEIDA","whats":"(62) 98100-4758","tel":"4758","cadeirinha":"3 ANOS","modelo":"SEDAN","cat":"Sedan","entrega":1777334400000,"devolucao":1777680000000,"hEnt":{"h":19,"mm":30},"hDev":{"h":12,"mm":0},"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":1860,"diariaUSD":89.42307692,"diariaBRL":465,"valorIntegral":1352,"custoReal":1144,"formaPag":"CARTAO DE CREDITO","parc":"1x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1776556800000,"vendedor":"LUCIANO","cliente":"EDSON VIEIRA DA SILVA JUNIOR","whats":"(62) 98496-3246","tel":"3246","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1776643200000,"devolucao":1777420800000,"hEnt":{"h":16,"mm":30},"localEnt":"MCO","localDev":"MCO","aerea":"GOL","valor":3800,"diariaUSD":81.1965812,"diariaBRL":422.2222222,"valorIntegral":3697.2,"custoReal":3229.2,"formaPag":"CARTAO DE CREDITO","parc":"4x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1776643200000,"vendedor":"LUCIANO","cliente":"GABRIEL COUTINHO ALVES SANTOS","whats":"(21) 97915-1991","tel":"1991","cadeirinha":"ATE 11 MESES","modelo":"SEDAN","cat":"Sedan","entrega":1777075200000,"devolucao":1778457600000,"hEnt":{"h":16,"mm":0},"hDev":{"h":6,"mm":30},"localEnt":"MIA","localDev":"MIA","aerea":"COPA Airlines","valor":4870,"diariaUSD":58.53365385,"diariaBRL":304.375,"valorIntegral":6448,"custoReal":4576,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776729600000,"vendedor":"LUCIANO","cliente":"CLAUDIA PILO ALVARENGA","whats":"(31) 99134-7731","tel":"7731","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1780099200000,"devolucao":1780963200000,"hEnt":{"h":20,"mm":30},"hDev":{"h":22,"mm":0},"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":4282.5,"diariaUSD":82.35576923,"diariaBRL":428.25,"valorIntegral":4108,"custoReal":3588,"formaPag":"CARTAO DE CREDITO","parc":"5x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1776902400000,"vendedor":"OUTROS","cliente":"RONALDO SILVEIRA FRANCO","whats":"(11) 98456-8980","tel":"8980","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1792972800000,"devolucao":1793923200000,"hEnt":{"h":18,"mm":0},"hDev":{"h":16,"mm":0},"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":3000,"diariaUSD":52.44755245,"diariaBRL":272.7272727,"valorIntegral":4518.8,"custoReal":3946.8,"formaPag":"NOMAD","parc":"AVISTA","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1776902400000,"vendedor":"OUTROS","cliente":"ANNE FRANCIS CAMACHO NARDELLI MOJANO","whats":"(11) 98456-8980","tel":"8980","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1792972800000,"devolucao":1793923200000,"hEnt":{"h":18,"mm":0},"hDev":{"h":16,"mm":0},"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":3000,"diariaUSD":52.44755245,"diariaBRL":272.7272727,"valorIntegral":4518.8,"custoReal":3946.8,"formaPag":"NOMAD","parc":"AVISTA","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1776729600000,"vendedor":"LUCIANO","cliente":"Caio Fabio de Souza Maciel","whats":"(62) 98197-6816","tel":"6816","cadeirinha":"2 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1779408000000,"devolucao":1780272000000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":3720,"diariaUSD":71.53846154,"diariaBRL":372,"valorIntegral":5148,"custoReal":3588,"formaPag":"CARTAO DE CREDITO","parc":"1x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776729600000,"vendedor":"LUCIANO","cliente":"Caio Fabio de Souza Maciel","whats":"(62) 98197-6816","tel":"6816","cadeirinha":"5 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1779408000000,"devolucao":1780272000000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":3720,"diariaUSD":71.53846154,"diariaBRL":372,"valorIntegral":5148,"custoReal":3588,"formaPag":"CARTAO DE CREDITO","parc":"1x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776816000000,"vendedor":"LUCIANO","cliente":"GIOVANI FERRETI FAVARO","whats":"(43) 99922-8454","tel":"8454","cadeirinha":"2 E 5 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1779926400000,"devolucao":1780704000000,"localEnt":"MCO","localDev":"MIA","aerea":"American Airlines","valor":3800,"diariaUSD":81.1965812,"diariaBRL":422.2222222,"valorIntegral":4217.2,"custoReal":3229.2,"formaPag":"CARTAO DE CREDITO","parc":"6x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776816000000,"vendedor":"LUCIANO","cliente":"GIOVANI FERRETI FAVARO","whats":"(43) 99922-8454","tel":"8454","cadeirinha":"2 E 5 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1781568000000,"devolucao":1782000000000,"localEnt":"MIA","localDev":"MIA","aerea":"American Airlines","valor":3200,"diariaUSD":123.0769231,"diariaBRL":640,"valorIntegral":3094,"custoReal":1794,"formaPag":"CARTAO DE CREDITO","parc":"6x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1776902400000,"vendedor":"LUCIANO","cliente":"MATHEUS FELIPE MARINHO DE OLIVEIRA","whats":"(41) 99858-2078","tel":"2078","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1785801600000,"devolucao":1786665600000,"localEnt":"MCO","localDev":"MCO","aerea":"GOL","valor":3200,"diariaUSD":61.53846154,"diariaBRL":320,"valorIntegral":3588,"custoReal":3068,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776988800000,"vendedor":"LUCIANO","cliente":"Mara / Wendel","whats":"1199643-0359","tel":"0359","cadeirinha":"NÃO","modelo":"SEDAN","cat":"Sedan","entrega":1776556800000,"devolucao":1778284800000,"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":6165.8,"diariaUSD":59.28653846,"diariaBRL":308.29,"valorIntegral":6760,"custoReal":5720,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776988800000,"vendedor":"LUCIANO","cliente":"SAMY CARDOSO DE OLIVEIRA","whats":"(31) 99728-3498","tel":"3498","cadeirinha":"5 ANOS","modelo":"SUV","cat":"SUV","entrega":1789257600000,"devolucao":1790467200000,"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":5000,"diariaUSD":68.68131868,"diariaBRL":357.1428571,"valorIntegral":5023.2,"custoReal":4295.2,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1777075200000,"vendedor":"LUCIANO","cliente":"JOEL CARLO VICHINHESKI","whats":"(47) 98423-8567","tel":"8567","cadeirinha":"2 x 5 NOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1790121600000,"devolucao":1791244800000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":3999,"diariaUSD":59.15680473,"diariaBRL":307.6153846,"valorIntegral":6380.4,"custoReal":4664.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1777075200000,"vendedor":"LUCIANO","cliente":"GILBERTO CAVASSINI","whats":"(41) 99990-6462","tel":"6462","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1780531200000,"devolucao":1781395200000,"localEnt":"MCO","localDev":"MCO","aerea":"GOL","valorIntegral":4108,"custoReal":3588,"formaPag":"CORTESIA","parc":"CORTESIA","qualidade":"NEGATIVA","_src":"hist"},{"dataFech":1777075200000,"vendedor":"LUCIANO","cliente":"ALDER DA COSTA PRESTES","whats":"(41) 99927-8961","tel":"8961","cadeirinha":"1 E 5 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1780531200000,"devolucao":1781395200000,"localEnt":"MCO","localDev":"MCO","aerea":"GOL","valor":3999,"diariaUSD":76.90384615,"diariaBRL":399.9,"valorIntegral":4108,"custoReal":3588,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1777420800000,"vendedor":"LUCIANO","cliente":"FABIO RODRIGUES SANTOS","whats":"(11) 98443-6218","tel":"6218","cadeirinha":"NÃO","modelo":"SEDAN","cat":"Sedan","entrega":1784332800000,"devolucao":1785628800000,"localEnt":"MCO","localDev":"MCO","aerea":"COPA Airlines","valor":4500,"diariaUSD":57.69230769,"diariaBRL":300,"valorIntegral":5070,"custoReal":4290,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1777507200000,"vendedor":"LUCIANO","cliente":"FELIPE PAIVA DOS SANTOS","whats":"(11) 97770-7485","tel":"7485","cadeirinha":"NÃO","modelo":"SEDAN","cat":"Sedan","entrega":1778889600000,"devolucao":1779494400000,"localEnt":"MCO","localDev":"MIA","aerea":"LATAM","valor":2600,"diariaUSD":71.42857143,"diariaBRL":371.4285714,"valorIntegral":2886,"custoReal":2002,"formaPag":"CARTAO DE CREDITO","parc":"1x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1777852800000,"vendedor":"LUCIANO","cliente":"VAGNER BORGES DOS SANTOS","whats":"(11) 97303-2446","tel":"2446","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1789776000000,"devolucao":1790726400000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":3400,"diariaUSD":59.44055944,"diariaBRL":309.0909091,"valorIntegral":3946.8,"custoReal":3374.8,"formaPag":"PIX/CARTÃO","parc":"5x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1778112000000,"vendedor":"LUCIANO","cliente":"WELLINGTON FELIPE DE OLIVEIRA DIAS","whats":"(11) 98136-4687","tel":"4687","cadeirinha":"2 ANOS","modelo":"SUV","cat":"SUV","entrega":1786147200000,"devolucao":1787011200000,"localEnt":"FLL","localDev":"MCO","aerea":"AZUL","valor":4000,"diariaUSD":76.92307692,"diariaBRL":400,"valorIntegral":3588,"custoReal":3068,"formaPag":"CARTAO DE CREDITO","parc":"4x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1778457600000,"vendedor":"LUCIANO","cliente":"EDSON VILELA DA ROCHA","whats":"(61) 98269-8418","tel":"8418","cadeirinha":"NÃO","modelo":"SEDAN","cat":"Sedan","entrega":1782432000000,"devolucao":1783296000000,"localEnt":"MIA","localDev":"MIA","aerea":"GOL","valor":3000,"diariaUSD":57.69230769,"diariaBRL":300,"valorIntegral":4420,"custoReal":2860,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1778544000000,"vendedor":"OUTROS","cliente":"Lauro Arison Ferreira Santos","whats":"(69) 98402-3349","tel":"3349","cadeirinha":"2 x 5 NOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1783728000000,"devolucao":1785024000000,"localEnt":"MIA","localDev":"MIA","aerea":"COPA Airlines","valor":6500,"diariaUSD":83.33333333,"diariaBRL":433.3333333,"valorIntegral":7202,"custoReal":5382,"qualidade":"POSITIVA","_src":"hist"},{"dataFech":1778803200000,"vendedor":"LUCIANO","cliente":"MARA","whats":"(11) 99643-0359","tel":"0359","cadeirinha":"NÃO","modelo":"SEDAN","cat":"Sedan","entrega":1778371200000,"devolucao":1780099200000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":6165.8,"diariaUSD":59.28653846153846,"diariaBRL":308.29,"valorIntegral":8637.408000000001,"custoReal":6136,"formaPag":"PIX","parc":"À VISTA","qualidade":"POSITIVA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1778889600000,"vendedor":"LUCIANO","cliente":"DIEGO FERNANDES PAULINO","whats":"(12) 98810-0087","tel":"0087","cadeirinha":"NÃO","modelo":"MINIVAN 8L","cat":"Minivan 8L","entrega":1800316800000,"devolucao":1801612800000,"localEnt":"MIA","localDev":"MIA","aerea":"SYKES","valor":5382,"diariaUSD":69,"diariaBRL":358.8,"valorIntegral":9202.856000000002,"custoReal":6162,"formaPag":"CARTAO DE CREDITO","parc":"6x","qualidade":"MÉDIA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1778889600000,"vendedor":"LUCIANO","cliente":"EWERTON DE MORAIS MALTA","whats":"(82) 99678-2901","tel":"2901","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1781568000000,"devolucao":1782259200000,"localEnt":"MCO","localDev":"MIA","aerea":"AMERICAN","valor":2870.4,"diariaUSD":69,"diariaBRL":358.8,"valorIntegral":4873.5232000000005,"custoReal":3286.4,"formaPag":"PIX","parc":"À VISTA","qualidade":"MÉDIA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1778889600000,"vendedor":"LUCIANO","cliente":"LINCOHN AGNER MENDES","whats":"(41) 99847-7624","tel":"7624","cadeirinha":"1 ANO + 3 MESES","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1782345600000,"devolucao":1783641600000,"localEnt":"MCO","localDev":"MCO","aerea":"DELTA","valor":5382,"diariaUSD":69,"diariaBRL":358.8,"valorIntegral":8162.856000000002,"custoReal":6162,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"MÉDIA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1778889600000,"vendedor":"LUCIANO","cliente":"ROBSTEY CAVALHEIRO","whats":"(11) 94748-7669","tel":"7669","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1784764800000,"devolucao":1785283200000,"localEnt":"MCO","localDev":"MCO","aerea":"ENDEREÇO","valor":2000,"diariaUSD":64.1025641025641,"diariaBRL":333.3333333333333,"valorIntegral":3265.1424,"custoReal":2152.8,"formaPag":"PIX","parc":"À VISTA","qualidade":"MÉDIA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1778889600000,"vendedor":"LUCIANO","cliente":"DANILO REIS SALLES","whats":"(62) 99989-3025","tel":"3025","cadeirinha":"5 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1790121600000,"devolucao":1791244800000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":4000,"diariaUSD":59.17159763313609,"diariaBRL":307.6923076923077,"valorIntegral":8114.475200000001,"custoReal":5340.400000000001,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"NEGATIVA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1778976000000,"vendedor":"LUCIANO","cliente":"Felipe Tadeu Rodrigues","whats":"(11) 98351-1924","tel":"1924","cadeirinha":"4 E 5 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1790294400000,"devolucao":1791244800000,"localEnt":"MIA","localDev":"MIA","aerea":"AVIANCA","valor":4500,"diariaUSD":78.67132867132867,"diariaBRL":409.09090909090907,"valorIntegral":7026.094400000002,"custoReal":4518.8,"formaPag":"CARTAO DE CREDITO","parc":"6x","qualidade":"MÉDIA","mesRef":"🟡 Pendente","voucher":"LIMITED","_src":"hist"},{"dataFech":1778976000000,"vendedor":"LUCIANO","cliente":"RENAN OLIVEIRA LUCAS","whats":"(11) 99557-5990","tel":"5990","cadeirinha":"2 E 4 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1785715200000,"devolucao":1787184000000,"localEnt":"FLL","localDev":"MCO","aerea":"AZUL","valor":5500,"diariaUSD":62.21719457013574,"diariaBRL":323.52941176470586,"valorIntegral":9251.236800000002,"custoReal":6983.6,"formaPag":"CARTAO DE CREDITO","parc":"12x","qualidade":"MÉDIA","mesRef":"🟡 Pendente","voucher":"LIMITED","_src":"hist"},{"dataFech":1779148800000,"vendedor":"LUCIANO","cliente":"CAROLINE OLIVEIRA LUCAS PELUCIO","whats":"(11) 91149-6796","tel":"6796","cadeirinha":"4 E 5 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1785628800000,"devolucao":1787184000000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":5400,"diariaUSD":57.69230769230769,"diariaBRL":300,"valorIntegral":9795.427200000002,"custoReal":7394.400000000001,"formaPag":"CARTAO DE CREDITO","parc":"12x","qualidade":"NEGATIVA","mesRef":"🟡 Pendente","voucher":"LIMITED","_src":"hist"},{"dataFech":1779667200000,"vendedor":"OUTROS","cliente":"Karina Alves da Silva","whats":"(11) 98330-3999","tel":"3999","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1783209600000,"devolucao":1783987200000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":3355,"diariaUSD":71.68803419,"diariaBRL":372.7777778,"valorIntegral":3697.2,"custoReal":3229.2,"formaPag":"CARTAO DE CREDITO","parc":"NÃO INFORMADO","qualidade":"POSITIVA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1779753600000,"vendedor":"OUTROS","cliente":"Nicolas Miguel Augusto","whats":"(11) 98984-5001","tel":"5001","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1779753600000,"devolucao":1780185600000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":1794,"diariaUSD":69,"diariaBRL":358.8,"valorIntegral":2054,"custoReal":1794,"formaPag":"PIX","parc":"1x","qualidade":"POSITIVA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1779753600000,"vendedor":"OUTROS","cliente":"Celso Luiz Hass da Silva","whats":"(11) 95025-9020","tel":"9020","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1780617600000,"devolucao":1781654400000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":3834,"diariaUSD":61.44230769,"diariaBRL":319.5,"valorIntegral":4929.6,"custoReal":4305.6,"formaPag":"PIX","parc":"AVISTA","qualidade":"MÉDIA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1780531200000,"vendedor":"OUTROS","cliente":"Pierre Souza","whats":"(61) 98138-2863","tel":"2863","cadeirinha":"NÃO","modelo":"Sedan","cat":"Sedan","entrega":1789171200000,"devolucao":1789862400000,"localEnt":"MIA","localDev":"MIA","aerea":"NÃO INFORMADO","valor":2100,"diariaUSD":50.48076923,"diariaBRL":262.5,"valorIntegral":3744,"custoReal":2288,"formaPag":"NÃO INFORMADO","parc":"NÃO INFORMADO","qualidade":"MÉDIA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1781049600000,"vendedor":"OUTROS","cliente":"ANDERSON HENRIQUE PREHS","whats":"55 11 97380-6708","tel":"6708","cadeirinha":"5 ANOS","modelo":"Minivan 7L","cat":"Minivan","entrega":1783814400000,"devolucao":1784851200000,"localEnt":"MIA","localDev":"MIA","aerea":"AZUL","valor":4400,"diariaUSD":70.51282051,"diariaBRL":366.6666667,"valorIntegral":5969.6,"custoReal":4305.6,"formaPag":"CARTAO DE CREDITO","parc":"3x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1780876800000,"vendedor":"OUTROS","cliente":"José Milton Texeira Uchoa","whats":"(85) 98135-8986","tel":"8986","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1784246400000,"devolucao":1785196800000,"localEnt":"MIA","localDev":"MIA","aerea":"NÃO INFORMADO","valor":3770.33,"diariaUSD":65.91486014,"diariaBRL":342.7572727,"valorIntegral":4986.8,"custoReal":3374.8,"formaPag":"CARTAO DE CREDITO","parc":"NÃO INFORMADO","qualidade":"POSITIVA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1780876800000,"vendedor":"OUTROS","cliente":"Eduardo Jose Santos Junior","whats":"55 11 98070-1615","tel":"1615","cadeirinha":"1 ANO","modelo":"Minivan 8L","cat":"Minivan 8L","entrega":1781654400000,"devolucao":1783555200000,"localEnt":"MIA","localDev":"MCO","aerea":"GOL","valor":8309.36,"diariaUSD":72.63426573,"diariaBRL":377.6981818,"valorIntegral":9557.6,"custoReal":7893.6,"formaPag":"CARTAO DE CREDITO","parc":"1x","qualidade":"POSITIVA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1780963200000,"vendedor":"OUTROS","cliente":"Dionisio Reis Ferreira","whats":"(13) 98115-1378","tel":"1378","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1782691200000,"devolucao":1783987200000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":5000,"diariaUSD":64.1025641,"diariaBRL":333.3333333,"valorIntegral":6162,"custoReal":5382,"formaPag":"CARTAO DE CREDITO","parc":"NÃO INFORMADO","qualidade":"MÉDIA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1781740800000,"vendedor":"OUTROS","cliente":"Daniel Ribeiro dos Santos Correia","whats":"5.56193817523E11","tel":"2311","cadeirinha":"NÃO","modelo":"Van 12L","cat":"Van 12L","entrega":1784937600000,"devolucao":1785801600000,"localEnt":"MIA","localDev":"MCO","aerea":"NÃO INFORMADO","valor":6514.5,"diariaUSD":125.2788462,"diariaBRL":651.45,"valorIntegral":7228,"custoReal":6188,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1781740800000,"vendedor":"OUTROS","cliente":"Rogério Fonseca Blasi","whats":"5.53588866828E11","tel":"2811","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1785110400000,"devolucao":1786752000000,"localEnt":"MCO","localDev":"MCO","aerea":"COPA","valor":6200,"diariaUSD":62.75303644,"diariaBRL":326.3157895,"valorIntegral":7805.2,"custoReal":6817.2,"formaPag":"CARTAO DE CREDITO","parc":"NÃO INFORMADO","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1782000000000,"vendedor":"DICKSON","cliente":"BEATRIZ VIEIRA DE CASTRO MOREIRA MESQUITA","whats":"5.521996466135E12","tel":"3512","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1785110400000,"devolucao":1786406400000,"localEnt":"MCO TREM","localDev":"MCO ENDERECO","aerea":"NÃO INFORMADO","valor":4850,"diariaUSD":62.17948718,"diariaBRL":323.3333333,"valorIntegral":6422,"custoReal":5382,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1782259200000,"vendedor":"OUTROS","cliente":"EDUARDO STEFFANELLO BASTIANI","whats":"5.55599291689E11","tel":"8911","cadeirinha":"1 ANO","modelo":"Minivan 7L","cat":"Minivan","entrega":1784937600000,"devolucao":1785801600000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":3955,"diariaUSD":76.05769231,"diariaBRL":395.5,"valorIntegral":4108,"custoReal":3588,"formaPag":"CARTAO DE CREDITO","parc":"NÃO INFORMADO","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1782172800000,"vendedor":"DICKSON","cliente":"Flavio de campos silva solza amaro","whats":"5.521987981978E12","tel":"7812","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1798156800000,"devolucao":1803686400000,"localEnt":"MCO","localDev":"MCO","aerea":"GOL","valor":12975,"diariaUSD":38.98737981,"diariaBRL":202.734375,"valorIntegral":32947.2,"custoReal":19635.2,"formaPag":"PIX","parc":"AVISTA","qualidade":"NEGATIVA","_src":"hist"},{"dataFech":1782518400000,"vendedor":"DICKSON","cliente":"JOSE ANDRE BARBOSA DE SOUZA","whats":"5.58199113797E11","tel":"9711","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1782864000000,"devolucao":1785974400000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":12891,"diariaUSD":68.86217949,"diariaBRL":358.0833333,"valorIntegral":14788.8,"custoReal":12916.8,"formaPag":"CARTAO DE CREDITO","parc":"5x","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1782864000000,"vendedor":"DICKSON","cliente":"Andre Gustavo Dias Vasconcelos","whats":"55 (81) 99903-7830","tel":"7830","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1784073600000,"devolucao":1785024000000,"localEnt":"FLL","localDev":"FLL","aerea":"AZUL","valor":6369.57,"diariaUSD":89,"diariaBRL":579.0518182,"valorIntegral":4518.8,"custoReal":3946.8,"formaPag":"CARTAO DE CREDITO","parc":"12x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1782864000000,"vendedor":"LIVIA","cliente":"Samir Cader de Freitas","whats":"5.521971050606E12","tel":"0612","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1783036800000,"devolucao":1784246400000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":5662.72,"diariaUSD":77.78461538,"diariaBRL":404.48,"valorIntegral":5751.2,"custoReal":5023.2,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1782950400000,"vendedor":"LIVIA","cliente":"Mario Temoteo","whats":"5.58197611717E11","tel":"1711","cadeirinha":"NÃO","modelo":"Van 12L","cat":"Van 12L","entrega":1784937600000,"devolucao":1786060800000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":7799.16,"diariaUSD":115.3721893,"diariaBRL":599.9353846,"valorIntegral":8720.4,"custoReal":8044.4,"formaPag":"CARTAO DE CREDITO","parc":"1x","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1783036800000,"vendedor":"DICKSON","cliente":"ALVARO TORQUATO SILVEIRA","whats":"55 11 97380-6708","tel":"6708","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1783900800000,"devolucao":1784592000000,"localEnt":"MCO","localDev":"MCO","aerea":"UNITED","valor":3000,"diariaUSD":72.11538462,"diariaBRL":375,"valorIntegral":3286.4,"custoReal":2870.4,"formaPag":"CARTAO DE CREDITO","parc":"5x","qualidade":"POSITIVA","voucher":"🟡 Pendente","_src":"hist"},{"dataFech":1783382400000,"vendedor":"DICKSON","cliente":"DANIEL VIEIRA LOSSAVERO","whats":"5.5679624044E11","tel":"4411","cadeirinha":"2 ANOS","modelo":"Minivan 7L","cat":"Minivan","entrega":1787702400000,"devolucao":1788825600000,"localEnt":"MCO","localDev":"MCO","aerea":"DELTA","valor":4000,"diariaUSD":59.17159763,"diariaBRL":307.6923077,"valorIntegral":5340.4,"custoReal":4664.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"MÉDIA","mesRef":"LIMITED","voucher":"🟡 Pendente","_src":"hist"},{"dataFech":1783382400000,"vendedor":"DICKSON","cliente":"Flávia Brandão","whats":"5.51399738655E12","tel":"5512","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1783728000000,"devolucao":1785715200000,"localEnt":"MCO","localDev":"MCO","aerea":"UNITED","valor":6500,"diariaUSD":54.34782609,"diariaBRL":282.6086957,"valorIntegral":9448.4,"custoReal":8252.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"MÉDIA","voucher":"🟡 Pendente","_src":"hist"},{"dataFech":1783555200000,"vendedor":"DICKSON","cliente":"Daniel Ribeiro dos Santos Correia","whats":"5.56193817523E11","tel":"2311","cadeirinha":"NÃO","modelo":"Van 12L","cat":"Van 12L","entrega":1784937600000,"devolucao":1785888000000,"localEnt":"MIA","localDev":"MCO","aerea":"NÃO INFORMADO","valor":825.24,"diariaUSD":14.42727273,"diariaBRL":75.02181818,"valorIntegral":7898.8,"custoReal":6806.8,"formaPag":"PIX","parc":"AVISTA","qualidade":"NEGATIVA","mesRef":"ALTERAÇÃO - ADÇÃO DE 1 DIÁRIA","voucher":"🟡 Pendente","_src":"hist"},{"dataFech":1783555200000,"vendedor":"DICKSON","cliente":"AUGUSTO CESAR VICTORIO","whats":"55 14 99713-9758","tel":"9758","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1797120000000,"devolucao":1797984000000,"localEnt":"MCO","localDev":"MCO","aerea":"COPA","valor":4100,"diariaUSD":78.84615385,"diariaBRL":410,"valorIntegral":3588,"custoReal":3068,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"DIAMANTE","mesRef":"TENTAR AO MÁXIMO A ENCLAVE","voucher":"🟡 Pendente","_src":"hist"},{"dataFech":1783555200000,"vendedor":"DICKSON","cliente":"ALEXANDRE SAMPAIO CAXIAS","whats":"55 92 99028-996","tel":"8996","cadeirinha":"5 ANOS","modelo":"Minivan 7L","cat":"Minivan","entrega":1785888000000,"devolucao":1786752000000,"localEnt":"MIA","localDev":"MIA","aerea":"COPA","valor":8700,"diariaUSD":167.3076923,"diariaBRL":870,"valorIntegral":5148,"custoReal":3588,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"DIAMANTE","mesRef":"LIMITED","voucher":"🟡 Pendente","_src":"hist"},{"dataFech":1783641600000,"vendedor":"DICKSON","cliente":"Carla Francini Ferreira Carreira","whats":"55 47 99007-800","tel":"7800","cadeirinha":"2 ANOS","modelo":"SUV Premium","cat":"SUV Premium","entrega":1784678400000,"devolucao":1785369600000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":4414.8,"diariaUSD":106.125,"diariaBRL":551.85,"valorIntegral":8278.4,"custoReal":7862.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"NEGATIVA","_src":"hist"},{"dataFech":1783641600000,"vendedor":"DICKSON","cliente":"Carla Francini Ferreira Carreira","whats":"55 47 99007-800","tel":"7800","cadeirinha":"2 ANOS","modelo":"SUV","cat":"SUV","entrega":1785369600000,"devolucao":1786147200000,"localEnt":"MCO ENDERECO","localDev":"MCO","aerea":"GOL","valor":4414.8,"diariaUSD":94.33333333,"diariaBRL":490.5333333,"valorIntegral":3489.2,"custoReal":2761.2,"formaPag":"PIX","parc":"AVISTA","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1783987200000,"vendedor":"DICKSON","cliente":"ANDREA SETO DE OLIVEIRA","whats":"5.511998021538E12","tel":"3812","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1785110400000,"devolucao":1785715200000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":3392,"diariaUSD":93.18681319,"diariaBRL":484.5714286,"valorIntegral":2875.6,"custoReal":2511.6,"formaPag":"CARTAO DE CREDITO","parc":"5x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1783987200000,"vendedor":"DICKSON","cliente":"RICARDO CARDOSO","whats":"5.56184967485E11","tel":"8511","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1784937600000,"devolucao":1786060800000,"localEnt":"MCO ENDERECO","localDev":"MCO ENDERECO","aerea":"GOL","valor":4950,"diariaUSD":73.22485207,"diariaBRL":380.7692308,"valorIntegral":5860.4,"custoReal":4664.4,"formaPag":"CARTAO DE CREDITO","parc":"7x","qualidade":"POSITIVA","mesRef":"LIMITED - A MELHOR DISPONÍVEL","_src":"hist"},{"dataFech":1783987200000,"vendedor":"JANES","cliente":"Wender Aparecido Xavier","whats":"5.51798112201E12","tel":"0112","cadeirinha":"NÃO","modelo":"Sedan","cat":"Sedan","entrega":1783641600000,"devolucao":1785369600000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":6165.8,"diariaUSD":59.28653846,"diariaBRL":308.29,"valorIntegral":6760,"custoReal":5720,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1784592000000,"vendedor":"DICKSON","cliente":"Ricardo da Rocha Dos Santos","whats":"5.51798112201E12","tel":"0112","cadeirinha":"3 E 5 ANOS","modelo":"Minivan 7L","cat":"Minivan","entrega":1784678400000,"devolucao":1786233600000,"localEnt":"MCO","localDev":"MCO","aerea":"DELTA","valor":7685.75,"diariaUSD":82.11271368,"diariaBRL":426.9861111,"valorIntegral":7394.4,"custoReal":6458.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1784678400000,"vendedor":"DICKSON","cliente":"Renato Oliveira Eugenio","whats":"5.511998766615E12","tel":"1512","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1784851200000,"devolucao":1785888000000,"localEnt":"MCO","localDev":"MCO","aerea":"AVIANCA","valor":7344,"diariaUSD":117.6923077,"diariaBRL":612,"valorIntegral":4929.6,"custoReal":4305.6,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1784937600000,"vendedor":"JANES","cliente":"LUCILENE OLIVEIRA TEXEIRA","whats":"1 (508) 663-9460","tel":"9460","cadeirinha":"NÃO","modelo":"Minivan 8L","cat":"Minivan 8L","entrega":1786492800000,"devolucao":1786924800000,"localEnt":"MCO","localDev":"MCO","aerea":"DELTA","valor":2711,"diariaUSD":104.2692308,"diariaBRL":542.2,"valorIntegral":2054,"custoReal":1794,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1785024000000,"vendedor":"LUCIANO","cliente":"PAULA ALVES AQUILINO","whats":"55 17 99179-9345","tel":"9345","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1800057600000,"devolucao":1801180800000,"localEnt":"MCO","localDev":"MCO","aerea":"COPA","valor":4700,"diariaUSD":69.52662722,"diariaBRL":361.5384615,"valorIntegral":5340.4,"custoReal":4664.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1785024000000,"vendedor":"LUCIANO","cliente":"RODOLFO LOPES DA SILVA","whats":"5.544999268911E12","tel":"1112","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1791676800000,"devolucao":1792540800000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":1703,"diariaUSD":32.75,"diariaBRL":170.3,"valorIntegral":4108,"custoReal":3588,"formaPag":"PIX","parc":"0.5","qualidade":"NEGATIVA","mesRef":"LIMITED / 25% em 15 dias e 25% em 15 dias","_src":"hist"},{"dataFech":1785110400000,"vendedor":"LUCIANO","cliente":"FERNANDA NAKABAYASHI LIMA","whats":"(21) 9 96721334","tel":"1334","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1797724800000,"devolucao":1799452800000,"localEnt":"MCO","localDev":"MCO","aerea":"A DEFINIR","valor":7000,"diariaUSD":67.30769231,"diariaBRL":350,"valorIntegral":15496,"custoReal":7176,"formaPag":"CARTAO DE CREDITO","parc":"5x","qualidade":"MÉDIA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785110400000,"vendedor":"LUCIANO","cliente":"MARCELLO NAKABAYASHI LIMA","whats":"55 11 97149-3822","tel":"3822","cadeirinha":"3 ANOS","modelo":"Minivan 7L","cat":"Minivan","entrega":1797724800000,"devolucao":1799452800000,"localEnt":"MCO","localDev":"MCO","aerea":"A DEFINIR","valor":7000,"diariaUSD":67.30769231,"diariaBRL":350,"valorIntegral":15496,"custoReal":7176,"formaPag":"CARTAO DE CREDITO","parc":"5x","qualidade":"MÉDIA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785110400000,"vendedor":"LUCIANO","cliente":"RAFAEL SOARES DE SOUZA","whats":"55 88 99655-237","tel":"5237","cadeirinha":"5 ANOS","modelo":"SUV","cat":"SUV","entrega":1792972800000,"devolucao":1793923200000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":3000,"diariaUSD":52.44755245,"diariaBRL":272.7272727,"valorIntegral":4986.8,"custoReal":3374.8,"formaPag":"CARTAO DE CREDITO","parc":"3x","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1785196800000,"vendedor":"LUCIANO","cliente":"GRAZIELA GRACI BENINCA MOREIRA","whats":"55 47 99686-663","tel":"6663","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1785715200000,"devolucao":1787184000000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":4250,"diariaUSD":48.07692308,"diariaBRL":250,"valorIntegral":6099.6,"custoReal":5215.6,"formaPag":"PIX","parc":"AVISTA","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1785196800000,"vendedor":"LUCIANO","cliente":"JONATAN DE LIMA","whats":"55 51 99515-364","tel":"5364","cadeirinha":"6 ANOS / 03 MESES","modelo":"Minivan 7L","cat":"Minivan","entrega":1786320000000,"devolucao":1789084800000,"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":8600,"diariaUSD":51.68269231,"diariaBRL":268.75,"valorIntegral":13145.6,"custoReal":11481.6,"formaPag":"PIX","parc":"AVISTA","qualidade":"NEGATIVA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785196800000,"vendedor":"LUCIANO","cliente":"PABLO BELLINI HAHN","whats":"55 51 99114-191","tel":"4191","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1790467200000,"devolucao":1791763200000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":4300,"diariaUSD":55.12820513,"diariaBRL":286.6666667,"valorIntegral":7202,"custoReal":5382,"formaPag":"PIX","parc":"AVISTA","qualidade":"MÉDIA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785283200000,"vendedor":"LUCIANO","cliente":"THIAGO FRANCO MANSO","whats":"55 11 96062-0968","tel":"0968","cadeirinha":"5 ANOS","modelo":"Minivan 7L","cat":"Minivan","entrega":1788220800000,"devolucao":1789344000000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":4100,"diariaUSD":60.65088757,"diariaBRL":315.3846154,"valorIntegral":6380.4,"custoReal":4664.4,"formaPag":"CARTAO DE CREDITO","parc":"5x","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1785283200000,"vendedor":"LUCIANO","cliente":"DIEGO SARTORI FELIX ARGENTA","whats":"55 41 91512-210","tel":"2210","cadeirinha":"2 E 5 ANOS","modelo":"SUV","cat":"SUV","entrega":1792454400000,"devolucao":1793059200000,"localEnt":"MCO","localDev":"MCO","aerea":"ENDEREÇO","valor":3400,"diariaUSD":93.40659341,"diariaBRL":485.7142857,"valorIntegral":2511.6,"custoReal":2147.6,"formaPag":"PIX","parc":"AVISTA","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1785369600000,"vendedor":"LUCIANO","cliente":"JULIO CEZAR KOTOVICZ","whats":"55 82-99120-8888","tel":"8888","cadeirinha":"NÃO","modelo":"Sedan","cat":"Sedan","entrega":1794009600000,"devolucao":1794873600000,"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":3120,"diariaUSD":60,"diariaBRL":312,"valorIntegral":3380,"custoReal":2860,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1785369600000,"vendedor":"LUCIANO","cliente":"CRISTIANE RINALDI LIDUARIO","whats":"55 41 96349-053","tel":"9053","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1789430400000,"devolucao":1792195200000,"localEnt":"MCO","localDev":"MCO","aerea":"GOL","valor":8000,"diariaUSD":48.07692308,"diariaBRL":250,"valorIntegral":11481.6,"custoReal":9817.6,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1785456000000,"vendedor":"LUCIANO","cliente":"Wender Aparecido Xavier","whats":"55 11 99643-0359","tel":"0359","cadeirinha":"NÃO","modelo":"Sedan","cat":"Sedan","entrega":1785456000000,"devolucao":1787184000000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":6165.8,"diariaUSD":59.28653846,"diariaBRL":308.29,"valorIntegral":6760,"custoReal":5720,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1785456000000,"vendedor":"LUCIANO","cliente":"RAUL NEVES SOARES","whats":"55 11 97057-3784","tel":"3784","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1800230400000,"devolucao":1801612800000,"localEnt":"MCO","localDev":"MIA","aerea":"AZUL","valor":5400,"diariaUSD":64.90384615,"diariaBRL":337.5,"valorIntegral":7092.8,"custoReal":5740.8,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"MÉDIA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785456000000,"vendedor":"LUCIANO","cliente":"RAUL NEVES SOARES","whats":"55 11 97057-3784","tel":"3784","cadeirinha":"NÃO","modelo":"Scooter","cat":"Outros","entrega":1800230400000,"devolucao":1801180800000,"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":1147.5,"diariaUSD":20.06118881,"diariaBRL":104.3181818,"custoReal":-572,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1785542400000,"vendedor":"LUCIANO","cliente":"AFONSO VINICIUS GOLDONI ARAUJO","whats":"34 999427348","tel":"7348","cadeirinha":"3 E 5 ANOS","modelo":"Minivan 8L","cat":"Minivan 8L","entrega":1793145600000,"devolucao":1794441600000,"localEnt":"MCO","localDev":"MIA","aerea":"GOL","valor":4400,"diariaUSD":56.41025641,"diariaBRL":293.3333333,"valorIntegral":6682,"custoReal":5382,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"MÉDIA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785542400000,"vendedor":"LUCIANO","cliente":"ANDRE LUIZ SILVEIRA ALVES","whats":"5.53186324332E11","tel":"3211","cadeirinha":"1 ANO","modelo":"Minivan 8L","cat":"Minivan 8L","entrega":1786752000000,"devolucao":1788220800000,"localEnt":"MCO","localDev":"MIA","aerea":"COPA","valor":6395.34,"diariaUSD":72.34547511,"diariaBRL":376.1964706,"valorIntegral":7503.6,"custoReal":6099.6,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"POSITIVA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785628800000,"vendedor":"LUCIANO","cliente":"GUILHERME TERUEL","whats":"34 999427348","tel":"7348","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1793145600000,"devolucao":1794441600000,"localEnt":"MCO","localDev":"MIA","aerea":"GOL","valor":4400,"diariaUSD":56.41025641,"diariaBRL":293.3333333,"valorIntegral":6682,"custoReal":5382,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"MÉDIA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785715200000,"vendedor":"LUCIANO","cliente":"DENISE SANTOS ALBUQUERQUE","whats":"1.1956475472E10","tel":"7210","cadeirinha":"NÃO","modelo":"Sedan","cat":"Sedan","entrega":1790294400000,"devolucao":1791072000000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":3000,"diariaUSD":64.1025641,"diariaBRL":333.3333333,"valorIntegral":4082,"custoReal":2574,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1785801600000,"vendedor":"LUCIANO","cliente":"LEONARDO LUIS FIAMONCINI","whats":"4.7988375883E10","tel":"8310","cadeirinha":"NÃO","modelo":"SUV Premium","cat":"SUV Premium","entrega":1768262400000,"devolucao":1769472000000,"localEnt":"MIA","localDev":"MIA","aerea":"GOL","valor":10245.9,"diariaUSD":140.7403846,"diariaBRL":731.85,"valorIntegral":15527.2,"custoReal":13759.2,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"NEGATIVA","_src":"hist"},{"dataFech":1785888000000,"vendedor":"LUCIANO","cliente":"FREDERICO PARREIRA VIEIRA","whats":"6.2982386109E10","tel":"0910","cadeirinha":"NÃO","modelo":"SUV Premium","cat":"SUV Premium","entrega":1798588800000,"devolucao":1799539200000,"localEnt":"MIA","localDev":"MIA","aerea":"AMERICAN","valor":6500,"diariaUSD":113.6363636,"diariaBRL":590.9090909,"valorIntegral":12422.8,"custoReal":10810.8,"qualidade":"NEGATIVA","_src":"hist"},{"dataFech":1785888000000,"vendedor":"LUCIANO","cliente":"LUIS ROBERTO DO CARMO LOURENCO","whats":"6.1999672325E10","tel":"2510","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1793664000000,"devolucao":1794787200000,"localEnt":"MIA","localDev":"MIA","aerea":"GOL","valor":4914,"diariaUSD":72.69230769,"diariaBRL":378,"valorIntegral":5704.4,"custoReal":3988.4,"qualidade":"POSITIVA","_src":"hist"},{"dataFech":1785974400000,"vendedor":"LUCIANO","cliente":"DEBORA  RUIZ DE SOUSA","whats":"9.2981163737E10","tel":"3710","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1799884800000,"devolucao":1801872000000,"localEnt":"MCO","localDev":"MCO","aerea":"COPA","valor":6000,"diariaUSD":50.16722408,"diariaBRL":260.8695652,"valorIntegral":17820.4,"custoReal":8252.4,"qualidade":"NEGATIVA","_src":"hist"},{"dataFech":1785974400000,"vendedor":"LUCIANO","cliente":"JULIO CESAR CANDIDO","whats":"1.1982077011E10","tel":"1110","cadeirinha":"1 ANO","modelo":"Minivan 7L","cat":"Minivan","entrega":1792713600000,"devolucao":1794441600000,"localEnt":"MCO","localDev":"MCO","aerea":"A DEFINIR","valor":6556.93,"diariaUSD":63.04740385,"diariaBRL":327.8465,"valorIntegral":8216,"custoReal":7176,"qualidade":"MÉDIA","_src":"hist"},{"dataFech":1786060800000,"vendedor":"LUCIANO","cliente":"DENISE LOPES DAS CHAGAS","whats":"(13) 97406-7931","tel":"7931","cadeirinha":"NÃO","modelo":"Sedan","cat":"Sedan","entrega":1791849600000,"devolucao":1792972800000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":4000,"diariaUSD":59.17159763,"diariaBRL":307.6923077,"valorIntegral":4394,"custoReal":3718,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1786147200000,"vendedor":"LUCIANO","cliente":"Francisco Jose Assi Meira Lima","whats":"84 999811146","tel":"1146","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1786924800000,"devolucao":1788652800000,"localEnt":"MIA","localDev":"FLL","aerea":"LATAM","valor":3000,"diariaUSD":28.84615385,"diariaBRL":150,"valorIntegral":8736,"custoReal":7176,"formaPag":"PIX","parc":"AVISTA","qualidade":"NEGATIVA","mesRef":"COBRAR RESTANTE DIA 16/08","_src":"hist"},{"dataFech":1786320000000,"vendedor":"LUCIANO","cliente":"EMERSON TERRA ROCHA","whats":"1.5996500111E10","tel":"1110","cadeirinha":"2 CADEIRINHA","modelo":"SUV Premium","cat":"SUV Premium","entrega":1787529600000,"devolucao":1788393600000,"localEnt":"FLL","localDev":"MCO","aerea":"AZUL","valor":7366.87,"diariaUSD":141.6705769,"diariaBRL":736.687,"valorIntegral":10348,"custoReal":9828,"formaPag":"CARTAO DE CREDITO","qualidade":"NEGATIVA","_src":"hist"},{"dataFech":1786320000000,"vendedor":"LUCIANO","cliente":"DIEGO ISOLA CAMINHA","whats":"5.1991002867E10","tel":"6710","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1788134400000,"devolucao":1788825600000,"localEnt":"MCO","localDev":"MCO","aerea":"COPA","valor":2700,"diariaUSD":64.90384615,"diariaBRL":337.5,"valorIntegral":3286.4,"custoReal":2870.4,"formaPag":"CARTAO DE CREDITO","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1786320000000,"vendedor":"LUCIANO","cliente":"CLEBER RORIZ FERREIRA FILHO","whats":"7.3988074099E10","tel":"9910","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1800921600000,"devolucao":1801958400000,"localEnt":"FLL","localDev":"MIA","aerea":"COPA","valor":4555.18,"diariaUSD":72.99967949,"diariaBRL":379.5983333,"valorIntegral":5449.6,"custoReal":4305.6,"formaPag":"CARTAO DE CREDITO","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1786406400000,"vendedor":"LUCIANO","cliente":"HEVERTON HENRIQUE DE ARAUJO FERREI","whats":"3.8999218763E10","tel":"6310","cadeirinha":"5 ANOS","modelo":"Minivan 7L","cat":"Minivan","entrega":1788739200000,"devolucao":1789776000000,"valor":3597,"diariaUSD":57.64423077,"diariaBRL":299.75,"valorIntegral":4929.6,"custoReal":4305.6,"qualidade":"MÉDIA","_src":"hist"},{"dataFech":1786406400000,"vendedor":"LUCIANO","cliente":"ORLY RICARDO SERAPHIM","whats":"1.9992191009E10","tel":"0910","cadeirinha":"6 ANOS","modelo":"SUV","cat":"SUV","entrega":1792108800000,"devolucao":1792972800000,"localEnt":"MCO ENDERECO","localDev":"MCO ENDERECO","valor":3500,"diariaUSD":67.30769231,"diariaBRL":350,"valorIntegral":4108,"custoReal":3068,"formaPag":"PIX","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1786492800000,"vendedor":"LUCIANO","cliente":"LINDOMAR CESARIO VIEIRA","whats":"1.1999647576E10","tel":"7610","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1791244800000,"devolucao":1792281600000,"localEnt":"MIA","localDev":"MCO","aerea":"LATAM","valor":4700,"diariaUSD":75.32051282,"diariaBRL":391.6666667,"valorIntegral":5449.6,"custoReal":4305.6,"formaPag":"CARTAO DE CREDITO","parc":"6x","qualidade":"POSITIVA","_src":"hist"}];
+</script>
 
 <script id="mgw-rentab-js">
 /* ═══════════════════════════════════════════════════════════════════
@@ -28910,6 +30417,8 @@ window.MGW_RENTAB={ render:render, copiar:copiar,
   window.onNavChange=function(id){
     if(typeof prev==='function'){ try{ prev(id); }catch(e){ console.warn('[rentab] handler anterior',e); } }
     if(id==='rentab'){ try{ render(); }catch(e){ console.warn('[rentab] render',e); } }
+    /* A aba Cotações × Vendas voltou; seu render nunca saiu do arquivo. */
+    if(id==='comparativo'){ try{ renderComparativo(); }catch(e){ console.warn('[comparativo]',e); } }
   };
 })();
 })();
