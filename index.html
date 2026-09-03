@@ -2057,10 +2057,13 @@ select.ffi option{background:#000020;color:#FF0000}
 </div>
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
   <input class="tsearch" id="hq" placeholder="Buscar cliente, categoria..." oninput="renderHistorico()" style="width:220px">
+  <select class="tsearch" id="hq-mes" onchange="renderHistorico()" style="width:190px"><option value="">Todos os meses</option></select>
   <button class="tbtn tbtn-o" onclick="exportHistorico()">Exportar CSV</button>
   <button class="tbtn tbtn-g" onclick="cotProcurarPerdidas()" title="Procura cotações na nuvem e nas chaves antigas deste computador — inclusive as que foram feitas em outra máquina — e mostra o que dá para trazer antes de gravar qualquer coisa">☁️ IMPORTAR COTAÇÕES DA NUVEM</button>
   <div style="margin-left:auto;font-size:.68rem;font-family:'DM Mono',monospace;color:var(--chalk3)" id="hist-stats"></div>
 </div>
+<div class="mgw-hint" style="margin-bottom:10px">📇 Mostra <b>todos os meses</b> por padrão — as cotações não ficam mais presas ao mês ativo.<br>
+  Lembre da virada do dia 12: uma cotação feita em <b>03/09</b> mora no mês de <b>agosto</b>, porque o ciclo vai do dia 13 ao dia 12. Se procurar por setembro e não achar, olhe em agosto — ou deixe em "Todos os meses".</div>
 <div id="hist-recuperar"></div>
 <div class="tbl-wrap">
   <div style="overflow-x:auto">
@@ -14025,11 +14028,102 @@ function cotVarrerAoAbrir(){
   setTimeout(function(){ try{ cotProcurarPerdidas(); }catch(e){} }, 400);
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   TODAS AS COTAÇÕES, DE TODOS OS MESES
+   ───────────────────────────────────────────────────────────────────
+   HIST_COT guarda UM mês de cada vez: dbLoadMes() esvazia o array e
+   carrega só a chave gs_cot_AAAA_MM do mês ativo. O Histórico lia esse
+   array e mostrava um filtro de período por cima — prometendo um
+   recorte que os dados em memória não tinham. Cotação de outro mês não
+   aparecia por mais que se ajustasse a data.
+
+   E tem a virada do dia 12: uma cotação feita em 03/09 mora na chave de
+   AGOSTO, porque o ciclo vai do dia 13 ao 12. Quem procurasse "as
+   cotações de setembro" não achava nenhuma, e elas estavam todas lá,
+   na chave do lado.
+
+   Esta função varre todas as chaves de cotação do armazenamento — a
+   compartilhada e as antigas por usuário —, junta sem duplicar e marca
+   cada cotação com o mês em que ela está guardada. O seletor de mês do
+   Histórico se monta a partir daí. */
+function cotTodasAsCotacoes(){
+  var vistos={}, out=[];
+  function assina(c){
+    return [String(c&&c.cliente||'').trim().toUpperCase(),
+            Number(c&&c.total||0).toFixed(2),
+            String(c&&(c.dtISO||c.dt)||''),
+            String(c&&c.cat||'')].join('|');
+  }
+  function junta(arr, ym){
+    if(!Array.isArray(arr)) return;
+    arr.forEach(function(c){
+      if(!c) return;
+      var k=c._uid?('u:'+c._uid):assina(c);
+      if(vistos[k]) return;
+      vistos[k]=1;
+      var copia=Object.assign({},c);
+      copia._ym=ym;
+      out.push(copia);
+    });
+  }
+  var raw=localStorage.__proto__;
+  try{
+    for(var i=0;i<localStorage.length;i++){
+      var k=localStorage.key(i); if(!k || k.indexOf('gs_cot_')<0) continue;
+      var m=String(k).match(/gs_cot_(\d{4})_(\d{2})$/); if(!m) continue;
+      var arr=[]; try{ arr=JSON.parse(raw.getItem.call(localStorage,k)||'[]')||[]; }catch(e){}
+      junta(arr, m[1]+'_'+m[2]);
+    }
+  }catch(e){}
+  /* o que está em memória entra por último: se o mês ativo tiver edição
+     ainda não gravada, ela não se perde */
+  try{ junta(HIST_COT, (typeof DB_MES_ATIVO!=='undefined'&&DB_MES_ATIVO)?DB_MES_ATIVO:''); }catch(e){}
+  return out;
+}
+function _cotYMRotulo(k){
+  var M=['','jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  var p=String(k||'').split('_');
+  return (p.length===2)?(M[+p[1]]+'/'+p[0]):(k||'—');
+}
+
 function renderHistorico(){
   const q=(document.getElementById('hq')?.value||'').toLowerCase();
   const sf=document.getElementById('hq-status')?.value||'';
-  const hcRange=typeof calGetRange==='function'?calGetRange('hc'):{from:'',to:''};
-  let rows=HIST_COT.filter(h=>{
+  /* A barra de calendário desta aba tem dois modos, e no modo "mês" ela
+     devolve SEMPRE um intervalo — o do mês selecionado nela. Com a lista
+     passando a mostrar todos os meses, esse intervalo apagava tudo o que
+     estivesse fora dele: 7 cotações guardadas, nenhuma na tela.
+     Agora quem manda é o seletor de mês desta aba. O intervalo de datas
+     só entra quando a pessoa escolheu o modo "período" de propósito. */
+  let hcRange={from:'',to:''};
+  try{
+    const modo=(typeof CAL_STATE!=='undefined'&&CAL_STATE.hc)?CAL_STATE.hc.mode:null;
+    if(modo==='periodo' && typeof calGetRange==='function') hcRange=calGetRange('hc');
+  }catch(e){}
+
+  /* ── de onde vem a lista ──
+     "Todos os meses" é o padrão: é o que responde à pergunta que sempre
+     se faz aqui — quantas cotações a gente fez. Quem quiser um mês só
+     escolhe no seletor. */
+  const TODAS=cotTodasAsCotacoes();
+  const selM=document.getElementById('hq-mes');
+  if(selM){
+    const porMes={};
+    TODAS.forEach(h=>{ const k=h._ym||'—'; porMes[k]=(porMes[k]||0)+1; });
+    const ordem=Object.keys(porMes).sort().reverse();
+    const assin=ordem.join(',');
+    if(selM.getAttribute('data-assin')!==assin){
+      const atual=selM.value;
+      selM.innerHTML='<option value="">Todos os meses ('+TODAS.length+')</option>'
+        +ordem.map(k=>'<option value="'+k+'">'+_cotYMRotulo(k)+' · '+porMes[k]+'</option>').join('');
+      selM.setAttribute('data-assin',assin);
+      if(atual) selM.value=atual;
+    }
+  }
+  const fm=(selM&&selM.value)||'';
+  const BASE=fm?TODAS.filter(h=>h._ym===fm):TODAS;
+
+  let rows=BASE.filter(h=>{
     const matchQ=!q||h.cliente.toLowerCase().includes(q)||h.cat.toLowerCase().includes(q);
     const matchS=!sf||(h.status||'pendente')===sf;
     const matchD=(!hcRange.from||h.dtISO>=hcRange.from)&&(!hcRange.to||h.dtISO<=hcRange.to);
@@ -14038,12 +14132,12 @@ function renderHistorico(){
   const tb=document.getElementById('hist-tbody');if(!tb)return;
   const stats=document.getElementById('hist-stats');
   if(stats){
-    const g=HIST_COT.filter(mgwGanhou).length;
-    const p=HIST_COT.filter(h=>mgwDesfecho(h)==='perdida').length;
-    const pend=HIST_COT.filter(h=>mgwDesfecho(h)==='pendente').length;
-    stats.innerHTML='';
+    const soma=rows.reduce((a,h)=>a+(+h.total||0),0);
+    stats.innerHTML=rows.length+' '+(rows.length===1?'cotação':'cotações')
+      +(rows.length!==TODAS.length?(' <span style="color:var(--chalk3)">de '+TODAS.length+' no total (filtro ativo)</span>'):'')
+      +' · US$ '+soma.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   }
-  if(!rows.length){tb.innerHTML=`<tr><td colspan="16" style="text-align:center;color:var(--chalk3);padding:24px">${HIST_COT.length?'Nenhuma cotação com esse filtro.':'Nenhuma cotação registrada ainda. Use Copiar WhatsApp ou Cotação Detalhada.'}</td></tr>`;return}
+  if(!rows.length){tb.innerHTML=`<tr><td colspan="16" style="text-align:center;color:var(--chalk3);padding:24px;line-height:1.9">${TODAS.length?('Nenhuma cotação com esse filtro.<br>Há <b>'+TODAS.length+'</b> cotação(ões) guardadas — troque o mês ou limpe o período.'):'Nenhuma cotação registrada ainda. Use Copiar WhatsApp ou Cotação Detalhada.'}</td></tr>`;return}
   tb.innerHTML=rows.map((h,i)=>{
     const realIdx=HIST_COT.indexOf(h);
     /* Cotação é cotação: não carrega desfecho. Quem sabe o que fechou é a
@@ -30806,7 +30900,12 @@ function dados(){ try{ return (window.MGW_RESV&&MGW_RESV.dados())||[]; }catch(e)
 function cp(){
   try{
     if(typeof cpClassificar!=='function') return null;
-    var cots=(typeof HIST_COT!=='undefined')?HIST_COT.slice():[];
+    /* TODAS as cotações, de todos os meses. HIST_COT guarda uma chave
+       mensal por vez, e usá-lo aqui daria uma conversão calculada sobre
+       um mês só — e um "mês a mês" com uma linha. */
+    var cots=(typeof cotTodasAsCotacoes==='function')
+      ? cotTodasAsCotacoes()
+      : ((typeof HIST_COT!=='undefined')?HIST_COT.slice():[]);
     if(!cots.length) return null;
     var ideais=[], complexos=[], motivos={};
     cots.forEach(function(h){
@@ -31013,6 +31112,14 @@ function renderMesAMes(){
     +(subiu.length?('<div class="or-l-bom"><b>Melhorou:</b> '+subiu.map(function(x){ return x.r+' '+n1(Math.abs(x.d.v))+(x.d.pontos?' p.p.':'%'); }).join(' · ')+'</div>'):'')
     +(caiu.length ?('<div class="or-l-ruim"><b>Piorou:</b> '+caiu.map(function(x){ return x.r+' '+n1(Math.abs(x.d.v))+(x.d.pontos?' p.p.':'%'); }).join(' · ')+'</div>'):'')
     +(!subiu.length&&!caiu.length?'<div>Nada se moveu mais de 2% — o mês repetiu o anterior.</div>':'')
+    /* Conversão acima de 100% não é erro de conta: é reserva sem cotação
+       registrada. Dizer isso evita que o número seja lido como defeito
+       da tela — e aponta o que precisa ser corrigido, que é o registro. */
+    +(s.some(function(g){ return g.conv!=null && g.conv>100; })
+      ? ('<div class="or-l-ruim" style="margin-top:8px"><b>Conversão acima de 100% em algum mês:</b> '
+        +'entraram mais reservas do que cotações registradas. Não é erro de cálculo — é venda que fechou '
+        +'sem a cotação ter sido lançada no app. Enquanto isso acontecer, a conversão desses meses não '
+        +'serve para comparar, e a régua do marketing fica sem base.</div>') : '')
     +'<p>Duas leituras que só aparecem cruzando as colunas, e que mudam a decisão:</p><ul>'
     +'<li><b>Receita sobe e conversão cai</b> = o mês foi salvo por volume de cotação, não por método. '
     +'É o crescimento que não se sustenta: no mês em que a entrada de lead oscilar, o faturamento vai junto.</li>'
