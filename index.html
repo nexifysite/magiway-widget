@@ -898,10 +898,6 @@ select.ffi option{background:#000020;color:#FF0000}
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"></rect><path stroke-linecap="round" stroke-width="2" d="M8 2v4M16 2v4M3 10h18"></path><rect x="6" y="13" width="4" height="3" rx="0.5" fill="currentColor" stroke="none"></rect><rect x="12" y="13" width="6" height="3" rx="0.5" fill="currentColor" stroke="none" opacity="0.5"></rect></svg>
         Calendário Frota <span class="sb-bdg bdg-live">LIVE</span>
       </div>
-      <div class="sb-item" onclick="nav('reservas',this)">
-        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16M8 6v12"></path></svg>
-        Reservas
-      </div>
       <div class="sb-item" onclick="nav('agenda',this)">
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l1.5 1.5L15 12"></path></svg>
         Agenda do Dia
@@ -933,6 +929,10 @@ select.ffi option{background:#000020;color:#FF0000}
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
         Histórico Reservas
       </div>
+      <div class="sb-item" onclick="nav('evolucao',this)">
+        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+        Evolução
+      </div>
       <div class="sb-item" onclick="nav('orienta',this)">
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
         Orientações &amp; Método
@@ -951,21 +951,9 @@ select.ffi option{background:#000020;color:#FF0000}
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14s1.2 1.5 3 1.5S15 14 15 14M9 9h.01M15 9h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         NPS
       </div>
-      <div class="sb-item" onclick="nav('tarefas',this)">
-        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-        Notas &amp; Pendências
-      </div>
-      <div class="sb-item" onclick="nav('auditoria',this)">
-        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" stroke-width="2"></rect><path stroke-linecap="round" stroke-width="2" d="M8 11V7a4 4 0 018 0v4"></path></svg>
-        Canal Anônimo
-      </div>
       <div class="sb-item" onclick="nav('fluxo',this)">
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         Fluxo de Caixa
-      </div>
-      <div class="sb-item" onclick="nav('relatorios',this)">
-        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-        Relatórios
       </div>
       <div class="sb-sec">Sistema</div>
       <div class="sb-item active" onclick="nav('vendedores',this)">
@@ -5783,6 +5771,23 @@ select.ffi option{background:#000020;color:#FF0000}
            vender carro e onde apertar o desconto.
            Nada aqui é digitado: sai tudo da mesma base das outras abas.
            ═══════════════════════════════════════════════════════════════ -->
+      <!-- ═══ EVOLUÇÃO — todos os KPIs, todos os ciclos ═══
+           No lugar de Notas, Relatórios e Canal Anônimo. Aquelas três
+           guardavam coisas; esta responde uma pergunta: o que mudou de
+           um ciclo para o outro, e por quê. O mês aqui é o da empresa,
+           dia 13 ao dia 12, igual ao resto do app. -->
+      <div class="panel" id="panel-evolucao">
+        <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">EVOLUÇÃO — MÊS A MÊS</span><div class="sec-line"></div></div>
+        <div class="man-bar">
+          <button class="mgw-btn" onclick="MGW_EVOL.render()">↻ Recalcular</button>
+          <span id="ev-periodo" class="mgw-status" style="margin-left:auto;color:var(--chalk2)"></span>
+        </div>
+        <div class="mgw-hint">📊 Todos os indicadores, ciclo a ciclo, com a variação contra o mês anterior e a leitura escrita de cada gráfico.<br>
+          O mês é o <b>ciclo da empresa — dia 13 ao dia 12</b>, o mesmo do Dashboard, das Metas e do comissionamento. Taxas variam em <b>pontos percentuais</b>; valores e contagens, em porcentagem.<br>
+          Toque em qualquer gráfico para ampliar.</div>
+        <div id="ev-corpo"></div>
+      </div>
+
       <div class="panel" id="panel-rentab">
         <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">RENTABILIDADE &amp; OCUPAÇÃO</span><div class="sec-line"></div></div>
         <div class="mgrsv-toolbar">
@@ -6351,8 +6356,41 @@ Data de retirada = din"></textarea>
   <!-- Caminho de emergência: quando a leitura online não confere, a
        planilha baixada resolve sem depender de compartilhamento, de gviz
        nem de cache. Fica fechado para não virar mais um botão na barra. -->
-  <details style="margin:10px 0">
-    <summary style="cursor:pointer;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--chalk3)">📥 Carregar da planilha baixada (histórico e mês, separados)</summary>
+
+  <div id="mgrsv-espelho-aviso"></div>
+  <div id="mgrsv-regra"></div>
+  <div id="mgrsv-status" class="mgw-status"></div>
+  <div id="mgrsv-count" class="mgw-status" style="color:var(--chalk2)"></div>
+  <div id="mgrsv-issues"></div>
+  <div class="mgrsv-tablewrap">
+    <table class="mgrsv-table mgrsv-wide">
+      <thead id="mgrsv-thead"></thead>
+      <tbody id="mgrsv-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════ VENDAS DO MÊS ═══════════ -->
+<div class="panel" id="panel-vendasmes">
+  <!-- ═══ ATUALIZAR AS RESERVAS DO MÊS ═══
+       A aba Reservas saiu da barra: mostrava a mesma coisa que esta. O
+       que ela tinha de exclusivo — carregar a planilha — veio junto, e
+       ganhou o botão de limpar antes, que é o gesto que faltava para
+       "substituir o mês" ser uma operação e não uma sequência de cliques
+       em telas diferentes. -->
+  <details style="margin:10px 0" id="vm-importar">
+    <summary style="cursor:pointer;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--chalk3)">🔄 Atualizar as reservas do mês pela planilha</summary>
+    <div style="margin-top:8px">
+      <div class="mgw-hint">
+        <b>Para trocar o mês inteiro de uma vez:</b> clique em <b>🧹 LIMPAR O MÊS</b> e depois carregue o CSV novo em 📋 FECHAMENTOS. O histórico não é tocado.<br>
+        Para só acrescentar, pule a limpeza e carregue direto — o carregamento já substitui o conteúdo da aba escolhida.
+      </div>
+      <div style="display:flex;gap:10px;margin:10px 0;flex-wrap:wrap;align-items:center">
+        <button class="mgw-btn" onclick="MGW_RESV.limparAba('fech')" title="Esvazia as reservas do mês em vigência. O histórico continua intacto.">🧹 LIMPAR O MÊS</button>
+        <span class="mgw-hint" style="margin:0">Tira da base só as reservas do mês. Use antes de carregar um CSV que substitui o mês inteiro.</span>
+      </div>
+  <div>
+
     <div style="margin-top:8px">
       <div class="mgw-hint">
         Duas gavetas <b>independentes</b>: carregar uma substitui só ela, a outra fica como está — dá para atualizar o mês sem recarregar mil linhas de histórico, e vice-versa. A base do app é a soma das duas.<br>
@@ -6396,22 +6434,10 @@ Data de retirada = din"></textarea>
         <span class="mgw-hint" style="margin:0">Apaga as duas abas e tudo o que o app guardou por cima das reservas — edições, exclusões, remanejamentos e viradas de mês. É o botão de emergência.</span>
       </div>
     </div>
-  </details>
-  <div id="mgrsv-espelho-aviso"></div>
-  <div id="mgrsv-regra"></div>
-  <div id="mgrsv-status" class="mgw-status"></div>
-  <div id="mgrsv-count" class="mgw-status" style="color:var(--chalk2)"></div>
-  <div id="mgrsv-issues"></div>
-  <div class="mgrsv-tablewrap">
-    <table class="mgrsv-table mgrsv-wide">
-      <thead id="mgrsv-thead"></thead>
-      <tbody id="mgrsv-tbody"></tbody>
-    </table>
   </div>
-</div>
+    </div>
+  </details>
 
-<!-- ═══════════ VENDAS DO MÊS ═══════════ -->
-<div class="panel" id="panel-vendasmes">
   <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">💰 VENDAS DO MÊS</span><div class="sec-line"></div></div>
   <div class="vm-ciclo" id="vm-ciclo-label"></div>
   <div class="mgrsv-toolbar" style="margin-bottom:12px">
@@ -8911,7 +8937,13 @@ tr.mgrsv-dup td{background:rgba(255,209,26,.05)}
 // FONTE ÚNICA DE VERDADE — valores padrão de negócio (Magiway)
 // Altere AQUI e vale em todo o app (defaults, migração, fallbacks e configurações).
 // ═══════════════════════════════════════════════════════════════════
-const MGW_META_DEFAULTS = [75000, 100000, 125000, 150000]; // 🥉 Bronze 75k(3%) · 🥈 Prata 100k(4%) · 🥇 Ouro 125k(5%) · 💎 Diamante 150k(5% + bônus R$1.000; +R$1.000 aos 200k)
+/* META ÚNICA DA EMPRESA — R$ 300.000 por ciclo (dia 13 ao dia 12).
+   As quatro medalhas deixaram de ser metas individuais e viraram os
+   degraus do MESMO caminho: um alvo só, quatro marcos até ele. Antes
+   havia uma escada que terminava em 150k e não conversava com nenhum
+   objetivo declarado; agora o topo é o número da empresa. */
+const MGW_META_EMPRESA = 300000;
+const MGW_META_DEFAULTS = [75000, 150000, 225000, 300000]; // 🥉 25% · 🥈 50% · 🥇 75% · 💎 100% da meta da empresa
 const MGW_COMISSAO_DEFAULT = 5;                            // % de comissionamento padrão
 
 // ═══ NAVIGATION & UI ═══
@@ -8940,6 +8972,7 @@ const NAV={
   orienta:['ORIENTAÇÕES & MÉTODO','O que marketing, tráfego e gestão precisam fazer · o mês contra o anterior · e o método de venda, passo a passo'],
   curso:['CURSO · NEUROCIÊNCIA DA VENDA','14 módulos com referências, evidência, limites e aplicação — o método explicado por dentro'],
   manual:['MANUAL DE VENDAS','Scripts para cada situação · o arcabouço completo do vendedor Magiway'],
+  evolucao:['EVOLUÇÃO — MÊS A MÊS','Todos os KPIs, ciclo a ciclo, com a leitura do que mudou e por quê'],
   rentab:['RENTABILIDADE & OCUPAÇÃO','O que sobra de cada reserva, quanto a frota roda e com que antecedência a venda fecha'],
   vendedores:['CONTROLE DE ACESSO','Usuário único · gerente Luciano · dados sincronizados no Supabase'],
   config:['CONFIGURAÇÕES','Parâmetros do sistema · Login · Comandos'],
@@ -13306,14 +13339,18 @@ function renderCorridaMetas(vendido, cfg){
   const box=document.getElementById('metas-corrida');
   if(!box) return;
   const M=window.MGW_CICLO;
-  const metas=(cfg&&cfg.vals&&cfg.vals.length)?cfg.vals:(M?M.metas():[75000,100000,125000,150000]);
+  const metas=(cfg&&cfg.vals&&cfg.vals.length)?cfg.vals:(M?M.metas():MGW_META_DEFAULTS.slice());
   const MED=(M&&M.MEDALHAS)||[
     {emoji:'🥉',nome:'Bronze',cor:'#cd7f32'},{emoji:'🥈',nome:'Prata',cor:'#C0C0C0'},
     {emoji:'🥇',nome:'Ouro',cor:'#f5c842'},{emoji:'💎',nome:'Diamante',cor:'#1FA9A6'}
   ];
   const fR0=v=>'R$ '+Math.round(v||0).toLocaleString('pt-BR');
-  const fR =v=>'R$ '+(+v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const ALVO=metas[metas.length-1]||300000;
 
+  /* ── onde estamos na trilha ──
+     Cada meta ocupa uma fração igual do caminho e, dentro do trecho, o
+     avanço é proporcional. Assim a luz nunca "pula" um marco, mesmo com
+     metas desiguais. */
   const pos = M ? M.posicaoNaPista(vendido, metas) : (function(){
     const seg=100/metas.length;
     for(let i=0;i<metas.length;i++){
@@ -13323,68 +13360,145 @@ function renderCorridaMetas(vendido, cfg){
     return 100;
   })();
 
-  let prox=-1;
-  for(let i=0;i<metas.length;i++){ if(vendido<metas[i]){ prox=i; break; } }
-  const seg=100/metas.length;
+  /* ── quanto falta, e por dia ──
+     Dias restantes contados dentro do ciclo da empresa (dia 13 → dia 12),
+     não do mês do calendário. Sem isso o "por dia" mente justamente na
+     virada, que é quando ele mais é olhado. */
+  let diasRestantes=null, periodo='', diasTotais=null;
+  try{
+    const c=M.cicloAtivo();
+    const hoje=new Date(); const h=new Date(hoje.getFullYear(),hoje.getMonth(),hoje.getDate());
+    const fim=new Date(c.fim.getFullYear(),c.fim.getMonth(),c.fim.getDate());
+    const ini=new Date(c.ini.getFullYear(),c.ini.getMonth(),c.ini.getDate());
+    diasTotais=Math.round((fim-ini)/86400000)+1;
+    diasRestantes=Math.max(0, Math.round((fim-h)/86400000)+1);
+    periodo=c.periodo;
+  }catch(e){}
+  const falta=Math.max(0, ALVO-vendido);
+  const porDia=(diasRestantes&&diasRestantes>0)?(falta/diasRestantes):null;
+  const ritmoAtual=(diasTotais&&diasRestantes!=null&&diasTotais>diasRestantes)
+    ? (vendido/(diasTotais-diasRestantes)) : null;
+  const projecao=(ritmoAtual!=null&&diasTotais)?(ritmoAtual*diasTotais):null;
 
-  /* a cor do cometa é a do último degrau conquistado — quem está longe
-     sobe em rosa, quem chegou ao fim sobe em turquesa */
-  const nivel=metas.filter(m=>vendido>=m).length;
-  const corAtual = nivel>0 ? MED[Math.min(nivel,MED.length)-1].cor : '#FC2877';
+  /* último degrau conquistado — define a cor da luz e do rastro */
+  let ultimo=-1;
+  for(let i=0;i<metas.length;i++){ if(vendido>=metas[i]) ultimo=i; }
+  const corLuz = ultimo>=0 ? MED[ultimo].cor : '#FF2D2D';
 
-  const topo=`<div class="corrida-top">
-    <div>
-      <div class="corrida-lbl">Seu faturamento no mês</div>
-      <div class="corrida-fat">${fR(vendido)}</div>
-    </div>
-    <div class="corrida-prox">${
-      prox<0
-        ? '<span style="color:#1FA9A6">💎 DIAMANTE CONQUISTADO — todas as metas batidas!</span>'
-        : 'Próxima: <b style="color:'+MED[prox].cor+'">'+MED[prox].emoji+' '+MED[prox].nome+'</b> — '+fR0(metas[prox])
-          +'<br>Faltam <b style="color:var(--chalk)">'+fR0(metas[prox]-vendido)+'</b>'
-    }</div>
-  </div>`;
+  /* ── a trilha, em SVG ──
+     Uma linha que sobe da esquerda para a direita passando pelas quatro
+     medalhas até o Diamante. A geometria é a mesma para todos os
+     tamanhos de tela: viewBox fixo e preserveAspectRatio deixando o SVG
+     esticar. Cada marco tem x proporcional à sua posição no caminho e y
+     subindo — é a subida que comunica progresso, e é o que o desenho de
+     referência mostra. */
+  const W=1000, H=340, X0=60, X1=940, Y0=286, Y1=64;
+  const n=metas.length;
+  const px=i=>X0+((i+1)/n)*(X1-X0);
+  const py=i=>Y0-((i+1)/n)*(Y0-Y1);
+  const pontos=[{x:X0,y:Y0}].concat(metas.map((m,i)=>({x:px(i),y:py(i)})));
 
-  /* rótulos em HTML e não no canvas: texto de canvas não fica nítido em
-     tela de alta densidade e não herda a fonte do app */
-  const marcosHTML=metas.map((m,i)=>{
-    const ok=vendido>=m, t=(i+1)/metas.length;
-    const esq=6 + t*88;                                /* mesma margem do mgtrPonto */
-    return `<div class="mgtr-m${ok?' ok':''}" data-i="${i}" style="--md:${MED[i].cor};left:${esq.toFixed(2)}%">
-      <div class="mgtr-m-i">${MED[i].emoji}</div>
-      <div class="mgtr-m-n">${MED[i].nome}</div>
-      <div class="mgtr-m-v">${fR0(m)}</div>
-    </div>`;
-  }).join('');
-
-  box.innerHTML=`<div class="corrida">${topo}
-    <div class="mgtr" title="${fR(vendido)} — ${pos.toFixed(1)}% do caminho até o Diamante">
-      <canvas id="mgtr-cv"></canvas>
-      <div class="mgtr-marcos">${marcosHTML}</div>
-    </div>
-  </div>`;
-
-  const cv=document.getElementById('mgtr-cv');
-  if(!cv) return;
-  MGTR.cv=cv; MGTR.ctx=cv.getContext('2d');
-  const els=[].slice.call(box.querySelectorAll('.mgtr-m'));
-  els.forEach(el=>el.classList.remove('ok'));          /* nascem apagados e acendem na passagem */
-
-  MGTR.dados={
-    dpr:1, p:0, alvo:Math.max(0,Math.min(1,pos/100)), fase:0, t0:0, chegou:false,
-    dur:1.7+Math.min(1.5, pos/100*1.5),                /* mês que foi longe, estrada mais longa */
-    cor:corAtual, andando:true, parts:[], pulsos:[],
-    valor:vendido, fmt:fR, elFat:box.querySelector('.corrida-fat'),
-    marcos:metas.map((m,i)=>({t:(i+1)/metas.length, cor:MED[i].cor,
-                              conquistado:vendido>=m, aceso:false, pulso:0, el:els[i]}))
-  };
-  mgtrMedir();
-  if(!MGTR._resize){
-    MGTR._resize=function(){ mgtrMedir(); mgtrDesenhar(); };
-    window.addEventListener('resize', MGTR._resize);
+  /* caminho suave passando pelos pontos (Catmull-Rom → Bézier) */
+  function suave(ps){
+    let d='M '+ps[0].x+' '+ps[0].y;
+    for(let i=0;i<ps.length-1;i++){
+      const p0=ps[i-1]||ps[i], p1=ps[i], p2=ps[i+1], p3=ps[i+2]||p2;
+      const c1x=p1.x+(p2.x-p0.x)/6, c1y=p1.y+(p2.y-p0.y)/6;
+      const c2x=p2.x-(p3.x-p1.x)/6, c2y=p2.y-(p3.y-p1.y)/6;
+      d+=' C '+c1x.toFixed(1)+' '+c1y.toFixed(1)+', '+c2x.toFixed(1)+' '+c2y.toFixed(1)+', '+p2.x.toFixed(1)+' '+p2.y.toFixed(1);
+    }
+    return d;
   }
-  mgtrAnimar();
+  const dPath=suave(pontos);
+
+  const uid='trilha-'+Math.random().toString(36).slice(2,7);
+  const pctLuz=Math.max(0,Math.min(100,pos));
+
+  let svg='<svg viewBox="0 0 '+W+' '+H+'" class="tr-svg" preserveAspectRatio="xMidYMid meet" aria-label="Trilha até a meta">'
+   +'<defs>'
+   +'<linearGradient id="'+uid+'-g" x1="0" y1="1" x2="1" y2="0">'
+     +'<stop offset="0%" stop-color="#FF2D2D" stop-opacity=".55"/>'
+     +'<stop offset="55%" stop-color="#FFD11A" stop-opacity=".75"/>'
+     +'<stop offset="100%" stop-color="#1FA9A6" stop-opacity=".95"/>'
+   +'</linearGradient>'
+   +'<filter id="'+uid+'-glow" x="-60%" y="-60%" width="220%" height="220%">'
+     +'<feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>'
+   +'</filter>'
+   +'<filter id="'+uid+'-soft" x="-40%" y="-40%" width="180%" height="180%">'
+     +'<feGaussianBlur stdDeviation="3.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>'
+   +'</filter>'
+   +'</defs>';
+
+  /* trilho apagado, do começo ao fim */
+  svg+='<path d="'+dPath+'" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="3" stroke-linecap="round"/>';
+  /* trilho aceso até onde chegamos — desenhado por dash, animado no CSS */
+  svg+='<path id="'+uid+'-feito" d="'+dPath+'" fill="none" stroke="url(#'+uid+'-g)" stroke-width="5" '
+     +'stroke-linecap="round" filter="url(#'+uid+'-soft)" '
+     +'pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" '
+     +'style="--alvo:'+(100-pctLuz).toFixed(2)+'"><animate attributeName="stroke-dashoffset" from="100" to="'
+     +(100-pctLuz).toFixed(2)+'" dur="1.6s" fill="freeze" calcMode="spline" keySplines="0.2 0.8 0.2 1" keyTimes="0;1"/></path>';
+
+  /* marcos */
+  metas.forEach((m,i)=>{
+    const x=px(i), y=py(i), ok=vendido>=m, md=MED[i];
+    svg+='<g class="tr-marco'+(ok?' on':'')+'">'
+      +'<circle cx="'+x+'" cy="'+y+'" r="'+(ok?13:10)+'" fill="'+(ok?md.cor:'rgba(255,255,255,.10)')+'" '
+        +'stroke="'+(ok?md.cor:'rgba(255,255,255,.22)')+'" stroke-width="2"'+(ok?' filter="url(#'+uid+'-soft)"':'')+'/>'
+      +'<text x="'+x+'" y="'+(y+6)+'" text-anchor="middle" font-size="'+(ok?16:13)+'" opacity="'+(ok?1:.45)+'">'+md.emoji+'</text>'
+      +'<text x="'+x+'" y="'+(y-26)+'" text-anchor="middle" class="tr-nome'+(ok?' on':'')+'">'+md.nome.toUpperCase()+'</text>'
+      +'<text x="'+x+'" y="'+(y+34)+'" text-anchor="middle" class="tr-val'+(ok?' on':'')+'">'+fR0(m)+'</text>'
+      +'</g>';
+  });
+
+  /* a luz: percorre o caminho e PARA onde está o faturamento */
+  svg+='<circle r="9" fill="'+corLuz+'" filter="url(#'+uid+'-glow)" class="tr-luz">'
+     +'<animateMotion dur="1.6s" fill="freeze" rotate="auto" calcMode="spline" keySplines="0.2 0.8 0.2 1" keyTimes="0;1" '
+     +'keyPoints="0;'+(pctLuz/100).toFixed(4)+'"><mpath href="#'+uid+'-feito"/></animateMotion></circle>';
+  svg+='<circle r="20" fill="none" stroke="'+corLuz+'" stroke-width="2" opacity=".5" class="tr-halo">'
+     +'<animateMotion dur="1.6s" fill="freeze" calcMode="spline" keySplines="0.2 0.8 0.2 1" keyTimes="0;1" '
+     +'keyPoints="0;'+(pctLuz/100).toFixed(4)+'"><mpath href="#'+uid+'-feito"/></animateMotion>'
+     +'<animate attributeName="r" values="14;24;14" dur="2.4s" begin="1.6s" repeatCount="indefinite"/>'
+     +'<animate attributeName="opacity" values=".55;.12;.55" dur="2.4s" begin="1.6s" repeatCount="indefinite"/></circle>';
+
+  svg+='</svg>';
+
+  const conquistado = ultimo>=0 ? MED[ultimo] : null;
+  const proxIdx = metas.findIndex(m=>vendido<m);
+  const prox = proxIdx>=0 ? {v:metas[proxIdx], md:MED[proxIdx]} : null;
+
+  box.innerHTML=
+     '<div class="tr-wrap">'
+    +'<div class="tr-head">'
+      +'<div class="tr-num-box">'
+        +'<div class="tr-num-lbl">FATURAMENTO DO MÊS</div>'
+        +'<div class="tr-num" style="color:'+corLuz+'">'+fR0(vendido)+'</div>'
+        +'<div class="tr-num-sub">meta da empresa: <b>'+fR0(ALVO)+'</b>'
+          +(periodo?(' · ciclo '+periodo):'')+'</div>'
+      +'</div>'
+      +'<div class="tr-falta-box">'
+        +(vendido>=ALVO
+          ? '<div class="tr-bateu">💎 META BATIDA</div><div class="tr-falta-sub">'+fR0(vendido-ALVO)+' acima dos '+fR0(ALVO)+'</div>'
+          : ('<div class="tr-falta-lbl">FALTAM</div>'
+             +'<div class="tr-falta">'+fR0(falta)+'</div>'
+             +(porDia!=null
+               ? ('<div class="tr-pordia">'+fR0(porDia)+' <span>por dia</span> · '+diasRestantes+' dia(s) até o dia 12</div>')
+               : '')))
+      +'</div>'
+    +'</div>'
+    +svg
+    +'<div class="tr-rodape">'
+      +(conquistado
+        ? ('<span class="tr-chip" style="border-color:'+conquistado.cor+';color:'+conquistado.cor+'">'+conquistado.emoji+' '+conquistado.nome+' conquistado</span>')
+        : '<span class="tr-chip">🥉 Bronze é o primeiro degrau</span>')
+      +(prox?('<span class="tr-chip">próximo: '+prox.md.emoji+' '+prox.md.nome+' em '+fR0(prox.v)+' — faltam '+fR0(prox.v-vendido)+'</span>'):'')
+      +(projecao!=null
+        ? ('<span class="tr-chip'+(projecao>=ALVO?' ok':' alerta')+'">no ritmo de hoje o mês fecha em '+fR0(projecao)
+           +(projecao>=ALVO?' — acima da meta':' — '+fR0(ALVO-projecao)+' abaixo')+'</span>')
+        : '')
+    +'</div>'
+    +'</div>';
 }
+
 /* mantido para quem ainda limpa o temporizador antigo em outro ponto */
 var CORRIDA_TIMER=null;
 
@@ -29407,6 +29521,81 @@ thead th,.mgdisp-tab thead th,.mgrsv-table thead th{ background:#070f1a !importa
   .cur-nav{justify-content:space-between}
 }
 
+
+/* ═══ TRILHA DA META — a linha que sobe até o diamante ═══ */
+.tr-wrap{background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(0,0,0,.25));
+  border:1px solid var(--edge);border-radius:16px;padding:20px 22px 14px;overflow:hidden}
+.tr-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:6px}
+.tr-num-lbl,.tr-falta-lbl{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.18em;
+  color:var(--chalk3);text-transform:uppercase}
+.tr-num{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,7.5vw,4rem);line-height:1;letter-spacing:.01em;
+  text-shadow:0 0 44px currentColor;margin:2px 0 4px}
+.tr-num-sub{font-size:.76rem;color:var(--chalk2)}
+.tr-num-sub b{color:#fff}
+.tr-falta-box{text-align:right}
+.tr-falta{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.5rem,4.4vw,2.3rem);line-height:1.05;color:#fff;margin:2px 0 3px}
+.tr-pordia{font-family:'DM Mono',monospace;font-size:.72rem;color:#FFD11A}
+.tr-pordia span{color:var(--chalk3)}
+.tr-bateu{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:#1FA9A6;text-shadow:0 0 30px rgba(31,169,166,.6)}
+.tr-falta-sub{font-size:.74rem;color:var(--chalk2)}
+.tr-svg{width:100%;height:auto;display:block;margin:2px 0 4px;overflow:visible}
+.tr-nome{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;fill:rgba(255,255,255,.34)}
+.tr-nome.on{fill:#fff}
+.tr-val{font-family:'DM Mono',monospace;font-size:12px;fill:rgba(255,255,255,.4)}
+.tr-val.on{fill:rgba(255,255,255,.85)}
+.tr-marco.on text{font-weight:700}
+.tr-rodape{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;padding-top:12px;border-top:1px solid var(--edge)}
+.tr-chip{font-family:'DM Mono',monospace;font-size:.66rem;color:var(--chalk2);
+  border:1px solid var(--edge);border-radius:999px;padding:5px 12px;line-height:1.4}
+.tr-chip.ok{border-color:#1AFF9D;color:#1AFF9D}
+.tr-chip.alerta{border-color:#FFD11A;color:#FFD11A}
+@media(max-width:640px){
+  .tr-wrap{padding:16px 14px 12px}
+  .tr-head{gap:12px}
+  .tr-falta-box{text-align:left}
+  .tr-nome{font-size:13px}.tr-val{font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){
+  .tr-luz,.tr-halo{animation:none}
+}
+
+
+/* ═══ EVOLUÇÃO ═══ */
+.ev-card{margin-bottom:14px}
+.ev-grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px}
+.ev-graf{height:270px;position:relative;margin:12px 0 4px;cursor:zoom-in}
+.ev-leitura{font-size:.86rem;line-height:1.85;color:var(--chalk2);border-top:1px solid var(--edge);
+  padding-top:12px;margin-top:10px}
+.ev-leitura b{color:#fff}
+.ev-dica{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--chalk3);text-align:right;margin-top:6px}
+.ev-placar-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:11px;margin-top:14px}
+.ev-kpi{background:rgba(255,255,255,.035);border:1px solid var(--edge);border-radius:11px;padding:13px 14px}
+.ev-kpi-r{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;color:var(--chalk3);
+  text-transform:uppercase;line-height:1.4;min-height:2.1em}
+.ev-kpi-v{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:#fff;line-height:1.1;margin:4px 0 6px}
+.ev-selo{font-family:'DM Mono',monospace;font-size:.62rem;padding:2px 8px;border-radius:999px;display:inline-block}
+.ev-sobe{background:rgba(26,255,157,.14);color:#1AFF9D}
+.ev-cai{background:rgba(255,45,45,.14);color:#FF6B78}
+.ev-igual{background:rgba(255,255,255,.07);color:var(--chalk3)}
+.ev-total td{font-weight:700;border-top:2px solid var(--edge);color:#fff}
+.ev-discurso{border-color:rgba(255,45,45,.3)}
+.ev-discurso p{font-size:.9rem;line-height:1.9;color:var(--chalk2);margin:0 0 14px}
+.ev-discurso b{color:#fff}
+.ev-alerta{background:rgba(255,45,45,.07);border-left:3px solid #FF2D2D;border-radius:0 10px 10px 0;padding:13px 16px}
+.ev-bom{background:rgba(26,255,157,.07);border-left:3px solid #1AFF9D;border-radius:0 10px 10px 0;padding:13px 16px}
+.ev-acoes{margin-top:18px;padding-top:16px;border-top:1px solid var(--edge)}
+.ev-acoes-t{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.16em;color:var(--gold);
+  text-transform:uppercase;margin-bottom:12px}
+.ev-acao{background:rgba(255,255,255,.03);border:1px solid var(--edge);border-radius:11px;padding:13px 16px;margin-bottom:9px}
+.ev-acao b{color:#FF4D4D;font-size:.9rem}
+.ev-acao p{font-size:.83rem;line-height:1.8;color:var(--chalk2);margin:5px 0 0}
+@media(max-width:720px){
+  .ev-grid2{grid-template-columns:1fr}
+  .ev-graf{height:240px}
+  .ev-leitura{font-size:.9rem}
+  .ev-discurso p{font-size:.94rem}
+}
+
 </style><!--/mgw-skin-v2-->
 
 
@@ -30605,6 +30794,475 @@ window.MGW_CPX={ cfg:cpxCfg, salvar:cpxSalvar, capa:cpxEsferaAnimar, nivel:cpxNi
 window.MGW_HIST_SEED=[{"dataFech":1776124800000,"vendedor":"OUTROS","cliente":"Cleber Roriz Ferreira Filho","whats":"5573988074099","tel":"4099","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1776297600000,"devolucao":1777075200000,"hEnt":{"h":6,"mm":30},"hDev":{"h":18,"mm":0},"localEnt":"MIA","localDev":"MCO","aerea":"LATAM","valor":4179,"diariaUSD":89.29487179,"diariaBRL":464.3333333,"valorIntegral":4217.2,"custoReal":3229.2,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776297600000,"vendedor":"OUTROS","cliente":"Josafá Cândido","whats":"(61) 99847-3606","tel":"3606","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1776729600000,"devolucao":1777852800000,"hEnt":{"h":16,"mm":0},"hDev":{"h":20,"mm":0},"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":4843,"diariaUSD":71.64201183,"diariaBRL":372.5384615,"valorIntegral":4664.4,"custoReal":3988.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1776384000000,"vendedor":"OUTROS","cliente":"Hellen Miyamoto","whats":"(21) 99734-7371","tel":"7371","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1776384000000,"devolucao":1777161600000,"hEnt":{"h":14,"mm":0},"hDev":{"h":14,"mm":0},"localEnt":"MCO ENDERECO","localDev":"MIA","aerea":"NÃO INFORMADO","valor":4482,"diariaUSD":95.76923077,"diariaBRL":498,"valorIntegral":4477.2,"custoReal":3229.2,"formaPag":"CARTAO DE CREDITO","parc":"1x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1776384000000,"vendedor":"OUTROS","cliente":"Alexandre Valentino da Silva Peres","whats":"(62) 99202-6682","tel":"6682","cadeirinha":"NÃO","modelo":"SEDAN","cat":"Sedan","entrega":1778716800000,"devolucao":1779321600000,"hEnt":{"h":9,"mm":0},"localEnt":"MCO ENDERECO","localDev":"MCO","aerea":"COPA Airlines","valor":2230,"diariaUSD":61.26373626,"diariaBRL":318.5714286,"valorIntegral":2626,"custoReal":2002,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776384000000,"vendedor":"OUTROS","cliente":"PASTOR NEANDER Cândido","whats":"(21) 99661-1616","tel":"1616","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1785283200000,"devolucao":1785974400000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":2976,"diariaUSD":71.53846154,"diariaBRL":372,"valorIntegral":3286.4,"custoReal":2870.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776470400000,"vendedor":"LUCIANO","cliente":"FELIPE COSTA DE ALMEIDA","whats":"(62) 98100-4758","tel":"4758","cadeirinha":"3 ANOS","modelo":"SEDAN","cat":"Sedan","entrega":1777334400000,"devolucao":1777680000000,"hEnt":{"h":19,"mm":30},"hDev":{"h":12,"mm":0},"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":1860,"diariaUSD":89.42307692,"diariaBRL":465,"valorIntegral":1352,"custoReal":1144,"formaPag":"CARTAO DE CREDITO","parc":"1x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1776556800000,"vendedor":"LUCIANO","cliente":"EDSON VIEIRA DA SILVA JUNIOR","whats":"(62) 98496-3246","tel":"3246","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1776643200000,"devolucao":1777420800000,"hEnt":{"h":16,"mm":30},"localEnt":"MCO","localDev":"MCO","aerea":"GOL","valor":3800,"diariaUSD":81.1965812,"diariaBRL":422.2222222,"valorIntegral":3697.2,"custoReal":3229.2,"formaPag":"CARTAO DE CREDITO","parc":"4x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1776643200000,"vendedor":"LUCIANO","cliente":"GABRIEL COUTINHO ALVES SANTOS","whats":"(21) 97915-1991","tel":"1991","cadeirinha":"ATE 11 MESES","modelo":"SEDAN","cat":"Sedan","entrega":1777075200000,"devolucao":1778457600000,"hEnt":{"h":16,"mm":0},"hDev":{"h":6,"mm":30},"localEnt":"MIA","localDev":"MIA","aerea":"COPA Airlines","valor":4870,"diariaUSD":58.53365385,"diariaBRL":304.375,"valorIntegral":6448,"custoReal":4576,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776729600000,"vendedor":"LUCIANO","cliente":"CLAUDIA PILO ALVARENGA","whats":"(31) 99134-7731","tel":"7731","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1780099200000,"devolucao":1780963200000,"hEnt":{"h":20,"mm":30},"hDev":{"h":22,"mm":0},"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":4282.5,"diariaUSD":82.35576923,"diariaBRL":428.25,"valorIntegral":4108,"custoReal":3588,"formaPag":"CARTAO DE CREDITO","parc":"5x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1776902400000,"vendedor":"OUTROS","cliente":"RONALDO SILVEIRA FRANCO","whats":"(11) 98456-8980","tel":"8980","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1792972800000,"devolucao":1793923200000,"hEnt":{"h":18,"mm":0},"hDev":{"h":16,"mm":0},"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":3000,"diariaUSD":52.44755245,"diariaBRL":272.7272727,"valorIntegral":4518.8,"custoReal":3946.8,"formaPag":"NOMAD","parc":"AVISTA","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1776902400000,"vendedor":"OUTROS","cliente":"ANNE FRANCIS CAMACHO NARDELLI MOJANO","whats":"(11) 98456-8980","tel":"8980","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1792972800000,"devolucao":1793923200000,"hEnt":{"h":18,"mm":0},"hDev":{"h":16,"mm":0},"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":3000,"diariaUSD":52.44755245,"diariaBRL":272.7272727,"valorIntegral":4518.8,"custoReal":3946.8,"formaPag":"NOMAD","parc":"AVISTA","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1776729600000,"vendedor":"LUCIANO","cliente":"Caio Fabio de Souza Maciel","whats":"(62) 98197-6816","tel":"6816","cadeirinha":"2 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1779408000000,"devolucao":1780272000000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":3720,"diariaUSD":71.53846154,"diariaBRL":372,"valorIntegral":5148,"custoReal":3588,"formaPag":"CARTAO DE CREDITO","parc":"1x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776729600000,"vendedor":"LUCIANO","cliente":"Caio Fabio de Souza Maciel","whats":"(62) 98197-6816","tel":"6816","cadeirinha":"5 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1779408000000,"devolucao":1780272000000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":3720,"diariaUSD":71.53846154,"diariaBRL":372,"valorIntegral":5148,"custoReal":3588,"formaPag":"CARTAO DE CREDITO","parc":"1x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776816000000,"vendedor":"LUCIANO","cliente":"GIOVANI FERRETI FAVARO","whats":"(43) 99922-8454","tel":"8454","cadeirinha":"2 E 5 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1779926400000,"devolucao":1780704000000,"localEnt":"MCO","localDev":"MIA","aerea":"American Airlines","valor":3800,"diariaUSD":81.1965812,"diariaBRL":422.2222222,"valorIntegral":4217.2,"custoReal":3229.2,"formaPag":"CARTAO DE CREDITO","parc":"6x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776816000000,"vendedor":"LUCIANO","cliente":"GIOVANI FERRETI FAVARO","whats":"(43) 99922-8454","tel":"8454","cadeirinha":"2 E 5 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1781568000000,"devolucao":1782000000000,"localEnt":"MIA","localDev":"MIA","aerea":"American Airlines","valor":3200,"diariaUSD":123.0769231,"diariaBRL":640,"valorIntegral":3094,"custoReal":1794,"formaPag":"CARTAO DE CREDITO","parc":"6x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1776902400000,"vendedor":"LUCIANO","cliente":"MATHEUS FELIPE MARINHO DE OLIVEIRA","whats":"(41) 99858-2078","tel":"2078","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1785801600000,"devolucao":1786665600000,"localEnt":"MCO","localDev":"MCO","aerea":"GOL","valor":3200,"diariaUSD":61.53846154,"diariaBRL":320,"valorIntegral":3588,"custoReal":3068,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776988800000,"vendedor":"LUCIANO","cliente":"Mara / Wendel","whats":"1199643-0359","tel":"0359","cadeirinha":"NÃO","modelo":"SEDAN","cat":"Sedan","entrega":1776556800000,"devolucao":1778284800000,"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":6165.8,"diariaUSD":59.28653846,"diariaBRL":308.29,"valorIntegral":6760,"custoReal":5720,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1776988800000,"vendedor":"LUCIANO","cliente":"SAMY CARDOSO DE OLIVEIRA","whats":"(31) 99728-3498","tel":"3498","cadeirinha":"5 ANOS","modelo":"SUV","cat":"SUV","entrega":1789257600000,"devolucao":1790467200000,"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":5000,"diariaUSD":68.68131868,"diariaBRL":357.1428571,"valorIntegral":5023.2,"custoReal":4295.2,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1777075200000,"vendedor":"LUCIANO","cliente":"JOEL CARLO VICHINHESKI","whats":"(47) 98423-8567","tel":"8567","cadeirinha":"2 x 5 NOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1790121600000,"devolucao":1791244800000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":3999,"diariaUSD":59.15680473,"diariaBRL":307.6153846,"valorIntegral":6380.4,"custoReal":4664.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1777075200000,"vendedor":"LUCIANO","cliente":"GILBERTO CAVASSINI","whats":"(41) 99990-6462","tel":"6462","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1780531200000,"devolucao":1781395200000,"localEnt":"MCO","localDev":"MCO","aerea":"GOL","valorIntegral":4108,"custoReal":3588,"formaPag":"CORTESIA","parc":"CORTESIA","qualidade":"NEGATIVA","_src":"hist"},{"dataFech":1777075200000,"vendedor":"LUCIANO","cliente":"ALDER DA COSTA PRESTES","whats":"(41) 99927-8961","tel":"8961","cadeirinha":"1 E 5 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1780531200000,"devolucao":1781395200000,"localEnt":"MCO","localDev":"MCO","aerea":"GOL","valor":3999,"diariaUSD":76.90384615,"diariaBRL":399.9,"valorIntegral":4108,"custoReal":3588,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1777420800000,"vendedor":"LUCIANO","cliente":"FABIO RODRIGUES SANTOS","whats":"(11) 98443-6218","tel":"6218","cadeirinha":"NÃO","modelo":"SEDAN","cat":"Sedan","entrega":1784332800000,"devolucao":1785628800000,"localEnt":"MCO","localDev":"MCO","aerea":"COPA Airlines","valor":4500,"diariaUSD":57.69230769,"diariaBRL":300,"valorIntegral":5070,"custoReal":4290,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1777507200000,"vendedor":"LUCIANO","cliente":"FELIPE PAIVA DOS SANTOS","whats":"(11) 97770-7485","tel":"7485","cadeirinha":"NÃO","modelo":"SEDAN","cat":"Sedan","entrega":1778889600000,"devolucao":1779494400000,"localEnt":"MCO","localDev":"MIA","aerea":"LATAM","valor":2600,"diariaUSD":71.42857143,"diariaBRL":371.4285714,"valorIntegral":2886,"custoReal":2002,"formaPag":"CARTAO DE CREDITO","parc":"1x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1777852800000,"vendedor":"LUCIANO","cliente":"VAGNER BORGES DOS SANTOS","whats":"(11) 97303-2446","tel":"2446","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1789776000000,"devolucao":1790726400000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":3400,"diariaUSD":59.44055944,"diariaBRL":309.0909091,"valorIntegral":3946.8,"custoReal":3374.8,"formaPag":"PIX/CARTÃO","parc":"5x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1778112000000,"vendedor":"LUCIANO","cliente":"WELLINGTON FELIPE DE OLIVEIRA DIAS","whats":"(11) 98136-4687","tel":"4687","cadeirinha":"2 ANOS","modelo":"SUV","cat":"SUV","entrega":1786147200000,"devolucao":1787011200000,"localEnt":"FLL","localDev":"MCO","aerea":"AZUL","valor":4000,"diariaUSD":76.92307692,"diariaBRL":400,"valorIntegral":3588,"custoReal":3068,"formaPag":"CARTAO DE CREDITO","parc":"4x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1778457600000,"vendedor":"LUCIANO","cliente":"EDSON VILELA DA ROCHA","whats":"(61) 98269-8418","tel":"8418","cadeirinha":"NÃO","modelo":"SEDAN","cat":"Sedan","entrega":1782432000000,"devolucao":1783296000000,"localEnt":"MIA","localDev":"MIA","aerea":"GOL","valor":3000,"diariaUSD":57.69230769,"diariaBRL":300,"valorIntegral":4420,"custoReal":2860,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1778544000000,"vendedor":"OUTROS","cliente":"Lauro Arison Ferreira Santos","whats":"(69) 98402-3349","tel":"3349","cadeirinha":"2 x 5 NOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1783728000000,"devolucao":1785024000000,"localEnt":"MIA","localDev":"MIA","aerea":"COPA Airlines","valor":6500,"diariaUSD":83.33333333,"diariaBRL":433.3333333,"valorIntegral":7202,"custoReal":5382,"qualidade":"POSITIVA","_src":"hist"},{"dataFech":1778803200000,"vendedor":"LUCIANO","cliente":"MARA","whats":"(11) 99643-0359","tel":"0359","cadeirinha":"NÃO","modelo":"SEDAN","cat":"Sedan","entrega":1778371200000,"devolucao":1780099200000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":6165.8,"diariaUSD":59.28653846153846,"diariaBRL":308.29,"valorIntegral":8637.408000000001,"custoReal":6136,"formaPag":"PIX","parc":"À VISTA","qualidade":"POSITIVA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1778889600000,"vendedor":"LUCIANO","cliente":"DIEGO FERNANDES PAULINO","whats":"(12) 98810-0087","tel":"0087","cadeirinha":"NÃO","modelo":"MINIVAN 8L","cat":"Minivan 8L","entrega":1800316800000,"devolucao":1801612800000,"localEnt":"MIA","localDev":"MIA","aerea":"SYKES","valor":5382,"diariaUSD":69,"diariaBRL":358.8,"valorIntegral":9202.856000000002,"custoReal":6162,"formaPag":"CARTAO DE CREDITO","parc":"6x","qualidade":"MÉDIA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1778889600000,"vendedor":"LUCIANO","cliente":"EWERTON DE MORAIS MALTA","whats":"(82) 99678-2901","tel":"2901","cadeirinha":"NÃO","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1781568000000,"devolucao":1782259200000,"localEnt":"MCO","localDev":"MIA","aerea":"AMERICAN","valor":2870.4,"diariaUSD":69,"diariaBRL":358.8,"valorIntegral":4873.5232000000005,"custoReal":3286.4,"formaPag":"PIX","parc":"À VISTA","qualidade":"MÉDIA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1778889600000,"vendedor":"LUCIANO","cliente":"LINCOHN AGNER MENDES","whats":"(41) 99847-7624","tel":"7624","cadeirinha":"1 ANO + 3 MESES","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1782345600000,"devolucao":1783641600000,"localEnt":"MCO","localDev":"MCO","aerea":"DELTA","valor":5382,"diariaUSD":69,"diariaBRL":358.8,"valorIntegral":8162.856000000002,"custoReal":6162,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"MÉDIA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1778889600000,"vendedor":"LUCIANO","cliente":"ROBSTEY CAVALHEIRO","whats":"(11) 94748-7669","tel":"7669","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1784764800000,"devolucao":1785283200000,"localEnt":"MCO","localDev":"MCO","aerea":"ENDEREÇO","valor":2000,"diariaUSD":64.1025641025641,"diariaBRL":333.3333333333333,"valorIntegral":3265.1424,"custoReal":2152.8,"formaPag":"PIX","parc":"À VISTA","qualidade":"MÉDIA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1778889600000,"vendedor":"LUCIANO","cliente":"DANILO REIS SALLES","whats":"(62) 99989-3025","tel":"3025","cadeirinha":"5 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1790121600000,"devolucao":1791244800000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":4000,"diariaUSD":59.17159763313609,"diariaBRL":307.6923076923077,"valorIntegral":8114.475200000001,"custoReal":5340.400000000001,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"NEGATIVA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1778976000000,"vendedor":"LUCIANO","cliente":"Felipe Tadeu Rodrigues","whats":"(11) 98351-1924","tel":"1924","cadeirinha":"4 E 5 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1790294400000,"devolucao":1791244800000,"localEnt":"MIA","localDev":"MIA","aerea":"AVIANCA","valor":4500,"diariaUSD":78.67132867132867,"diariaBRL":409.09090909090907,"valorIntegral":7026.094400000002,"custoReal":4518.8,"formaPag":"CARTAO DE CREDITO","parc":"6x","qualidade":"MÉDIA","mesRef":"🟡 Pendente","voucher":"LIMITED","_src":"hist"},{"dataFech":1778976000000,"vendedor":"LUCIANO","cliente":"RENAN OLIVEIRA LUCAS","whats":"(11) 99557-5990","tel":"5990","cadeirinha":"2 E 4 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1785715200000,"devolucao":1787184000000,"localEnt":"FLL","localDev":"MCO","aerea":"AZUL","valor":5500,"diariaUSD":62.21719457013574,"diariaBRL":323.52941176470586,"valorIntegral":9251.236800000002,"custoReal":6983.6,"formaPag":"CARTAO DE CREDITO","parc":"12x","qualidade":"MÉDIA","mesRef":"🟡 Pendente","voucher":"LIMITED","_src":"hist"},{"dataFech":1779148800000,"vendedor":"LUCIANO","cliente":"CAROLINE OLIVEIRA LUCAS PELUCIO","whats":"(11) 91149-6796","tel":"6796","cadeirinha":"4 E 5 ANOS","modelo":"MINIVAN 7L","cat":"Minivan","entrega":1785628800000,"devolucao":1787184000000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":5400,"diariaUSD":57.69230769230769,"diariaBRL":300,"valorIntegral":9795.427200000002,"custoReal":7394.400000000001,"formaPag":"CARTAO DE CREDITO","parc":"12x","qualidade":"NEGATIVA","mesRef":"🟡 Pendente","voucher":"LIMITED","_src":"hist"},{"dataFech":1779667200000,"vendedor":"OUTROS","cliente":"Karina Alves da Silva","whats":"(11) 98330-3999","tel":"3999","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1783209600000,"devolucao":1783987200000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":3355,"diariaUSD":71.68803419,"diariaBRL":372.7777778,"valorIntegral":3697.2,"custoReal":3229.2,"formaPag":"CARTAO DE CREDITO","parc":"NÃO INFORMADO","qualidade":"POSITIVA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1779753600000,"vendedor":"OUTROS","cliente":"Nicolas Miguel Augusto","whats":"(11) 98984-5001","tel":"5001","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1779753600000,"devolucao":1780185600000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":1794,"diariaUSD":69,"diariaBRL":358.8,"valorIntegral":2054,"custoReal":1794,"formaPag":"PIX","parc":"1x","qualidade":"POSITIVA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1779753600000,"vendedor":"OUTROS","cliente":"Celso Luiz Hass da Silva","whats":"(11) 95025-9020","tel":"9020","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1780617600000,"devolucao":1781654400000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":3834,"diariaUSD":61.44230769,"diariaBRL":319.5,"valorIntegral":4929.6,"custoReal":4305.6,"formaPag":"PIX","parc":"AVISTA","qualidade":"MÉDIA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1780531200000,"vendedor":"OUTROS","cliente":"Pierre Souza","whats":"(61) 98138-2863","tel":"2863","cadeirinha":"NÃO","modelo":"Sedan","cat":"Sedan","entrega":1789171200000,"devolucao":1789862400000,"localEnt":"MIA","localDev":"MIA","aerea":"NÃO INFORMADO","valor":2100,"diariaUSD":50.48076923,"diariaBRL":262.5,"valorIntegral":3744,"custoReal":2288,"formaPag":"NÃO INFORMADO","parc":"NÃO INFORMADO","qualidade":"MÉDIA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1781049600000,"vendedor":"OUTROS","cliente":"ANDERSON HENRIQUE PREHS","whats":"55 11 97380-6708","tel":"6708","cadeirinha":"5 ANOS","modelo":"Minivan 7L","cat":"Minivan","entrega":1783814400000,"devolucao":1784851200000,"localEnt":"MIA","localDev":"MIA","aerea":"AZUL","valor":4400,"diariaUSD":70.51282051,"diariaBRL":366.6666667,"valorIntegral":5969.6,"custoReal":4305.6,"formaPag":"CARTAO DE CREDITO","parc":"3x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1780876800000,"vendedor":"OUTROS","cliente":"José Milton Texeira Uchoa","whats":"(85) 98135-8986","tel":"8986","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1784246400000,"devolucao":1785196800000,"localEnt":"MIA","localDev":"MIA","aerea":"NÃO INFORMADO","valor":3770.33,"diariaUSD":65.91486014,"diariaBRL":342.7572727,"valorIntegral":4986.8,"custoReal":3374.8,"formaPag":"CARTAO DE CREDITO","parc":"NÃO INFORMADO","qualidade":"POSITIVA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1780876800000,"vendedor":"OUTROS","cliente":"Eduardo Jose Santos Junior","whats":"55 11 98070-1615","tel":"1615","cadeirinha":"1 ANO","modelo":"Minivan 8L","cat":"Minivan 8L","entrega":1781654400000,"devolucao":1783555200000,"localEnt":"MIA","localDev":"MCO","aerea":"GOL","valor":8309.36,"diariaUSD":72.63426573,"diariaBRL":377.6981818,"valorIntegral":9557.6,"custoReal":7893.6,"formaPag":"CARTAO DE CREDITO","parc":"1x","qualidade":"POSITIVA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1780963200000,"vendedor":"OUTROS","cliente":"Dionisio Reis Ferreira","whats":"(13) 98115-1378","tel":"1378","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1782691200000,"devolucao":1783987200000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":5000,"diariaUSD":64.1025641,"diariaBRL":333.3333333,"valorIntegral":6162,"custoReal":5382,"formaPag":"CARTAO DE CREDITO","parc":"NÃO INFORMADO","qualidade":"MÉDIA","mesRef":"🟡 Pendente","_src":"hist"},{"dataFech":1781740800000,"vendedor":"OUTROS","cliente":"Daniel Ribeiro dos Santos Correia","whats":"5.56193817523E11","tel":"2311","cadeirinha":"NÃO","modelo":"Van 12L","cat":"Van 12L","entrega":1784937600000,"devolucao":1785801600000,"localEnt":"MIA","localDev":"MCO","aerea":"NÃO INFORMADO","valor":6514.5,"diariaUSD":125.2788462,"diariaBRL":651.45,"valorIntegral":7228,"custoReal":6188,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1781740800000,"vendedor":"OUTROS","cliente":"Rogério Fonseca Blasi","whats":"5.53588866828E11","tel":"2811","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1785110400000,"devolucao":1786752000000,"localEnt":"MCO","localDev":"MCO","aerea":"COPA","valor":6200,"diariaUSD":62.75303644,"diariaBRL":326.3157895,"valorIntegral":7805.2,"custoReal":6817.2,"formaPag":"CARTAO DE CREDITO","parc":"NÃO INFORMADO","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1782000000000,"vendedor":"DICKSON","cliente":"BEATRIZ VIEIRA DE CASTRO MOREIRA MESQUITA","whats":"5.521996466135E12","tel":"3512","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1785110400000,"devolucao":1786406400000,"localEnt":"MCO TREM","localDev":"MCO ENDERECO","aerea":"NÃO INFORMADO","valor":4850,"diariaUSD":62.17948718,"diariaBRL":323.3333333,"valorIntegral":6422,"custoReal":5382,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1782259200000,"vendedor":"OUTROS","cliente":"EDUARDO STEFFANELLO BASTIANI","whats":"5.55599291689E11","tel":"8911","cadeirinha":"1 ANO","modelo":"Minivan 7L","cat":"Minivan","entrega":1784937600000,"devolucao":1785801600000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":3955,"diariaUSD":76.05769231,"diariaBRL":395.5,"valorIntegral":4108,"custoReal":3588,"formaPag":"CARTAO DE CREDITO","parc":"NÃO INFORMADO","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1782172800000,"vendedor":"DICKSON","cliente":"Flavio de campos silva solza amaro","whats":"5.521987981978E12","tel":"7812","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1798156800000,"devolucao":1803686400000,"localEnt":"MCO","localDev":"MCO","aerea":"GOL","valor":12975,"diariaUSD":38.98737981,"diariaBRL":202.734375,"valorIntegral":32947.2,"custoReal":19635.2,"formaPag":"PIX","parc":"AVISTA","qualidade":"NEGATIVA","_src":"hist"},{"dataFech":1782518400000,"vendedor":"DICKSON","cliente":"JOSE ANDRE BARBOSA DE SOUZA","whats":"5.58199113797E11","tel":"9711","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1782864000000,"devolucao":1785974400000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":12891,"diariaUSD":68.86217949,"diariaBRL":358.0833333,"valorIntegral":14788.8,"custoReal":12916.8,"formaPag":"CARTAO DE CREDITO","parc":"5x","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1782864000000,"vendedor":"DICKSON","cliente":"Andre Gustavo Dias Vasconcelos","whats":"55 (81) 99903-7830","tel":"7830","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1784073600000,"devolucao":1785024000000,"localEnt":"FLL","localDev":"FLL","aerea":"AZUL","valor":6369.57,"diariaUSD":89,"diariaBRL":579.0518182,"valorIntegral":4518.8,"custoReal":3946.8,"formaPag":"CARTAO DE CREDITO","parc":"12x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1782864000000,"vendedor":"LIVIA","cliente":"Samir Cader de Freitas","whats":"5.521971050606E12","tel":"0612","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1783036800000,"devolucao":1784246400000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":5662.72,"diariaUSD":77.78461538,"diariaBRL":404.48,"valorIntegral":5751.2,"custoReal":5023.2,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1782950400000,"vendedor":"LIVIA","cliente":"Mario Temoteo","whats":"5.58197611717E11","tel":"1711","cadeirinha":"NÃO","modelo":"Van 12L","cat":"Van 12L","entrega":1784937600000,"devolucao":1786060800000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":7799.16,"diariaUSD":115.3721893,"diariaBRL":599.9353846,"valorIntegral":8720.4,"custoReal":8044.4,"formaPag":"CARTAO DE CREDITO","parc":"1x","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1783036800000,"vendedor":"DICKSON","cliente":"ALVARO TORQUATO SILVEIRA","whats":"55 11 97380-6708","tel":"6708","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1783900800000,"devolucao":1784592000000,"localEnt":"MCO","localDev":"MCO","aerea":"UNITED","valor":3000,"diariaUSD":72.11538462,"diariaBRL":375,"valorIntegral":3286.4,"custoReal":2870.4,"formaPag":"CARTAO DE CREDITO","parc":"5x","qualidade":"POSITIVA","voucher":"🟡 Pendente","_src":"hist"},{"dataFech":1783382400000,"vendedor":"DICKSON","cliente":"DANIEL VIEIRA LOSSAVERO","whats":"5.5679624044E11","tel":"4411","cadeirinha":"2 ANOS","modelo":"Minivan 7L","cat":"Minivan","entrega":1787702400000,"devolucao":1788825600000,"localEnt":"MCO","localDev":"MCO","aerea":"DELTA","valor":4000,"diariaUSD":59.17159763,"diariaBRL":307.6923077,"valorIntegral":5340.4,"custoReal":4664.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"MÉDIA","mesRef":"LIMITED","voucher":"🟡 Pendente","_src":"hist"},{"dataFech":1783382400000,"vendedor":"DICKSON","cliente":"Flávia Brandão","whats":"5.51399738655E12","tel":"5512","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1783728000000,"devolucao":1785715200000,"localEnt":"MCO","localDev":"MCO","aerea":"UNITED","valor":6500,"diariaUSD":54.34782609,"diariaBRL":282.6086957,"valorIntegral":9448.4,"custoReal":8252.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"MÉDIA","voucher":"🟡 Pendente","_src":"hist"},{"dataFech":1783555200000,"vendedor":"DICKSON","cliente":"Daniel Ribeiro dos Santos Correia","whats":"5.56193817523E11","tel":"2311","cadeirinha":"NÃO","modelo":"Van 12L","cat":"Van 12L","entrega":1784937600000,"devolucao":1785888000000,"localEnt":"MIA","localDev":"MCO","aerea":"NÃO INFORMADO","valor":825.24,"diariaUSD":14.42727273,"diariaBRL":75.02181818,"valorIntegral":7898.8,"custoReal":6806.8,"formaPag":"PIX","parc":"AVISTA","qualidade":"NEGATIVA","mesRef":"ALTERAÇÃO - ADÇÃO DE 1 DIÁRIA","voucher":"🟡 Pendente","_src":"hist"},{"dataFech":1783555200000,"vendedor":"DICKSON","cliente":"AUGUSTO CESAR VICTORIO","whats":"55 14 99713-9758","tel":"9758","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1797120000000,"devolucao":1797984000000,"localEnt":"MCO","localDev":"MCO","aerea":"COPA","valor":4100,"diariaUSD":78.84615385,"diariaBRL":410,"valorIntegral":3588,"custoReal":3068,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"DIAMANTE","mesRef":"TENTAR AO MÁXIMO A ENCLAVE","voucher":"🟡 Pendente","_src":"hist"},{"dataFech":1783555200000,"vendedor":"DICKSON","cliente":"ALEXANDRE SAMPAIO CAXIAS","whats":"55 92 99028-996","tel":"8996","cadeirinha":"5 ANOS","modelo":"Minivan 7L","cat":"Minivan","entrega":1785888000000,"devolucao":1786752000000,"localEnt":"MIA","localDev":"MIA","aerea":"COPA","valor":8700,"diariaUSD":167.3076923,"diariaBRL":870,"valorIntegral":5148,"custoReal":3588,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"DIAMANTE","mesRef":"LIMITED","voucher":"🟡 Pendente","_src":"hist"},{"dataFech":1783641600000,"vendedor":"DICKSON","cliente":"Carla Francini Ferreira Carreira","whats":"55 47 99007-800","tel":"7800","cadeirinha":"2 ANOS","modelo":"SUV Premium","cat":"SUV Premium","entrega":1784678400000,"devolucao":1785369600000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":4414.8,"diariaUSD":106.125,"diariaBRL":551.85,"valorIntegral":8278.4,"custoReal":7862.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"NEGATIVA","_src":"hist"},{"dataFech":1783641600000,"vendedor":"DICKSON","cliente":"Carla Francini Ferreira Carreira","whats":"55 47 99007-800","tel":"7800","cadeirinha":"2 ANOS","modelo":"SUV","cat":"SUV","entrega":1785369600000,"devolucao":1786147200000,"localEnt":"MCO ENDERECO","localDev":"MCO","aerea":"GOL","valor":4414.8,"diariaUSD":94.33333333,"diariaBRL":490.5333333,"valorIntegral":3489.2,"custoReal":2761.2,"formaPag":"PIX","parc":"AVISTA","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1783987200000,"vendedor":"DICKSON","cliente":"ANDREA SETO DE OLIVEIRA","whats":"5.511998021538E12","tel":"3812","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1785110400000,"devolucao":1785715200000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":3392,"diariaUSD":93.18681319,"diariaBRL":484.5714286,"valorIntegral":2875.6,"custoReal":2511.6,"formaPag":"CARTAO DE CREDITO","parc":"5x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1783987200000,"vendedor":"DICKSON","cliente":"RICARDO CARDOSO","whats":"5.56184967485E11","tel":"8511","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1784937600000,"devolucao":1786060800000,"localEnt":"MCO ENDERECO","localDev":"MCO ENDERECO","aerea":"GOL","valor":4950,"diariaUSD":73.22485207,"diariaBRL":380.7692308,"valorIntegral":5860.4,"custoReal":4664.4,"formaPag":"CARTAO DE CREDITO","parc":"7x","qualidade":"POSITIVA","mesRef":"LIMITED - A MELHOR DISPONÍVEL","_src":"hist"},{"dataFech":1783987200000,"vendedor":"JANES","cliente":"Wender Aparecido Xavier","whats":"5.51798112201E12","tel":"0112","cadeirinha":"NÃO","modelo":"Sedan","cat":"Sedan","entrega":1783641600000,"devolucao":1785369600000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":6165.8,"diariaUSD":59.28653846,"diariaBRL":308.29,"valorIntegral":6760,"custoReal":5720,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1784592000000,"vendedor":"DICKSON","cliente":"Ricardo da Rocha Dos Santos","whats":"5.51798112201E12","tel":"0112","cadeirinha":"3 E 5 ANOS","modelo":"Minivan 7L","cat":"Minivan","entrega":1784678400000,"devolucao":1786233600000,"localEnt":"MCO","localDev":"MCO","aerea":"DELTA","valor":7685.75,"diariaUSD":82.11271368,"diariaBRL":426.9861111,"valorIntegral":7394.4,"custoReal":6458.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1784678400000,"vendedor":"DICKSON","cliente":"Renato Oliveira Eugenio","whats":"5.511998766615E12","tel":"1512","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1784851200000,"devolucao":1785888000000,"localEnt":"MCO","localDev":"MCO","aerea":"AVIANCA","valor":7344,"diariaUSD":117.6923077,"diariaBRL":612,"valorIntegral":4929.6,"custoReal":4305.6,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1784937600000,"vendedor":"JANES","cliente":"LUCILENE OLIVEIRA TEXEIRA","whats":"1 (508) 663-9460","tel":"9460","cadeirinha":"NÃO","modelo":"Minivan 8L","cat":"Minivan 8L","entrega":1786492800000,"devolucao":1786924800000,"localEnt":"MCO","localDev":"MCO","aerea":"DELTA","valor":2711,"diariaUSD":104.2692308,"diariaBRL":542.2,"valorIntegral":2054,"custoReal":1794,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1785024000000,"vendedor":"LUCIANO","cliente":"PAULA ALVES AQUILINO","whats":"55 17 99179-9345","tel":"9345","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1800057600000,"devolucao":1801180800000,"localEnt":"MCO","localDev":"MCO","aerea":"COPA","valor":4700,"diariaUSD":69.52662722,"diariaBRL":361.5384615,"valorIntegral":5340.4,"custoReal":4664.4,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1785024000000,"vendedor":"LUCIANO","cliente":"RODOLFO LOPES DA SILVA","whats":"5.544999268911E12","tel":"1112","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1791676800000,"devolucao":1792540800000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":1703,"diariaUSD":32.75,"diariaBRL":170.3,"valorIntegral":4108,"custoReal":3588,"formaPag":"PIX","parc":"0.5","qualidade":"NEGATIVA","mesRef":"LIMITED / 25% em 15 dias e 25% em 15 dias","_src":"hist"},{"dataFech":1785110400000,"vendedor":"LUCIANO","cliente":"FERNANDA NAKABAYASHI LIMA","whats":"(21) 9 96721334","tel":"1334","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1797724800000,"devolucao":1799452800000,"localEnt":"MCO","localDev":"MCO","aerea":"A DEFINIR","valor":7000,"diariaUSD":67.30769231,"diariaBRL":350,"valorIntegral":15496,"custoReal":7176,"formaPag":"CARTAO DE CREDITO","parc":"5x","qualidade":"MÉDIA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785110400000,"vendedor":"LUCIANO","cliente":"MARCELLO NAKABAYASHI LIMA","whats":"55 11 97149-3822","tel":"3822","cadeirinha":"3 ANOS","modelo":"Minivan 7L","cat":"Minivan","entrega":1797724800000,"devolucao":1799452800000,"localEnt":"MCO","localDev":"MCO","aerea":"A DEFINIR","valor":7000,"diariaUSD":67.30769231,"diariaBRL":350,"valorIntegral":15496,"custoReal":7176,"formaPag":"CARTAO DE CREDITO","parc":"5x","qualidade":"MÉDIA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785110400000,"vendedor":"LUCIANO","cliente":"RAFAEL SOARES DE SOUZA","whats":"55 88 99655-237","tel":"5237","cadeirinha":"5 ANOS","modelo":"SUV","cat":"SUV","entrega":1792972800000,"devolucao":1793923200000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":3000,"diariaUSD":52.44755245,"diariaBRL":272.7272727,"valorIntegral":4986.8,"custoReal":3374.8,"formaPag":"CARTAO DE CREDITO","parc":"3x","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1785196800000,"vendedor":"LUCIANO","cliente":"GRAZIELA GRACI BENINCA MOREIRA","whats":"55 47 99686-663","tel":"6663","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1785715200000,"devolucao":1787184000000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":4250,"diariaUSD":48.07692308,"diariaBRL":250,"valorIntegral":6099.6,"custoReal":5215.6,"formaPag":"PIX","parc":"AVISTA","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1785196800000,"vendedor":"LUCIANO","cliente":"JONATAN DE LIMA","whats":"55 51 99515-364","tel":"5364","cadeirinha":"6 ANOS / 03 MESES","modelo":"Minivan 7L","cat":"Minivan","entrega":1786320000000,"devolucao":1789084800000,"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":8600,"diariaUSD":51.68269231,"diariaBRL":268.75,"valorIntegral":13145.6,"custoReal":11481.6,"formaPag":"PIX","parc":"AVISTA","qualidade":"NEGATIVA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785196800000,"vendedor":"LUCIANO","cliente":"PABLO BELLINI HAHN","whats":"55 51 99114-191","tel":"4191","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1790467200000,"devolucao":1791763200000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":4300,"diariaUSD":55.12820513,"diariaBRL":286.6666667,"valorIntegral":7202,"custoReal":5382,"formaPag":"PIX","parc":"AVISTA","qualidade":"MÉDIA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785283200000,"vendedor":"LUCIANO","cliente":"THIAGO FRANCO MANSO","whats":"55 11 96062-0968","tel":"0968","cadeirinha":"5 ANOS","modelo":"Minivan 7L","cat":"Minivan","entrega":1788220800000,"devolucao":1789344000000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":4100,"diariaUSD":60.65088757,"diariaBRL":315.3846154,"valorIntegral":6380.4,"custoReal":4664.4,"formaPag":"CARTAO DE CREDITO","parc":"5x","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1785283200000,"vendedor":"LUCIANO","cliente":"DIEGO SARTORI FELIX ARGENTA","whats":"55 41 91512-210","tel":"2210","cadeirinha":"2 E 5 ANOS","modelo":"SUV","cat":"SUV","entrega":1792454400000,"devolucao":1793059200000,"localEnt":"MCO","localDev":"MCO","aerea":"ENDEREÇO","valor":3400,"diariaUSD":93.40659341,"diariaBRL":485.7142857,"valorIntegral":2511.6,"custoReal":2147.6,"formaPag":"PIX","parc":"AVISTA","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1785369600000,"vendedor":"LUCIANO","cliente":"JULIO CEZAR KOTOVICZ","whats":"55 82-99120-8888","tel":"8888","cadeirinha":"NÃO","modelo":"Sedan","cat":"Sedan","entrega":1794009600000,"devolucao":1794873600000,"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":3120,"diariaUSD":60,"diariaBRL":312,"valorIntegral":3380,"custoReal":2860,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1785369600000,"vendedor":"LUCIANO","cliente":"CRISTIANE RINALDI LIDUARIO","whats":"55 41 96349-053","tel":"9053","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1789430400000,"devolucao":1792195200000,"localEnt":"MCO","localDev":"MCO","aerea":"GOL","valor":8000,"diariaUSD":48.07692308,"diariaBRL":250,"valorIntegral":11481.6,"custoReal":9817.6,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1785456000000,"vendedor":"LUCIANO","cliente":"Wender Aparecido Xavier","whats":"55 11 99643-0359","tel":"0359","cadeirinha":"NÃO","modelo":"Sedan","cat":"Sedan","entrega":1785456000000,"devolucao":1787184000000,"localEnt":"MCO","localDev":"MCO","aerea":"NÃO INFORMADO","valor":6165.8,"diariaUSD":59.28653846,"diariaBRL":308.29,"valorIntegral":6760,"custoReal":5720,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1785456000000,"vendedor":"LUCIANO","cliente":"RAUL NEVES SOARES","whats":"55 11 97057-3784","tel":"3784","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1800230400000,"devolucao":1801612800000,"localEnt":"MCO","localDev":"MIA","aerea":"AZUL","valor":5400,"diariaUSD":64.90384615,"diariaBRL":337.5,"valorIntegral":7092.8,"custoReal":5740.8,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"MÉDIA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785456000000,"vendedor":"LUCIANO","cliente":"RAUL NEVES SOARES","whats":"55 11 97057-3784","tel":"3784","cadeirinha":"NÃO","modelo":"Scooter","cat":"Outros","entrega":1800230400000,"devolucao":1801180800000,"localEnt":"MCO","localDev":"MCO","aerea":"AZUL","valor":1147.5,"diariaUSD":20.06118881,"diariaBRL":104.3181818,"custoReal":-572,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"DIAMANTE","_src":"hist"},{"dataFech":1785542400000,"vendedor":"LUCIANO","cliente":"AFONSO VINICIUS GOLDONI ARAUJO","whats":"34 999427348","tel":"7348","cadeirinha":"3 E 5 ANOS","modelo":"Minivan 8L","cat":"Minivan 8L","entrega":1793145600000,"devolucao":1794441600000,"localEnt":"MCO","localDev":"MIA","aerea":"GOL","valor":4400,"diariaUSD":56.41025641,"diariaBRL":293.3333333,"valorIntegral":6682,"custoReal":5382,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"MÉDIA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785542400000,"vendedor":"LUCIANO","cliente":"ANDRE LUIZ SILVEIRA ALVES","whats":"5.53186324332E11","tel":"3211","cadeirinha":"1 ANO","modelo":"Minivan 8L","cat":"Minivan 8L","entrega":1786752000000,"devolucao":1788220800000,"localEnt":"MCO","localDev":"MIA","aerea":"COPA","valor":6395.34,"diariaUSD":72.34547511,"diariaBRL":376.1964706,"valorIntegral":7503.6,"custoReal":6099.6,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"POSITIVA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785628800000,"vendedor":"LUCIANO","cliente":"GUILHERME TERUEL","whats":"34 999427348","tel":"7348","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1793145600000,"devolucao":1794441600000,"localEnt":"MCO","localDev":"MIA","aerea":"GOL","valor":4400,"diariaUSD":56.41025641,"diariaBRL":293.3333333,"valorIntegral":6682,"custoReal":5382,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"MÉDIA","mesRef":"LIMITED","_src":"hist"},{"dataFech":1785715200000,"vendedor":"LUCIANO","cliente":"DENISE SANTOS ALBUQUERQUE","whats":"1.1956475472E10","tel":"7210","cadeirinha":"NÃO","modelo":"Sedan","cat":"Sedan","entrega":1790294400000,"devolucao":1791072000000,"localEnt":"MIA","localDev":"MIA","aerea":"LATAM","valor":3000,"diariaUSD":64.1025641,"diariaBRL":333.3333333,"valorIntegral":4082,"custoReal":2574,"formaPag":"PIX","parc":"AVISTA","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1785801600000,"vendedor":"LUCIANO","cliente":"LEONARDO LUIS FIAMONCINI","whats":"4.7988375883E10","tel":"8310","cadeirinha":"NÃO","modelo":"SUV Premium","cat":"SUV Premium","entrega":1768262400000,"devolucao":1769472000000,"localEnt":"MIA","localDev":"MIA","aerea":"GOL","valor":10245.9,"diariaUSD":140.7403846,"diariaBRL":731.85,"valorIntegral":15527.2,"custoReal":13759.2,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"NEGATIVA","_src":"hist"},{"dataFech":1785888000000,"vendedor":"LUCIANO","cliente":"FREDERICO PARREIRA VIEIRA","whats":"6.2982386109E10","tel":"0910","cadeirinha":"NÃO","modelo":"SUV Premium","cat":"SUV Premium","entrega":1798588800000,"devolucao":1799539200000,"localEnt":"MIA","localDev":"MIA","aerea":"AMERICAN","valor":6500,"diariaUSD":113.6363636,"diariaBRL":590.9090909,"valorIntegral":12422.8,"custoReal":10810.8,"qualidade":"NEGATIVA","_src":"hist"},{"dataFech":1785888000000,"vendedor":"LUCIANO","cliente":"LUIS ROBERTO DO CARMO LOURENCO","whats":"6.1999672325E10","tel":"2510","cadeirinha":"NÃO","modelo":"SUV","cat":"SUV","entrega":1793664000000,"devolucao":1794787200000,"localEnt":"MIA","localDev":"MIA","aerea":"GOL","valor":4914,"diariaUSD":72.69230769,"diariaBRL":378,"valorIntegral":5704.4,"custoReal":3988.4,"qualidade":"POSITIVA","_src":"hist"},{"dataFech":1785974400000,"vendedor":"LUCIANO","cliente":"DEBORA  RUIZ DE SOUSA","whats":"9.2981163737E10","tel":"3710","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1799884800000,"devolucao":1801872000000,"localEnt":"MCO","localDev":"MCO","aerea":"COPA","valor":6000,"diariaUSD":50.16722408,"diariaBRL":260.8695652,"valorIntegral":17820.4,"custoReal":8252.4,"qualidade":"NEGATIVA","_src":"hist"},{"dataFech":1785974400000,"vendedor":"LUCIANO","cliente":"JULIO CESAR CANDIDO","whats":"1.1982077011E10","tel":"1110","cadeirinha":"1 ANO","modelo":"Minivan 7L","cat":"Minivan","entrega":1792713600000,"devolucao":1794441600000,"localEnt":"MCO","localDev":"MCO","aerea":"A DEFINIR","valor":6556.93,"diariaUSD":63.04740385,"diariaBRL":327.8465,"valorIntegral":8216,"custoReal":7176,"qualidade":"MÉDIA","_src":"hist"},{"dataFech":1786060800000,"vendedor":"LUCIANO","cliente":"DENISE LOPES DAS CHAGAS","whats":"(13) 97406-7931","tel":"7931","cadeirinha":"NÃO","modelo":"Sedan","cat":"Sedan","entrega":1791849600000,"devolucao":1792972800000,"localEnt":"MCO","localDev":"MCO","aerea":"LATAM","valor":4000,"diariaUSD":59.17159763,"diariaBRL":307.6923077,"valorIntegral":4394,"custoReal":3718,"formaPag":"CARTAO DE CREDITO","parc":"10x","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1786147200000,"vendedor":"LUCIANO","cliente":"Francisco Jose Assi Meira Lima","whats":"84 999811146","tel":"1146","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1786924800000,"devolucao":1788652800000,"localEnt":"MIA","localDev":"FLL","aerea":"LATAM","valor":3000,"diariaUSD":28.84615385,"diariaBRL":150,"valorIntegral":8736,"custoReal":7176,"formaPag":"PIX","parc":"AVISTA","qualidade":"NEGATIVA","mesRef":"COBRAR RESTANTE DIA 16/08","_src":"hist"},{"dataFech":1786320000000,"vendedor":"LUCIANO","cliente":"EMERSON TERRA ROCHA","whats":"1.5996500111E10","tel":"1110","cadeirinha":"2 CADEIRINHA","modelo":"SUV Premium","cat":"SUV Premium","entrega":1787529600000,"devolucao":1788393600000,"localEnt":"FLL","localDev":"MCO","aerea":"AZUL","valor":7366.87,"diariaUSD":141.6705769,"diariaBRL":736.687,"valorIntegral":10348,"custoReal":9828,"formaPag":"CARTAO DE CREDITO","qualidade":"NEGATIVA","_src":"hist"},{"dataFech":1786320000000,"vendedor":"LUCIANO","cliente":"DIEGO ISOLA CAMINHA","whats":"5.1991002867E10","tel":"6710","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1788134400000,"devolucao":1788825600000,"localEnt":"MCO","localDev":"MCO","aerea":"COPA","valor":2700,"diariaUSD":64.90384615,"diariaBRL":337.5,"valorIntegral":3286.4,"custoReal":2870.4,"formaPag":"CARTAO DE CREDITO","qualidade":"MÉDIA","_src":"hist"},{"dataFech":1786320000000,"vendedor":"LUCIANO","cliente":"CLEBER RORIZ FERREIRA FILHO","whats":"7.3988074099E10","tel":"9910","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1800921600000,"devolucao":1801958400000,"localEnt":"FLL","localDev":"MIA","aerea":"COPA","valor":4555.18,"diariaUSD":72.99967949,"diariaBRL":379.5983333,"valorIntegral":5449.6,"custoReal":4305.6,"formaPag":"CARTAO DE CREDITO","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1786406400000,"vendedor":"LUCIANO","cliente":"HEVERTON HENRIQUE DE ARAUJO FERREI","whats":"3.8999218763E10","tel":"6310","cadeirinha":"5 ANOS","modelo":"Minivan 7L","cat":"Minivan","entrega":1788739200000,"devolucao":1789776000000,"valor":3597,"diariaUSD":57.64423077,"diariaBRL":299.75,"valorIntegral":4929.6,"custoReal":4305.6,"qualidade":"MÉDIA","_src":"hist"},{"dataFech":1786406400000,"vendedor":"LUCIANO","cliente":"ORLY RICARDO SERAPHIM","whats":"1.9992191009E10","tel":"0910","cadeirinha":"6 ANOS","modelo":"SUV","cat":"SUV","entrega":1792108800000,"devolucao":1792972800000,"localEnt":"MCO ENDERECO","localDev":"MCO ENDERECO","valor":3500,"diariaUSD":67.30769231,"diariaBRL":350,"valorIntegral":4108,"custoReal":3068,"formaPag":"PIX","qualidade":"POSITIVA","_src":"hist"},{"dataFech":1786492800000,"vendedor":"LUCIANO","cliente":"LINDOMAR CESARIO VIEIRA","whats":"1.1999647576E10","tel":"7610","cadeirinha":"NÃO","modelo":"Minivan 7L","cat":"Minivan","entrega":1791244800000,"devolucao":1792281600000,"localEnt":"MIA","localDev":"MCO","aerea":"LATAM","valor":4700,"diariaUSD":75.32051282,"diariaBRL":391.6666667,"valorIntegral":5449.6,"custoReal":4305.6,"formaPag":"CARTAO DE CREDITO","parc":"6x","qualidade":"POSITIVA","_src":"hist"}];
 </script>
 
+
+<script id="mgw-evolucao-js">
+/* ═══════════════════════════════════════════════════════════════════
+   EVOLUÇÃO — todos os KPIs, todos os ciclos, lado a lado
+   ───────────────────────────────────────────────────────────────────
+   Substitui as abas Notas, Relatórios e Canal Anônimo. Aquelas três
+   guardavam coisas; esta responde uma pergunta: o que mudou de um mês
+   para o outro, e por quê.
+
+   Duas decisões que valem explicação:
+
+   1. O mês aqui é o CICLO DA EMPRESA — dia 13 de um mês ao dia 12 do
+      seguinte —, igual ao resto do app. Usar o mês do calendário faria
+      esta aba discordar do Dashboard, das Metas e do comissionamento
+      na virada, que é exatamente quando alguém vai conferir.
+
+   2. Cada gráfico vem com leitura escrita ao lado, gerada dos próprios
+      números — não um texto fixo. Gráfico sem leitura vira enfeite: as
+      pessoas olham, acham bonito e não mudam nada por causa dele.
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+'use strict';
+var DIA=86400000;
+function esc7(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function n0(v){ return Math.round(+v||0).toLocaleString('pt-BR'); }
+function n1(v){ return (+v||0).toFixed(1).replace('.',','); }
+function brl0(v){ return 'R$ '+Math.round(+v||0).toLocaleString('pt-BR'); }
+function pct(v){ return (v==null)?'—':(n1(v)+'%'); }
+function dOnly(d){ return new Date(d.getFullYear(),d.getMonth(),d.getDate()); }
+function dados(){ try{ return (window.MGW_RESV&&MGW_RESV.dados())||[]; }catch(e){ return []; } }
+function cotacoes(){ try{ return (typeof cotTodasAsCotacoes==='function')?cotTodasAsCotacoes():((typeof HIST_COT!=='undefined')?HIST_COT.slice():[]); }catch(e){ return []; } }
+
+/* ── o ciclo de uma data: dia 13 → dia 12 ─────────────────────────── */
+function cicloDe(d){
+  if(!d) return null;
+  var virada=(window.MGW_CICLO&&MGW_CICLO.DIA_VIRADA)||12;
+  var y=d.getFullYear(), m=d.getMonth();
+  if(d.getDate()<=virada){ m-=1; if(m<0){ m=11; y-=1; } }
+  return y+'-'+('0'+(m+1)).slice(-2);
+}
+function cicloDeISO(s){
+  var m=String(s||'').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(!m) return null;
+  return cicloDe(new Date(+m[1],+m[2]-1,+m[3]));
+}
+var MESPT=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+function rot(k){ var p=String(k).split('-'); return p.length===2?(MESPT[(+p[1]||1)-1]+'/'+String(p[0]).slice(2)):k; }
+function rotLongo(k){ var p=String(k).split('-'); return p.length===2?(MESPT[(+p[1]||1)-1]+'/'+p[0]):k; }
+function diarias(r){
+  if(!r.entrega||!r.devolucao) return 0;
+  var d=Math.round((dOnly(r.devolucao)-dOnly(r.entrega))/DIA);
+  return d>0?d:0;
+}
+
+/* ── a série: uma linha por ciclo ─────────────────────────────────── */
+function serie(){
+  var m={};
+  function pega(k){
+    if(!k) return null;
+    if(!m[k]) m[k]={ym:k, receita:0, custo:0, comCusto:0, vendas:0, diarias:0, cots:0, ideais:0,
+                    integral:0, cats:{}, vends:{}, antSoma:0, antN:0, locais:{}, semDatas:0};
+    return m[k];
+  }
+  dados().forEach(function(r){
+    if(!r||!r.cliente) return;
+    var g=pega(cicloDe(r.dataFech||r.entrega)); if(!g) return;
+    g.vendas++;
+    g.receita+=(+r.valor||0);
+    g.integral+=(+r.valorIntegral||0);
+    var d=diarias(r); g.diarias+=d;
+    if(!r.entrega||!r.devolucao) g.semDatas++;
+    var c=+r.custoReal||0; if(c>0){ g.custo+=c; g.comCusto++; }
+    var cat=r.cat||'—'; g.cats[cat]=(g.cats[cat]||0)+(+r.valor||0);
+    var v=r.vendedor||'—'; g.vends[v]=(g.vends[v]||0)+(+r.valor||0);
+    var loc=(r.localEnt||'—').toUpperCase().slice(0,3); g.locais[loc]=(g.locais[loc]||0)+1;
+    if(r.dataFech&&r.entrega){
+      var a=Math.round((dOnly(r.entrega)-dOnly(r.dataFech))/DIA);
+      if(a>=0&&a<500){ g.antSoma+=a; g.antN++; }
+    }
+  });
+  var C=cotacoes();
+  C.forEach(function(h){
+    var g=pega(cicloDeISO(h.dtISO||h.dt)); if(!g) return;
+    g.cots++;
+    try{ if(typeof cpClassificar==='function' && cpClassificar(h).ideal) g.ideais++; }catch(e){}
+  });
+  return Object.keys(m).sort().map(function(k){
+    var g=m[k];
+    g.rot=rot(k); g.rotLongo=rotLongo(k);
+    g.ticket=g.vendas?g.receita/g.vendas:0;
+    g.diariaMedia=g.diarias?g.receita/g.diarias:null;
+    g.diariasPorReserva=g.vendas?g.diarias/g.vendas:0;
+    g.conv=g.cots?(g.vendas/g.cots*100):null;
+    g.pctIdeal=g.cots?(g.ideais/g.cots*100):null;
+    g.margem=(g.comCusto&&g.receita>0)?((g.receita-g.custo)/g.receita*100):null;
+    g.desconto=(g.integral>0)?((g.integral-g.receita)/g.integral*100):null;
+    g.antecedencia=g.antN?(g.antSoma/g.antN):null;
+    g.catTop=Object.keys(g.cats).sort(function(a,b){ return g.cats[b]-g.cats[a]; })[0]||'—';
+    g.vendTop=Object.keys(g.vends).sort(function(a,b){ return g.vends[b]-g.vends[a]; })[0]||'—';
+    return g;
+  });
+}
+
+/* ── variação, em % ou em pontos ──────────────────────────────────── */
+function delta(at, an, maiorMelhor, pontos){
+  if(at==null||an==null) return null;
+  if(pontos){
+    var p=at-an; if(Math.abs(p)<0.05) return null;
+    return {v:p, bom:(maiorMelhor?p>0:p<0), pontos:true};
+  }
+  if(an===0) return null;
+  var d=(at-an)/Math.abs(an)*100;
+  return {v:d, bom:(maiorMelhor?d>0:d<0)};
+}
+function selo(d){
+  if(!d) return '<span class="ev-selo ev-igual">= estável</span>';
+  var lim=d.pontos?0.5:2;
+  if(Math.abs(d.v)<lim) return '<span class="ev-selo ev-igual">= estável</span>';
+  var cls=d.bom?'ev-sobe':'ev-cai';
+  return '<span class="ev-selo '+cls+'">'+(d.v>0?'▲':'▼')+' '+n1(Math.abs(d.v))+(d.pontos?' p.p.':'%')+'</span>';
+}
+
+/* ── a fábrica de gráficos ────────────────────────────────────────── */
+var charts={};
+var GRAFS=[];
+function graf(id, cfg){ GRAFS.push({id:id, cfg:cfg}); }
+function desenharTodos(){
+  if(typeof Chart==='undefined') return;
+  GRAFS.forEach(function(g){
+    var el=document.getElementById(g.id); if(!el) return;
+    try{ var a=Chart.getChart&&Chart.getChart(el); if(a) a.destroy(); }catch(e){}
+    try{ charts[g.id]=new Chart(el,g.cfg); }catch(e){ console.warn('[evolucao] '+g.id,e); }
+  });
+}
+var COR={red:'#FF2D2D', gold:'#FFD11A', ice:'#1FA9A6', blue:'#3B9EFF', purple:'#A855F7', green:'#1AFF9D', chalk:'#9AB4CC'};
+function base(labels, datasets, opts){
+  return {type:(opts&&opts.type)||'bar',
+    data:{labels:labels, datasets:datasets},
+    options:Object.assign({responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:!!(datasets.length>1), labels:{color:'#9AB4CC', font:{size:11}, boxWidth:12}}},
+      scales:{ y:{beginAtZero:true, grid:{color:'rgba(255,255,255,.06)'}, ticks:{color:'#9AB4CC', font:{size:11}}},
+               x:{grid:{display:false}, ticks:{color:'#9AB4CC', font:{size:11}}} }
+    }, (opts&&opts.options)||{})};
+}
+function ds(label, dados, cor, tipo){
+  var o={label:label, data:dados, borderRadius:5};
+  if(tipo==='linha'){ o.type='line'; o.borderColor=cor; o.backgroundColor=cor+'22';
+    o.fill=true; o.tension=.35; o.pointRadius=4; o.pointBackgroundColor=cor; o.borderWidth=2.5; }
+  else { o.backgroundColor=cor; o.borderColor=cor; }
+  return o;
+}
+
+/* ── um cartão de gráfico com leitura ─────────────────────────────── */
+function cartao(id, titulo, sub, leitura){
+  return '<div class="card ev-card">'
+    +'<div class="card-title">'+esc7(titulo)+'</div>'
+    +'<div class="card-sub">'+sub+'</div>'
+    +'<div class="ev-graf"><canvas id="'+id+'"></canvas></div>'
+    +'<div class="ev-leitura"><b>O que este gráfico diz:</b> '+leitura+'</div>'
+    +'<div class="ev-dica">toque no gráfico para ampliar</div>'
+    +'</div>';
+}
+
+function render(){
+  var box=document.getElementById('ev-corpo'); if(!box) return;
+  GRAFS.length=0;
+  var S=serie();
+  if(S.length<1){
+    box.innerHTML='<div class="or-vazio">Sem reservas na base. Carregue a planilha em <b>Vendas do Mês</b>.</div>';
+    return;
+  }
+  var L=S.map(function(g){ return g.rot; });
+  var u=S[S.length-1], a=S.length>1?S[S.length-2]:null;
+  var H=[];
+
+  /* ═══ 1 · O PLACAR ═══ */
+  var linhas=[
+    {r:'Receita',            v:brl0(u.receita),        d:a?delta(u.receita,a.receita,true):null},
+    {r:'Reservas fechadas',  v:n0(u.vendas),           d:a?delta(u.vendas,a.vendas,true):null},
+    {r:'Ticket médio',       v:brl0(u.ticket),         d:a?delta(u.ticket,a.ticket,true):null},
+    {r:'Diárias vendidas',   v:n0(u.diarias),          d:a?delta(u.diarias,a.diarias,true):null},
+    {r:'Diárias por reserva',v:n1(u.diariasPorReserva),d:a?delta(u.diariasPorReserva,a.diariasPorReserva,true):null},
+    {r:'Diária média',       v:u.diariaMedia==null?'—':brl0(u.diariaMedia), d:(a&&u.diariaMedia!=null&&a.diariaMedia!=null)?delta(u.diariaMedia,a.diariaMedia,true):null},
+    {r:'Cotações',           v:n0(u.cots),             d:a?delta(u.cots,a.cots,true):null},
+    {r:'Conversão',          v:pct(u.conv),            d:(a&&u.conv!=null&&a.conv!=null)?delta(u.conv,a.conv,true,true):null},
+    {r:'Carteira ideal',     v:pct(u.pctIdeal),        d:(a&&u.pctIdeal!=null&&a.pctIdeal!=null)?delta(u.pctIdeal,a.pctIdeal,true,true):null},
+    {r:'Antecedência média', v:u.antecedencia==null?'—':(n1(u.antecedencia)+' dias'), d:(a&&u.antecedencia!=null&&a.antecedencia!=null)?delta(u.antecedencia,a.antecedencia,true):null},
+    {r:'Desconto concedido', v:pct(u.desconto),        d:(a&&u.desconto!=null&&a.desconto!=null)?delta(u.desconto,a.desconto,false,true):null}
+  ];
+  H.push('<div class="card ev-card ev-placar">'
+    +'<div class="card-title">📌 O PLACAR DE '+esc7(u.rotLongo.toUpperCase())+'</div>'
+    +'<div class="card-sub">Cada número contra '+(a?esc7(a.rotLongo):'—')+'. O ciclo é o da empresa: dia 13 ao dia 12.</div>'
+    +'<div class="ev-placar-grid">'
+    +linhas.map(function(x){
+      return '<div class="ev-kpi"><div class="ev-kpi-r">'+x.r+'</div>'
+        +'<div class="ev-kpi-v">'+x.v+'</div>'+selo(x.d)+'</div>';
+    }).join('')
+    +'</div></div>');
+
+  /* ═══ 2 · RECEITA E VOLUME ═══ */
+  H.push('<div class="ev-grid2">');
+  H.push(cartao('ev-g-receita','RECEITA POR CICLO','quanto entrou em cada mês da empresa',
+    (function(){
+      var max=S.reduce(function(m,g){ return g.receita>m.receita?g:m; }, S[0]);
+      var min=S.reduce(function(m,g){ return g.receita<m.receita?g:m; }, S[0]);
+      return 'O melhor ciclo foi <b>'+esc7(max.rotLongo)+'</b> com '+brl0(max.receita)+'; o mais fraco, <b>'+esc7(min.rotLongo)+'</b> com '+brl0(min.receita)+
+        '. A distância entre os dois é de <b>'+brl0(max.receita-min.receita)+'</b>'+
+        (min.receita>0?(' — o melhor mês vale '+n1(max.receita/min.receita)+'× o pior'):'')+
+        '. Amplitude grande entre meses é sinal de operação dependente de sazonalidade ou de volume de lead, não de método estável.';
+    })()));
+  graf('ev-g-receita', base(L,[ds('Receita',S.map(function(g){return Math.round(g.receita);}),COR.red)]));
+
+  H.push(cartao('ev-g-volume','RESERVAS × COTAÇÕES','o funil, ciclo a ciclo',
+    (function(){
+      var comCot=S.filter(function(g){ return g.cots>0; });
+      if(!comCot.length) return 'Nenhum ciclo tem cotação registrada, então o funil não pode ser medido. Sem isso não há como saber se o problema é de entrada ou de fechamento — e essa é a primeira pergunta de qualquer diagnóstico comercial.';
+      var ult=comCot[comCot.length-1];
+      return 'No último ciclo com cotação medida ('+esc7(ult.rotLongo)+'), entraram <b>'+n0(ult.cots)+'</b> cotações e fecharam <b>'+n0(ult.vendas)+'</b> reservas — conversão de <b>'+pct(ult.conv)+'</b>. '
+        +'As duas barras subindo juntas significam crescimento por volume; a de reservas subindo mais que a de cotações significa crescimento por método, que é o único que se sustenta quando a entrada de lead oscila.';
+    })()));
+  graf('ev-g-volume', base(L,[
+    ds('Cotações',S.map(function(g){return g.cots;}),COR.chalk),
+    ds('Reservas',S.map(function(g){return g.vendas;}),COR.ice)]));
+  H.push('</div>');
+
+  /* ═══ 3 · TICKET E DIÁRIAS ═══ */
+  H.push('<div class="ev-grid2">');
+  H.push(cartao('ev-g-ticket','TICKET MÉDIO','valor médio de cada reserva',
+    (function(){
+      var max=S.reduce(function(m,g){ return g.ticket>m.ticket?g:m; }, S[0]);
+      return 'O ticket é a alavanca mais barata que existe: subir '+brl0(500)+' no ticket com o mesmo número de reservas do último ciclo somaria <b>'+brl0(500*u.vendas)+'</b> ao mês, sem uma cotação a mais. '
+        +'O melhor ticket foi em <b>'+esc7(max.rotLongo)+'</b> ('+brl0(max.ticket)+'). Ticket sobe por dois caminhos: diárias mais longas e categoria maior — exatamente a definição do cliente ideal.';
+    })()));
+  graf('ev-g-ticket', base(L,[ds('Ticket médio',S.map(function(g){return Math.round(g.ticket);}),COR.gold,'linha')],{type:'line'}));
+
+  H.push(cartao('ev-g-diarias','DIÁRIAS VENDIDAS E POR RESERVA','volume de frota ocupada e duração média',
+    'A barra é o total de diárias vendidas no ciclo — é ela, e não o número de reservas, que mede quanto a frota rodou. '
+    +'A linha é a duração média de cada reserva: no último ciclo, <b>'+n1(u.diariasPorReserva)+' diárias</b> por reserva. '
+    +'O perfil ideal da Magiway começa em 10 diárias; quanto mais essa linha se afastar disso para baixo, mais a carteira está fora do perfil que sustenta a margem.'));
+  graf('ev-g-diarias', base(L,[
+    ds('Diárias vendidas',S.map(function(g){return g.diarias;}),COR.blue),
+    Object.assign(ds('Diárias por reserva',S.map(function(g){return +g.diariasPorReserva.toFixed(1);}),COR.gold,'linha'),{yAxisID:'y2'})],
+    {options:{scales:{
+      y:{beginAtZero:true, grid:{color:'rgba(255,255,255,.06)'}, ticks:{color:'#9AB4CC', font:{size:11}}},
+      y2:{position:'right', beginAtZero:true, grid:{display:false}, ticks:{color:'#FFD11A', font:{size:11}}},
+      x:{grid:{display:false}, ticks:{color:'#9AB4CC', font:{size:11}}}}}}));
+  H.push('</div>');
+
+  /* ═══ 4 · CONVERSÃO E PERFIL ═══ */
+  var temCot=S.some(function(g){ return g.cots>0; });
+  if(temCot){
+    H.push('<div class="ev-grid2">');
+    H.push(cartao('ev-g-conv','TAXA DE CONVERSÃO','% das cotações que viraram reserva',
+      'Esta é a única métrica que mede <b>método</b> em vez de volume. Conversão subindo com cotações estáveis significa que se está vendendo melhor; '
+      +'conversão caindo com receita subindo significa que o mês foi salvo por entrada de lead, e vai desabar no mês em que a entrada oscilar. '
+      +'É também a régua certa para medir a verba de marketing: reconhecimento de marca age aqui, não no número de leads.'));
+    graf('ev-g-conv', base(L,[ds('Conversão %',S.map(function(g){return g.conv==null?null:+g.conv.toFixed(1);}),COR.green,'linha')],{type:'line'}));
+
+    H.push(cartao('ev-g-ideal','% DE CARTEIRA IDEAL','fatia das cotações que cumpre os quatro critérios',
+      'Cliente ideal: mais de 10 diárias, Orlando→Orlando, minivan, retirada em até 3 meses — as quatro juntas. '
+      +'Esta linha é o indicador que diz se o <b>tráfego</b> está trazendo o público certo, e não é responsabilidade do comercial. '
+      +'Quando ela sobe, a conversão sobe atrás sem ninguém mudar o discurso de venda; quando cai, exigir a mesma conversão de quem atende é cobrar por algo que ele não controla.'));
+    graf('ev-g-ideal', base(L,[ds('% ideal',S.map(function(g){return g.pctIdeal==null?null:+g.pctIdeal.toFixed(1);}),COR.purple,'linha')],{type:'line'}));
+    H.push('</div>');
+  }
+
+  /* ═══ 5 · MIX DE CATEGORIA E VENDEDOR ═══ */
+  var cats={}; S.forEach(function(g){ Object.keys(g.cats).forEach(function(k){ cats[k]=1; }); });
+  var catKeys=Object.keys(cats).sort();
+  var paleta=[COR.gold,COR.ice,COR.blue,COR.red,COR.purple,COR.green,'#FF8C1A','#C0C0C0'];
+  H.push('<div class="ev-grid2">');
+  H.push(cartao('ev-g-cat','RECEITA POR CATEGORIA','o que sustenta o faturamento em cada ciclo',
+    (function(){
+      var top=Object.keys(u.cats).sort(function(x,y){ return u.cats[y]-u.cats[x]; })[0];
+      var val=top?u.cats[top]:0;
+      return 'No último ciclo, <b>'+esc7(top||'—')+'</b> respondeu por '+brl0(val)+
+        (u.receita>0?(' — '+pct(val/u.receita*100)+' da receita'):'')+
+        '. Concentração alta numa categoria é força e risco ao mesmo tempo: força porque a operação sabe vender aquilo, risco porque uma falta de frota naquela linha derruba o mês inteiro. '
+        +'A leitura útil é comparar a altura das faixas entre ciclos: mudança de mix costuma vir antes da mudança de resultado.';
+    })()));
+  graf('ev-g-cat', base(L, catKeys.map(function(k,i){
+      return Object.assign(ds(k, S.map(function(g){ return Math.round(g.cats[k]||0); }), paleta[i%paleta.length]),{stack:'a'});
+    }), {options:{plugins:{legend:{display:true,labels:{color:'#9AB4CC',font:{size:11},boxWidth:12}}},
+      scales:{y:{stacked:true,beginAtZero:true,grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#9AB4CC',font:{size:11}}},
+              x:{stacked:true,grid:{display:false},ticks:{color:'#9AB4CC',font:{size:11}}}}}}));
+
+  var vends={}; S.forEach(function(g){ Object.keys(g.vends).forEach(function(k){ vends[k]=1; }); });
+  var vKeys=Object.keys(vends).sort();
+  H.push(cartao('ev-g-vend','RECEITA POR VENDEDOR','quem sustenta o número, ciclo a ciclo',
+    (function(){
+      var tot=vKeys.map(function(k){ return {k:k, v:S.reduce(function(a2,g){ return a2+(g.vends[k]||0); },0)}; })
+                   .sort(function(x,y){ return y.v-x.v; });
+      var soma=tot.reduce(function(a2,x){ return a2+x.v; },0);
+      var lider=tot[0];
+      var txt='Somando todos os ciclos, <b>'+esc7(lider.k)+'</b> responde por '+brl0(lider.v)
+        +(soma>0?(' — '+pct(lider.v/soma*100)+' de tudo o que a empresa faturou no período'):'')+'.';
+      if(soma>0 && lider.v/soma>0.6){
+        txt+='<br><br><b>Concentração acima de 60% num único vendedor é o dado mais importante desta tela.</b> '
+          +'Ela significa que o resultado da empresa hoje é, em boa parte, o resultado de uma pessoa — o que é uma força enquanto essa pessoa está, e um risco no dia em que não estiver. '
+          +'Quem sustenta número nessa proporção não está apenas vendendo: está segurando o padrão de atendimento, o relacionamento com a carteira e o conhecimento de operação que não está escrito em lugar nenhum. '
+          +'Reduzir essa concentração não é diminuir o papel de quem carrega — é transformar o que essa pessoa sabe em método reprodutível, que é exatamente o que as abas <b>Curso</b> e <b>Manual</b> existem para fazer.';
+      }
+      return txt;
+    })()));
+  graf('ev-g-vend', base(L, vKeys.map(function(k,i){
+      return Object.assign(ds(k, S.map(function(g){ return Math.round(g.vends[k]||0); }), paleta[i%paleta.length]),{stack:'v'});
+    }), {options:{plugins:{legend:{display:true,labels:{color:'#9AB4CC',font:{size:11},boxWidth:12}}},
+      scales:{y:{stacked:true,beginAtZero:true,grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#9AB4CC',font:{size:11}}},
+              x:{stacked:true,grid:{display:false},ticks:{color:'#9AB4CC',font:{size:11}}}}}}));
+  H.push('</div>');
+
+  /* ═══ 6 · ANTECEDÊNCIA E DESCONTO ═══ */
+  H.push('<div class="ev-grid2">');
+  H.push(cartao('ev-g-antec','ANTECEDÊNCIA MÉDIA','dias entre fechar a venda e entregar o carro',
+    'Este número decide <b>quando anunciar</b>. Se a antecedência média é de '
+    +(u.antecedencia==null?'—':n1(u.antecedencia))+' dias, a campanha que precisa encher dezembro tem de estar no ar '
+    +(u.antecedencia==null?'com essa antecedência':('cerca de '+Math.round(u.antecedencia/30)+' mês(es) antes'))+'. '
+    +'Antecedência caindo é sinal de venda de última hora: aperta a operação, reduz o poder de negociação e aumenta a chance de não haver frota.'));
+  graf('ev-g-antec', base(L,[ds('Dias de antecedência',S.map(function(g){return g.antecedencia==null?null:+g.antecedencia.toFixed(1);}),COR.blue,'linha')],{type:'line'}));
+
+  H.push(cartao('ev-g-desc','DESCONTO CONCEDIDO','% abatido sobre o valor de tabela',
+    'Desconto é renúncia direta de receita, e é a variável que a operação controla inteiramente. '
+    +'No último ciclo foram <b>'+pct(u.desconto)+'</b> — sobre a receita, isso equivale a '
+    +brl0(u.integral>0?(u.integral-u.receita):0)+' que deixaram de entrar. '
+    +'A pergunta certa não é "por que damos desconto", é "o desconto está comprando alguma coisa?" — mais diárias, pagamento à vista, indicação. Desconto sem contrapartida ensina o mercado que o preço era inventado.'));
+  graf('ev-g-desc', base(L,[ds('Desconto %',S.map(function(g){return g.desconto==null?null:+g.desconto.toFixed(1);}),COR.red,'linha')],{type:'line'}));
+  H.push('</div>');
+
+  /* ═══ 7 · A TABELA COMPLETA ═══ */
+  H.push('<div class="card ev-card"><div class="card-title">📋 TODOS OS CICLOS, TODOS OS NÚMEROS</div>'
+    +'<div class="card-sub">A base de tudo o que está acima. Ciclo da empresa, dia 13 ao dia 12.</div>'
+    +'<div class="or-tabwrap"><table class="or-tab"><thead><tr>'
+    +'<th>CICLO</th><th>RECEITA</th><th>RESERVAS</th><th>TICKET</th><th>DIÁRIAS</th><th>D/RESERVA</th>'
+    +'<th>DIÁRIA MÉDIA</th><th>COTAÇÕES</th><th>CONVERSÃO</th><th>% IDEAL</th><th>ANTEC.</th><th>DESCONTO</th>'
+    +'<th>CATEGORIA TOP</th></tr></thead><tbody>'
+    +S.map(function(g){
+      return '<tr><td class="or-mes-lbl">'+esc7(g.rotLongo)+'</td>'
+        +'<td class="or-num">'+brl0(g.receita)+'</td>'
+        +'<td class="or-num">'+n0(g.vendas)+'</td>'
+        +'<td class="or-num">'+brl0(g.ticket)+'</td>'
+        +'<td class="or-num">'+n0(g.diarias)+'</td>'
+        +'<td class="or-num">'+n1(g.diariasPorReserva)+'</td>'
+        +'<td class="or-num">'+(g.diariaMedia==null?'—':brl0(g.diariaMedia))+'</td>'
+        +'<td class="or-num">'+n0(g.cots)+'</td>'
+        +'<td class="or-num">'+pct(g.conv)+'</td>'
+        +'<td class="or-num">'+pct(g.pctIdeal)+'</td>'
+        +'<td class="or-num">'+(g.antecedencia==null?'—':n1(g.antecedencia)+'d')+'</td>'
+        +'<td class="or-num">'+pct(g.desconto)+'</td>'
+        +'<td>'+esc7(g.catTop)+'</td></tr>';
+    }).join('')
+    +'<tr class="ev-total"><td>TOTAL</td>'
+      +'<td class="or-num">'+brl0(S.reduce(function(a2,g){return a2+g.receita;},0))+'</td>'
+      +'<td class="or-num">'+n0(S.reduce(function(a2,g){return a2+g.vendas;},0))+'</td>'
+      +'<td class="or-num">'+brl0(S.reduce(function(a2,g){return a2+g.receita;},0)/Math.max(1,S.reduce(function(a2,g){return a2+g.vendas;},0)))+'</td>'
+      +'<td class="or-num">'+n0(S.reduce(function(a2,g){return a2+g.diarias;},0))+'</td>'
+      +'<td colspan="8"></td></tr>'
+    +'</tbody></table></div></div>');
+
+  /* ═══ 8 · A LEITURA ESCRITA ═══ */
+  H.push(leituraDiscursiva(S));
+
+  box.innerHTML=H.join('');
+  setTimeout(desenharTodos, 40);
+  var lbl=document.getElementById('ev-periodo');
+  if(lbl) lbl.textContent=S.length+' ciclo(s) · '+S[0].rotLongo+' a '+u.rotLongo;
+}
+
+/* ── a leitura em palavras ────────────────────────────────────────── */
+function leituraDiscursiva(S){
+  var u=S[S.length-1], a=S.length>1?S[S.length-2]:null;
+  var H=[];
+  H.push('<div class="card ev-card ev-discurso"><div class="card-title">🧭 O QUE MUDOU, E O QUE FAZER COM ISSO</div>'
+    +'<div class="card-sub">Leitura gerada dos números acima — não é texto fixo</div>');
+
+  if(!a){
+    H.push('<p>Há um ciclo só na base. A comparação começa a existir a partir do segundo — e é ela que transforma número em decisão.</p></div>');
+    return H.join('');
+  }
+
+  /* o que subiu e o que caiu */
+  var itens=[
+    {r:'receita', d:delta(u.receita,a.receita,true), v:brl0(u.receita)},
+    {r:'reservas', d:delta(u.vendas,a.vendas,true), v:n0(u.vendas)},
+    {r:'ticket médio', d:delta(u.ticket,a.ticket,true), v:brl0(u.ticket)},
+    {r:'diárias vendidas', d:delta(u.diarias,a.diarias,true), v:n0(u.diarias)},
+    {r:'conversão', d:(u.conv!=null&&a.conv!=null)?delta(u.conv,a.conv,true,true):null, v:pct(u.conv)},
+    {r:'carteira ideal', d:(u.pctIdeal!=null&&a.pctIdeal!=null)?delta(u.pctIdeal,a.pctIdeal,true,true):null, v:pct(u.pctIdeal)}
+  ].filter(function(x){ return x.d; });
+  var rel=function(x){ return Math.abs(x.d.v)>=(x.d.pontos?0.5:2); };
+  var subiu=itens.filter(function(x){ return x.d.bom&&rel(x); });
+  var caiu=itens.filter(function(x){ return !x.d.bom&&rel(x); });
+
+  H.push('<p><b>'+esc7(u.rotLongo)+' contra '+esc7(a.rotLongo)+':</b> '
+    +(subiu.length?('subiram '+subiu.map(function(x){ return x.r+' ('+n1(Math.abs(x.d.v))+(x.d.pontos?' p.p.':'%')+')'; }).join(', ')):'')
+    +(subiu.length&&caiu.length?'; ':'')
+    +(caiu.length?('caíram '+caiu.map(function(x){ return x.r+' ('+n1(Math.abs(x.d.v))+(x.d.pontos?' p.p.':'%')+')'; }).join(', ')):'')
+    +(!subiu.length&&!caiu.length?'nada se moveu de forma relevante — o ciclo repetiu o anterior':'')+'.</p>');
+
+  /* o diagnóstico cruzado */
+  var dRec=delta(u.receita,a.receita,true), dConv=(u.conv!=null&&a.conv!=null)?delta(u.conv,a.conv,true,true):null;
+  var dTick=delta(u.ticket,a.ticket,true), dRes=delta(u.vendas,a.vendas,true);
+  if(dRec&&dConv){
+    if(dRec.v>2&&dConv.v<-0.5){
+      H.push('<p class="ev-alerta"><b>Atenção ao cruzamento mais importante desta tela:</b> a receita subiu e a conversão caiu. '
+        +'Isso quer dizer que o mês foi salvo por <b>volume de cotação</b>, não por método. É o crescimento que não se sustenta: '
+        +'no primeiro mês em que a entrada de lead oscilar, o faturamento vai junto, e o comercial será cobrado por uma queda que começou no tráfego.</p>');
+    }else if(dRec.v<-2&&dConv.v>0.5){
+      H.push('<p class="ev-bom"><b>Cruzamento favorável mal interpretado:</b> a receita caiu, mas a conversão subiu. '
+        +'Está se vendendo <b>melhor</b> para menos gente. O gargalo aqui é de entrada, e é do tráfego — cobrar o comercial por essa queda seria ler o dado ao contrário.</p>');
+    }else if(dRec.v>2&&dConv.v>0.5){
+      H.push('<p class="ev-bom"><b>O melhor cruzamento possível:</b> receita e conversão subindo juntas. '
+        +'É crescimento por método, e é o único que resiste a uma queda de entrada de lead. O que estiver sendo feito diferente precisa ser escrito e repetido — antes de virar sorte na memória de alguém.</p>');
+    }
+  }
+  if(dTick&&dRes&&dTick.v<-2&&dRes.v>2){
+    H.push('<p class="ev-alerta"><b>Ticket caindo com reservas subindo:</b> está entrando mais cliente curto e de categoria menor. '
+      +'Volume compensando qualidade é o caminho contrário ao da meta de '+brl0(300000)+': para chegar lá por volume seriam necessárias '
+      +n0(Math.ceil(300000/Math.max(1,u.ticket)))+' reservas no mês, contra '+n0(u.vendas)+' hoje.</p>');
+  }
+
+  /* a distância até a meta */
+  var META=300000;
+  H.push('<p><b>Distância até a meta da empresa.</b> O último ciclo fechou em '+brl0(u.receita)+', ou '
+    +pct(u.receita/META*100)+' dos '+brl0(META)+'. Faltam <b>'+brl0(Math.max(0,META-u.receita))+'</b>. '
+    +'Pelo ticket atual isso são <b>'+n0(Math.ceil(Math.max(0,META-u.receita)/Math.max(1,u.ticket)))+' reservas a mais</b>; '
+    +'pela conversão atual'+(u.conv?(' de '+pct(u.conv)+', isso exigiria '+n0(Math.ceil(Math.ceil(Math.max(0,META-u.receita)/Math.max(1,u.ticket))/(u.conv/100)))+' cotações adicionais'):' — não medida, porque não há cotação registrada no ciclo')+'. '
+    +'A comparação entre esses dois caminhos é a decisão de investimento do mês: mais entrada, ou mais conversão.</p>');
+
+  /* concentração em uma pessoa */
+  var vendsTot={};
+  S.forEach(function(g){ Object.keys(g.vends).forEach(function(k){ vendsTot[k]=(vendsTot[k]||0)+g.vends[k]; }); });
+  var totGeral=Object.keys(vendsTot).reduce(function(x,k){ return x+vendsTot[k]; },0);
+  var ord=Object.keys(vendsTot).sort(function(x,y){ return vendsTot[y]-vendsTot[x]; });
+  if(ord.length && totGeral>0){
+    var lid=ord[0], part=vendsTot[lid]/totGeral*100;
+    H.push('<p><b>De quem depende o resultado.</b> No período inteiro, <b>'+esc7(lid)+'</b> responde por '+pct(part)+' da receita'
+      +(ord.length>1?(', contra '+pct(vendsTot[ord[1]]/totGeral*100)+' do segundo'):'')+'. ');
+    if(part>=60){
+      H.push('Uma concentração desse tamanho tem duas leituras, e as duas são verdadeiras ao mesmo tempo. '
+        +'A primeira é de mérito: sustentar essa fatia com preço acima do nicho e carteira majoritariamente fora do perfil ideal não é volume de trabalho, é padrão de atendimento — e o padrão está na cabeça de uma pessoa, não num documento. '
+        +'A segunda é de risco estrutural: a empresa hoje tem um único ponto de falha comercial, e ele é humano. '
+        +'A saída não é dividir a carteira, é <b>extrair o método</b>: transformar o que essa pessoa faz sem pensar em passos que outra pessoa consiga repetir. '
+        +'É exatamente para isso que existem as abas <b>Curso de Vendas</b> e <b>Manual de Vendas</b> — e é por isso que quem carrega o número precisa estar dentro da operação enquanto o método é escrito, e não só cobrando resultado dela.</p>');
+    }else{
+      H.push('A distribuição está razoavelmente equilibrada, o que reduz o risco de depender de uma pessoa só.</p>');
+    }
+  }
+
+  /* os três indicadores que decidem o próximo mês */
+  H.push('<div class="ev-acoes"><div class="ev-acoes-t">OS TRÊS NÚMEROS PARA OLHAR NO PRÓXIMO CICLO</div>'
+    +'<div class="ev-acao"><b>1 · Conversão dentro do perfil ideal</b><p>É a única métrica de venda que o comercial controla de fato. A conversão total carrega preço e qualidade de lead junto, e cobrar por ela é cobrar por decisão de outra área.</p></div>'
+    +'<div class="ev-acao"><b>2 · % de carteira ideal</b><p>É a régua do tráfego e do marketing. Se a verba subir e este número não se mover, o dinheiro comprou volume — e volume, no nosso posicionamento, dobra a recusa em vez de dobrar a venda.</p></div>'
+    +'<div class="ev-acao"><b>3 · Ticket médio</b><p>É a alavanca mais barata para os '+brl0(300000)+': cada '+brl0(500)+' de ticket a mais valem '+brl0(500*u.vendas)+' no ciclo, sem uma cotação adicional. Sobe por diárias mais longas e categoria maior.</p></div>'
+    +'</div>');
+
+  H.push('</div>');
+  return H.join('');
+}
+
+window.MGW_EVOL={ render:render, serie:serie };
+(function(){
+  var prev=window.onNavChange;
+  window.onNavChange=function(id){
+    if(typeof prev==='function'){ try{ prev(id); }catch(e){} }
+    if(id==='evolucao'){ try{ render(); }catch(e){ console.warn('[evolucao]',e); } }
+  };
+})();
+})();
+</script>
 
 <script id="mgw-curso-js">
 /* ═══════════════════════════════════════════════════════════════════
