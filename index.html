@@ -925,6 +925,10 @@ select.ffi option{background:#000020;color:#FF0000}
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
         Dashboard Cotações
       </div>
+      <div class="sb-item" onclick="nav('comparativo',this)">
+        <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l-4 3v10l4-3zm0 0l6 3V9L9 6v13zm6 3l4-3V6l-4 3v13z"></path></svg>
+        Cotações × Vendas <span class="sb-bdg" style="background:linear-gradient(135deg,#FC2877,#F2BA52);font-weight:900;color:#04101e">×</span>
+      </div>
       <div class="sb-item" onclick="nav('histresv',this)">
         <svg class="sb-ico" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
         Histórico Reservas
@@ -5723,6 +5727,127 @@ select.ffi option{background:#000020;color:#FF0000}
            O que não é do mês em vigência. Vem da aba 📦 HISTÓRICO da
            planilha, que é o arquivo dos meses já fechados. Mesmas
            colunas da aba Reservas, mesma leitura — muda só o recorte. -->
+      <!-- A aba Cotacoes x Vendas: o que foi cotado contra o que fechou.
+           Todo o codigo dela ja existia; o painel havia se perdido numa
+           reorganizacao da barra, e sem painel nada era desenhado. -->
+<div class="panel" id="panel-comparativo">
+<div style="padding:4px 0 0">
+  <!-- ═══ A VERDADE DE ABERTURA ═══ -->
+  <div class="cp-hero" id="cp-hero">
+    <div class="cp-hero-eyebrow">SEM RODEIOS</div>
+    <div class="cp-hero-n" id="cp-hero-n">—</div>
+    <div class="cp-hero-t" id="cp-hero-t">Carregando os números…</div>
+    <div class="cp-hero-s" id="cp-hero-s"></div>
+    <div class="cp-hero-pulse"></div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px;border-color:rgba(255,209,26,.28)">
+    <div class="card-title">O QUE COTAMOS × O QUE FECHAMOS</div>
+    <div class="card-sub">Cada quadro junta o mesmo assunto nos dois lados. Clique em qualquer gráfico para ampliar com a explicação.</div>
+    <div class="kpi-grid" id="cp-kpis" style="margin-top:14px"></div>
+  </div>
+
+  <div class="ch-grid2" style="margin-bottom:14px">
+    <div class="card"><div class="card-title">POR CATEGORIA — COTADO × FECHADO</div><div class="card-sub">onde o pedido vira venda e onde ele morre</div><div style="height:260px;position:relative"><canvas id="cp-cat"></canvas></div></div>
+    <div class="card"><div class="card-title">POR LOCAL — COTADO × FECHADO</div><div class="card-sub">o ponto de retirada muda a chance de fechar?</div><div style="height:260px;position:relative"><canvas id="cp-loc"></canvas></div></div>
+  </div>
+
+  <div class="ch-grid2" style="margin-bottom:14px">
+    <div class="card"><div class="card-title">POR MÊS — COTADO × FECHADO</div><div class="card-sub">volume lado a lado, em ordem crescente</div><div style="height:240px;position:relative"><canvas id="cp-mes"></canvas></div></div>
+    <div class="card"><div class="card-title">CONVERSÃO POR MÊS</div><div class="card-sub">% das cotações que viraram venda</div><div style="height:240px;position:relative"><canvas id="cp-conv"></canvas></div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px;border-color:rgba(26,255,157,.28)">
+    <div class="card-title">CLIENTE IDEAL × CLIENTE COMPLEXO</div>
+    <div class="card-sub" id="cp-def-sub">definição abaixo · muda o julgamento do time, então está escrita na tela</div>
+    <div class="cp-def" id="cp-def"></div>
+    <div class="ch-grid2" style="margin-top:14px">
+      <div class="card" style="background:transparent"><div class="card-title">COMPOSIÇÃO DA CARTEIRA</div><div class="card-sub">quanto do que chega é fácil e quanto é difícil</div><div style="height:230px;position:relative"><canvas id="cp-perfil"></canvas></div></div>
+      <div class="card" style="background:transparent"><div class="card-title">CONVERSÃO: IDEAL × COMPLEXO</div><div class="card-sub">a diferença de dificuldade, medida</div><div style="height:230px;position:relative"><canvas id="cp-perfil-conv"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ ÍNDICE DE CONTRACORRENTE ═══ -->
+  <div class="card cp-corrente cp-ampliar" id="cp-corrente-card" data-quadro="cp-corrente-card">
+    <div class="card-title">🌊 ÍNDICE DE CONTRACORRENTE</div>
+    <div class="card-sub">Quanta força o vendedor precisa fazer para vender aqui. 0 = a favor · 100 = tudo contra.</div>
+    <div class="cp-gauge-wrap">
+      <div class="cp-gauge"><canvas id="cp-gauge"></canvas><div class="cp-gauge-n" id="cp-gauge-n">—</div></div>
+      <div class="cp-forcas" id="cp-forcas"></div>
+    </div>
+    <div id="cp-corrente-txt"></div>
+  </div>
+
+  <!-- ═══ ESFORÇO POR VENDA ═══ -->
+  <div class="ch-grid2" style="margin-bottom:14px">
+    <div class="card"><div class="card-title">QUAL CATEGORIA CONVERTE</div><div class="card-sub">% do que foi cotado virou venda · a barra enche até o resultado</div><div style="height:250px;position:relative"><canvas id="cp-conv-cat"></canvas></div></div>
+    <div class="card"><div class="card-title">DIÁRIAS — COTADO × FECHADO</div><div class="card-sub">locação longa fecha mais que locação curta?</div><div style="height:250px;position:relative"><canvas id="cp-dias"></canvas></div></div>
+  </div>
+
+  <div class="ch-grid2" style="margin-bottom:14px">
+    <div class="card"><div class="card-title">ONDE O PEDIDO SE PERDE</div><div class="card-sub">cotado, e o que sobrou depois de cada filtro do cliente ideal</div><div style="height:250px;position:relative"><canvas id="cp-funil"></canvas></div></div>
+    <div class="card"><div class="card-title">EVOLUÇÃO DA CONVERSÃO</div><div class="card-sub">mês a mês, com linha de tendência</div><div style="height:250px;position:relative"><canvas id="cp-tend"></canvas></div></div>
+  </div>
+
+  <div class="ch-grid2" style="margin-bottom:14px">
+    <div class="card cp-ampliar" data-quadro="cp-esforco"><div class="card-title">O CUSTO DE UMA VENDA <span class="cp-lupa">⤢</span></div><div class="card-sub">quanto trabalho cabe dentro de cada fechamento</div><div id="cp-esforco"></div></div>
+    <div class="card cp-ampliar" data-quadro="cp-preco"><div class="card-title">PREÇO × MERCADO <span class="cp-lupa">⤢</span></div><div class="card-sub">de onde vem a resistência antes de o vendedor abrir a boca</div><div id="cp-preco"></div></div>
+  </div>
+
+  <!-- ═══ DESGASTE ═══ -->
+  <div class="card cp-desgaste cp-ampliar" data-quadro="cp-desgaste">
+    <div class="card-title">🧠 O QUE ISSO FAZ COM QUEM VENDE</div>
+    <div class="card-sub">Leitura do desgaste físico e psicológico a partir dos seus próprios números</div>
+    <div id="cp-desgaste"></div>
+  </div>
+
+  <!-- ═══ O IMPASSE ═══ -->
+  <div class="card cp-impasse cp-ampliar" data-quadro="cp-impasse">
+    <div class="card-title">⛓️ O IMPASSE — VENDEDOR, DIRETORIA E O LAÇO QUE SE ALIMENTA SOZINHO</div>
+    <div class="card-sub">Por que a discussão de preço não avança, por que o tráfego vira o culpado, e onde isso termina</div>
+    <div id="cp-impasse"></div>
+  </div>
+
+  <div class="card" id="cp-relatorio-card" style="border-color:rgba(255,0,0,.25)">
+    <div class="card-title" style="color:var(--fire)">📋 LEITURA DOS NÚMEROS — A FAVOR OU CONTRA O VENDEDOR?</div>
+    <div class="card-sub">Relatório gerado dos dados do período, sem opinião de fora</div>
+    <div id="cp-relatorio"></div>
+  </div>
+
+  <!-- ═══ ANÁLISE PELA IA ═══ -->
+  <div class="card cp-ia">
+    <div class="cp-ia-hd">
+      <div>
+        <div class="card-title">🤖 ANÁLISE DA IA</div>
+        <div class="card-sub">Leitura interpretativa dos mesmos números · gerada sob demanda</div>
+      </div>
+      <button class="tbtn tbtn-o" id="cp-ia-btn" onclick="cpAnaliseIA()">↻ Atualizar análise</button>
+    </div>
+    <div id="cp-ia-txt" class="cp-ia-txt">
+      <span class="cp-ia-vazio">Clique em <b>Atualizar análise</b> quando quiser uma leitura nova — por exemplo depois de um mês fechado, de uma mudança de preço ou da compra de carros.</span>
+    </div>
+    <div class="cp-ia-rodape" id="cp-ia-rodape"></div>
+  </div>
+
+  <!-- ═══ O QUE ISSO COBRA EM 12 MESES ═══
+       O desgaste olha para hoje; o impasse, para o sistema. Faltava o
+       eixo do TEMPO: nada aqui explode de uma vez, e é justamente por
+       isso que passa despercebido até ser tarde. -->
+  <div class="card cp-longo cp-ampliar" data-quadro="cp-longo" style="margin-bottom:14px;border-color:rgba(255,0,0,.3)">
+    <div class="card-title">⏳ O QUE ISSO COBRA EM 12 MESES</div>
+    <div class="card-sub">Nada aqui acontece de uma vez — e é por isso que não se vê acontecer</div>
+    <div id="cp-longo"></div>
+  </div>
+
+  <!-- ═══ PLANO DE AÇÃO ═══ -->
+  <div class="card cp-plano cp-ampliar" data-quadro="cp-plano">
+    <div class="card-title">🎯 PLANO DE AÇÃO</div>
+    <div class="card-sub">Ordenado por quanto alivia o vendedor dividido por quanto custa fazer</div>
+    <div id="cp-plano"></div>
+  </div>
+</div>
+      </div>
+      
       <div class="panel" id="panel-histresv">
         <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">HISTÓRICO DE RESERVAS</span><div class="sec-line"></div></div>
         <div class="mgrsv-toolbar">
@@ -5821,11 +5946,12 @@ select.ffi option{background:#000020;color:#FF0000}
           <div class="card-sub">Quem traz volume e quem traz margem nem sempre é a mesma pessoa.</div>
           <div class="mgrsv-tablewrap"><table class="mgrsv-table"><thead id="rt-vend-head"></thead><tbody id="rt-vend-body"></tbody></table></div>
         </div>
-        <div class="card">
+        <div class="card" style="margin-bottom:14px">
           <div class="card-title">ANTECEDÊNCIA — DA VENDA À RETIRADA</div>
           <div class="card-sub">Quantos dias entre fechar e entregar o carro. Curto demais aperta a operação; longo demais é dinheiro parado esperando.</div>
           <div class="mgrsv-tablewrap"><table class="mgrsv-table"><thead id="rt-ant-head"></thead><tbody id="rt-ant-body"></tbody></table></div>
         </div>
+        <div id="rt-extra"></div>
       </div>
 
 
@@ -8968,6 +9094,7 @@ const NAV={
   analitico:['ANÁLISE AVANÇADA','Métricas calculadas'],
   historico:['HISTÓRICO DE COTAÇÕES','Todas as cotações registradas automaticamente'],
   dashcot:['DASHBOARD COTAÇÕES','KPIs e análise completa das cotações geradas'],
+  comparativo:['COTAÇÕES × VENDAS','O que foi cotado contra o que fechou · por que tanta cotação vira tão pouca venda · e o que isso cobra da equipe'],
   histresv:['HISTÓRICO DE RESERVAS','Reservas de outros meses · a aba 📦 HISTÓRICO da planilha'],
   orienta:['ORIENTAÇÕES & MÉTODO','O que marketing, tráfego e gestão precisam fazer · o mês contra o anterior · e o método de venda, passo a passo'],
   curso:['CURSO · NEUROCIÊNCIA DA VENDA','14 módulos com referências, evidência, limites e aplicação — o método explicado por dentro'],
@@ -22361,10 +22488,11 @@ window.onNavChange = (function(){
     if(id==='analitico'){analiticoInited=false;initAnalitico();}
     if(id==='historico')renderHistorico();
     if(id==='dashcot'){renderDashCot();}
+    if(id==='comparativo'){ try{ renderComparativo(); }catch(e){ console.warn('[comparativo]',e); } }
     /* Cotação é o dado que mais muda entre computadores. Ao ABRIR qualquer
        tela que a mostra, busca a nuvem na hora em vez de esperar o ciclo de
        60 segundos — assim o histórico está certo quando você olha para ele. */
-    if(id==='historico'||id==='dashcot'||id==='cotacao'){
+    if(id==='historico'||id==='dashcot'||id==='cotacao'||id==='comparativo'){
       try{ if(window.MGW_LIVE&&MGW_LIVE.puxar) MGW_LIVE.puxar(true); }catch(e){}
     }
     if(id==='dashboard'){dashInited=false;initDashboard();renderDashVendas();
@@ -30744,6 +30872,28 @@ function cpxRender(soRedesenhar){
 }
 window.MGW_CPX_RENDER=cpxRender;
 
+/* A aba lê DUAS bases: as cotações e as reservas. As reservas chegam da
+   planilha depois do login, e quem abrisse a aba antes de elas chegarem via
+   a manchete "nenhuma virou venda ainda" — verdadeira para o instante,
+   falsa para o mês. Então, quando a base de reservas muda e a aba está na
+   tela, ela se redesenha sozinha. Fora da tela não redesenha nada: seria
+   trabalho jogado fora e ainda por cima com o canvas sem tamanho. */
+(function(){
+  var anterior=window.mgwAposReservas;
+  var pendente=null;
+  window.mgwAposReservas=function(){
+    if(typeof anterior==='function'){ try{ anterior.apply(this,arguments); }catch(e){ console.warn('[cpx] handler anterior',e); } }
+    var painel=document.getElementById('panel-comparativo');
+    if(!painel||!painel.classList.contains('active')) return;
+    if(pendente) clearTimeout(pendente);
+    pendente=setTimeout(function(){
+      pendente=null;
+      try{ if(typeof window.renderComparativo==='function') window.renderComparativo(); }
+      catch(e){ console.warn('[cpx] redesenho',e); }
+    }, 300);
+  };
+})();
+
 /* Entra depois do renderComparativo, que é quem calcula _cpUltimo — sem
    ele o relatório abriria zerado na primeira visita à aba. */
 (function(){
@@ -31838,6 +31988,350 @@ window.MGW_CURSO_B=[
 }
 ];
 
+/* ═══════════════════════════════════════════════════════════════════
+   CURSO — MÓDULOS 15 a 22 · a camada de comportamento
+   ───────────────────────────────────────────────────────────────────
+   Os catorze primeiros explicam a decisão. Estes oito explicam o que
+   acontece ANTES e DEPOIS dela: como a atenção é conquistada, como a
+   dúvida se forma, o que o silêncio significa, e por que a mesma
+   pessoa compra num dia e não compra no outro.
+   ═══════════════════════════════════════════════════════════════════ */
+window.MGW_CURSO_C=[
+
+{id:'m15', n:15, eixo:'Atenção',
+ t:'Os primeiros sete segundos de uma mensagem',
+ sub:'Por que a maioria das propostas nunca é lida até o fim',
+ tempo:'25 min',
+ porque:'A proposta perfeita que não é lida vale zero. Em atendimento por WhatsApp, a disputa não é contra o concorrente — é contra o polegar do cliente, que rola a tela. Este módulo é sobre não ser rolado.',
+ teoria:[
+  {h:'Carga cognitiva — Sweller (1988)',
+   p:'A memória de trabalho processa poucos elementos de cada vez. Quando uma mensagem exige mais do que isso, a pessoa não processa metade: ela <b>abandona</b>. A carga que atrapalha é a <b>estranha</b> — a que vem da forma de apresentar, não do conteúdo. Bloco de texto sem quebra, cinco perguntas numa mensagem só, valor no meio de um parágrafo: tudo isso é carga estranha, e toda ela pode ser eliminada sem tirar uma informação sequer.',
+   ref:'Sweller, J. (1988). Cognitive load during problem solving: Effects on learning. Cognitive Science, 12(2), 257-285.'},
+  {h:'Fluência de processamento — Alter e Oppenheimer (2009)',
+   p:'Informação fácil de processar é julgada como <b>mais verdadeira, mais familiar e menos arriscada</b> — independentemente do conteúdo. O efeito aparece com fonte legível, frase curta, palavra comum e até com nome fácil de pronunciar.<br><br>Para nós isso é direto: a proposta clara não parece só mais organizada, ela parece <b>mais confiável</b>. E confiança é o eixo em que empresa pequena precisa ganhar.',
+   ref:'Alter, A., & Oppenheimer, D. (2009). Uniting the Tribes of Fluency to Form a Metacognitive Nation. Personality and Social Psychology Review, 13(3), 219-235.'}
+ ],
+ evidencia:'Em estudos de fluência, instruções apresentadas em fonte difícil de ler foram avaliadas como exigindo mais tempo e esforço do que as mesmas instruções em fonte legível — a diferença estava só na forma. Em outra linha de experimentos, ações com nomes mais fáceis de pronunciar tiveram desempenho superior nos primeiros dias de negociação em bolsa, um efeito sem qualquer fundamento econômico.',
+ limite:'Fluência produz sensação de verdade, não verdade. É por isso que ela é uma faca de dois gumes: a mesma clareza que faz uma proposta honesta parecer confiável faz uma proposta enganosa parecer confiável também. O uso legítimo é remover atrito de compreensão — nunca criar impressão que o conteúdo não sustenta. E há limite: simplificar ao ponto de omitir taxa ou condição não é fluência, é omissão.',
+ aplicacao:[
+  'Uma ideia por mensagem. Se precisa de duas, são duas mensagens.',
+  'Primeira linha carrega o essencial: quem fala e o que vem a seguir.',
+  'Valor sempre em linha própria, nunca no meio de um parágrafo.',
+  'Emoji como marcador de seção, não como decoração — três no máximo por mensagem.',
+  'Frases de até 20 palavras. Quando passar, quebre em duas.',
+  'Nada de "conforme solicitado", "venho por meio desta", "prezado cliente".'
+ ],
+ scripts:[
+  'Oi {nome}! 😊 Aqui é o {vendedor}, da Magiway.\n\nVou cuidar do carro de vocês em Orlando do começo ao fim.\n\nMe conta: vocês vão em quantos e por quantos dias?',
+  '{nome}, montei sua proposta 👇\n\n🚗 {categoria}\n📅 {dias} diárias · {dataIn} a {dataOut}\n\n💰 {valor}\n\nJá com seguro total, zero caução e suporte em português. Te explico cada um?'
+ ],
+ erros:[
+  'Mandar um parágrafo de oito linhas com tudo dentro.',
+  'Fazer cinco perguntas numa mensagem só.',
+  'Abrir com o nome da empresa em vez do seu.'
+ ],
+ exercicio:'Pegue sua última proposta enviada e reescreva com a regra de uma ideia por linha. Conte os caracteres antes e depois — a redução costuma passar de 40% sem perder nenhuma informação.',
+ grafico:{tipo:'barra', t:'Leitura completa por formato de mensagem',
+   sub:'% que chega até o fim da proposta',
+   labels:['Parágrafo corrido','Texto com quebras','Lista com emoji-marcador','Lista + valor em linha própria'],
+   vals:[27,49,72,88], cor:'#3B9EFF',
+   exp:'Ilustra o efeito da carga cognitiva estranha sobre a leitura. A informação é a mesma nas quatro barras — muda só a forma. Cada quebra de linha, cada marcador e cada número isolado reduz o esforço de processar, e esforço de processar é o que faz o polegar rolar a tela.'}
+},
+
+{id:'m16', n:16, eixo:'Atenção',
+ t:'O tempo de resposta é um argumento de venda',
+ sub:'O que o silêncio de duas horas comunica sem você dizer nada',
+ tempo:'20 min',
+ porque:'É a variável mais barata de todas — não custa desconto, não custa margem, não custa frota — e é a que mais separa quem fecha de quem não fecha numa operação de WhatsApp.',
+ teoria:[
+  {h:'Atribuição de intenção pelo tempo',
+   p:'Diante de uma demora sem explicação, a pessoa preenche o vazio com uma <b>hipótese</b>, e a hipótese raramente favorece quem demorou. "Estão ocupados demais para mim", "empresa pequena não dá conta", "se demoram agora, imagina se der problema lá". Nada disso é dito; tudo isso é concluído.<br><br>Para uma marca cara, é fatal: o preço alto cria uma expectativa de serviço, e a demora é a primeira evidência contra ela.'},
+  {h:'Janela de intenção',
+   p:'A intenção de compra tem meia-vida curta. Quem pede um orçamento está, naquele momento, com a viagem na cabeça — e provavelmente pediu para três empresas. Uma hora depois está em outra tarefa; um dia depois, já formou opinião com quem respondeu antes.<br><br>Isso não exige estudo para ser verificado: basta comparar a conversão das cotações respondidas em minutos com a das respondidas em horas, o que é um teste que a operação pode rodar sozinha.'}
+ ],
+ evidencia:'A recomendação prática mais robusta desta área é comparativa e vem da própria operação: separe as cotações do último trimestre em respondidas em até 15 minutos, até 2 horas e depois disso, e compare a conversão dos três grupos. Em quase toda operação de venda consultiva por mensagem a diferença é grande o suficiente para reorganizar a rotina — e é um dado que ninguém pode contestar, porque é da casa.',
+ limite:'Rápido não substitui bom. Resposta imediata e genérica converte pior que resposta em vinte minutos com o nome da pessoa e a preocupação dela endereçada. O objetivo não é velocidade: é <b>não deixar vazio</b>. Uma mensagem curta avisando que a proposta vem em vinte minutos resolve o problema do vazio sem exigir a proposta pronta.',
+ aplicacao:[
+  'Primeira resposta em minutos, sempre — mesmo que seja só para dizer que a proposta vem.',
+  'Nunca deixar a pessoa sem retorno por mais de duas horas em horário comercial.',
+  'Fora do horário, responder com o horário em que a proposta chega. Prazo dito é prazo cumprido.',
+  'Se atrasar, avisar ANTES de o cliente cobrar. Atraso comunicado é contratempo; atraso descoberto é descaso.',
+  'Medir o tempo até a primeira resposta como indicador do comercial — é dele, e ele controla.'
+ ],
+ scripts:[
+  'Oi {nome}! Recebi sua mensagem 👍 Já estou montando sua proposta — te mando em uns 20 minutos com tudo detalhado.',
+  'Oi {nome}! Vi agora sua mensagem. Já é tarde por aqui, mas amanhã às 8h te mando tudo prontinho. Pode ser?',
+  '{nome}, prometi pras 10h e vou atrasar uns 30 minutos — estou conferindo disponibilidade de minivan pro seu período. Já te falo.'
+ ],
+ erros:[
+  'Deixar a mensagem "lida" sem responder.',
+  'Prometer prazo e não cumprir sem avisar.',
+  'Responder rápido e genérico só para marcar presença.'
+ ],
+ exercicio:'Meça, nos próximos 20 atendimentos, o tempo entre a mensagem do cliente e a sua primeira resposta. Compare a conversão dos que responderam em até 15 minutos com a dos demais. É o experimento mais barato deste curso, e o que mais muda rotina.',
+ grafico:{tipo:'linha', t:'Conversão por tempo até a primeira resposta',
+   sub:'formato típico da curva em venda consultiva por mensagem',
+   labels:['até 5 min','15 min','1 hora','3 horas','1 dia','2 dias+'],
+   vals:[100,88,61,38,17,6], cor:'#FF2D2D',
+   exp:'Curva ilustrativa, com o primeiro ponto como referência 100. O formato é o que importa: a queda mais íngreme acontece <b>na primeira hora</b>, não no primeiro dia. É por isso que a meta de tempo de resposta se mede em minutos, e é por isso que este é o indicador mais barato de melhorar — não custa desconto, não custa margem, não custa frota.'}
+},
+
+{id:'m17', n:17, eixo:'Dúvida',
+ t:'Como a objeção se forma antes de ser dita',
+ sub:'O que "vou pensar" está escondendo, e como descobrir',
+ tempo:'30 min',
+ porque:'A objeção que chega verbalizada é a ponta. Embaixo dela existe uma dúvida que se formou minutos antes, e que quase sempre é outra. Responder à ponta é o erro mais comum do vendedor experiente.',
+ teoria:[
+  {h:'Dissonância e a decisão adiada — Festinger (1957)',
+   p:'Quando duas ideias incompatíveis convivem — "quero muito esse carro" e "esse valor é alto para mim" —, o desconforto empurra a pessoa a resolver a tensão. Resolver pode ser comprar e se justificar, ou <b>adiar</b>, que é a saída mais barata: adiar elimina o desconforto sem exigir decisão.<br><br>"Vou pensar" quase nunca é intenção de pensar. É alívio de dissonância.',
+   ref:'Festinger, L. (1957). A Theory of Cognitive Dissonance. Stanford University Press.'},
+  {h:'Custo de errar × custo de não decidir',
+   p:'Diante de risco percebido, o cérebro compara dois custos: o de escolher errado e o de não escolher. Adiar tem custo aparente zero — a pessoa não perde nada hoje. Trazer o custo real do adiamento para a superfície (a minivan que some, o preço que sobe, a viagem que aperta) é o que reequilibra a conta.<br><br>A condição: esse custo tem de ser <b>verdadeiro</b>. Custo inventado, quando descoberto, destrói o eixo de confiança do módulo 2 e não volta.'}
+ ],
+ evidencia:'A observação prática que sustenta este módulo é a taxa de resposta da pergunta de desempate. Quando, depois de "vou pensar", o vendedor pergunta "é o valor, a data ou o carro?", uma parte grande dos clientes responde — e a resposta quase nunca é a que o vendedor supunha. Objeção suposta e objeção real coincidem menos do que a intuição sugere.',
+ limite:'Nem toda objeção esconde outra. Às vezes o valor é o valor mesmo, e insistir em procurar a "objeção real" vira interrogatório. A regra: <b>uma</b> pergunta de desempate. Se a resposta for clara, trate-a. Se não vier, aceite e combine o retorno — insistir depois disso converte "não agora" em "não nunca".',
+ aplicacao:[
+  'Depois de "vou pensar", uma pergunta e só uma: "é o valor, a data ou o carro?".',
+  'Ouvir a resposta sem defender nada. Defesa imediata confirma que havia o que defender.',
+  'Se a objeção for de valor, não baixar preço na hora — perguntar "caro comparado com o quê?".',
+  'Se for de data, resolver com flexibilidade: reserva sem compromisso, valor travado.',
+  'Se for de carro, é a mais fácil das três: mostrar a alternativa.',
+  'Sempre combinar o retorno. Sem combinar, o retorno não acontece.'
+ ],
+ scripts:[
+  'Claro, pensa com calma. Só me tira uma dúvida pra eu não ficar no escuro: é o valor, a data ou o carro que ficou em aberto?',
+  'Perfeito. Tem alguma coisa que eu não expliquei direito e ficou martelando?',
+  'Combinado. Te chamo {dia} pra saber, pode ser? Se decidir antes, é só me mandar mensagem.'
+ ],
+ erros:[
+  'Responder ao "está caro" baixando o preço na mesma mensagem.',
+  'Fazer três perguntas de desempate seguidas.',
+  'Encerrar sem combinar o retorno.'
+ ],
+ exercicio:'Anote, nos próximos 10 "vou pensar", qual você supôs que era a objeção e qual o cliente disse quando perguntado. A taxa de acerto costuma surpreender — e é o argumento para sempre perguntar.',
+ grafico:{tipo:'barra', t:'O que está por trás de "vou pensar"',
+   sub:'distribuição típica das respostas à pergunta de desempate',
+   labels:['Valor','Data / disponibilidade','Precisa falar com alguém','Não confia ainda','Carro / categoria'],
+   vals:[34,22,19,17,8], cor:'#FFD11A',
+   exp:'Distribuição ilustrativa das objeções reais. O ponto do gráfico não são os percentuais exatos: é que <b>duas em cada três vezes a objeção não é preço</b> — e o vendedor que assume preço por padrão responde à pergunta errada em dois terços dos casos, gastando desconto onde faltava confiança ou flexibilidade de data.'}
+},
+
+{id:'m18', n:18, eixo:'Dúvida',
+ t:'Risco percebido e o que reduz cada tipo',
+ sub:'Cinco medos diferentes, cinco respostas diferentes',
+ tempo:'25 min',
+ porque:'Alugar carro a 8 mil km de casa, com a família junto, numa empresa que a pessoa nunca ouviu falar, pagando antes de ver: é um dos contextos de maior risco percebido do varejo brasileiro. Saber qual risco está em jogo muda a resposta.',
+ teoria:[
+  {h:'As dimensões do risco percebido — Jacoby e Kaplan (1972)',
+   p:'O risco de uma compra não é um bloco só. Ele se decompõe em dimensões, e cada uma se reduz por um caminho diferente:<br><br>'
+     +'• <b>Financeiro</b> — "vou perder meu dinheiro". Reduz-se com contrato antes do pagamento, CNPJ, pagamento rastreável.<br>'
+     +'• <b>De desempenho</b> — "o carro não vai ser o que prometeram". Reduz-se com foto, modelo específico, garantia de categoria.<br>'
+     +'• <b>Físico</b> — "pode ser inseguro". Reduz-se com seguro total, carro reserva, assistência.<br>'
+     +'• <b>Social</b> — "vou passar vergonha com a família". Reduz-se com prova social de gente parecida.<br>'
+     +'• <b>Psicológico</b> — "vou me sentir burro por ter caído nisso". Reduz-se com transparência e com a possibilidade de sair.<br>'
+     +'• <b>De tempo</b> — "se der errado, perco dias da viagem". Reduz-se com suporte 24h e prazo de resolução.',
+   ref:'Jacoby, J., & Kaplan, L. (1972). The components of perceived risk. Advances in Consumer Research, 3(3), 382-393.'},
+  {h:'Risco cresce com a distância e com a irreversibilidade',
+   p:'Quanto mais longe do lugar onde a pessoa tem recurso — família, advogado, Procon, o próprio idioma —, maior o risco percebido de cada dimensão. E quanto mais irreversível a decisão, maior ainda: uma viagem marcada não se remarca de graça.<br><br>É por isso que a mesma pessoa que compra um celular pela internet sem pensar trava para alugar um carro em Orlando.'}
+ ],
+ evidencia:'A aplicação prática é diagnóstica: a objeção que o cliente verbaliza indica qual dimensão está ativa. "E se vocês sumirem?" é financeiro. "O carro é novo?" é desempenho. "É seguro dirigir lá?" é físico. "Meu amigo teve problema" é social e psicológico junto. Responder com a redução da dimensão errada não resolve — é o que faz uma resposta correta parecer não ter sido ouvida.',
+ limite:'Reduzir risco percebido não é eliminar risco real. Se a operação de fato não tem carro reserva num domingo, prometer que tem é criar a decepção que vai gerar a avaliação ruim. A regra deste curso vale aqui inteira: só se promete o que a operação entrega — e onde ela não entrega, o caminho é dizer, não maquiar.',
+ aplicacao:[
+  'Identificar a dimensão pela objeção verbalizada, antes de responder.',
+  'Financeiro: contrato antes do pagamento, CNPJ, conta da empresa. Sempre nessa ordem.',
+  'Desempenho: foto do carro, categoria garantida, o que acontece se faltar o modelo.',
+  'Físico e de tempo: seguro total, carro reserva, suporte 24h em português com pessoa.',
+  'Social: depoimento de perfil igual ao dele — família com filhos da mesma idade, mesma cidade.',
+  'Psicológico: dar a saída. "Sem compromisso até assinar" reduz mais medo do que qualquer garantia.'
+ ],
+ scripts:[
+  'Você recebe o contrato com os dados da empresa e assina digitalmente. Só depois disso entra pagamento, e sempre em nome da empresa — nunca em conta de pessoa física.',
+  'Se faltar o modelo exato, você recebe um da mesma categoria ou superior, sem custo. Isso está no contrato, não é promessa de conversa.',
+  'Te mando o depoimento de uma família de {cidade} que foi em {mês} com crianças da idade das suas.',
+  'Você assina e, se surgir qualquer coisa até {prazo}, a gente ajusta ou cancela sem multa. Não é uma porta que fecha.'
+ ],
+ erros:[
+  'Responder a medo de golpe com "confia em mim".',
+  'Responder a medo de desempenho com prova social — são dimensões diferentes.',
+  'Prometer o que a operação não entrega para reduzir risco na conversa.'
+ ],
+ exercicio:'Classifique as últimas 15 objeções que você recebeu nas seis dimensões. A que aparecer mais é a que o seu material de venda deveria atacar antes de a pergunta existir.',
+ grafico:{tipo:'barra', t:'Dimensões do risco no nosso contexto',
+   sub:'peso relativo em locação para brasileiro em Orlando',
+   labels:['Financeiro','De tempo','Desempenho','Psicológico','Social','Físico'],
+   vals:[92,78,64,58,41,33], cor:'#FF6B78',
+   exp:'Peso relativo estimado de cada dimensão no nosso contexto específico: compra antecipada, à distância, em outro país e em outra língua. O <b>financeiro</b> domina porque se paga antes de receber, e o <b>de tempo</b> vem logo atrás porque o problema, se acontecer, come dias de uma viagem que custou caro. Nossa lista de inclusos ataca justamente esses dois — e é por isso que ela vem antes do preço.'}
+},
+
+{id:'m19', n:19, eixo:'Relacionamento',
+ t:'Reciprocidade: dar antes de pedir',
+ sub:'Por que informação entregue de graça volta em venda',
+ tempo:'20 min',
+ porque:'Numa operação cara, o vendedor precisa de licença para conduzir a conversa. Reciprocidade compra essa licença — e é a única forma de influência deste curso que funciona melhor quanto mais sincera for.',
+ teoria:[
+  {h:'A norma da reciprocidade — Gouldner (1960)',
+   p:'Receber algo cria obrigação de retribuir. É uma norma social presente em praticamente todas as culturas documentadas, e opera <b>mesmo quando o presente não foi pedido</b> e mesmo quando quem recebe não gosta de quem deu.<br><br>Em vendas, isso significa que a informação útil entregue antes de qualquer compromisso não é gasto: é investimento com retorno assimétrico.',
+   ref:'Gouldner, A. (1960). The Norm of Reciprocity: A Preliminary Statement. American Sociological Review, 25(2), 161-178.'},
+  {h:'Reciprocidade e o efeito do favor não pedido',
+   p:'Estudos clássicos de Regan mostraram que um pequeno favor espontâneo aumentou substancialmente a probabilidade de a pessoa comprar depois — e o efeito não dependia de ela simpatizar com quem fez o favor. A obrigação social operou por fora da simpatia.',
+   ref:'Regan, D. (1971). Effects of a favor and liking on compliance. Journal of Experimental Social Psychology, 7(6), 627-639.'}
+ ],
+ evidencia:'No experimento de Regan, participantes que receberam um refrigerante não solicitado compraram, em média, cerca do <b>dobro</b> de bilhetes de rifa em comparação aos que não receberam nada. O valor do refrigerante era uma fração do valor dos bilhetes comprados a mais.',
+ limite:'Reciprocidade com cobrança embutida deixa de ser reciprocidade e vira constrangimento — e o constrangimento é lembrado com ressentimento. "Já que eu te mandei tudo isso..." destrói o efeito que a entrega criou. O dar tem de ser genuinamente sem condição: quem entrega esperando retorno explícito comunica isso, e a pessoa percebe.',
+ aplicacao:[
+  'Mandar o passo a passo da retirada mesmo para quem ainda não fechou.',
+  'Dar informação útil sobre a viagem que não tem nada a ver com carro: pedágio, estacionamento de parque, horário de pico.',
+  'Comparar honestamente com o concorrente, inclusive quando a comparação não nos favorece.',
+  'Nunca cobrar o favor, nem por insinuação.',
+  'Se o cliente não vai fechar, entregar mesmo assim. É o que gera indicação e retorno futuro.'
+ ],
+ scripts:[
+  'Vou te mandar o passo a passo da retirada mesmo que você não feche com a gente — é informação que ajuda de qualquer jeito.',
+  'Uma dica que vale pra sua viagem independente de onde você alugue: em {mês} o trânsito na saída dos parques fica pesado depois das 18h. Sair 30 minutos antes economiza uma hora.',
+  'Se o seu orçamento está fechado nesse valor, prefiro te falar com honestidade: a gente não chega lá. Melhor eu dizer agora do que você descobrir depois.'
+ ],
+ erros:[
+  'Entregar e cobrar, ainda que sutilmente.',
+  'Entregar só para quem parece que vai fechar.',
+  'Transformar a entrega em pretexto para nova abordagem de venda na mesma mensagem.'
+ ],
+ exercicio:'Escolha três informações genuinamente úteis sobre viajar a Orlando de carro e monte um pequeno guia. Mande para os próximos 10 leads, sem condição nenhuma. Compare a taxa de resposta com a dos 10 anteriores.',
+ grafico:{tipo:'barra', t:'Taxa de resposta depois de um favor sem contrapartida',
+   sub:'esquema do experimento de Regan (1971) e do que vemos no atendimento',
+   labels:['sem favor prévio','favor não solicitado','favor + pedido no mesmo texto'],
+   vals:[100,187,96], cor:'#1FA9A6',
+   exp:'Números em índice, tomando como 100 o grupo que não recebeu nada. No experimento clássico, quem recebeu um refrigerante não pedido comprou quase o dobro de rifas de quem não recebeu — e o efeito <b>não dependia de gostar</b> de quem deu. A terceira barra é o alerta: quando a entrega vem colada ao pedido, ela deixa de ser um favor e vira preço, e o ganho desaparece. <b>Entregue e cale. O pedido vem depois, em outra mensagem.</b>'}
+},
+
+{id:'m20', n:20, eixo:'Relacionamento',
+ t:'Coerência: o poder do pequeno sim',
+ sub:'Por que a venda avança em passos e não em saltos',
+ tempo:'25 min',
+ porque:'Este módulo explica a arquitetura inteira do método: por que sete passos e não um pedido direto. Cada passo é um compromisso pequeno, e compromissos pequenos mudam o comportamento seguinte.',
+ teoria:[
+  {h:'Compromisso e coerência — Cialdini, a partir de Freedman e Fraser (1966)',
+   p:'Depois de aceitar um pedido pequeno, a pessoa fica muito mais propensa a aceitar um pedido maior no mesmo sentido — o efeito conhecido como "pé na porta". A explicação: o primeiro sim altera a autoimagem ("sou o tipo de pessoa que colabora com isso"), e o comportamento seguinte se alinha a essa imagem.',
+   ref:'Freedman, J., & Fraser, S. (1966). Compliance without pressure: the foot-in-the-door technique. Journal of Personality and Social Psychology, 4(2), 195-202.'},
+  {h:'Compromisso ativo vale mais que passivo',
+   p:'Compromisso que a pessoa <b>escreve, diz ou escolhe</b> pesa mais do que compromisso que ela apenas não recusou. Por isso "é isso mesmo?" no passo 3 do método não é confirmação burocrática: é o cliente afirmando ativamente o que quer, e essa afirmação passa a orientar o que ele faz depois.'}
+ ],
+ evidencia:'No estudo de Freedman e Fraser, donos de casa que primeiro aceitaram colar um adesivo pequeno na janela concordaram em seguida, em proporção muito maior, em instalar um cartaz grande e feio no jardim — comparados a quem recebeu só o pedido grande. O pedido pequeno anterior mais que triplicou a aceitação do grande.',
+ limite:'A técnica é a mesma usada em manipulação de rua, e a diferença é inteiramente de <b>intenção</b>. Pequenos sins que conduzem a pessoa para onde ela quer ir são condução; pequenos sins que a conduzem para onde ela não quer ir são armadilha, e passam a fatura depois — em cancelamento, em avaliação ruim, em cliente que não volta. O teste do arrependimento do módulo 14 resolve todo caso duvidoso.',
+ aplicacao:[
+  'Cada passo do método pede um compromisso menor que o seguinte.',
+  '"Me conta a viagem" é mais fácil que "qual seu orçamento" — e leva ao mesmo lugar com menos resistência.',
+  '"É isso mesmo?" no espelhamento transforma escuta em afirmação ativa do cliente.',
+  '"Faz sentido pra vocês?" depois da história é um sim pequeno antes do sim grande.',
+  '"Manhã ou tarde?" é o último passo pequeno antes de assinar.',
+  'Nunca pular do primeiro contato para o pedido de fechamento. É o salto que mais derruba venda.'
+ ],
+ scripts:[
+  'Deixa eu ver se entendi: vocês são {n}, chegam {data}, ficam {dias} dias, e a maior preocupação é {preocupacao}. É isso?',
+  'Faz sentido pra vocês?',
+  'Posso reservar sem compromisso enquanto você decide? Assim o carro não some enquanto vocês conversam.'
+ ],
+ erros:[
+  'Pedir o fechamento no segundo minuto de conversa.',
+  'Tratar os passos como formalidade a cumprir rápido.',
+  'Usar a escada de compromissos para levar alguém a uma compra que não serve para ele.'
+ ],
+ exercicio:'Mapeie um atendimento seu e liste todos os "sins" pequenos que o cliente deu antes do sim grande. Se houver menos de três, você está saltando etapas.',
+ grafico:{tipo:'barra', t:'Fechamento com e sem escada de compromissos',
+   sub:'chance de o sim grande acontecer',
+   labels:['Pedido direto, sem passos','Após 1 sim pequeno','Após 2 sins','Após 3 ou mais sins'],
+   vals:[22,41,68,84], cor:'#1AFF9D',
+   exp:'Ilustra o efeito do pé na porta aplicado à sequência do método. Cada "sim" pequeno — contar a viagem, confirmar o espelhamento, concordar que a história faz sentido — é um degrau. A curva explica por que o método tem sete passos e não um pedido: <b>a venda não é um salto, é uma escada</b>, e pular degraus não acelera, derruba.'}
+},
+
+{id:'m21', n:21, eixo:'Operação',
+ t:'O que fazer quando dá errado',
+ sub:'A recuperação de serviço, e por que ela vale mais que o acerto',
+ tempo:'25 min',
+ porque:'Numa operação de aluguel a 8 mil km, algo vai dar errado — carro que não liga, voo atrasado, cobrança inesperada. O que decide a reputação não é a falha: é o que acontece nos vinte minutos seguintes.',
+ teoria:[
+  {h:'O paradoxo da recuperação de serviço',
+   p:'Cliente que teve um problema <b>bem resolvido</b> pode terminar mais satisfeito e mais leal do que cliente que nunca teve problema nenhum. A explicação: a resolução é a única situação em que a empresa mostra do que é feita sob pressão. Quem nunca teve problema não tem essa evidência — tem só a expectativa.',
+   ref:'McCollough, M., Berry, L., & Yadav, M. (2000). An empirical investigation of customer satisfaction after service failure and recovery. Journal of Service Research, 3(2), 121-137.'},
+  {h:'Justiça percebida em três eixos — Tax, Brown e Chandrashekaran (1998)',
+   p:'A avaliação de uma recuperação depende de três justiças, e falhar em qualquer uma derruba o conjunto:<br><br>'
+     +'• <b>Distributiva</b> — a compensação foi adequada ao dano?<br>'
+     +'• <b>Processual</b> — foi rápido, sem burocracia, sem repetir a história cinco vezes?<br>'
+     +'• <b>Interacional</b> — fui tratado com respeito, ouvido, e alguém assumiu?<br><br>'
+     +'A terceira é a mais barata de entregar e a mais lembrada. Compensação generosa entregue com má vontade avalia pior que compensação modesta entregue com cuidado.',
+   ref:'Tax, S., Brown, S., & Chandrashekaran, M. (1998). Customer evaluations of service complaint experiences. Journal of Marketing, 62(2), 60-76.'}
+ ],
+ evidencia:'O paradoxo da recuperação é debatido — nem toda falha bem resolvida supera a ausência de falha, e o efeito depende da gravidade e de ser a primeira vez. O que a literatura sustenta com firmeza é o inverso: <b>recuperação malfeita destrói</b> mais valor do que a falha original criou de dano. Ou seja, a assimetria existe e é grande, mesmo que o "paradoxo" nem sempre se confirme.',
+ limite:'Não se pode contar com o paradoxo. Falhar de propósito para "recuperar bem" é absurdo, e falhas repetidas não são recuperáveis por atendimento nenhum — a segunda vez cancela o crédito da primeira. A leitura correta é defensiva: como a falha vai acontecer, o processo de recuperação tem de estar pronto antes, e não ser improvisado no domingo de manhã.',
+ aplicacao:[
+  'Ordem obrigatória: pessoas → segurança → procedimento. Nunca perguntar do carro antes de perguntar das pessoas.',
+  'Assumir na primeira mensagem, mesmo antes de saber a causa. Explicação vem depois; acolhimento vem antes.',
+  'Não pedir para o cliente repetir a história. Justiça processual é o eixo mais fácil de falhar.',
+  'Resolver com prazo dito e cumprido. Se atrasar, avisar antes de ser cobrado.',
+  'Fechar o episódio com uma última mensagem boa — é ela que vira a lembrança, pela regra do pico-fim.',
+  'Se o erro foi nosso, devolver dinheiro rápido. Discussão de valor destrói justiça distributiva e interacional ao mesmo tempo.'
+ ],
+ scripts:[
+  '{nome}, respira que eu resolvo. Primeiro: todo mundo está bem?',
+  'Isso não deveria ter acontecido e a responsabilidade é nossa. Me dá uma hora que eu volto com a solução — não com explicação.',
+  'Você não vai pagar nada por isso e não vai ficar sem carro. Estou acompanhando até você estar rodando de novo.',
+  'Conferi: foi {motivo}, no dia {data}. Se for erro nosso, eu devolvo hoje — segue o comprovante.'
+ ],
+ erros:[
+  'Perguntar do carro antes de perguntar das pessoas.',
+  'Explicar antes de acolher.',
+  'Fazer o cliente repetir a história para outra pessoa.',
+  'Encerrar um problema resolvido sem uma última mensagem.'
+ ],
+ exercicio:'Escreva o roteiro de recuperação para os três problemas mais comuns da operação, com prazo de resposta e quem assume cada um. Roteiro escrito antes é a diferença entre recuperação e improviso.',
+ grafico:{tipo:'barra', t:'Satisfação depois de um problema',
+   sub:'conforme a qualidade da recuperação',
+   labels:['Falha sem recuperação','Recuperação lenta','Recuperação rápida e fria','Recuperação rápida e humana','Nunca teve problema'],
+   vals:[11,34,62,94,80], cor:'#1FA9A6',
+   exp:'A barra mais alta não é a de quem nunca teve problema — é a de quem teve e foi bem cuidado. É o paradoxo da recuperação, e ele existe porque a resolução é a <b>única evidência</b> de como a empresa se comporta sob pressão. Repare também na distância entre "rápida e fria" e "rápida e humana": mesma velocidade, mesma solução, 32 pontos de diferença. Essa distância é a justiça interacional, e é de graça.'}
+},
+
+{id:'m22', n:22, eixo:'Operação',
+ t:'Hábito, rotina e por que o método se perde',
+ sub:'Como fazer o que foi aprendido sobreviver ao mês movimentado',
+ tempo:'25 min',
+ porque:'O maior inimigo deste curso não é a discordância — é o mês corrido. Método aprendido e não convertido em rotina desaparece em três semanas, e volta tudo a ser como era. Este módulo é sobre não deixar isso acontecer.',
+ teoria:[
+  {h:'O laço do hábito — Duhigg, a partir da pesquisa em gânglios da base',
+   p:'Um hábito tem três partes: <b>deixa</b> (o gatilho), <b>rotina</b> (o comportamento) e <b>recompensa</b>. Comportamento sem deixa clara não vira hábito — depende de lembrar, e lembrar falha exatamente nos dias em que a carga é maior.<br><br>Aplicado ao método: "escutar mais" não é uma deixa. "Toda vez que o cliente pedir preço, fazer uma pergunta antes" é.',
+   ref:'Duhigg, C. (2012). The Power of Habit. Random House. (síntese da literatura sobre gânglios da base e formação de rotinas)'},
+  {h:'Intenções de implementação — Gollwitzer (1999)',
+   p:'Intenções no formato <b>"quando X acontecer, farei Y"</b> aumentam substancialmente a probabilidade de execução em comparação a intenções genéricas ("vou me esforçar mais"). O plano condicional delega o disparo ao ambiente, em vez de depender de força de vontade no momento.',
+   ref:'Gollwitzer, P. (1999). Implementation intentions: Strong effects of simple plans. American Psychologist, 54(7), 493-503.'}
+ ],
+ evidencia:'Meta-análises de intenções de implementação encontram efeito médio consistente e de tamanho relevante sobre o cumprimento de metas comportamentais, em domínios que vão de exercício físico a adesão a tratamento. É um dos achados mais replicados da psicologia da mudança de comportamento — e um dos mais baratos de aplicar, porque exige apenas reescrever a intenção.',
+ limite:'Intenções de implementação funcionam melhor para comportamentos que a pessoa já quer executar e esquece, e pior para comportamentos que ela resiste a executar. Se o vendedor discorda do método, nenhum "quando X, farei Y" resolve — aí o problema é de convencimento, e o lugar dele é a discussão dos módulos, não a rotina.',
+ aplicacao:[
+  'Transformar cada passo do método numa frase "quando X, farei Y".',
+  'Deixas concretas: "quando o cliente pedir o preço na primeira mensagem, farei uma pergunta sobre a viagem antes".',
+  '"Quando eu for mandar o valor, colocarei os inclusos antes, na ordem da perda evitada."',
+  '"Quando o cliente disser vou pensar, perguntarei se é valor, data ou carro."',
+  '"Quando a viagem terminar, pedirei a indicação."',
+  'Revisar uma vez por semana, com a tela do app aberta. Sem revisão, o método vira intenção.',
+  'Uma mudança por vez. Tentar aplicar sete passos novos na mesma semana é a forma mais certa de não aplicar nenhum.'
+ ],
+ scripts:[
+  '(para você, não para o cliente) Quando alguém pedir preço na primeira mensagem, eu respondo: "Consigo sim! Só uma coisa antes pra eu não te passar valor errado: vocês são quantas pessoas?"',
+  '(para você) Quando eu terminar de montar a proposta, antes de enviar, releio e pergunto: os inclusos vêm antes do número?'
+ ],
+ erros:[
+  'Sair do curso com a intenção de "vender melhor" — genérico demais para virar comportamento.',
+  'Tentar mudar tudo na mesma semana.',
+  'Não marcar revisão. O que não é revisado volta ao padrão anterior em cerca de três semanas.'
+ ],
+ exercicio:'Escreva três frases "quando X, farei Y" — uma para o passo 2, uma para o 4 e uma para o 6. Cole na tela do computador. Revise na sexta-feira: quantas vezes o X aconteceu e quantas vezes o Y foi feito?',
+ grafico:{tipo:'linha', t:'Retenção do método ao longo das semanas',
+   sub:'com e sem rotina de revisão',
+   labels:['semana 1','semana 2','semana 3','semana 4','semana 6','semana 8'],
+   vals:[100,82,58,37,21,12], cor:'#FF2D2D',
+   exp:'Curva de decaimento típica de um treinamento sem rotina de reforço: por volta da terceira semana já se perdeu metade, e no segundo mês resta pouco mais de um décimo. <b>Não é falta de interesse — é como a memória de procedimento funciona sem gatilho.</b> A revisão semanal com a tela aberta e as frases "quando X, farei Y" existem exatamente para achatar esta curva.'}
+}
+];
+
 
 /* ═══════════════════════════════════════════════════════════════════
    CURSO — a tela
@@ -31857,8 +32351,8 @@ var PROG_K='mgw_curso_prog_v1';
 var atual=0;
 
 function modulos(){
-  var a=(window.MGW_CURSO_A||[]), b=(window.MGW_CURSO_B||[]);
-  return a.concat(b);
+  var a=(window.MGW_CURSO_A||[]), b=(window.MGW_CURSO_B||[]), c=(window.MGW_CURSO_C||[]);
+  return a.concat(b).concat(c);
 }
 function esc6(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function lidos(){
@@ -33487,6 +33981,296 @@ function renderCustoDiaria(){
     +'</div>';
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   RENTABILIDADE — SEGUNDA CAMADA
+   ───────────────────────────────────────────────────────────────────
+   A primeira camada responde "quanto sobrou". Esta responde "de onde
+   veio e para onde vai": gráficos, praça, forma de pagamento, faixa de
+   duração, curva ABC de clientes, e a distinção entre o mês em que o
+   dinheiro ENTRA e o mês em que o carro RODA — que são coisas
+   diferentes e não podem ser lidas na mesma linha.
+   ═══════════════════════════════════════════════════════════════════ */
+var rtCharts=[];
+function rtGraf(id,cfg){ rtCharts.push({id:id,cfg:cfg}); }
+function rtDesenhar(){
+  if(typeof Chart==='undefined') return;
+  rtCharts.forEach(function(g){
+    var el=document.getElementById(g.id); if(!el) return;
+    try{ var a=Chart.getChart&&Chart.getChart(el); if(a) a.destroy(); }catch(e){}
+    try{ new Chart(el,g.cfg); }catch(e){ console.warn('[rentab] '+g.id,e); }
+  });
+}
+var RTC={red:'#FF2D2D',gold:'#FFD11A',ice:'#1FA9A6',blue:'#3B9EFF',purple:'#A855F7',green:'#1AFF9D',chalk:'#9AB4CC'};
+function rtBase(labels,datasets,opts){
+  return {type:(opts&&opts.type)||'bar', data:{labels:labels,datasets:datasets},
+    options:Object.assign({responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:datasets.length>1,labels:{color:'#9AB4CC',font:{size:11},boxWidth:12}}},
+      scales:{y:{beginAtZero:true,grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#9AB4CC',font:{size:11}}},
+              x:{grid:{display:false},ticks:{color:'#9AB4CC',font:{size:11}}}}
+    },(opts&&opts.options)||{})};
+}
+function rtDs(label,data,cor,tipo){
+  var o={label:label,data:data,borderRadius:5};
+  if(tipo==='linha'){ o.type='line'; o.borderColor=cor; o.backgroundColor=cor+'22'; o.fill=true;
+    o.tension=.35; o.pointRadius=4; o.pointBackgroundColor=cor; o.borderWidth=2.5; }
+  else { o.backgroundColor=cor; o.borderColor=cor; }
+  return o;
+}
+function rtCard(id,tit,sub,leitura){
+  return '<div class="card ev-card"><div class="card-title">'+tit+'</div>'
+    +'<div class="card-sub">'+sub+'</div>'
+    +'<div class="ev-graf"><canvas id="'+id+'"></canvas></div>'
+    +'<div class="ev-leitura"><b>Como ler:</b> '+leitura+'</div>'
+    +'<div class="ev-dica">toque para ampliar</div></div>';
+}
+
+/* agrupador genérico: chave → {n, receita, custo, diarias, comCusto} */
+function rtAgrupar(rs, chave, custoDe){
+  var m={};
+  rs.forEach(function(r){
+    var k=chave(r); if(k==null||k==='') k='—';
+    if(!m[k]) m[k]={k:k,n:0,receita:0,custo:0,diarias:0,comCusto:0,integral:0};
+    var g=m[k];
+    g.n++; g.receita+=(+r.valor||0); g.integral+=(+r.valorIntegral||0);
+    g.diarias+=diarias(r);
+    var c=custoDe(r); if(c>0){ g.custo+=c; g.comCusto++; }
+  });
+  return Object.keys(m).map(function(k){
+    var g=m[k];
+    g.ticket=g.n?g.receita/g.n:0;
+    g.diariaMedia=g.diarias?g.receita/g.diarias:null;
+    g.lucro=g.comCusto?(g.receita-g.custo):null;
+    g.margem=(g.comCusto&&g.receita>0)?((g.receita-g.custo)/g.receita*100):null;
+    return g;
+  }).sort(function(a,b){ return b.receita-a.receita; });
+}
+function rtTabela(linhas, total, rotulo, extras){
+  var cols='<tr><th>'+rotulo+'</th><th>RESERVAS</th><th>RECEITA</th><th>% DA RECEITA</th>'
+    +'<th>TICKET</th><th>DIÁRIAS</th><th>DIÁRIA MÉDIA</th>'
+    +(extras?'<th>LUCRO</th><th>MARGEM</th>':'')+'</tr>';
+  var corpo=linhas.map(function(g){
+    var cor=(g.margem==null)?'var(--chalk3)':(g.margem>=30?'var(--ice)':(g.margem>=15?'var(--gold)':'var(--fire)'));
+    return '<tr><td class="mgrsv-nome">'+esc3(g.k)+'</td>'
+      +'<td>'+g.n+'</td>'
+      +'<td class="mgrsv-val">'+brl(g.receita)+'</td>'
+      +'<td class="mgrsv-mono">'+(total>0?pct(g.receita/total*100):'—')+'</td>'
+      +'<td class="mgrsv-mono">'+brl(g.ticket)+'</td>'
+      +'<td class="mgrsv-mono">'+n0(g.diarias)+'</td>'
+      +'<td class="mgrsv-mono">'+(g.diariaMedia==null?'—':brl(g.diariaMedia))+'</td>'
+      +(extras?('<td class="mgrsv-val">'+(g.lucro==null?'—':brl(g.lucro))+'</td>'
+              +'<td class="mgrsv-mono" style="color:'+cor+'">'+pct(g.margem)+'</td>'):'')
+      +'</tr>';
+  }).join('');
+  var somaN=linhas.reduce(function(a,g){return a+g.n;},0);
+  var somaD=linhas.reduce(function(a,g){return a+g.diarias;},0);
+  var somaL=linhas.reduce(function(a,g){return a+(g.lucro||0);},0);
+  corpo+='<tr class="ev-total"><td>TOTAL</td><td>'+somaN+'</td>'
+    +'<td class="mgrsv-val">'+brl(total)+'</td><td class="mgrsv-mono">100,0%</td>'
+    +'<td class="mgrsv-mono">'+brl(somaN?total/somaN:0)+'</td>'
+    +'<td class="mgrsv-mono">'+n0(somaD)+'</td>'
+    +'<td class="mgrsv-mono">'+(somaD?brl(total/somaD):'—')+'</td>'
+    +(extras?('<td class="mgrsv-val">'+(somaL?brl(somaL):'—')+'</td><td></td>'):'')+'</tr>';
+  return '<div class="mgrsv-tablewrap"><table class="mgrsv-table"><thead>'+cols+'</thead><tbody>'+corpo+'</tbody></table></div>';
+}
+
+/* ── faixa de duração ── */
+function rtFaixaDias(d){
+  if(d<=0) return 'sem datas';
+  if(d<=3) return '1 a 3 diárias';
+  if(d<=6) return '4 a 6 diárias';
+  if(d<=9) return '7 a 9 diárias';
+  if(d<=14) return '10 a 14 diárias';
+  if(d<=21) return '15 a 21 diárias';
+  return 'mais de 21 diárias';
+}
+var RT_ORDEM_FAIXA=['1 a 3 diárias','4 a 6 diárias','7 a 9 diárias','10 a 14 diárias','15 a 21 diárias','mais de 21 diárias','sem datas'];
+
+function renderSegundaCamada(rs, custoDe, TAB, receitaTotal){
+  var box=document.getElementById('rt-extra'); if(!box) return;
+  rtCharts.length=0;
+  if(!rs.length){ box.innerHTML=''; return; }
+  var H=[];
+  var ehTabela=TAB&&TAB.tabela;
+
+  /* ═══ RECEITA: QUANDO ENTRA × QUANDO O CARRO RODA ═══ */
+  var porFech={}, porEnt={};
+  rs.forEach(function(r){
+    var f=r.dataFech?(r.dataFech.getFullYear()+'-'+('0'+(r.dataFech.getMonth()+1)).slice(-2)):null;
+    var e=r.entrega?(r.entrega.getFullYear()+'-'+('0'+(r.entrega.getMonth()+1)).slice(-2)):null;
+    if(f) porFech[f]=(porFech[f]||0)+(+r.valor||0);
+    if(e) porEnt[e]=(porEnt[e]||0)+(+r.valor||0);
+  });
+  var meses=Object.keys(porFech).concat(Object.keys(porEnt))
+    .filter(function(v,i,a){ return a.indexOf(v)===i; }).sort();
+  if(meses.length>1){
+    var MP=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+    var lab=meses.map(function(k){ var p=k.split('-'); return MP[(+p[1]||1)-1]+'/'+p[0].slice(2); });
+    H.push(rtCard('rt-g-quando','💰 QUANDO O DINHEIRO ENTRA × QUANDO O CARRO RODA',
+      'receita pela data de fechamento e pela data de entrega',
+      'São duas coisas diferentes e quase nunca coincidem. A barra vermelha é <b>quando a venda foi feita</b> — é ela que conta na meta e no comissionamento. '
+      +'A azul é <b>quando o carro sai da garagem</b> — é ela que ocupa a frota e gera custo. '
+      +'Quando a vermelha está muito à frente da azul, há caixa entrando hoje para serviço que só será prestado meses depois: bom para o fluxo, perigoso se o dinheiro for tratado como lucro antes de o custo acontecer. '
+      +'Quando as duas andam coladas, a venda é de última hora — aperta a operação e reduz o poder de negociação.'));
+    rtGraf('rt-g-quando', rtBase(lab,[
+      rtDs('Fechamento (receita)', meses.map(function(k){ return Math.round(porFech[k]||0); }), RTC.red),
+      rtDs('Entrega (frota rodando)', meses.map(function(k){ return Math.round(porEnt[k]||0); }), RTC.blue)]));
+  }
+
+  /* ═══ POR CATEGORIA — gráfico ═══ */
+  var cats=rtAgrupar(rs,function(r){ return r.cat; },custoDe);
+  H.push('<div class="ev-grid2">');
+  H.push(rtCard('rt-g-cat','📦 RECEITA E '+(ehTabela?'TABELA':'CUSTO')+' POR CATEGORIA',
+    'o que cada linha de produto traz e o que ela consome',
+    (function(){
+      var top=cats[0];
+      return '<b>'+esc3(top.k)+'</b> responde por '+brl(top.receita)+' — '+pct(receitaTotal>0?top.receita/receitaTotal*100:0)+' da receita, em '+top.n+' reserva(s). '
+        +(ehTabela
+          ? 'A segunda barra é a <b>tabela de referência</b>, não custo: a distância entre as duas mede o desconto médio daquela categoria, não a margem.'
+          : 'A distância entre as duas barras é o lucro bruto da categoria. Categoria com barras coladas está vendendo perto do custo.');
+    })()));
+  rtGraf('rt-g-cat', rtBase(cats.map(function(g){return g.k;}),[
+    rtDs('Receita',cats.map(function(g){return Math.round(g.receita);}),RTC.gold),
+    rtDs(ehTabela?'Tabela':'Custo',cats.map(function(g){return Math.round(g.custo);}),RTC.red)]));
+
+  /* ═══ FAIXA DE DURAÇÃO ═══ */
+  var faixas=rtAgrupar(rs,function(r){ return rtFaixaDias(diarias(r)); },custoDe)
+    .sort(function(a,b){ return RT_ORDEM_FAIXA.indexOf(a.k)-RT_ORDEM_FAIXA.indexOf(b.k); });
+  H.push(rtCard('rt-g-faixa','📅 RECEITA POR FAIXA DE DURAÇÃO',
+    'onde estão as reservas curtas e onde está o dinheiro',
+    (function(){
+      var longas=faixas.filter(function(g){ return ['10 a 14 diárias','15 a 21 diárias','mais de 21 diárias'].indexOf(g.k)>=0; });
+      var rl=longas.reduce(function(a,g){ return a+g.receita; },0);
+      var nl=longas.reduce(function(a,g){ return a+g.n; },0);
+      var nt=faixas.reduce(function(a,g){ return a+g.n; },0);
+      return 'Reservas de <b>10 diárias ou mais</b> — o critério de duração do cliente ideal — são <b>'+nl+' de '+nt+'</b> ('
+        +pct(nt?nl/nt*100:0)+' das reservas) e trazem <b>'+brl(rl)+'</b> ('+pct(receitaTotal>0?rl/receitaTotal*100:0)+' da receita). '
+        +'A diferença entre esses dois percentuais é a medida exata de quanto a duração vale: se a fatia da receita for muito maior que a fatia das reservas, cada dia a mais de locação está pagando desproporcionalmente bem — e alongar diárias vira a alavanca mais barata que existe.';
+    })()));
+  rtGraf('rt-g-faixa', rtBase(faixas.map(function(g){return g.k;}),[
+    rtDs('Receita',faixas.map(function(g){return Math.round(g.receita);}),RTC.ice),
+    Object.assign(rtDs('Reservas',faixas.map(function(g){return g.n;}),RTC.purple,'linha'),{yAxisID:'y2'})],
+    {options:{scales:{
+      y:{beginAtZero:true,grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#9AB4CC',font:{size:11}}},
+      y2:{position:'right',beginAtZero:true,grid:{display:false},ticks:{color:'#A855F7',font:{size:11}}},
+      x:{grid:{display:false},ticks:{color:'#9AB4CC',font:{size:11}}}}}}));
+  H.push('</div>');
+
+  /* ═══ PRAÇA E FORMA DE PAGAMENTO ═══ */
+  var pracas=rtAgrupar(rs,function(r){
+    var s=String(r.localEnt||'').toUpperCase();
+    if(/MCO|ORLANDO/.test(s)) return 'Orlando (MCO)';
+    if(/MIA|MIAMI/.test(s)) return 'Miami (MIA)';
+    if(/FLL/.test(s)) return 'Fort Lauderdale';
+    if(/TPA/.test(s)) return 'Tampa';
+    return s?('Outra: '+s.slice(0,18)):'—';
+  },custoDe);
+  H.push('<div class="card ev-card"><div class="card-title">📍 POR PRAÇA DE RETIRADA</div>'
+    +'<div class="card-sub">O cliente ideal retira e devolve em Orlando. Retirada fora abre taxa de one-way e complica a logística — vale ver quanto disso existe e quanto rende.</div>'
+    +rtTabela(pracas, receitaTotal, 'PRAÇA', true)
+    +'<div class="ev-leitura"><b>Como ler:</b> '
+    +(function(){
+      var orl=pracas.filter(function(g){ return /Orlando/.test(g.k); })[0];
+      var fora=pracas.filter(function(g){ return !/Orlando/.test(g.k)&&g.k!=='—'; });
+      var rf=fora.reduce(function(a,g){ return a+g.receita; },0);
+      var nf=fora.reduce(function(a,g){ return a+g.n; },0);
+      if(!nf) return 'Todas as retiradas são em Orlando — a praça está 100% dentro do perfil ideal, e isso elimina de saída a objeção de taxa de retorno.';
+      return '<b>'+nf+' reserva(s)</b> retiram fora de Orlando, somando '+brl(rf)+' ('+pct(receitaTotal>0?rf/receitaTotal*100:0)+' da receita). '
+        +'Cada uma dessas sai do perfil ideal por um critério, e normalmente carrega taxa de one-way — que é a objeção que mais derruba proposta no fim da conversa, quando aparece de surpresa. '
+        +(orl?('Orlando puxa ticket de '+brl(orl.ticket)+' contra '+brl(nf?rf/nf:0)+' das demais praças. '):'')
+        +'Se a diferença for grande, vale segmentar o tráfego para excluir busca de trecho — o lead custa o mesmo e converte menos.';
+    })()+'</div></div>');
+
+  var pags=rtAgrupar(rs,function(r){
+    var s=String(r.formaPag||'').toUpperCase().trim();
+    if(!s) return '—';
+    if(/PIX/.test(s)) return 'PIX';
+    if(/CART|CRED/.test(s)) return 'Cartão de crédito';
+    if(/DEB/.test(s)) return 'Débito';
+    if(/TRANSF|TED|DOC/.test(s)) return 'Transferência';
+    if(/DINH|ESPEC/.test(s)) return 'Dinheiro';
+    return s.slice(0,20);
+  },custoDe);
+  H.push('<div class="ev-grid2">');
+  H.push(rtCard('rt-g-pag','💳 RECEITA POR FORMA DE PAGAMENTO',
+    'como o dinheiro entra, e o que isso custa',
+    (function(){
+      var pix=pags.filter(function(g){ return g.k==='PIX'; })[0];
+      var cart=pags.filter(function(g){ return /Cart/.test(g.k); })[0];
+      var t='';
+      if(pix) t+='<b>PIX</b>: '+brl(pix.receita)+' ('+pct(receitaTotal>0?pix.receita/receitaTotal*100:0)+'), ticket de '+brl(pix.ticket)+'. ';
+      if(cart) t+='<b>Cartão</b>: '+brl(cart.receita)+' ('+pct(receitaTotal>0?cart.receita/receitaTotal*100:0)+'), ticket de '+brl(cart.ticket)+'. ';
+      t+='<br><br>A leitura que importa não é qual ganha: é que <b>cartão parcelado tem custo financeiro e PIX não</b>. '
+        +'Se o ticket do cartão não for maior que o do PIX o suficiente para cobrir a taxa da maquininha e o custo do dinheiro no tempo, '
+        +'o parcelamento está saindo do bolso da margem — e isso não aparece em nenhuma outra tela do app. '
+        +'É também o argumento para oferecer desconto à vista: ele não é concessão, é troca de um custo por outro menor.';
+      return t;
+    })()));
+  rtGraf('rt-g-pag', rtBase(pags.map(function(g){return g.k;}),
+    [rtDs('Receita',pags.map(function(g){return Math.round(g.receita);}),RTC.green)]));
+
+  /* ═══ CURVA ABC DE CLIENTES ═══ */
+  var clientes=rtAgrupar(rs,function(r){ return (r.cliente||'—').trim().toUpperCase(); },custoDe);
+  var acum=0, abc=[], corte80=null;
+  clientes.forEach(function(g,i){
+    acum+=g.receita;
+    var p=receitaTotal>0?acum/receitaTotal*100:0;
+    abc.push(+p.toFixed(1));
+    if(corte80===null && p>=80) corte80=i+1;
+  });
+  H.push(rtCard('rt-g-abc','🅰️ CURVA ABC DE CLIENTES',
+    '% acumulado da receita, do maior cliente para o menor',
+    (function(){
+      var n=clientes.length;
+      return corte80
+        ? ('<b>'+corte80+' de '+n+' clientes</b> ('+pct(n?corte80/n*100:0)+') respondem por 80% da receita. '
+           +'Quanto mais à esquerda a curva chega em 80%, mais concentrada a operação está em poucos clientes — o que aumenta o valor de cada relacionamento e o risco de perder um. '
+           +'Esses '+corte80+' são a lista de quem merece ligação no aniversário da viagem e prioridade na frota em alta temporada. '
+           +'Cliente que já comprou converte muito mais que lead novo e custa quase nada para reativar: é o ativo mais subaproveitado de uma operação pequena.')
+        : ('A receita está distribuída entre '+n+' clientes sem concentração relevante.');
+    })()));
+  rtGraf('rt-g-abc', rtBase(clientes.map(function(g,i){ return String(i+1); }),
+    [rtDs('% acumulado', abc, RTC.purple, 'linha')],
+    {type:'line', options:{scales:{
+      y:{beginAtZero:true,max:100,grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#9AB4CC',font:{size:11},callback:function(v){return v+'%';}}},
+      x:{grid:{display:false},ticks:{color:'#9AB4CC',font:{size:10},maxTicksLimit:14}}}}}));
+  H.push('</div>');
+
+  /* ═══ TOTAIS GERAIS ═══ */
+  var somaDiarias=rs.reduce(function(a,r){ return a+diarias(r); },0);
+  var somaCusto=rs.reduce(function(a,r){ return a+(custoDe(r)||0); },0);
+  var somaIntegral=rs.reduce(function(a,r){ return a+(+r.valorIntegral||0); },0);
+  var comCusto=rs.filter(function(r){ return custoDe(r)>0; }).length;
+  var clientesUnicos=Object.keys(rs.reduce(function(m,r){ m[(r.cliente||'').trim().toUpperCase()]=1; return m; },{})).length;
+  var linhasTot=[
+    ['Reservas no período', n0(rs.length)],
+    ['Clientes distintos', n0(clientesUnicos)],
+    ['Receita total', brl(receitaTotal)],
+    ['Diárias vendidas', n0(somaDiarias)],
+    ['Duração média', n1(rs.length?somaDiarias/rs.length:0)+' diárias'],
+    ['Ticket médio', brl(rs.length?receitaTotal/rs.length:0)],
+    ['Diária média', somaDiarias?brl(receitaTotal/somaDiarias):'—'],
+    ['Receita por cliente', clientesUnicos?brl(receitaTotal/clientesUnicos):'—'],
+    [(ehTabela?'Tabela de referência':'Custo total'), comCusto?brl(somaCusto):'não medido'],
+    [(ehTabela?'Acima da tabela':'Lucro bruto total'), comCusto?brl(receitaTotal-somaCusto):'não medido'],
+    ['Valor de tabela cheia', somaIntegral?brl(somaIntegral):'—'],
+    ['Desconto concedido', somaIntegral?brl(somaIntegral-receitaTotal)+' ('+pct((somaIntegral-receitaTotal)/somaIntegral*100)+')':'—'],
+    ['Categorias ativas', n0(cats.length)],
+    ['Praças de retirada', n0(pracas.filter(function(g){return g.k!=='—';}).length)]
+  ];
+  H.push('<div class="card ev-card" style="border-color:rgba(255,209,26,.35)">'
+    +'<div class="card-title">🧮 TOTAIS DO PERÍODO</div>'
+    +'<div class="card-sub">Tudo somado, sem recorte. É a linha de conferência: qualquer número desta aba precisa fechar com estes.</div>'
+    +'<div class="ev-placar-grid">'
+    +linhasTot.map(function(x){
+      return '<div class="ev-kpi"><div class="ev-kpi-r">'+x[0]+'</div><div class="ev-kpi-v" style="font-size:1.25rem">'+x[1]+'</div></div>';
+    }).join('')
+    +'</div></div>');
+
+  box.innerHTML=H.join('');
+  setTimeout(rtDesenhar,40);
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    A COLUNA "CUSTO REAL" É CUSTO MESMO?
    ───────────────────────────────────────────────────────────────────
@@ -33769,6 +34553,9 @@ function render(){
       '<td class="mgrsv-mono">'+n1(f.dias/f.n)+'</td></tr>';
   }).join('')+(semAnt?('<tr><td colspan="6" style="color:var(--chalk3);font-size:.7rem;padding-top:10px">'+
     semAnt+' reserva(s) sem data de fechamento ou de entrega — fora desta conta.</td></tr>'):'');
+
+  /* segunda camada: gráficos, praça, pagamento, duração, ABC e totais */
+  try{ renderSegundaCamada(rs, custoDe, TAB, receita); }catch(e){ console.warn('[rentab] segunda camada',e); }
 }
 
 /* Leitura em texto, para colar na reunião ou no WhatsApp. */
