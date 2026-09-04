@@ -5795,7 +5795,7 @@ select.ffi option{background:#000020;color:#FF0000}
           <button class="mgw-btn mgw-btn-csv" onclick="MGW_RENTAB.copiar()">📋 Copiar leitura</button>
           <span id="rt-periodo-lbl" class="mgw-status" style="margin-left:auto;color:var(--chalk2)"></span>
         </div>
-        <div class="mgw-hint">💰 <b>Lucro bruto</b> = valor da venda − custo real, das duas colunas que a planilha já tem. Reserva sem custo preenchido entra na receita e fica <b>fora</b> da margem — não é margem de 100%, é margem não medida, e o rodapé de cada tabela diz quantas são.</div>
+        <div class="mgw-hint">💰 Esta tela lê as colunas <b>VALOR VENDA R$</b> e <b>CUSTO REAL R$</b> da planilha e não calcula nenhuma delas.<br>Se a segunda for uma fórmula de tabela de preço — e na planilha atual ela é —, os rótulos mudam sozinhos: o que apareceria como margem passa a se chamar <b>% sobre a tabela</b>, porque é isso que o número mede. Reserva sem valor preenchido entra na receita e fica <b>fora</b> da conta; o rodapé de cada tabela diz quantas são.</div>
         <div id="rt-aviso"></div>
         <div class="kpi-grid" id="rt-kpis" style="margin:14px 0"></div>
         <div class="card" style="margin-bottom:14px">
@@ -32619,6 +32619,54 @@ function frotaPorCat(){
   return m;
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   A COLUNA "CUSTO REAL" É CUSTO MESMO?
+   ───────────────────────────────────────────────────────────────────
+   Na planilha FECHAMENTO, a coluna R (CUSTO REAL R$) não é digitada:
+   é uma fórmula.
+
+     (diária de BAIXA TEMPORADA da categoria − US$ 10) × dias × câmbio
+
+   Ou seja: é o PREÇO DE TABELA da própria Magiway com dez dólares de
+   abatimento, convertido em real. Não é o que a Magiway paga pelo
+   carro. Conferido nas 39 linhas com dados completos da aba de
+   fechamento: bate em 39 de 39, ao centavo.
+
+   A diferença muda tudo o que se lê em cima dela. "Valor − custo" não
+   é lucro: é o quanto a venda ficou acima ou abaixo da própria tabela
+   de baixa temporada. E "custo maior que a venda" não é prejuízo: é
+   desconto — em alguns casos de 50% a 65% sobre a tabela.
+
+   Chamar isso de margem seria um erro caro: levaria a decidir preço,
+   frota e comissão sobre um número que não mede o que o nome diz.
+
+   O detector não depende de conhecer a fórmula. Ele testa a assinatura
+   dela: se o valor for derivado de tabela, custo ÷ diária é CONSTANTE
+   dentro de cada categoria. Custo de verdade varia de reserva para
+   reserva — carro, fornecedor, data, negociação. Se a variação for
+   quase nula em todas as categorias com três ou mais reservas, é
+   tabela; e a tela passa a dizer o que o número é de fato.
+   ═══════════════════════════════════════════════════════════════════ */
+function custoEhTabela(rs){
+  var porCat={};
+  rs.forEach(function(r){
+    var c=+r.custoReal||0, d=diarias(r);
+    if(!(c>0)||!(d>0)) return;
+    var k=r.cat||'—';
+    (porCat[k]=porCat[k]||[]).push(c/d);
+  });
+  var testadas=0, constantes=0;
+  Object.keys(porCat).forEach(function(k){
+    var v=porCat[k]; if(v.length<3) return;
+    testadas++;
+    var m=v.reduce(function(a,x){ return a+x; },0)/v.length;
+    if(!(m>0)) return;
+    var dp=Math.sqrt(v.reduce(function(a,x){ return a+(x-m)*(x-m); },0)/v.length);
+    if((dp/m)<0.02) constantes++;   /* variação abaixo de 2% = tabela */
+  });
+  return {tabela:(testadas>0 && constantes===testadas), testadas:testadas, constantes:constantes};
+}
+
 /* ── a conta ─────────────────────────────────────────────────────── */
 function agregar(rs,chave){
   var m={};
@@ -32705,11 +32753,20 @@ function render(){
     return '<div class="kpi"><div class="kpi-tag">'+rot+'</div><div class="kpi-val">'+val+'</div>'+
            (sub?('<div style="font-size:.6rem;color:var(--chalk3);margin-top:2px">'+sub+'</div>'):'')+'</div>';
   }
+  /* O que a coluna R é de verdade decide os rótulos desta tela. */
+  var TAB=custoEhTabela(rs);
+  var rotCusto  = TAB.tabela ? 'Tabela de referência' : 'Custo real';
+  var rotLucro  = TAB.tabela ? 'Acima da tabela'      : 'Lucro bruto';
+  var rotMargem = TAB.tabela ? '% sobre a tabela'     : 'Margem';
+  var subCusto  = TAB.tabela ? 'preço de baixa − US$10 × dias' : (comCusto+' de '+rs.length+' com custo');
+  var subLucro  = TAB.tabela ? 'venda menos a tabela — NÃO é lucro' : (lucro==null?'falta o custo':'sobre as '+comCusto+' medidas');
+  var subMargem = TAB.tabela ? 'não é margem: é desconto médio' : (margem==null?'falta o custo':'lucro ÷ receita medida');
+
   box.innerHTML=
      kpi('Receita', brl0(receita), rs.length+' reserva(s)')
-    +kpi('Custo real', comCusto?brl0(custo):'não medido', comCusto+' de '+rs.length+' com custo')
-    +kpi('Lucro bruto', lucro==null?'não medido':brl0(lucro), lucro==null?'falta o custo':'sobre as '+comCusto+' medidas')
-    +kpi('Margem', pct(margem), margem==null?'falta o custo':'lucro ÷ receita medida')
+    +kpi(rotCusto, comCusto?brl0(custo):'não medido', subCusto)
+    +kpi(rotLucro, lucro==null?'não medido':brl0(lucro), subLucro)
+    +kpi(rotMargem, pct(margem), subMargem)
     +kpi('Ticket médio', brl0(ticket), 'por reserva')
     +kpi('Diária média', diaria==null?'—':brl0(diaria), n0(dias)+' diária(s) vendida(s)')
     +kpi('Antecedência', antN?(n1(antSoma/antN)+' dias'):'—', antN?('média de '+antN+' reserva(s)'):'sem datas')
@@ -32725,18 +32782,33 @@ function render(){
 
   if(aviso){
     var partes=[];
+    if(TAB.tabela) partes.push('<div class="mgw-hint" style="border-left:3px solid var(--fire);background:rgba(255,45,45,.07)">'
+      +'⚠ <b>A coluna CUSTO REAL da planilha não é custo.</b> Ela é uma fórmula: '
+      +'<code>(diária de baixa temporada da categoria − US$ 10) × dias × câmbio</code> — ou seja, o <b>preço de tabela da própria Magiway</b> '
+      +'com dez dólares de abatimento, não o que se paga pelo carro. '
+      +'(Detectado aqui pelo comportamento: custo ÷ diária é constante dentro de cada categoria em '+TAB.constantes+' de '+TAB.testadas+' categorias testadas — custo de verdade varia por reserva.)<br><br>'
+      +'Por isso os rótulos desta tela mudaram: <b>não há margem calculável</b> enquanto o custo real não for informado. '
+      +'O que aparece como "acima da tabela" é o quanto a venda ficou acima ou abaixo do preço de baixa temporada, e o que pareceria prejuízo é <b>desconto</b>.<br><br>'
+      +'<b>Para ter margem de verdade:</b> ou o custo do carro passa a ser digitado numa coluna própria da planilha, ou me diga quanto a Magiway paga por diária em cada categoria que eu calculo aqui.</div>');
     if(semCusto) partes.push('<div class="mgw-hint" style="border-left:3px solid var(--gold);background:rgba(255,209,26,.07)">⚠ <b>'+
       semCusto+' de '+rs.length+' reserva(s) sem CUSTO REAL na planilha</b> — R$ '+
       (receita-receitaCC).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+
       ' de receita que não entra em nenhuma conta de margem desta tela. Preencha a coluna CUSTO REAL R$ e a margem passa a valer para a base inteira.</div>');
-    if(negativas.length) partes.push('<div class="mgw-hint" style="border-left:3px solid var(--fire);background:rgba(255,0,0,.06)">🔴 <b>'+
-      negativas.length+' reserva(s) com custo MAIOR que o valor da venda</b> — '+brl(prejuizo)+' de prejuízo, que puxa a margem de todas as outras para baixo:<br>'+
-      negativas.slice(0,8).map(function(r){
-        return '• <b>'+esc3(r.cliente)+'</b> · '+esc3(r.cat||r.modelo||'—')+' · vendeu '+brl(r.valor)+
-               ' · custou '+brl(r.custoReal)+' · <span style="color:var(--fire)">'+brl((+r.valor||0)-(+r.custoReal||0))+'</span>';
+    if(negativas.length) partes.push('<div class="mgw-hint" style="border-left:3px solid '+(TAB.tabela?'var(--gold)':'var(--fire)')+';background:rgba(255,'+(TAB.tabela?'209,26':'0,0')+',.06)">'
+      +(TAB.tabela
+        ? ('🏷️ <b>'+negativas.length+' reserva(s) vendida(s) ABAIXO da tabela de baixa temporada</b> — '+brl(prejuizo)+' de desconto concedido. '
+           +'<b>Isto não é prejuízo</b>: é o tamanho do abatimento dado sobre o nosso próprio preço.<br>')
+        : ('🔴 <b>'+negativas.length+' reserva(s) com custo MAIOR que o valor da venda</b> — '+brl(prejuizo)+' de prejuízo, que puxa a margem de todas as outras para baixo:<br>'))
+      +negativas.slice(0,8).map(function(r){
+        var v=(+r.valor||0), c=(+r.custoReal||0);
+        return '• <b>'+esc3(r.cliente)+'</b> · '+esc3(r.cat||r.modelo||'—')+' · vendeu '+brl(v)+
+               ' · '+(TAB.tabela?'tabela ':'custou ')+brl(c)+
+               ' · <span style="color:var(--fire)">'+(TAB.tabela?('−'+(c>0?n1((1-v/c)*100):'0')+'%'):brl(v-c))+'</span>';
       }).join('<br>')+
-      (negativas.length>8?('<br>… e mais '+(negativas.length-8)+'.'):'')+
-      '<br>Ou o custo foi digitado errado na planilha, ou essa venda saiu no prejuízo. Vale conferir uma por uma.</div>');
+      (negativas.length>8?('<br>… e mais '+(negativas.length-8)+'.'):'')
+      +(TAB.tabela
+        ? '<br>Desconto desse tamanho pode ser decisão comercial deliberada — só precisa ser <b>decisão</b>, e não descoberta no fim do mês. Este é o número para discutir política de desconto.'
+        : '<br>Ou o custo foi digitado errado na planilha, ou essa venda saiu no prejuízo. Vale conferir uma por uma.')+'</div>');
     aviso.innerHTML=partes.join('');
   }
 
@@ -32754,7 +32826,9 @@ function render(){
   });
   cats.sort(function(a,b){ return b.receita-a.receita; });
   var th=document.getElementById('rt-cat-head');
-  if(th) th.innerHTML='<tr><th>CATEGORIA</th><th>RESERVAS</th><th>DIÁRIAS VENDIDAS</th><th>RECEITA</th><th>CUSTO</th><th>LUCRO BRUTO</th><th>MARGEM</th><th>DIÁRIA MÉDIA</th><th>CARROS</th><th>OCUPAÇÃO</th></tr>';
+  if(th) th.innerHTML='<tr><th>CATEGORIA</th><th>RESERVAS</th><th>DIÁRIAS VENDIDAS</th><th>RECEITA</th><th>'
+    +(TAB.tabela?'TABELA':'CUSTO')+'</th><th>'+(TAB.tabela?'ACIMA DA TABELA':'LUCRO BRUTO')+'</th><th>'
+    +(TAB.tabela?'% S/ TABELA':'MARGEM')+'</th><th>DIÁRIA MÉDIA</th><th>CARROS</th><th>OCUPAÇÃO</th></tr>';
   var tb=document.getElementById('rt-cat-body');
   if(tb) tb.innerHTML=cats.map(function(g){
     var dm=g.diarias?(g.receita/g.diarias):null;
@@ -32777,7 +32851,8 @@ function render(){
   var vends=comporMargem(rs,function(r){ return r.vendedor||'—'; }, agregar(rs,function(r){ return r.vendedor||'—'; }));
   vends.sort(function(a,b){ return b.receita-a.receita; });
   var thv=document.getElementById('rt-vend-head');
-  if(thv) thv.innerHTML='<tr><th>VENDEDOR</th><th>RESERVAS</th><th>RECEITA</th><th>% DA RECEITA</th><th>TICKET MÉDIO</th><th>LUCRO BRUTO</th><th>MARGEM</th></tr>';
+  if(thv) thv.innerHTML='<tr><th>VENDEDOR</th><th>RESERVAS</th><th>RECEITA</th><th>% DA RECEITA</th><th>TICKET MÉDIO</th><th>'
+    +(TAB.tabela?'ACIMA DA TABELA':'LUCRO BRUTO')+'</th><th>'+(TAB.tabela?'% S/ TABELA':'MARGEM')+'</th></tr>';
   var tbv=document.getElementById('rt-vend-body');
   if(tbv) tbv.innerHTML=vends.map(function(g){
     var cor=(g.margem==null)?'var(--chalk3)':(g.margem>=30?'var(--ice)':(g.margem>=15?'var(--gold)':'var(--fire)'));
