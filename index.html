@@ -2086,8 +2086,9 @@ select.ffi option{background:#000020;color:#FF0000}
   <button class="tbtn tbtn-g" onclick="cotProcurarPerdidas()" title="Procura cotações na nuvem e nas chaves antigas deste computador — inclusive as que foram feitas em outra máquina — e mostra o que dá para trazer antes de gravar qualquer coisa">☁️ IMPORTAR COTAÇÕES DA NUVEM</button>
   <div style="margin-left:auto;font-size:.68rem;font-family:'DM Mono',monospace;color:var(--chalk3)" id="hist-stats"></div>
 </div>
-<div class="mgw-hint" style="margin-bottom:10px">📇 Mostra <b>todos os meses</b> por padrão — as cotações não ficam mais presas ao mês ativo.<br>
-  Lembre da virada do dia 12: uma cotação feita em <b>03/09</b> mora no mês de <b>agosto</b>, porque o ciclo vai do dia 13 ao dia 12. Se procurar por setembro e não achar, olhe em agosto — ou deixe em "Todos os meses".</div>
+<div class="mgw-hint" style="margin-bottom:10px">📇 Mostra <b>todos os meses</b> por padrão, somando o que existe neste computador e o que veio da nuvem de outras máquinas.<br>
+  O seletor agrupa pelo <b>mês do calendário em que a cotação foi feita</b>. Isso é diferente da chave onde ela é guardada: o ciclo do app vai do dia 13 ao 12, então uma cotação de <b>03/09</b> fica gravada na chave de agosto — mas aqui ela aparece em <b>setembro</b>, que é quando ela aconteceu.<br>
+  Se o número de um mês parecer baixo, clique em <b>☁️ IMPORTAR COTAÇÕES DA NUVEM</b>: cotação feita em outro computador só entra depois de restaurada.</div>
 <div id="hist-recuperar"></div>
 <div class="tbl-wrap">
   <div style="overflow-x:auto">
@@ -5682,6 +5683,7 @@ select.ffi option{background:#000020;color:#FF0000}
   Atenção à escala: aqui <b>número alto é ruim</b> — ao contrário da esfera verde do Dashboard.
   0 significa que o cenário vende sozinho; 100, que tudo está contra. Passe o mouse em cada fator para ver o que ele quer dizer.
 </div>
+<div id="dc-origem" class="mgw-hint" style="margin-bottom:10px"></div>
 <!-- KPI rows -->
 <div class="kpi-grid" id="dc-kpis" style="margin-bottom:10px">
     <div class="kpi kpi-o"><div class="kg"></div><div class="kpi-tag">Total Cotado</div><div class="kpi-val">$224059</div><div class="kpi-sub">185 cotações</div><div class="kpi-bar"></div></div>
@@ -5798,6 +5800,12 @@ select.ffi option{background:#000020;color:#FF0000}
         <div class="mgw-hint">💰 Esta tela lê as colunas <b>VALOR VENDA R$</b> e <b>CUSTO REAL R$</b> da planilha e não calcula nenhuma delas.<br>Se a segunda for uma fórmula de tabela de preço — e na planilha atual ela é —, os rótulos mudam sozinhos: o que apareceria como margem passa a se chamar <b>% sobre a tabela</b>, porque é isso que o número mede. Reserva sem valor preenchido entra na receita e fica <b>fora</b> da conta; o rodapé de cada tabela diz quantas são.</div>
         <div id="rt-aviso"></div>
         <div class="kpi-grid" id="rt-kpis" style="margin:14px 0"></div>
+        <div class="card" style="margin-bottom:14px;border-color:rgba(31,169,166,.35)">
+          <div class="card-title">🏷️ CUSTO POR DIÁRIA — O DADO QUE FALTA PARA HAVER MARGEM</div>
+          <div class="card-sub">A planilha tem o <b>preço</b> (o que cobramos) e não tem o <b>custo</b> (o que pagamos). Informe o custo de cada categoria uma vez e a margem desta aba passa a ser margem de verdade — hoje ela mede desconto sobre a nossa própria tabela.<br>
+            As duas primeiras colunas vêm da aba DADOS da planilha e são só referência.</div>
+          <div id="rt-custodia"></div>
+        </div>
         <div class="card" style="margin-bottom:14px">
           <div class="card-title">POR CATEGORIA — O QUE SOBRA E O QUANTO RODA</div>
           <div class="card-sub">DIÁRIAS VENDIDAS é a duração inteira das reservas fechadas no período. OCUPAÇÃO conta só os dias que caem <b>dentro</b> do período ÷ (carros na frota × dias do período) — reserva vendida agora para dezembro entra na receita de hoje e na ocupação de dezembro, por isso as duas colunas não andam juntas.</div>
@@ -14050,7 +14058,33 @@ var _cotVarreuNaSessao=false;
 function cotVarrerAoAbrir(){
   if(_cotVarreuNaSessao) return;
   _cotVarreuNaSessao=true;
-  setTimeout(function(){ try{ cotProcurarPerdidas(); }catch(e){} }, 400);
+  setTimeout(function(){
+    try{
+      var r=cotProcurarPerdidas();
+      /* Mostrar o que dá para trazer e esperar um clique deixava a
+         cotação de outro computador fora da conta até alguém reparar no
+         quadro. E a restauração só SOMA — ela junta o que falta e nunca
+         apaga nem sobrescreve o que já está na tela. Sendo aditiva, não
+         há o que confirmar: o risco de trazer é zero e o de não trazer é
+         um dashboard errado. Então traz sozinha, e avisa o que trouxe. */
+      Promise.resolve(r).then(function(res){
+        var n=(res&&res.totalNovas)||0;
+        if(!n) return;
+        var pacote=window.__cotRecuperacao||{};
+        var meses=Object.keys(pacote); if(!meses.length) return;
+        var raw=localStorage.__proto__, ok=0;
+        meses.forEach(function(mes){
+          try{ localStorage.setItem(mes, JSON.stringify(pacote[mes])); ok++; }
+          catch(e){ try{ raw.setItem.call(localStorage, mes, JSON.stringify(pacote[mes])); ok++; }catch(_){} }
+        });
+        window.__cotRecuperacao={};
+        try{ renderHistorico(); }catch(e){}
+        try{ if(typeof renderDashCot==='function') renderDashCot(); }catch(e){}
+        if(typeof toast==='function') toast('☁️ '+n+' cotação(ões) de outros computadores entraram na base');
+        try{ cotProcurarPerdidas(); }catch(e){}
+      });
+    }catch(e){}
+  }, 400);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -14087,7 +14121,19 @@ function cotTodasAsCotacoes(){
       if(vistos[k]) return;
       vistos[k]=1;
       var copia=Object.assign({},c);
-      copia._ym=ym;
+      /* Dois "meses" convivem aqui e eles não coincidem:
+           _ymChave = a chave onde a cotação está guardada, que segue a
+                      virada do dia 12 (uma cotação de 03/09 é gravada
+                      em agosto);
+           _ym      = o mês do CALENDÁRIO em que ela foi feita.
+         O seletor da tela usa o do calendário, porque é assim que a
+         pergunta é feita: "quantas cotações a gente fez em agosto?".
+         Agrupar pela chave fazia agosto parecer curto — metade das
+         cotações de agosto (as dos dias 1 a 12) mora na chave de
+         julho. Quando a cotação não tem data, a chave é o que sobra. */
+      var m=String(c.dtISO||c.dt||'').match(/^(\d{4})-(\d{2})/);
+      copia._ymChave=ym;
+      copia._ym = m ? (m[1]+'_'+m[2]) : ym;
       out.push(copia);
     });
   }
@@ -14141,6 +14187,7 @@ function renderHistorico(){
       const atual=selM.value;
       selM.innerHTML='<option value="">Todos os meses ('+TODAS.length+')</option>'
         +ordem.map(k=>'<option value="'+k+'">'+_cotYMRotulo(k)+' · '+porMes[k]+'</option>').join('');
+      selM.title='Mês do calendário em que a cotação foi feita — não a chave onde ela está guardada.';
       selM.setAttribute('data-assin',assin);
       if(atual) selM.value=atual;
     }
@@ -14330,12 +14377,51 @@ function renderDashCot(){
   const from=_r.from||document.getElementById('dc-from')?.value||'';
   const to  =_r.to  ||document.getElementById('dc-to')?.value  ||'';
   const reservas=mgwReservasNoPeriodo(from,to);
-  let data=[...HIST_COT];
+  /* ── a base é TODA a nuvem, não o mês ativo ──────────────────────
+     HIST_COT carrega uma chave mensal por vez. Este painel tem seletor
+     de período próprio e, lendo só o mês ativo, ele filtrava um recorte
+     dentro de outro recorte: escolher "julho" no seletor não trazia
+     julho, trazia a interseção de julho com o mês que estava carregado
+     — quase sempre vazia. Agora a base é cotTodasAsCotacoes(), que
+     varre todas as chaves de cotação do armazenamento, incluindo as
+     que vieram de outros computadores pela sincronização, e só então o
+     período desta tela é aplicado. */
+  const TODAS=(typeof cotTodasAsCotacoes==='function')?cotTodasAsCotacoes():[...HIST_COT];
+  let data=[...TODAS];
   if(from)data=data.filter(h=>h.dtISO>=from);
   if(to)data=data.filter(h=>h.dtISO<=to);
 
+  /* O seletor de período abre no ciclo em vigência. Se ainda não houve
+     cotação nesse ciclo — o que é o normal nos primeiros dias do mês —,
+     a tela inteira abria zerada com a base cheia atrás. Tela em branco
+     com dado disponível é o pior resultado possível: parece defeito, e
+     ninguém procura o seletor. Então mostramos tudo e DIZEMOS que
+     ampliamos; quem quiser o recorte escolhe na barra. */
+  let _ampliou=false;
+  if(!data.length && TODAS.length){ data=[...TODAS]; _ampliou=true; }
+
+  /* de onde veio a base — para o número na tela nunca ser um mistério */
+  const _orig=document.getElementById('dc-origem');
+  if(_orig){
+    const meses={}; TODAS.forEach(h=>{ if(h._ym) meses[h._ym]=1; });
+    const nMeses=Object.keys(meses).length;
+    var _per=(from||to)
+      ? ((from?from.split('-').reverse().join('/'):'início')+' a '+(to?to.split('-').reverse().join('/'):'hoje'))
+      : 'todo o período';
+    _orig.innerHTML='☁️ Base: <b>'+TODAS.length+'</b> cotação(ões) de <b>'+nMeses+'</b> mês(es), '
+      +'somando o que existe neste computador e o que veio da nuvem de outras máquinas. '
+      +'Mostrando <b>'+data.length+'</b> em <b>'+_per+'</b>.'
+      +(_ampliou
+        ? ' <span style="color:var(--gold)">Não há cotação no período selecionado na barra acima, então a tela está mostrando <b>todos os meses</b>. Escolha outro período para recortar.</span>'
+        : (data.length!==TODAS.length?(' No período selecionado: <b>'+data.length+'</b>.'):' Nenhum filtro de período ativo.'));
+  }
+
   if(!data.length){
-    document.getElementById('dc-kpis').innerHTML='<div style="color:var(--chalk3);font-size:.78rem;padding:20px;text-align:center;grid-column:1/-1">Nenhuma cotação no período. Use os botões <strong>Copiar WhatsApp</strong> ou <strong>Cotação Detalhada</strong> para registrar.</div>';
+    document.getElementById('dc-kpis').innerHTML='<div style="color:var(--chalk3);font-size:.78rem;padding:20px;text-align:center;grid-column:1/-1;line-height:1.9">'
+      +(TODAS.length
+        ? ('Nenhuma cotação <b>no período selecionado</b>.<br>Há <b>'+TODAS.length+'</b> cotação(ões) na base — troque o mês na barra acima.<br><span style="color:var(--gold)">Lembre da virada do dia 12: cotação de 03/09 está no mês de agosto.</span>')
+        : 'Nenhuma cotação registrada. Use <strong>Copiar WhatsApp</strong> ou <strong>Cotação Detalhada</strong> para registrar, ou traga da nuvem na aba <strong>Histórico Cotações</strong>.')
+      +'</div>';
     document.getElementById('dc-kpis2').innerHTML='';
     return;
   }
@@ -16367,11 +16453,29 @@ const CAL_STATE={};
 const CAL_MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
 function initAllCalendars(){
-  // Use the active month, not always today
-  const ym=DB_MES_ATIVO||dbCurrentYM();
-  const parts=ym.split('_');
-  const year=parseInt(parts[0]);
-  const month=parseInt(parts[1])-1;
+  /* O ano vinha de DB_MES_ATIVO || dbCurrentYM(). Quando esta função roda
+     antes de o módulo do ciclo existir — o que acontece na primeira
+     montagem —, ym vem nulo ou impróprio, year sai NaN, nenhuma opção do
+     seletor fica marcada e o navegador escolhe a PRIMEIRA da lista: 2024.
+     A partir daí todo painel com barra de calendário filtra por um
+     intervalo de 2024 e aparece vazio, com a base cheia atrás. Foi isso
+     que fez o Dashboard de Cotações mostrar agosto zerado.
+     Agora, se o ym não der um ano e um mês válidos, o ciclo de hoje é
+     recalculado aqui mesmo, com a mesma regra do dia 13 ao 12. */
+  let ym=null;
+  try{ ym=(typeof DB_MES_ATIVO!=='undefined'&&DB_MES_ATIVO)?DB_MES_ATIVO:(typeof dbCurrentYM==='function'?dbCurrentYM():null); }catch(e){}
+  let year=NaN, month=NaN;
+  if(ym && /^\d{4}_\d{2}$/.test(String(ym))){
+    const parts=String(ym).split('_');
+    year=parseInt(parts[0],10);
+    month=parseInt(parts[1],10)-1;
+  }
+  if(!(year>=2000) || !(month>=0 && month<=11)){
+    const n=new Date();
+    const virada=(window.MGW_CICLO&&MGW_CICLO.DIA_VIRADA)||12;
+    year=n.getFullYear(); month=n.getMonth();
+    if(n.getDate()<=virada){ month-=1; if(month<0){ month=11; year-=1; } }
+  }
   CAL_PANELS.forEach(p=>{
     initCalendar(p,year,month);
     // Sync legacy date inputs (dv-from, dv-to, dc-from, dc-to etc)
@@ -16434,8 +16538,21 @@ function calGetRange(p){
   if(st.mode==='mes'||!st.mode){
     const mSel=document.getElementById('cal-mes-sel-'+p);
     const aSel=document.getElementById('cal-ano-sel-'+p);
-    const m=mSel?parseInt(mSel.value):new Date().getMonth();
-    const y=aSel?parseInt(aSel.value):new Date().getFullYear();
+    let m=mSel?parseInt(mSel.value,10):NaN;
+    let y=aSel?parseInt(aSel.value,10):NaN;
+    /* Se initAllCalendars() ainda não rodou — ela só acontece depois do
+       login —, os seletores estão com as opções fixas do HTML e o ano sai
+       2024. Nesse estado o painel filtra por um intervalo de dois anos
+       atrás e aparece vazio com a base cheia atrás, o que se lê como
+       "sumiram as cotações". Sem CAL_STATE para este painel, não dá para
+       confiar no que está nos seletores: o ciclo de hoje é recalculado
+       aqui, com a mesma regra do dia 13 ao 12. */
+    if(!CAL_STATE[p] || !(y>=2000) || !(m>=0 && m<=11)){
+      const n=new Date();
+      const virada=(window.MGW_CICLO&&MGW_CICLO.DIA_VIRADA)||12;
+      y=n.getFullYear(); m=n.getMonth();
+      if(n.getDate()<=virada){ m-=1; if(m<0){ m=11; y-=1; } }
+    }
     return calCicloRange(y,m);   /* dia 13 do mês → dia 12 do seguinte */
   } else {
     const fEl=document.getElementById('cal-from-'+p);
@@ -32619,6 +32736,99 @@ function frotaPorCat(){
   return m;
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   CUSTO POR DIÁRIA — o dado que falta para haver margem
+   ───────────────────────────────────────────────────────────────────
+   A planilha tem a TABELA DE PREÇOS (o que a Magiway cobra) e não tem
+   o custo (o que a Magiway paga). A coluna CUSTO REAL é derivada da
+   primeira, então "margem" calculada com ela mede desconto, não lucro.
+
+   Aqui se informa o custo por diária de cada categoria, uma vez. A
+   partir daí a aba calcula:  custo = custo/diária × diárias  — e a
+   margem passa a ser margem.
+
+   Fica ao lado do preço de tabela de propósito: ver os dois números
+   juntos é o que permite discutir preço com base em alguma coisa.
+   O valor é da empresa (sincroniza), porque custo não é opinião de
+   quem abriu o app.
+   ═══════════════════════════════════════════════════════════════════ */
+var CUSTO_K='gs_custo_diaria_v1';
+/* Preço de venda, da aba DADOS da planilha — só referência, não editável aqui. */
+var PRECO_TABELA=[
+  {cat:'Sedan',       alta:89,  baixa:65},
+  {cat:'SUV',         alta:99,  baixa:69},
+  {cat:'SUV Premium', alta:199, baixa:199},
+  {cat:'Minivan 7L',  alta:149, baixa:79},
+  {cat:'Minivan 8L',  alta:154, baixa:79},
+  {cat:'Van 12L',     alta:199, baixa:129},
+  {cat:'Conversível', alta:199, baixa:199}
+];
+function loadCustoDiaria(){
+  try{ return JSON.parse(localStorage.getItem(CUSTO_K)||'{}')||{}; }catch(e){ return {}; }
+}
+function saveCustoDiaria(o){
+  try{ localStorage.setItem(CUSTO_K, JSON.stringify(o)); }catch(e){}
+}
+function cambioAtual(){
+  try{ if(typeof _cambioCfg==='function') return _cambioCfg()||5.2; }catch(e){}
+  try{ if(typeof _CFG!=='undefined' && _CFG.cambio) return _CFG.cambio; }catch(e){}
+  return 5.2;
+}
+/* Custo em reais de uma reserva, a partir do custo por diária informado.
+   null quando a categoria dela não tem custo cadastrado. */
+function custoDaReserva(r){
+  var C=loadCustoDiaria();
+  var v=C[r.cat];
+  if(!(v>0)) return null;
+  var d=diarias(r); if(!(d>0)) return null;
+  return v*d*cambioAtual();
+}
+function temCustoInformado(){
+  var C=loadCustoDiaria();
+  return Object.keys(C).some(function(k){ return +C[k]>0; });
+}
+function salvarCustoDaTela(){
+  var C={};
+  PRECO_TABELA.forEach(function(p){
+    var el=document.getElementById('rt-custo-'+p.cat.replace(/[^a-z0-9]/gi,''));
+    var v=el?parseFloat(String(el.value).replace(',','.')):0;
+    if(v>0) C[p.cat]=v;
+  });
+  saveCustoDiaria(C);
+  if(typeof toast==='function') toast('💾 Custo por diária salvo — a margem passa a ser calculada com ele');
+  render();
+}
+function renderCustoDiaria(){
+  var box=document.getElementById('rt-custodia'); if(!box) return;
+  var C=loadCustoDiaria(), cam=cambioAtual();
+  var linhas=PRECO_TABELA.map(function(p){
+    var id='rt-custo-'+p.cat.replace(/[^a-z0-9]/gi,'');
+    var c=+C[p.cat]||0;
+    var margAlta = c>0 ? ((p.alta-c)/p.alta*100) : null;
+    var margBaixa= c>0 ? ((p.baixa-c)/p.baixa*100) : null;
+    function cor(m){ return m==null?'var(--chalk3)':(m>=35?'var(--ice)':(m>=20?'var(--gold)':'var(--fire)')); }
+    return '<tr>'
+      +'<td class="mgrsv-nome">'+esc3(p.cat)+'</td>'
+      +'<td class="mgrsv-mono">$'+p.alta+'</td>'
+      +'<td class="mgrsv-mono">$'+p.baixa+'</td>'
+      +'<td><input id="'+id+'" class="ffi" style="width:96px;padding:5px 8px;text-align:right" '
+        +'type="number" step="1" min="0" placeholder="—" value="'+(c>0?c:'')+'"></td>'
+      +'<td class="mgrsv-mono" style="color:'+cor(margAlta)+'">'+(margAlta==null?'—':n1(margAlta)+'%')+'</td>'
+      +'<td class="mgrsv-mono" style="color:'+cor(margBaixa)+'">'+(margBaixa==null?'—':n1(margBaixa)+'%')+'</td>'
+      +'</tr>';
+  }).join('');
+  box.innerHTML=
+     '<div class="mgrsv-tablewrap"><table class="mgrsv-table"><thead><tr>'
+    +'<th>CATEGORIA</th><th>PREÇO ALTA (USD)</th><th>PREÇO BAIXA (USD)</th>'
+    +'<th>CUSTO/DIÁRIA (USD)</th><th>MARGEM NA ALTA</th><th>MARGEM NA BAIXA</th>'
+    +'</tr></thead><tbody>'+linhas+'</tbody></table></div>'
+    +'<div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap">'
+    +'<button class="form-btn" style="background:linear-gradient(135deg,#1FA9A6,#0d7a77)" onclick="MGW_RENTAB.salvarCusto()">💾 SALVAR CUSTO POR DIÁRIA</button>'
+    +'<span class="mgw-hint" style="margin:0">Câmbio em uso: <b>'+n1(cam)+'</b>. As duas colunas de margem são por diária, na tabela — a margem das vendas reais está nos indicadores acima.</span>'
+    +'</div>';
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    A COLUNA "CUSTO REAL" É CUSTO MESMO?
    ───────────────────────────────────────────────────────────────────
@@ -32678,7 +32888,8 @@ function agregar(rs,chave){
     g.receita+=(+r.valor||0);
     g.integral+=(+r.valorIntegral||0);
     g.diarias+=diarias(r);
-    var c=+r.custoReal||0;
+    var c=(typeof temCustoInformado==='function'&&temCustoInformado())
+      ? (custoDaReserva(r)||0) : (+r.custoReal||0);
     if(c>0){ g.custo+=c; g.comCusto++; } else g.semCusto++;
   });
   return Object.keys(m).map(function(k){
@@ -32693,7 +32904,9 @@ function comporMargem(rs,chave,linhas){
   var porK={}; linhas.forEach(function(g){ porK[g.k]=g; });
   rs.forEach(function(r){
     var g=porK[chave(r)||'—']; if(!g) return;
-    if((+r.custoReal||0)>0) g.receitaComCusto+=(+r.valor||0);
+    var _c=(typeof temCustoInformado==='function'&&temCustoInformado())
+      ? (custoDaReserva(r)||0) : (+r.custoReal||0);
+    if(_c>0) g.receitaComCusto+=(+r.valor||0);
   });
   linhas.forEach(function(g){
     if(g.comCusto>0){ g.lucro=g.receitaComCusto-g.custo;
@@ -32703,6 +32916,7 @@ function comporMargem(rs,chave,linhas){
 }
 
 function render(){
+  try{ renderCustoDiaria(); }catch(e){ console.warn('[rentab] custo/diária',e); }
   var box=document.getElementById('rt-kpis'); if(!box) return;
   var p=periodo(), rs=filtradas();
   var lbl=document.getElementById('rt-periodo-lbl');
@@ -32731,12 +32945,19 @@ function render(){
     return;
   }
 
+  /* Custo informado por diária vence a coluna da planilha: um é custo,
+     o outro é tabela de preço. Quando existe, a margem volta a ser margem. */
+  var USA_INFORMADO=temCustoInformado();
+  function custoDe(r){
+    if(USA_INFORMADO){ var c=custoDaReserva(r); if(c!=null) return c; return 0; }
+    return +r.custoReal||0;
+  }
   var receita=0, custo=0, integral=0, dias=0, semCusto=0, comCusto=0, receitaCC=0, antSoma=0, antN=0;
   rs.forEach(function(r){
     receita+=(+r.valor||0);
     integral+=(+r.valorIntegral||0);
     dias+=diarias(r);
-    var c=+r.custoReal||0;
+    var c=custoDe(r);
     if(c>0){ custo+=c; comCusto++; receitaCC+=(+r.valor||0); } else semCusto++;
     if(r.dataFech&&r.entrega){
       var a=Math.round((dOnly2(r.entrega)-dOnly2(r.dataFech))/DIA);
@@ -32754,7 +32975,7 @@ function render(){
            (sub?('<div style="font-size:.6rem;color:var(--chalk3);margin-top:2px">'+sub+'</div>'):'')+'</div>';
   }
   /* O que a coluna R é de verdade decide os rótulos desta tela. */
-  var TAB=custoEhTabela(rs);
+  var TAB=USA_INFORMADO?{tabela:false,testadas:0,constantes:0}:custoEhTabela(rs);
   var rotCusto  = TAB.tabela ? 'Tabela de referência' : 'Custo real';
   var rotLucro  = TAB.tabela ? 'Acima da tabela'      : 'Lucro bruto';
   var rotMargem = TAB.tabela ? '% sobre a tabela'     : 'Margem';
@@ -32776,9 +32997,9 @@ function render(){
      nomeada, é a lista do que precisa ser conferido na planilha ou
      renegociado. Sempre uma das duas coisas — nunca nenhuma. */
   var negativas=rs.filter(function(r){
-    var c=+r.custoReal||0; return c>0 && c>(+r.valor||0);
-  }).sort(function(a,b){ return ((+a.valor||0)-(+a.custoReal||0))-((+b.valor||0)-(+b.custoReal||0)); });
-  var prejuizo=negativas.reduce(function(a,r){ return a+((+r.custoReal||0)-(+r.valor||0)); },0);
+    var c=custoDe(r); return c>0 && c>(+r.valor||0);
+  }).sort(function(a,b){ return ((+a.valor||0)-custoDe(a))-((+b.valor||0)-custoDe(b)); });
+  var prejuizo=negativas.reduce(function(a,r){ return a+(custoDe(r)-(+r.valor||0)); },0);
 
   if(aviso){
     var partes=[];
@@ -32800,7 +33021,7 @@ function render(){
            +'<b>Isto não é prejuízo</b>: é o tamanho do abatimento dado sobre o nosso próprio preço.<br>')
         : ('🔴 <b>'+negativas.length+' reserva(s) com custo MAIOR que o valor da venda</b> — '+brl(prejuizo)+' de prejuízo, que puxa a margem de todas as outras para baixo:<br>'))
       +negativas.slice(0,8).map(function(r){
-        var v=(+r.valor||0), c=(+r.custoReal||0);
+        var v=(+r.valor||0), c=custoDe(r);
         return '• <b>'+esc3(r.cliente)+'</b> · '+esc3(r.cat||r.modelo||'—')+' · vendeu '+brl(v)+
                ' · '+(TAB.tabela?'tabela ':'custou ')+brl(c)+
                ' · <span style="color:var(--fire)">'+(TAB.tabela?('−'+(c>0?n1((1-v/c)*100):'0')+'%'):brl(v-c))+'</span>';
@@ -32920,7 +33141,8 @@ function copiar(){
   return txt;
 }
 
-window.MGW_RENTAB={ render:render, copiar:copiar,
+window.MGW_RENTAB={ render:render, copiar:copiar, salvarCusto:salvarCustoDaTela,
+  custoDiaria:loadCustoDiaria, custoDaReserva:custoDaReserva, temCusto:temCustoInformado,
   /* expostos para teste */
   periodo:periodo, filtradas:filtradas, diarias:diarias, diariasNoPeriodo:diariasNoPeriodo };
 
