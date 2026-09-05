@@ -29799,6 +29799,19 @@ thead th,.mgdisp-tab thead th,.mgrsv-table thead th{ background:#070f1a !importa
   .cv-ciclo-r{max-width:none}
   .cv-ciclo-s{display:none}
 }
+
+/* ── Método: a terceira camada de cada passo ── */
+.or-extra{display:grid;gap:10px;margin-top:12px}
+.or-x{border-left:3px solid;border-radius:0 11px 11px 0;padding:11px 14px;background:rgba(255,255,255,.03)}
+.or-x-t{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:5px}
+.or-x p{margin:0;font-size:.87rem;line-height:1.72;color:#D6E3EF}
+.or-x-erro{border-color:#FF6B78;background:rgba(255,45,45,.06)}
+.or-x-erro .or-x-t{color:#FF6B78}
+.or-x-sinal{border-color:#1AFF9D;background:rgba(26,255,157,.05)}
+.or-x-sinal .or-x-t{color:#1AFF9D}
+.or-x-treino{border-color:#A855F7;background:rgba(168,85,247,.06)}
+.or-x-treino .or-x-t{color:#C084FC}
+@media(max-width:820px){ .or-x p{font-size:.92rem;line-height:1.78} }
 </style><!--/mgw-skin-v2-->
 
 
@@ -33212,6 +33225,220 @@ window.MGW_MANUAL_EXTRA=[
    colapsáveis para não rolar página inteira, e um toque para copiar a
    fala já na área de transferência. Sem isso vira documento bonito que
    ninguém abre no meio de um atendimento. */
+/* ═══════════════════════════════════════════════════════════════════
+   MANUAL — TERCEIRO BLOCO
+   ───────────────────────────────────────────────────────────────────
+   Os dois primeiros blocos cobrem a CONVERSA: abordar, qualificar,
+   apresentar, contornar, fechar, recuperar. Este cobre o que aparece
+   NO MEIO dela e trava tudo — a pergunta técnica.
+
+   Uma advertência que vale para o bloco inteiro: onde aparece {chave},
+   é para você preencher com a política real da Magiway, conferida.
+   Estas falas ensinam COMO responder, não O QUE a nossa apólice cobre.
+   Chutar um valor de franquia ou prometer cobertura que não existe é o
+   único erro deste manual que não tem conserto depois — o cliente já
+   viajou confiando no que você disse.
+   ═══════════════════════════════════════════════════════════════════ */
+window.MGW_MANUAL_C=[
+
+/* ───────────────  PERGUNTAS TÉCNICAS  ─────────────── */
+{g:'Perguntas técnicas — seguro e caução', ico:'🛡️', itens:[
+ {t:'"O seguro cobre o quê, exatamente?"',
+  q:'A pergunta mais comum depois do preço — e a que mais se responde mal.',
+  p:'Aqui a tentação é responder "cobre tudo", porque é a resposta que fecha mais rápido. É também a que gera a pior reclamação possível: a que acontece com o cliente do outro lado do mundo, com um problema, descobrindo que "tudo" não era tudo. Responda pelo que ESTÁ coberto, em lista curta, e diga em voz alta o que não está. Cliente que ouve o limite antes de viajar confia mais, não menos — o limite é a prova de que o resto é verdade.',
+  f:['Te explico direitinho 👇\n\n✅ {coberturas}\n\n❌ O que não entra: {exclusoes}\n\nEssas duas listas são as de verdade, não as de propaganda. Prefiro que você saiba agora do que descobrir lá.',
+     'Cobre {coberturas}. Não cobre {exclusoes} — e eu falo isso de propósito, porque é o tipo de coisa que estraga viagem quando aparece de surpresa.',
+     'Vou te mandar por escrito o que entra e o que não entra, pra você ter guardado. Qualquer dúvida depois, é só olhar essa mensagem.']},
+
+ {t:'"Vocês pedem caução no cartão?"',
+  q:'Medo clássico de quem já alugou nos EUA e teve valor bloqueado.',
+  p:'Caução zero é uma das nossas vantagens reais e é subaproveitada. Quem já alugou lá sabe a dor do bloqueio de US$ 500 no cartão em plena viagem. Diga o número que NÃO é bloqueado — a ausência precisa ser dimensionada para ser sentida.',
+  f:['Zero. Nada é bloqueado no seu cartão 🙌\n\nNas locadoras de balcão costuma ficar preso entre {faixaCaucao} durante a viagem inteira. Com a gente esse dinheiro continua disponível pra vocês gastarem no que interessa.',
+     'Não pedimos caução. É justamente a coisa que mais irrita quem aluga por lá — o limite do cartão preso enquanto você está viajando.',
+     'Nenhum valor bloqueado. Você paga o combinado e pronto; seu limite fica inteiro pra viagem.']},
+
+ {t:'"Qual é a franquia se eu bater?"',
+  q:'Cliente que lê contrato — normalmente o que mais fecha.',
+  p:'Quem pergunta franquia é bom sinal: está se projetando usando o carro, o que em decisão é meio caminho. Nunca improvise o valor. Se você não tem o número na mão, diga que vai confirmar e confirme — "acho que é" é a frase que vira reclamação.',
+  f:['Boa pergunta, e vou te dar o número exato em vez de aproximar: {franquia}. Te mando o trecho do contrato onde isso está escrito.',
+     'Deixa eu confirmar o valor certo pra não te passar informação torta — te respondo em alguns minutos com a fonte.',
+     'A franquia é {franquia}. E olha, na prática o que mais acontece não é batida — é arranhão de estacionamento. Isso está {tratamentoArranhao}.']},
+
+ {t:'"E se acontecer alguma coisa, eu falo com quem?"',
+  q:'A pergunta por trás de quase toda objeção de confiança.',
+  p:'Ele não está pedindo um número de telefone; está perguntando se vai ficar sozinho. A resposta que funciona é uma PESSOA com nome, não um canal. Suporte em português é o nosso ativo mais forte e o mais fácil de descrever mal — "temos suporte 24h" é slogan; "é comigo, neste número, e eu atendo" é promessa.',
+  f:['Comigo. Este mesmo número, {vendedor}. Não é central, não é robô, não é fila — é a pessoa que está falando com você agora.',
+     'Você fala comigo, em português, e eu resolvo com a locadora. Você não vai precisar discutir em inglês com ninguém — é literalmente pra isso que a gente existe.',
+     'Salva este contato. Qualquer coisa em Orlando, de pneu furado a dúvida boba de GPS, chama aqui.']},
+
+ {t:'"Preciso de seguro viagem à parte?"',
+  q:'Confusão comum entre seguro do carro e seguro de saúde.',
+  p:'São duas coisas diferentes e o cliente costuma achar que uma cobre a outra. Esclarecer isso não vende carro nenhum — e é exatamente por isso que constrói confiança: você está informando contra o seu próprio interesse imediato. Reciprocidade sem cobrança é o mecanismo, e ele funciona porque é genuíno.',
+  f:['São coisas diferentes: o nosso seguro é do carro. Seguro de saúde/viagem é outro, e vale muito a pena nos EUA — mas não é comigo que você contrata, e eu não ganho nada te falando isso.',
+     'O do carro está incluso. O de saúde é separado e eu recomendo fortemente, porque atendimento lá é caríssimo. Não vendo esse, só estou avisando.']}
+]},
+
+/* ───────────────  ESTRADA, DOCUMENTOS E REGRAS  ─────────────── */
+{g:'Perguntas técnicas — dirigir nos EUA', ico:'🛣️', itens:[
+ {t:'"Preciso de habilitação internacional?"',
+  q:'Dúvida quase universal de primeira viagem.',
+  p:'Regra prática: responda o que a Magiway exige e o que a locadora exige, que são as duas que importam para a viagem dele. Se houver divergência entre o que se ouve por aí e o que vale na prática, diga qual é qual. A pessoa não quer opinião, quer saber o que colocar na mala.',
+  f:['Pra alugar com a gente você precisa de {documentos}. A PID (permissão internacional) {statusPID} — te explico em uma frase por quê: {motivoPID}.',
+     'Leva {documentos}. É o que a locadora pede no balcão, e é o que já vi funcionando em centenas de retiradas.',
+     'Te mando a listinha do que separar antes de viajar, pra você conferir com calma.']},
+
+ {t:'"Qual a idade mínima pra dirigir?"',
+  q:'Grupos jovens, ou filho que vai dirigir junto.',
+  p:'Idade abaixo de 25 costuma ter cobrança extra nas locadoras americanas. Se for o caso aqui, diga o valor ANTES da proposta — taxa que aparece depois do "sim" é o começo de uma reclamação, mesmo quando ela sempre esteve no contrato.',
+  f:['A idade mínima é {idadeMin}. De {faixaJovem} tem uma taxa de {taxaJovem} por dia — já te digo agora pra não aparecer surpresa lá na frente.',
+     'Pode dirigir a partir de {idadeMin}. Se alguém do grupo estiver abaixo de 25, me avisa que eu já calculo certo na proposta.']},
+
+ {t:'"Posso colocar mais de um motorista?"',
+  q:'Casais e grupos que vão revezar em viagem longa.',
+  p:'Motorista adicional é um dos itens em que a nossa condição costuma ser melhor que a do balcão, e quase nunca é oferecido de forma ativa. Ofereça antes de ele pedir: em viagem de 10 dias, revezar não é luxo, é segurança.',
+  f:['Pode sim. Motorista adicional {condicaoAdicional}. Em viagem de {dias} dias eu recomendo colocar os dois mesmo — cansaço na I-4 é real.',
+     'Consigo incluir o segundo motorista. Quem mais vai dirigir? Já deixo no contrato pra não ter problema se precisarem trocar no meio do caminho.']},
+
+ {t:'"Como funciona o pedágio? E o SunPass?"',
+  q:'A dúvida mais específica de Orlando — e a que mais gera cobrança surpresa.',
+  p:'Boa parte das estradas da região é cash-free. Cliente que não entende isso passa direto e recebe a cobrança semanas depois, já no Brasil, com taxa administrativa. Explicar isso antes evita a única reclamação pós-viagem que é 100% previsível.',
+  f:['Em Orlando quase todo pedágio é eletrônico, sem cabine pra pagar em dinheiro. No seu carro {situacaoPedagio}.\n\nO que você precisa saber: {comoFunciona}. Assim não chega cobrança de surpresa depois.',
+     'Te explico o pedágio porque é onde todo mundo se enrola: {comoFunciona}. Guarda essa mensagem.']},
+
+ {t:'"Como devolvo o carro? Cheio de gasolina?"',
+  q:'Última dúvida operacional, geralmente na véspera.',
+  p:'Combustível é onde o cliente perde dinheiro por desinformação — devolver com tanque pela metade sob política de "cheio-cheio" custa caro. Uma mensagem de véspera com isso evita a irritação de última hora, que é justamente o momento que a memória guarda (o "fim" da regra pico-fim).',
+  f:['Na devolução: {politicaCombustivel}. Tem posto a {distanciaPosto} do aeroporto — se quiser eu te mando o mapa no dia.',
+     'Devolve {politicaCombustivel}. Sai bem mais barato abastecer no posto do que deixar pra locadora completar.']},
+
+ {t:'"Posso sair da Flórida com o carro?"',
+  q:'Roteiros que incluem Miami, Georgia ou cruzeiro.',
+  p:'Quase sempre pode, mas a pergunta por trás é "vou ter problema?". Responda a permissão E o que muda (se muda), porque ele vai planejar em cima disso.',
+  f:['Pode sim. {regraEstados}. Me conta o roteiro que eu já vejo se tem alguma coisa a ajustar.',
+     'Sem problema. Só me avisa o destino porque {motivoAviso} — nada complicado, é só pra deixar tudo certo no contrato.']}
+]},
+
+/* ───────────────  DATAS E TEMPORADA  ─────────────── */
+{g:'Datas, temporada e mudança de plano', ico:'📅', itens:[
+ {t:'Cliente ainda não comprou a passagem',
+  q:'"Ainda estou vendo as datas."',
+  p:'Sem passagem, a viagem ainda não existe na cabeça dele — e proposta fechada agora vira cotação morta. O movimento certo não é forçar o fechamento; é ficar do lado dele na decisão que ele está tomando de verdade, que é a aérea. Quem ajuda antes de vender é quem recebe a mensagem quando a passagem sai.',
+  f:['Sem problema! Me avisa quando as datas fecharem que eu monto na hora.\n\nSó uma dica que vale dinheiro: {dicaData}. Se der pra encaixar aí, vocês economizam bastante.',
+     'Então segura a proposta comigo. Assim que comprar a passagem, me manda print que eu já deixo o carro reservado nas datas certas.']},
+
+ {t:'Viagem em alta temporada',
+  q:'Dezembro, julho, spring break, feriadão.',
+  p:'Escassez em alta temporada é real, e por isso pode ser dita — o limite ético é não inventá-la. Diga o fato (frota e preço mudam) sem transformar em pressão artificial. Escassez fabricada é a técnica que mais destrói confiança quando descoberta, e nesse nicho o cliente confere.',
+  f:['{mes} é a época mais cheia do ano em Orlando. Não é conversa de vendedor: {fatoTemporada}. Se a viagem é certa, fechar agora costuma sair melhor do que fechar depois.',
+     'Nessa data a minivan é o primeiro carro a acabar, porque é o que toda família brasileira procura. Não estou te apressando — só te contando como funciona.']},
+
+ {t:'Cliente quer mudar a data depois de fechado',
+  q:'Mudança de passagem, imprevisto, remarcação.',
+  p:'Este é um dos momentos de maior valor da relação inteira. A pessoa espera atrito — e quando não encontra, o vínculo salta. Resolver bem uma mudança gera mais indicação do que uma viagem que correu lisa, porque só nela ele descobre como você age quando dá trabalho.',
+  f:['Sem drama, isso acontece 🙂 Me manda as datas novas que eu vejo o que dá pra fazer e te falo com transparência: {politicaMudanca}.',
+     'Vamos ajustar. Me passa a data nova. Se tiver diferença de valor eu te mostro a conta aberta, sem letra miúda.']},
+
+ {t:'Viagem cancelada de vez',
+  q:'Desistência, problema pessoal, visto negado.',
+  p:'Este é o atendimento que parece perdido e não é. A pessoa que cancela hoje viaja em algum momento, e conta para o grupo dela como foi tratada na hora ruim. Cobrar bem e despedir mal é a troca mais cara que existe neste negócio.',
+  f:['Poxa, sinto muito de verdade 😔 Vamos resolver a parte burocrática rápido pra você cuidar do resto: {politicaCancelamento}.',
+     'Entendo perfeitamente. Deixa comigo a parte do carro. E quando remarcarem, é só me chamar — guardo seu histórico aqui.']},
+
+ {t:'Cliente pergunta a melhor época para ir',
+  q:'Viagem sem data definida.',
+  p:'Responder isso bem custa dois minutos e planta autoridade real — é conselho de quem conhece o destino, não de quem vende carro. Autoridade que se demonstra vale muito mais que a que se declara.',
+  f:['Vou te dar minha opinião sincera de quem vê isso o ano inteiro: {melhorEpoca}. E a pior, se puder evitar: {piorEpoca}.',
+     'Depende do que vocês priorizam — parque vazio ou clima bom. Me diz o que pesa mais e eu te falo o mês certo.']}
+]},
+
+/* ───────────────  PAGAMENTO  ─────────────── */
+{g:'Pagamento e burocracia', ico:'💳', itens:[
+ {t:'Mandou o link e o cliente sumiu',
+  q:'Silêncio depois do link de pagamento — o pior tipo.',
+  p:'Sumiço depois do link raramente é desistência: é dúvida que apareceu na hora de digitar o cartão, e vergonha de perguntar de novo. Reabrir a porta sem cobrar é o que traz de volta. Cobrança acelera a fuga; pergunta genuína, não.',
+  f:['{nome}, vi que o link ficou pendente. Não é cobrança 🙂 Só quero saber se apareceu alguma dúvida na hora — muita gente trava numa coisinha boba e não pergunta.',
+     'Passou alguma dificuldade no pagamento? Se quiser, eu mudo a forma. Tem {alternativas} também.']},
+
+ {t:'Cartão recusado',
+  q:'Compra internacional bloqueada pelo banco.',
+  p:'Quase sempre é o banco brasileiro barrando compra internacional, não falta de limite — e o cliente costuma se sentir constrangido, o que faz ele sumir em vez de avisar. Tirar a culpa dele resolve a maioria dos casos em uma mensagem.',
+  f:['Isso é super comum e quase nunca é limite — o banco costuma barrar compra internacional por segurança. Liga no seu banco e libera; leva uns 2 minutos. Te espero.',
+     'Acontece direto! Tenta {alternativa}, ou libera a compra internacional no app do banco e a gente refaz.']},
+
+ {t:'"Dá pra parcelar em quantas vezes?"',
+  q:'Pergunta de valor alto, muito comum em família grande.',
+  p:'Parcelamento muda a percepção do preço mais do que desconto, porque a comparação mental passa a ser com a parcela e não com o total. Isso é legítimo desde que o total continue visível — esconder o total para "aliviar" a parcela é manipulação, e é o tipo de coisa que o cliente descobre no extrato.',
+  f:['Dá pra fazer em {parcelas}. Fica {valorParcela} por mês — e o total continua sendo {valorTotal}, sem juros escondidos.',
+     'Consigo {parcelas}. Quer que eu monte assim ou você prefere à vista com {condicaoVista}?']},
+
+ {t:'Cliente pede nota / comprovante para reembolso da empresa',
+  q:'Viagem de trabalho, ou reembolso de convênio.',
+  p:'Resolver documento rápido é entrega concreta e barata. É também o cliente que mais repete, porque viagem de trabalho volta todo ano.',
+  f:['Claro! Te mando {documento} em até {prazo}. Me confirma os dados que precisam sair no documento: {dadosNecessarios}.',
+     'Sem problema. Me passa CNPJ e razão social que eu emito certinho pro seu financeiro aceitar de primeira.']},
+
+ {t:'"Posso pagar quando chegar aí?"',
+  q:'Tentativa de adiar o compromisso financeiro.',
+  p:'Aqui não é para ceder por medo de perder a venda, mas também não é para responder só "não". Explique o porquê da regra — regra com motivo é aceita; regra sem motivo é sentida como desconfiança do cliente, e ele reage a isso.',
+  f:['A reserva só fica garantida com o pagamento — é isso que trava o carro no seu nome na data. Sem isso o sistema libera pra outra pessoa, e em {mes} some rápido.',
+     'Nesse formato eu não consigo segurar o carro. O que eu posso fazer é {alternativaReal} — assim você não fica sem e eu não te prometo o que não vou conseguir cumprir.']}
+]},
+
+/* ───────────────  QUANDO A RESPOSTA É NÃO  ─────────────── */
+{g:'Quando a resposta é não', ico:'🚫', itens:[
+ {t:'O orçamento dele não chega no nosso preço',
+  q:'Diferença grande, sem margem de negociação.',
+  p:'Enrolar aqui custa duas coisas: o tempo dele e a sua reputação. Dizer não com clareza é a coisa mais rara que um vendedor faz — e é lembrada. Boa parte das indicações que a gente recebe vem de gente que NÃO fechou, e foi bem tratada na recusa.',
+  f:['Vou ser honesto com você em vez de ficar empurrando: nesse orçamento a gente não chega. Prefiro te falar agora do que te fazer perder tempo.\n\nSe em algum momento o plano mudar, me chama — fica meu contato.',
+     'Não vou conseguir chegar nesse valor, e não adianta eu inventar. O que eu posso fazer é {alternativaHonesta}. Se não servir, tudo bem mesmo.']},
+
+ {t:'O que ele quer, a gente não faz',
+  q:'Pedido fora do nosso escopo ou da nossa frota.',
+  p:'Encaminhar bem quem você não pode atender é investimento em marca, não perda. A pessoa lembra de quem resolveu, mesmo que quem resolveu não tenha sido você.',
+  f:['Isso especificamente a gente não faz. Não vou te vender uma solução torta só pra fechar.\n\nO que eu te sugiro é {encaminhamento}. Se depois precisar de carro em Orlando, você sabe onde me achar 🙂',
+     'Não é o nosso forte e eu prefiro dizer. Pra esse caso, {encaminhamento} atende melhor que a gente.']},
+
+ {t:'Ele está pedindo algo que não vai dar certo',
+  q:'Carro pequeno demais para o grupo, prazo impossível, roteiro inviável.',
+  p:'Aceitar um pedido que você sabe que vai dar errado é adiar o problema para o meio da viagem, quando ele custa dez vezes mais — em suporte, em reclamação e em avaliação pública. Discordar aqui é serviço, não atrito.',
+  f:['Vou te dar uma opinião contrária ao meu próprio bolso: {n} pessoas com mala nesse carro não cabe. Vai dar certo no papel e errado no primeiro dia.\n\nCom {alternativa} vocês viajam inteiros. É mais caro, e eu prefiro te falar isso agora do que você me falar de lá.',
+     'Dá pra fazer do jeito que você pediu, mas eu não recomendo, e vou te dizer por quê: {motivo}. A decisão é sua — só não quero que você descubra isso na estrada.']},
+
+ {t:'Cliente insiste depois de um não bem dado',
+  q:'Terceira tentativa em cima do mesmo ponto.',
+  p:'Repetir o não com as mesmas palavras é o que preserva a credibilidade — mudar de posição na terceira insistência ensina que basta insistir, e transforma todas as próximas conversas em negociação. Firmeza sem aspereza.',
+  f:['Entendo o seu lado, de verdade. Mas a minha resposta continua a mesma, e eu prefiro ser coerente com você a ceder agora e voltar atrás depois.',
+     'Continua sendo não nesse ponto — e continua valendo tudo que eu ofereci de bom coração. A porta fica aberta.']}
+]},
+
+/* ───────────────  QUANDO O ERRO FOI NOSSO  ─────────────── */
+{g:'Quando o erro foi nosso', ico:'🙇', itens:[
+ {t:'Você passou uma informação errada',
+  q:'Valor, data, categoria ou regra dita errado.',
+  p:'A recuperação bem feita produz mais confiança do que o serviço que nunca falhou — é o paradoxo da recuperação de serviço, e ele só funciona com três coisas na ordem certa: assumir sem rodeio, corrigir rápido, e não repetir. Justificativa antes da correção destrói o efeito.',
+  f:['{nome}, eu errei aqui e vou corrigir: {oQueErrei}. O certo é {oCerto}.\n\nA responsabilidade é minha, e o que eu vou fazer pra compensar é {reparacao}.',
+     'Erro meu, sem desculpa. Já estou resolvendo e te dou retorno em {prazo}.']},
+
+ {t:'Atrasamos ou falhamos na entrega',
+  q:'Cliente esperando no aeroporto, coisa não saiu como combinado.',
+  p:'Nesse momento a pessoa não quer explicação, quer previsão. Dê o horário real, mesmo que ruim, e cumpra. Prazo otimista que fura transforma um problema logístico em problema de confiança.',
+  f:['{nome}, houve um atraso e a culpa é nossa. Você vai ser atendido em {tempoReal} — esse é o prazo real, não o otimista.\n\nEstou acompanhando pessoalmente até você estar com o carro na mão.',
+     'Sei que você está cansado da viagem e isso não devia estar acontecendo. Já estou em cima. Te atualizo a cada {intervalo}, mesmo que não tenha novidade.']},
+
+ {t:'O cliente reclamou publicamente',
+  q:'Avaliação ruim, comentário em rede social.',
+  p:'A resposta pública não é para o reclamante — é para as dezenas de pessoas que vão ler depois. Responder com defensiva confirma o problema; responder com responsabilidade e um caminho concreto costuma convencer mais que dez avaliações boas. E leve a conversa para o privado só depois de assumir em público.',
+  f:['{nome}, obrigado por escrever, e desculpa mesmo pelo que aconteceu. {reconhecimento}.\n\nJá estou resolvendo: {acao}. Vou te chamar no privado pra acertar, mas queria assumir aqui também.',
+     'Você tem razão em reclamar. Foi falha nossa em {ponto}. O que estamos fazendo pra não repetir é {mudanca}.']},
+
+ {t:'Você não sabe a resposta',
+  q:'Pergunta técnica fora do seu domínio.',
+  p:'Inventar aqui é o erro mais caro do manual, porque a mentira só aparece quando o cliente já está viajando. "Não sei, vou confirmar" não derruba autoridade — derruba quem responde errado e é descoberto.',
+  f:['Não vou chutar isso com você. Vou confirmar na fonte certa e te respondo em {prazo}.',
+     'Essa eu não sei de cabeça, e prefiro te dar o número certo a te dar um número rápido. Já volto.']}
+]}
+];
+
 (function(){
 'use strict';
 function esc5(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -33220,7 +33447,7 @@ var abertos={};
 
 function render(){
   var box=document.getElementById('man-corpo'); if(!box) return;
-  var M=(window.MGW_MANUAL||[]).concat(window.MGW_MANUAL_EXTRA||[]);
+  var M=(window.MGW_MANUAL||[]).concat(window.MGW_MANUAL_EXTRA||[]).concat(window.MGW_MANUAL_C||[]);
   var q=norm5((document.getElementById('man-busca')||{}).value||'');
   var total=0, mostrados=0;
   var html=M.map(function(g,gi){
@@ -33258,7 +33485,7 @@ function render(){
   box.innerHTML = html || '<div class="or-vazio">Nada encontrado para “'+esc5((document.getElementById('man-busca')||{}).value||'')+'”. Tente a palavra que o cliente usou — por exemplo <b>caro</b>, <b>pensar</b>, <b>caução</b>, <b>sumiu</b>.</div>';
 }
 function toggle(gi){ abertos[gi]=(abertos[gi]===false); render(); }
-function todosOsGrupos(){ return (window.MGW_MANUAL||[]).concat(window.MGW_MANUAL_EXTRA||[]); }
+function todosOsGrupos(){ return (window.MGW_MANUAL||[]).concat(window.MGW_MANUAL_EXTRA||[]).concat(window.MGW_MANUAL_C||[]); }
 function copiar(id,btn){
   var el=document.getElementById(id); if(!el) return;
   var txt=el.innerText||el.textContent||'';
@@ -33776,6 +34003,52 @@ function renderOrientacoes(){
    Sete passos. Cada um tem: o que fazer, por que o cérebro responde
    assim, e o que dizer. As referências são reais e estão nomeadas; o
    que é interpretação nossa está marcado como tal. */
+/* ═══════════════════════════════════════════════════════════════════
+   MÉTODO — a terceira camada de cada passo
+   ───────────────────────────────────────────────────────────────────
+   Os sete passos diziam o que fazer, o que dizer e o que evitar. Falta
+   o que separa quem leu de quem aplica:
+
+     ERRO    — a maneira específica de errar este passo. Não é o oposto
+               dele: é a versão que PARECE certa e não é, que é a que
+               realmente acontece.
+     SINAL   — como saber, dentro da conversa, que o passo pegou. Sem
+               isso a pessoa segue o roteiro no vazio e só descobre no
+               fim que perdeu a venda três passos atrás.
+     TREINO  — um exercício concreto, de fazer nesta semana. Método sem
+               repetição deliberada volta ao padrão anterior em cerca de
+               três semanas (é a curva do módulo 12 do curso).
+   ═══════════════════════════════════════════════════════════════════ */
+window.MGW_METODO_EXTRA={
+ 1:{erro:'Fazer a saudação calorosa e emendar o orçamento na mesma mensagem. O calor vira formalidade de abertura — um "oi, tudo bem?" protocolar antes do arquivo em PDF — e o cliente lê exatamente como o que é: educação de quem já ia mandar o preço de qualquer jeito.',
+    sinal:'Ele responde com mais de uma linha, ou conta algo que você não perguntou ("vamos levar minha mãe", "é aniversário da minha filha"). Resposta de uma palavra depois da sua abertura significa que você ainda não existe para ele — não avance, insista mais uma vez no humano.',
+    treino:'Pegue seus últimos 10 primeiros contatos. Conte em quantos o preço apareceu antes de uma pergunta sobre a viagem. Reescreva os três piores. Não precisa mandar para ninguém — o ganho é perceber o padrão.'},
+
+ 2:{erro:'Perguntar as quatro coisas em bloco, numeradas, para "ganhar tempo". Vira formulário, e formulário recebe resposta de formulário: dados corretos, zero preocupação declarada. Você sai com o que precisa para orçar e sem nada com que vender.',
+    sinal:'Ele declara uma preocupação sem você ter perguntado diretamente por ela — "minha mulher tem medo de dirigir lá", "a gente tem uma criança pequena". Esse é o material do passo 5. Se ao fim do passo 2 você não tem nenhuma frase dele guardada, o passo não aconteceu.',
+    treino:'Nos próximos 5 atendimentos, anote literalmente uma frase do cliente, com as palavras dele. Guarde num bloco de notas. No fim da semana, veja em quantos você conseguiu usar aquela frase depois.'},
+
+ 3:{erro:'Espelhar parafraseando bonito. "Entendi, então vocês buscam conforto e tranquilidade" é resumo de vendedor, não a fala dele — e soa treinado. O efeito vem da palavra literal, inclusive quando ela é torta.',
+    sinal:'Ele confirma com ênfase: "isso!", "exatamente", "é isso mesmo". Confirmação morna ("é... mais ou menos") quer dizer que você espelhou a sua interpretação, não o que ele disse. Volte e pergunte de novo.',
+    treino:'Grave (mentalmente, ou anote) uma frase do cliente por atendimento e devolva-a inteira, sem melhorar. Repare na diferença de reação entre a devolução literal e o resumo elegante.'},
+
+ 4:{erro:'Listar os inclusos e o preço na mesma mensagem. Quando o número está visível, ninguém lê a lista — a atenção vai direto ao valor e a lista vira justificativa, que é lida como defesa. A ordem não é detalhe de estilo, é o passo inteiro.',
+    sinal:'Ele reage a um incluso antes de ver o preço: "zero caução mesmo?", "seguro total tá dentro?". Aí a régua dele deixou de ser só a tarifa. Se a primeira reação ao seu bloco foi sobre o valor, o preço vazou cedo demais.',
+    treino:'Separe suas propostas em duas mensagens por uma semana: uma com o que está incluso, outra com o número. Compare a taxa de resposta com a das semanas anteriores.'},
+
+ 5:{erro:'Resolver a preocupação genérica em vez da declarada. O cliente disse "tenho medo de bater lá fora" e a resposta fala de "tranquilidade e segurança". É a mesma distância entre remédio e propaganda de remédio.',
+    sinal:'Ele agradece especificamente ("ah, isso me deixa mais tranquilo") ou faz uma segunda pergunta sobre o mesmo assunto — sinal de que a preocupação era real e agora está sendo tratada.',
+    treino:'Antes de mandar a proposta, releia a frase que você anotou no passo 2 e pergunte: alguma linha desta proposta responde exatamente a isso? Se não, acrescente uma.'},
+
+ 6:{erro:'Confundir conduzir com apressar. Perguntar "e aí, fechamos?" é transferir para o cliente o trabalho de decidir sozinho, e ainda por cima sob pressão — que é a receita da reatância do módulo 8: quanto mais empurra, mais ele adia.',
+    sinal:'Ele passa a falar no futuro do indicativo — "quando a gente retirar", "aí eu levo a cadeirinha". Linguagem de quem já se colocou dentro da viagem. Enquanto for condicional ("se eu fechar"), ainda não é hora.',
+    treino:'Troque a pergunta de fechamento por uma escolha entre dois caminhos reais durante uma semana. Anote quantas vezes o cliente escolheu em vez de adiar.'},
+
+ 7:{erro:'Sumir depois do pagamento e reaparecer só na próxima venda. O cliente lembra do pico e do fim (módulo 7); o fim, aqui, é a devolução — e um fim silencioso apaga uma viagem que foi boa. Pós-venda não é gentileza, é o que decide se existe indicação.',
+    sinal:'Ele responde às suas mensagens durante a viagem, manda foto, ou pergunta algo que não é problema. Silêncio total durante a viagem é o cliente que não vai indicar ninguém, mesmo tendo gostado.',
+    treino:'Marque três toques fixos por cliente fechado: confirmação, véspera e chegada. Ponha na agenda no dia do fechamento, não depois. O que não é agendado não acontece.'}
+};
+
 var METODO=[
   {n:1, t:'ABRIR — existir antes de vender', tempo:'primeiros 30 segundos',
    obj:'Fazer o cliente sair do modo "estou pedindo orçamento" e entrar no modo "estou falando com alguém".',
@@ -33845,6 +34118,19 @@ var METODO=[
    evitar:['Sumir depois do pagamento.','Pedir indicação antes da viagem terminar.']}
 ];
 
+/* A terceira camada de cada passo — erro típico, sinal de que pegou e
+   treino. Vem de MGW_METODO_EXTRA; se o bloco não tiver carregado, o
+   passo aparece como antes, sem buraco na tela. */
+function camadaExtra(n){
+  var X=(window.MGW_METODO_EXTRA||{})[n];
+  if(!X) return '';
+  return '<div class="or-extra">'
+    +(X.erro?  '<div class="or-x or-x-erro"><div class="or-x-t">O ERRO QUE PARECE CERTO</div><p>'+X.erro+'</p></div>':'')
+    +(X.sinal? '<div class="or-x or-x-sinal"><div class="or-x-t">COMO SABER QUE PEGOU</div><p>'+X.sinal+'</p></div>':'')
+    +(X.treino?'<div class="or-x or-x-treino"><div class="or-x-t">TREINO DA SEMANA</div><p>'+X.treino+'</p></div>':'')
+    +'</div>';
+}
+
 function renderMetodo(){
   var box=document.getElementById('or-metodo'); if(!box) return;
   box.innerHTML=METODO.map(function(m){
@@ -33860,6 +34146,7 @@ function renderMetodo(){
           +m.script.map(function(l){ return '<div class="or-fala">'+esc4(l)+'</div>'; }).join('')+'</div>'
         +'<div class="or-nao"><div class="or-nao-t">O QUE NÃO FAZER</div><ul>'
           +m.evitar.map(function(f){ return '<li>'+f+'</li>'; }).join('')+'</ul></div>'
+        + camadaExtra(m.n)
       +'</div></div>';
   }).join('');
 }
@@ -34812,7 +35099,7 @@ function resgatar(painel){
 var SEL=['.cur-porque','.cur-teo','.cur-evid','.cur-lim','.cur-graf','.cur-apl','.cur-scr',
          '.cur-err','.cur-exe','.cur-cab','.cur-rodape',
          '.man-bloco','.man-sec','.man-fala','.man-cab','.man-grupo',
-         '.or-sec','.or-card','.or-bloco','.met-passo','.card'].join(',');
+         '.or-sec','.or-card','.or-bloco','.or-passo','.met-passo','.card'].join(',');
 
 function animar(painel){
   if(!painel) return;
