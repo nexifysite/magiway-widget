@@ -12003,7 +12003,7 @@ function mgsCalcularSaude(){
   var rotulo=cic?cic.periodo:'todo o histórico';
 
   /* cotações do ciclo — pela data em que a cotação foi feita */
-  var cots=((typeof HIST_COT!=='undefined')?HIST_COT:[]).filter(function(h){
+  var cots=cotBase().filter(function(h){
     var d=String(h.dtISO||'').slice(0,10);
     if(!d)   return !iniISO;                       /* sem data: só sem recorte */
     return (!iniISO||d>=iniISO) && (!fimISO||d<=fimISO);
@@ -12532,7 +12532,7 @@ function mgDiagCalcular(){
   var r=(typeof calGetRange==='function')?calGetRange('dc'):{from:'',to:''};
   var from=(r&&r.from)||'', to=(r&&r.to)||'';
 
-  var cots=(typeof HIST_COT!=='undefined'&&HIST_COT)?HIST_COT.slice():[];
+  var cots=cotBase();
   if(from) cots=cots.filter(function(h){ return String(h.dtISO||'')>=from; });
   if(to)   cots=cots.filter(function(h){ return String(h.dtISO||'')<=to; });
 
@@ -14237,6 +14237,8 @@ async function cotProcurarPerdidas(){
 
   var MES=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   var nome=function(k){ var p=k.replace('gs_cot_','').split('_'); return MES[+p[1]]+'/'+p[0]; };
+
+
   var linhas=resumo.map(function(r){
     return '<tr'+(r.novas?' style="background:rgba(26,255,157,.06)"':'')+'>'
       +'<td><b>'+nome(r.mes)+'</b></td>'
@@ -14246,10 +14248,57 @@ async function cotProcurarPerdidas(){
       +'<td style="font-size:.64rem;color:var(--chalk3)">'+r.origens.join(' · ')+'</td></tr>';
   }).join('');
 
+  /* ── o mesmo achado, contado pelo mês do CALENDÁRIO ──
+     A tabela acima conta por CHAVE de armazenamento, que segue a virada
+     do dia 12. É a verdade do arquivo e serve para conferir, mas não
+     responde a pergunta que se faz de verdade — "quantas cotações a
+     gente fez em agosto?" —, porque as de 1 a 12 de agosto moram na
+     chave de julho. Quem olhasse só a tabela concluiria que agosto foi
+     fraco quando metade dele está na linha de cima. */
+  var porCal={};
+  Object.keys(porMes).forEach(function(mes){
+    var atual=[]; try{ atual=JSON.parse(raw.getItem.call(localStorage,mes)||'[]')||[]; }catch(e){}
+    function conta(c, nova){
+      if(!c) return;
+      var m=String(c.dtISO||c.dt||'').match(/^(\d{4})-(\d{2})/);
+      var cal=m?(m[1]+'_'+m[2]):mes.replace('gs_cot_','');
+      if(!porCal[cal]) porCal[cal]={tem:0, novas:0};
+      porCal[cal][nova?'novas':'tem']++;
+    }
+    atual.forEach(function(c){ conta(c,false); });
+    var pacote=window.__cotRecuperacao[mes];
+    if(pacote){
+      var jaTinha={};
+      atual.forEach(function(c){ if(c){ jaTinha[_cotAssinatura(c)]=1; if(c._uid) jaTinha['u:'+c._uid]=1; } });
+      pacote.forEach(function(c){
+        if(!c) return;
+        var a=_cotAssinatura(c), u=c._uid?('u:'+c._uid):null;
+        if(jaTinha[a]||(u&&jaTinha[u])) return;
+        conta(c,true);
+      });
+    }
+  });
+  var calKeys=Object.keys(porCal).sort();
+  var calLinhas=calKeys.map(function(k){
+    var p2=k.split('_'), d=porCal[k];
+    return '<tr'+(d.novas?' style="background:rgba(26,255,157,.06)"':'')+'>'
+      +'<td><b>'+MES[+p2[1]]+'/'+p2[0]+'</b></td>'
+      +'<td style="text-align:right">'+d.tem+'</td>'
+      +'<td style="text-align:right;color:'+(d.novas?'var(--green)':'var(--chalk3)')+'"><b>'+(d.novas||'—')+'</b></td>'
+      +'<td style="text-align:right"><b>'+(d.tem+d.novas)+'</b></td></tr>';
+  }).join('');
+
   box.innerHTML='<div class="hrec">'
     +(erroNuvem?'<div class="hrec-av">⚠️ Nuvem não consultada: '+String(erroNuvem).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];})+'</div>':'')
+    +(calKeys.length
+      ? '<div class="hrec-tit">POR MÊS DE CALENDÁRIO — a data em que a cotação foi feita</div>'
+        +'<table class="hrec-t"><thead><tr><th>Mês</th><th style="text-align:right">Já na tela</th>'
+        +'<th style="text-align:right">Entrariam</th><th style="text-align:right">Ficaria com</th></tr></thead>'
+        +'<tbody>'+calLinhas+'</tbody></table>'
+      : '')
     +(resumo.length
-      ? '<table class="hrec-t"><thead><tr><th>Mês</th><th style="text-align:right">Já na tela</th>'
+      ? '<div class="hrec-tit">POR CHAVE DE ARQUIVO — o ciclo do dia 13 ao dia 12</div>'
+        +'<table class="hrec-t"><thead><tr><th>Mês</th><th style="text-align:right">Já na tela</th>'
         +'<th style="text-align:right">Recuperáveis</th><th style="text-align:right">Ficaria com</th><th>Onde estavam</th></tr></thead>'
         +'<tbody>'+linhas+'</tbody></table>'
       : '<div>Não encontrei nenhuma cotação guardada, nem aqui nem na nuvem.</div>')
@@ -14346,6 +14395,22 @@ function cotVarrerAoAbrir(){
    compartilhada e as antigas por usuário —, junta sem duplicar e marca
    cada cotação com o mês em que ela está guardada. O seletor de mês do
    Histórico se monta a partir daí. */
+/* A base de cotação NUNCA é HIST_COT direto: esse array guarda um mês de
+   cada vez (dbLoadMes esvazia e recarrega), então quem o lê enxerga só a
+   chave ativa e perde tudo que veio de outro computador ou de outro mês.
+   cotTodasAsCotacoes() varre todas as chaves e devolve a base inteira, já
+   sem duplicata.
+
+   Precisa ser GLOBAL, e não é detalhe: as três telas que leem cotação
+   moram em blocos <script> diferentes. Declarada dentro de um deles, as
+   outras duas encontram um ReferenceError — que os try/catch do roteador
+   engolem, deixando a tela em branco e o console limpo. */
+function cotBase(){
+  try{ if(typeof cotTodasAsCotacoes==='function') return cotTodasAsCotacoes(); }catch(e){}
+  return (typeof HIST_COT!=='undefined'&&HIST_COT)?HIST_COT.slice():[];
+}
+window.cotBase=cotBase;
+
 function cotTodasAsCotacoes(){
   var vistos={}, out=[];
   function assina(c){
@@ -14628,9 +14693,41 @@ function renderDashCot(){
      que vieram de outros computadores pela sincronização, e só então o
      período desta tela é aplicado. */
   const TODAS=(typeof cotTodasAsCotacoes==='function')?cotTodasAsCotacoes():[...HIST_COT];
+
+  /* ── por que "agosto" aqui é o AGOSTO DO CALENDÁRIO ──────────────
+     Faturamento, comissão e meta correm no ciclo do dia 13 ao 12, e
+     continuam assim. Cotação não. A pergunta que se faz sobre ela é
+     "quantas cotações a gente fez em agosto?", e no ciclo essa conta
+     perde as dos dias 1 a 12 — elas ficam guardadas na chave de julho.
+     Numa base de teste com 9 cotações feitas em agosto, esta tela
+     mostrava 4, e o Histórico, que já contava pelo calendário, mostrava
+     9. Duas telas do mesmo app dando dois números para a mesma
+     pergunta é pior do que qualquer um dos dois estar errado.
+     Agora as duas contam igual. O número do ciclo não se perde: ele
+     aparece logo abaixo, dito com todas as letras. */
+  const _modo=(window.CAL_STATE&&CAL_STATE.dc&&CAL_STATE.dc.mode)||'mes';
+  const _mSel=document.getElementById('cal-mes-sel-dc');
+  const _aSel=document.getElementById('cal-ano-sel-dc');
+  let _ymAlvo='';
+  if(_modo==='mes'){
+    let _m=_mSel?parseInt(_mSel.value,10):NaN, _y=_aSel?parseInt(_aSel.value,10):NaN;
+    if(!(_y>=2000)||!(_m>=0&&_m<=11)){
+      const n=new Date(); const v=(window.MGW_CICLO&&MGW_CICLO.DIA_VIRADA)||12;
+      _y=n.getFullYear(); _m=n.getMonth();
+      if(n.getDate()<=v){ _m-=1; if(_m<0){ _m=11; _y-=1; } }
+    }
+    _ymAlvo=_y+'_'+String(_m+1).padStart(2,'0');
+  }
+
   let data=[...TODAS];
-  if(from)data=data.filter(h=>h.dtISO>=from);
-  if(to)data=data.filter(h=>h.dtISO<=to);
+  if(_ymAlvo){
+    data=data.filter(h=>h._ym===_ymAlvo);
+  }else{
+    if(from)data=data.filter(h=>h.dtISO>=from);
+    if(to)data=data.filter(h=>h.dtISO<=to);
+  }
+  /* quantas caem no ciclo 13→12, para a linha comparativa */
+  const _noCiclo=TODAS.filter(h=>(!from||h.dtISO>=from)&&(!to||h.dtISO<=to)).length;
 
   /* O seletor de período abre no ciclo em vigência. Se ainda não houve
      cotação nesse ciclo — o que é o normal nos primeiros dias do mês —,
@@ -14649,12 +14746,20 @@ function renderDashCot(){
     var _per=(from||to)
       ? ((from?from.split('-').reverse().join('/'):'início')+' a '+(to?to.split('-').reverse().join('/'):'hoje'))
       : 'todo o período';
+    var _MES=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    var _rot=_ymAlvo?(_MES[+_ymAlvo.split('_')[1]]+'/'+_ymAlvo.split('_')[0]):_per;
     _orig.innerHTML='☁️ Base: <b>'+TODAS.length+'</b> cotação(ões) de <b>'+nMeses+'</b> mês(es), '
       +'somando o que existe neste computador e o que veio da nuvem de outras máquinas. '
-      +'Mostrando <b>'+data.length+'</b> em <b>'+_per+'</b>.'
+      +'Mostrando <b>'+data.length+'</b> em <b>'+_rot+'</b>.'
+      +(_ymAlvo
+        ? ('<br><span style="color:var(--chalk3)">Contando pelo <b>mês do calendário</b> — a data em que a cotação foi feita —, '
+           +'igual à aba Histórico Cotações. No <b>ciclo do dia 13 ao 12</b> o mesmo recorte daria <b>'+_noCiclo+'</b>. '
+           +'Faturamento, comissão e meta continuam correndo pelo ciclo; cotação conta pelo calendário, porque a pergunta é '
+           +'"quantas a gente fez em '+_rot+'".</span>')
+        : '')
       +(_ampliou
         ? ' <span style="color:var(--gold)">Não há cotação no período selecionado na barra acima, então a tela está mostrando <b>todos os meses</b>. Escolha outro período para recortar.</span>'
-        : (data.length!==TODAS.length?(' No período selecionado: <b>'+data.length+'</b>.'):' Nenhum filtro de período ativo.'));
+        : '');
   }
 
   if(!data.length){
@@ -14668,13 +14773,19 @@ function renderDashCot(){
   }
 
   // ── Base calculations ──
-  const total=data.reduce((a,h)=>a+h.total,0);
-  const subtotal=data.reduce((a,h)=>a+h.subtotal,0);
-  const totalDisc=data.reduce((a,h)=>a+h.disc,0);
+  /* Uma soma de campo que pode não existir precisa somar ZERO, não NaN.
+     Cotação antiga, ou vinda de outro computador com versão anterior,
+     não tem 'subtotal' nem 'disc' — e um único registro assim fazia o
+     KPI inteiro virar "$NaN" na tela, para todas as cotações. Número
+     que não existe some da média; ele não pode apagar o resto. */
+  const n0=v=>{ const x=+v; return isFinite(x)?x:0; };
+  const total=data.reduce((a,h)=>a+n0(h.total),0);
+  const subtotal=data.reduce((a,h)=>a+n0(h.subtotal),0);
+  const totalDisc=data.reduce((a,h)=>a+n0(h.disc),0);
   const discPct=subtotal>0?(totalDisc/subtotal*100):0;
   const ticket=data.length?total/data.length:0;
-  const diasAll=data.filter(h=>h.dias>0);
-  const diasMed=diasAll.length?diasAll.reduce((a,h)=>a+h.dias,0)/diasAll.length:0;
+  const diasAll=data.filter(h=>n0(h.dias)>0);
+  const diasMed=diasAll.length?diasAll.reduce((a,h)=>a+n0(h.dias),0)/diasAll.length:0;
   const ganhas=data.filter(mgwGanhou).length;
 
   /* ── TAXA DE CONVERSÃO = VENDAS ÷ COTAÇÕES (pedido do Luciano) ──
@@ -15042,16 +15153,15 @@ function cpChart(id,cfg){
   cpCharts[id]=new Chart(el,cfg);
 }
 
-/* A aba Comparativo saiu do app em 12/08/2026 — virou o documento
-   apresentacao/MAGIWAY-DIAGNOSTICO.html. Esta função não é mais chamada:
-   o roteador deixou de invocá-la e o painel não existe.
-   Fica aqui, e não é descuido: cpClassificar, cpEhMinivan, cpCatCanon e
-   CP_PRECOS moram neste mesmo bloco e continuam sendo usados pelas duas
-   esferas — a da saúde e a da dificuldade. Arrancar a função levaria as
-   quatro junto. Ela é inofensiva: todo getElementById aqui devolve null. */
+/* A aba Cotações × Vendas. Este comentário dizia que a função não era
+   mais chamada e que o painel não existia — foi verdade entre 12/08 e a
+   restauração do painel, e virou mentira no dia em que a aba voltou.
+   Comentário desatualizado é pior que comentário nenhum: ele afirma com
+   confiança que mexer aqui não tem efeito. Tem: esta função desenha a
+   aba inteira. */
 function renderComparativo(){
   if(typeof Chart==='undefined') return;
-  var cots=(typeof HIST_COT!=='undefined')?HIST_COT.slice():[];
+  var cots=cotBase();
   var vendas=(typeof SALES_DATA!=='undefined')?SALES_DATA.slice():[];
   var box=document.getElementById('cp-relatorio');
 
@@ -16806,8 +16916,25 @@ function updateCalLabel(p){
   const r=calGetRange(p);
   const lbl=document.getElementById('cal-label-'+p);
   if(!lbl)return;
+  const st0=CAL_STATE[p]||{};
+  /* O painel de cotações conta pelo mês do CALENDÁRIO, não pelo ciclo.
+     O rótulo tem de dizer a mesma coisa que a tela conta — dizer
+     "13/08 a 12/09" ao lado de um número que é do agosto inteiro é
+     colocar a contradição na cara de quem lê e ainda assim errar. */
+  if(p==='dc' && (st0.mode==='mes' || !st0.mode)){
+    const mS=document.getElementById('cal-mes-sel-dc');
+    const aS=document.getElementById('cal-ano-sel-dc');
+    let m=mS?parseInt(mS.value,10):NaN, y=aS?parseInt(aS.value,10):NaN;
+    if(!(y>=2000)||!(m>=0&&m<=11)){
+      const n=new Date(); const v=(window.MGW_CICLO&&MGW_CICLO.DIA_VIRADA)||12;
+      y=n.getFullYear(); m=n.getMonth();
+      if(n.getDate()<=v){ m-=1; if(m<0){ m=11; y-=1; } }
+    }
+    lbl.textContent=CAL_MONTHS[m]+' '+y+' · mês do calendário';
+    return;
+  }
   if(r.from&&r.to){
-    const st=CAL_STATE[p]||{};
+    const st=st0;
     if(st.mode==='mes'){
       const mSel=document.getElementById('cal-mes-sel-'+p);
       const aSel=document.getElementById('cal-ano-sel-'+p);
@@ -29812,6 +29939,11 @@ thead th,.mgdisp-tab thead th,.mgrsv-table thead th{ background:#070f1a !importa
 .or-x-treino{border-color:#A855F7;background:rgba(168,85,247,.06)}
 .or-x-treino .or-x-t{color:#C084FC}
 @media(max-width:820px){ .or-x p{font-size:.92rem;line-height:1.78} }
+
+/* titulo das duas tabelas do quadro de recuperacao de cotacoes */
+.hrec-tit{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--chalk3);margin:12px 0 6px}
+.hrec-tit:first-child{margin-top:0}
 </style><!--/mgw-skin-v2-->
 
 
@@ -34982,8 +35114,18 @@ window.MGW_RENTAB={ render:render, copiar:copiar, salvarCusto:salvarCustoDaTela,
     if(typeof prev==='function'){ try{ prev(id); }catch(e){ console.warn('[rentab] handler anterior',e); } }
     if(id==='rentab'){ try{ render(); }catch(e){ console.warn('[rentab] render',e); } }
     /* A aba Cotações × Vendas voltou; seu render nunca saiu do arquivo. */
-    /* cotações de outro computador aparecem sozinhas ao abrir o histórico */
-    if(id==='histcot'){ try{ cotVarrerAoAbrir(); }catch(e){ console.warn('[cotações nuvem]',e); } }
+    /* Cotações de outro computador entram sozinhas ao abrir qualquer tela
+       que as LEIA. Isto estava preso em id==='histcot', e aba com esse
+       nome não existe — a do histórico se chama 'historico'. O resultado
+       era mudo e caro: a varredura nunca rodava, a cotação feita na outra
+       máquina nunca chegava, e o mês parecia ter menos cotação do que
+       teve. Erro de digitação não avisa; só aparece no número.
+       E não basta o histórico: o Dashboard de Cotações e a Cotações ×
+       Vendas são justamente as telas que TIRAM conclusão dessa base.
+       Chegar nelas com base incompleta é pior do que não ter a tela. */
+    if(id==='historico'||id==='dashcot'||id==='comparativo'){
+      try{ cotVarrerAoAbrir(); }catch(e){ console.warn('[cotações nuvem]',e); }
+    }
   };
 })();
 })();
