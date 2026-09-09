@@ -5952,6 +5952,7 @@ select.ffi option{background:#000020;color:#FF0000}
           <div class="mgrsv-tablewrap"><table class="mgrsv-table"><thead id="rt-ant-head"></thead><tbody id="rt-ant-body"></tbody></table></div>
         </div>
         <div id="rt-extra"></div>
+        <div id="rt-explica"></div>
       </div>
 
 
@@ -28820,6 +28821,30 @@ thead th,.mgdisp-tab thead th,.mgrsv-table thead th{ background:#070f1a !importa
 .hrec-tit{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.13em;text-transform:uppercase;
   color:var(--chalk3);margin:12px 0 6px}
 .hrec-tit:first-child{margin-top:0}
+
+/* ── Rentabilidade: a camada que explica ── */
+.rx{display:grid;gap:12px;margin-top:18px}
+.rx-bloco{background:rgba(255,255,255,.03);border:1px solid var(--edge);border-radius:14px;overflow:hidden}
+.rx-h{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--chalk2);padding:13px 16px;cursor:pointer;list-style:none;display:block}
+.rx-h::-webkit-details-marker{display:none}
+details.rx-bloco>.rx-h::after{content:' ▾';color:var(--chalk3)}
+details.rx-bloco[open]>.rx-h::after{content:' ▴'}
+.rx-leitura{border-color:rgba(31,169,166,.35);background:rgba(31,169,166,.06)}
+.rx-leitura .rx-h{color:#1FA9A6;cursor:default}
+.rx-c{padding:0 16px 16px}
+.rx-c p{margin:0 0 11px;font-size:.87rem;line-height:1.78;color:#D6E3EF}
+.rx-c b{color:#fff}
+.rx-med{padding:12px 0;border-top:1px solid var(--edge)}
+.rx-med:first-child{border-top:none;padding-top:4px}
+.rx-med-n{font-size:.95rem;font-weight:700;color:#fff;margin-bottom:5px}
+.rx-f{font-family:'DM Mono',monospace;font-size:.72rem;color:#FFD11A;background:rgba(255,209,26,.07);
+  border-left:2px solid #FFD11A;padding:7px 11px;border-radius:0 8px 8px 0;margin-bottom:9px;line-height:1.6}
+.rx-cuidado,.rx-olho{font-size:.8rem;line-height:1.7;color:var(--chalk2);
+  border-left:2px solid #FF6B78;padding:7px 11px;background:rgba(255,45,45,.05);border-radius:0 8px 8px 0}
+.rx-olho{border-left-color:#1AFF9D;background:rgba(26,255,157,.05)}
+.rx-alerta{color:#FFD11A}
+@media(max-width:820px){ .rx-c p{font-size:.92rem} .rx-f{font-size:.76rem} }
 </style><!--/mgw-skin-v2-->
 
 
@@ -33204,6 +33229,190 @@ window.MGW_ORIENTA={ render:render, serieMensal:serieMensal, METODO:METODO, META
 })();
 </script>
 
+<script id="mgw-rentab-explica-js">
+/* ═══════════════════════════════════════════════════════════════════
+   RENTABILIDADE — A CAMADA QUE EXPLICA
+   ───────────────────────────────────────────────────────────────────
+   A aba tinha números bons e quase nenhuma explicação. Número sem
+   régua não é informação: "margem de 4,1%" pode ser ótimo ou péssimo
+   dependendo do que está sendo dividido por quê, e quem não sabe a
+   fórmula não tem como discordar do resultado — só acreditar.
+
+   Três coisas entram aqui, nesta ordem:
+
+     1. COMO CADA NÚMERO É FEITO. A fórmula, em português, com o que
+        entra e o que fica de fora. Inclusive quando a resposta é
+        incômoda — o caso da coluna CUSTO REAL, que não é custo.
+     2. COMO LER. O que é bom, o que é ruim, e a partir de quando.
+     3. O QUE ESTES NÚMEROS ESTÃO DIZENDO HOJE. Uma leitura escrita a
+        partir dos valores da tela, que muda quando eles mudam — não um
+        texto fixo que finge comentar dados.
+   ═══════════════════════════════════════════════════════════════════ */
+window.MGW_RENTAB_EXPLICA=(function(){
+'use strict';
+
+function esc(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function brl(v){ return 'R$ '+Math.round(+v||0).toLocaleString('pt-BR'); }
+/* número em português: vírgula decimal, como no resto da tela */
+function n1(v,c){ return (+v||0).toFixed(c==null?1:c).replace('.',','); }
+function pct(v,c){ return (v==null||!isFinite(v))?'—':(n1(v,c)+'%'); }
+
+/* ── 1. o dicionário das medidas ─────────────────────────────────── */
+var MEDIDAS=[
+ {n:'Receita', f:'Soma da coluna VALOR de todas as reservas do período.',
+  d:'É o valor cheio que o cliente pagou, antes de qualquer dedução. Não é lucro e não pretende ser. Toda porcentagem desta aba tem a receita como denominador, então é dela que tudo depende.',
+  cuidado:'Reserva sem data de fechamento nem data de entrega não entra em nenhum recorte de mês — ela existe no total geral e some quando você escolhe um período. Se o total do mês não bate com o da planilha, é quase sempre isto.'},
+
+ {n:'Tabela de referência', f:'(diária de baixa temporada da categoria − US$ 10) × diárias × câmbio.',
+  d:'É a fórmula que a planilha usa na coluna chamada CUSTO REAL. <b>Ela não é custo.</b> É o preço de tabela da própria Magiway em baixa temporada, com dez dólares de abatimento. Comparar a receita com ela responde "vendemos acima ou abaixo da nossa própria tabela?", que é uma pergunta útil — só não é a pergunta sobre lucro.',
+  cuidado:'Enquanto o custo de verdade — o que a Magiway paga por diária — não estiver preenchido, esta aba mede distância da tabela, não margem. Os rótulos da tela dizem isso sozinhos: quando o custo real for informado, eles mudam para "lucro" e "margem".'},
+
+ {n:'Acima da tabela', f:'Receita − Tabela de referência.',
+  d:'Quanto se vendeu acima (positivo) ou abaixo (negativo) do preço de tabela. Negativo aqui significa desconto, não prejuízo.',
+  cuidado:'Um número muito negativo numa categoria com uma ou duas reservas não é tendência: é uma negociação específica. Olhe a coluna de quantidade antes de concluir qualquer coisa.'},
+
+ {n:'% sobre a tabela', f:'(Acima da tabela ÷ Receita) × 100.',
+  d:'A mesma distância, em porcentagem, para poder comparar categorias de tamanhos diferentes.',
+  cuidado:'É calculada sobre a RECEITA, não sobre a tabela. Isso mantém a escala entre −100% e +100% e evita os números absurdos que apareceriam ao dividir por uma base pequena.'},
+
+ {n:'Ticket médio', f:'Receita ÷ número de reservas.',
+  d:'Quanto entra, em média, por reserva fechada. É o número que mais responde a mudança de categoria e de duração — sobe quando se vende minivan e viagem longa, cai quando se vende sedan e três diárias.',
+  cuidado:'Média esconde extremo. Duas reservas de R$ 10 mil e oito de R$ 2 mil dão o mesmo ticket que dez de R$ 3.600 — e são negócios completamente diferentes. Por isso a curva ABC existe mais abaixo.'},
+
+ {n:'Diária média', f:'Receita ÷ soma das diárias de todas as reservas.',
+  d:'O preço por dia efetivamente praticado. É o número mais honesto para comparar meses, porque neutraliza a duração: um mês de viagens longas infla a receita sem que se tenha vendido melhor.',
+  cuidado:'Só entram reservas com data de entrega E de devolução. Sem as duas não há como contar diárias, e a reserva fica fora deste cálculo mesmo contando na receita.'},
+
+ {n:'Antecedência', f:'Média de dias entre a data de fechamento e a data de entrega.',
+  d:'Quanto tempo antes da viagem o cliente fecha. Antecedência alta é caixa previsível e frota planejável; antecedência baixa é operação apertada e menos poder de negociar.',
+  cuidado:'Reserva sem uma das duas datas fica fora. A tabela por faixa mostra quantas ficaram.'},
+
+ {n:'Desconto dado', f:'Soma dos abatimentos registrados nas reservas do período.',
+  d:'O que foi cedido na mesa. Comparado à receita, diz quanto do faturamento foi entregue em negociação.',
+  cuidado:'Só aparece o desconto que foi REGISTRADO. Abatimento combinado por fora e digitado direto no valor final não é contado aqui — some da conta e reaparece como diária média mais baixa.'}
+];
+
+/* ── 2. como ler as tabelas ──────────────────────────────────────── */
+var TABELAS=[
+ {t:'Por categoria',
+  p:'Cada linha é uma categoria de carro. As colunas seguem a mesma lógica dos indicadores de cima, aplicadas só àquela fatia. A leitura que interessa não é a linha isolada — é a <b>combinação de peso e distância da tabela</b>: uma categoria que responde por metade da receita e vende quase na tabela move o resultado muito mais do que uma categoria pequena vendida muito acima.',
+  olho:'Ordene mentalmente por receita, não por porcentagem. A porcentagem mais alta costuma estar na categoria com uma reserva só.'},
+ {t:'Por vendedor',
+  p:'Mesmas medidas, recortadas por quem fechou. Serve para comparar ticket e distância da tabela entre pessoas — não para ranquear volume, que depende de quantos leads cada um recebeu.',
+  olho:'A observação "(n s/ custo)" conta as reservas sem valor de referência preenchido. Quanto maior esse número, menos a porcentagem daquela linha significa.'},
+ {t:'Por antecedência',
+  p:'Distribui as reservas pelo tempo entre o fechamento e a viagem. É a tabela que mais diz sobre o tipo de demanda que está chegando: muita venda de última hora indica dependência de urgência; muita venda com 60+ dias indica planejamento e permite negociar melhor.',
+  olho:'Compare o ticket médio entre as faixas. Se as faixas longas têm ticket maior, o cliente que planeja é o cliente que vale mais — e isso muda para onde o marketing deve apontar.'}
+];
+
+/* ── 3. a leitura dos números de hoje ─────────────────────────────
+   Escrita a partir do que está na tela. Se o mês mudar, o texto muda:
+   um parágrafo fixo comentando dados variáveis vira mentira no mês
+   seguinte, e ninguém percebe porque ele continua parecendo análise. */
+function leitura(d){
+  if(!d || !d.n) return '<p>Sem reservas no período escolhido — não há o que ler.</p>';
+  var L=[];
+
+  L.push('<p>No período há <b>'+d.n+' reserva(s)</b> somando <b>'+brl(d.receita)+'</b>, '
+    +'com ticket médio de <b>'+brl(d.ticket)+'</b> e diária média de <b>'+brl(d.diariaMedia)+'</b>. '
+    +'A duração média foi de <b>'+n1(d.diariasMedia||0)+' diárias</b> por reserva.</p>');
+
+  /* concentração: quanto a maior categoria pesa */
+  if(d.maiorCat){
+    var p=d.receita>0?(d.maiorCat.receita/d.receita*100):0;
+    L.push('<p><b>'+esc(d.maiorCat.nome)+'</b> é a categoria que mais pesa: '
+      +brl(d.maiorCat.receita)+', ou <b>'+pct(p)+'</b> de tudo que entrou, em '+d.maiorCat.n+' reserva(s). '
+      +(p>=45
+        ? 'Com quase metade da receita numa categoria só, o resultado do mês é praticamente o resultado dela — '
+          +'qualquer variação de preço ou de disponibilidade aí dentro aparece inteira no total.'
+        : 'A receita está distribuída entre categorias, o que reduz a dependência de uma frota específica.')
+      +'</p>');
+  }
+
+  /* distância da tabela */
+  if(d.pctTabela!=null){
+    L.push('<p>No conjunto, vendeu-se <b>'+pct(d.pctTabela)+'</b> em relação ao preço de tabela — '
+      +(d.pctTabela>=10 ? 'acima dela com folga.'
+        : d.pctTabela>=0 ? 'praticamente em cima dela. Sobra pouca gordura: um desconto pontual já leva a categoria para o negativo.'
+        : 'abaixo dela, ou seja, o conjunto foi vendido com desconto.')
+      +' Lembrando que esta comparação é contra a <b>nossa própria tabela</b>, não contra custo — '
+      +'ela responde "seguramos o preço?", não "quanto sobrou?".</p>');
+  }
+
+  /* a categoria mais fora da curva, com a ressalva do tamanho */
+  if(d.piorCat && d.piorCat.pct!=null && d.piorCat.pct<0){
+    L.push('<p>O maior desvio negativo está em <b>'+esc(d.piorCat.nome)+'</b>: '+pct(d.piorCat.pct)+' '
+      +'em '+d.piorCat.n+' reserva(s). '
+      +(d.piorCat.n<=2
+        ? '<b>Com esse volume, isto não é tendência</b> — é uma ou duas negociações específicas, e a porcentagem grande vem de a base ser pequena. Antes de mudar preço de categoria por causa deste número, veja qual foi o negócio.'
+        : 'Com esse volume o desvio já merece explicação: ou a tabela desta categoria está desalinhada, ou o desconto virou hábito nela.')
+      +'</p>');
+  }
+
+  /* antecedência */
+  if(d.antecedencia!=null){
+    L.push('<p>A antecedência média foi de <b>'+n1(d.antecedencia)+' dias</b>. '
+      +(d.antecedencia>=45
+        ? 'É uma demanda que planeja — dá para programar frota e negociar sem a pressa que corrói preço.'
+        : d.antecedencia>=20
+        ? 'É um meio-termo: parte do mês depende de decisão rápida, o que limita o poder de segurar preço.'
+        : 'É uma demanda de última hora, e ela cobra caro: com pouco tempo entre o fechamento e a viagem, sobra pouco espaço para negociar e a operação trabalha apertada.')
+      +'</p>');
+  }
+
+  /* desconto */
+  if(d.desconto>0 && d.receita>0){
+    var pd=d.desconto/(d.receita+d.desconto)*100;
+    L.push('<p>Foram registrados <b>'+brl(d.desconto)+'</b> de desconto, o equivalente a <b>'+pct(pd)+'</b> '
+      +'do que teria sido faturado sem nenhum abatimento. '
+      +(pd>=10
+        ? 'É bastante: um décimo do faturamento potencial foi entregue na mesa. Vale olhar em quais categorias isso se concentra antes de tratar como custo de fazer negócio.'
+        : 'É um patamar controlado.')
+      +' Só entra aqui o desconto <b>registrado</b> — o que for abatido direto no valor final não aparece nesta conta.</p>');
+  }
+
+  /* reservas fora dos recortes */
+  if(d.semData>0){
+    L.push('<p class="rx-alerta">⚠ <b>'+d.semData+' reserva(s)</b> estão sem data de fechamento ou de entrega. '
+      +'Elas contam na receita total, mas ficam de fora dos cortes por antecedência e por mês. '
+      +'É a explicação mais comum para um total que não bate entre duas telas.</p>');
+  }
+
+  return L.join('');
+}
+
+/* ── monta o bloco ───────────────────────────────────────────────── */
+function html(d){
+  var H=[];
+  H.push('<div class="rx">');
+
+  H.push('<div class="rx-bloco rx-leitura"><div class="rx-h">📖 O QUE ESTES NÚMEROS ESTÃO DIZENDO</div>'
+    +'<div class="rx-c">'+leitura(d)+'</div></div>');
+
+  H.push('<details class="rx-bloco"><summary class="rx-h">🧮 COMO CADA NÚMERO É FEITO — a fórmula de cada um</summary><div class="rx-c">'
+    +MEDIDAS.map(function(m){
+      return '<div class="rx-med"><div class="rx-med-n">'+esc(m.n)+'</div>'
+        +'<div class="rx-f">'+esc(m.f)+'</div>'
+        +'<p>'+m.d+'</p>'
+        +'<div class="rx-cuidado"><b>Onde erra:</b> '+m.cuidado+'</div></div>';
+    }).join('')
+    +'</div></details>');
+
+  H.push('<details class="rx-bloco"><summary class="rx-h">📊 COMO LER CADA TABELA</summary><div class="rx-c">'
+    +TABELAS.map(function(t){
+      return '<div class="rx-med"><div class="rx-med-n">'+esc(t.t)+'</div><p>'+t.p+'</p>'
+        +'<div class="rx-olho"><b>O olho treinado vê:</b> '+t.olho+'</div></div>';
+    }).join('')
+    +'</div></details>');
+
+  H.push('</div>');
+  return H.join('');
+}
+
+return { html:html, leitura:leitura, MEDIDAS:MEDIDAS, TABELAS:TABELAS };
+})();
+</script>
+
 <script id="mgw-rentab-js">
 /* ═══════════════════════════════════════════════════════════════════
    MAGIWAY — RENTABILIDADE & OCUPAÇÃO
@@ -33499,6 +33708,16 @@ function rtFaixaDias(d){
 }
 var RT_ORDEM_FAIXA=['1 a 3 diárias','4 a 6 diárias','7 a 9 diárias','10 a 14 diárias','15 a 21 diárias','mais de 21 diárias','sem datas'];
 
+/* O mês de uma data é o ciclo dela: quem fecha no dia 05/08 fecha no mês
+   de julho. Sem isto os gráficos desta camada montavam barras por mês de
+   calendário ao lado de indicadores por ciclo, na mesma tela. */
+function rtYMCiclo(d){
+  if(!d) return null;
+  var a=d.getFullYear(), m=d.getMonth()+1;
+  if(d.getDate()<=12){ m-=1; if(m<1){ m=12; a-=1; } }
+  return a+'-'+('0'+m).slice(-2);
+}
+
 function renderSegundaCamada(rs, custoDe, TAB, receitaTotal){
   var box=document.getElementById('rt-extra'); if(!box) return;
   rtCharts.length=0;
@@ -33509,8 +33728,9 @@ function renderSegundaCamada(rs, custoDe, TAB, receitaTotal){
   /* ═══ RECEITA: QUANDO ENTRA × QUANDO O CARRO RODA ═══ */
   var porFech={}, porEnt={};
   rs.forEach(function(r){
-    var f=r.dataFech?(r.dataFech.getFullYear()+'-'+('0'+(r.dataFech.getMonth()+1)).slice(-2)):null;
-    var e=r.entrega?(r.entrega.getFullYear()+'-'+('0'+(r.entrega.getMonth()+1)).slice(-2)):null;
+    /* mês = CICLO da data (dia 13 → dia 12), igual ao resto do app */
+    var f=r.dataFech?rtYMCiclo(r.dataFech):null;
+    var e=r.entrega?rtYMCiclo(r.entrega):null;
     if(f) porFech[f]=(porFech[f]||0)+(+r.valor||0);
     if(e) porEnt[e]=(porEnt[e]||0)+(+r.valor||0);
   });
@@ -33969,6 +34189,67 @@ function render(){
 
   /* segunda camada: gráficos, praça, pagamento, duração, ABC e totais */
   try{ renderSegundaCamada(rs, custoDe, TAB, receita); }catch(e){ console.warn('[rentab] segunda camada',e); }
+
+  /* terceira camada: a explicação de cada número e a leitura do mês.
+     Recebe os MESMOS valores que os cartões de cima já mostraram — se
+     ela recalculasse por conta própria, um dia divergiria do número que
+     está explicando, e aí piora tudo em vez de ajudar. */
+  try{
+    renderExplicacao({
+      rs:rs, n:rs.length, receita:receita, custo:custo, comCusto:comCusto,
+      desconto:desconto, integral:integral, ticket:ticket, diaria:diaria,
+      dias:dias, antSoma:antSoma, antN:antN, margem:margem, TAB:TAB
+    });
+  }catch(e){ console.warn('[rentab] explicação',e); }
+}
+
+/* Junta o que a explicação precisa e entrega para o módulo que escreve.
+   Os agregados vêm prontos de render(); aqui só se calcula o que os
+   cartões não calculam — o peso de cada categoria e quantas reservas
+   ficaram fora dos recortes por falta de data. */
+function renderExplicacao(v){
+  var alvo=document.getElementById('rt-explica');
+  if(!alvo || !window.MGW_RENTAB_EXPLICA) return;
+  var rs=v.rs||[];
+
+  var comDiarias=0, semData=0, porCat={};
+  rs.forEach(function(r){
+    if(diarias(r)>0) comDiarias++;
+    if(!r.dataFech || !r.entrega) semData++;
+    var c=r.categoria||r.modelo||'Outros';
+    if(!porCat[c]) porCat[c]={nome:c, n:0, receita:0, tab:0, comTab:0};
+    porCat[c].n++; porCat[c].receita+=(+r.valor||0);
+    var t=(typeof temCustoInformado==='function'&&temCustoInformado())
+      ? (custoDaReserva(r)||0) : (+r.custoReal||0);
+    if(t>0){ porCat[c].tab+=t; porCat[c].comTab++; }
+  });
+
+  var cats=Object.keys(porCat).map(function(k){
+    var c=porCat[k];
+    c.pct=(c.comTab&&c.receita>0)?((c.receita-c.tab)/c.receita*100):null;
+    return c;
+  });
+  var maior=cats.slice().sort(function(a,b){ return b.receita-a.receita; })[0]||null;
+  var pior=cats.filter(function(c){ return c.pct!=null; })
+               .sort(function(a,b){ return a.pct-b.pct; })[0]||null;
+
+  alvo.innerHTML=window.MGW_RENTAB_EXPLICA.html({
+    n:v.n, receita:v.receita,
+    ticket: v.ticket,
+    diariaMedia: v.diaria,
+    diariasMedia: comDiarias?(v.dias/comDiarias):0,
+    antecedencia: v.antN?(v.antSoma/v.antN):null,
+    desconto: v.desconto||0,
+    semData: semData,
+    /* NÃO recalcular: usar o mesmo número do cartão. Recalculado aqui
+       dava 16,0% enquanto o cartão mostrava 4,1%, porque o cartão divide
+       pela receita SÓ das reservas que têm valor de tabela e esta conta
+       dividia pela receita toda. Duas porcentagens diferentes para o
+       mesmo nome, na mesma tela, uma explicando a outra. */
+    pctTabela: (v.margem==null?null:v.margem),
+    ehTabela: !!(v.TAB&&v.TAB.tabela),
+    maiorCat: maior, piorCat: pior
+  });
 }
 
 /* Leitura em texto, para colar na reunião ou no WhatsApp. */
