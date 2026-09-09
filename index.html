@@ -202,7 +202,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .lg-rec.ok{color:#1AFF9D}
 .lg-rec.erro{color:var(--red)}
 .lg-status{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:16px;font-size:.65rem;color:var(--chalk3)}
-.ls-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 2.5s infinite}
+.ls-dot{width:5px;height:5px;border-radius:50%;background:var(--chalk3);animation:blink 2.5s infinite}
+.ls-dot.ok{background:var(--green)}
+.ls-dot.off{background:#FF3B30;animation:none}
+.lg-status.off{color:#FF8C8C}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 
 /* ── APP ── */
@@ -840,7 +843,7 @@ select.ffi option{background:#000020;color:#FF0000}
     <div class="lg-rec" id="l-rec"></div>
     <script>(function(){var p=document.getElementById('l-pass');if(p){p.value='';setTimeout(function(){try{p.focus();}catch(e){}},250);}})();</script>
     <div class="lg-err" id="l-err" style="display: none;"></div>
-    <div class="lg-status"><div class="ls-dot"></div>Sistema Magiway · Florida, USA · acesso pela nuvem <span id="lg-versao" style="opacity:.55"></span></div>
+    <div class="lg-status"><div class="ls-dot" id="ls-dot"></div><span id="ls-txt">Verificando o servidor…</span> <span id="lg-versao" style="opacity:.55"></span></div>
   </div>
 
   <!-- Definir senha nova — é aqui que a pessoa cai ao clicar no link do e-mail -->
@@ -8670,6 +8673,45 @@ window.CLOUD = {
       setTimeout(()=>finish(false), 8000);
     }catch(err){ console.warn('[nuvem] loader',err); finish(false); }
   });
+})();
+
+/* ═══════════════════════════════════════════════════════════════════
+   ESTADO DO SERVIDOR, ANTES DE TENTAR ENTRAR
+   ───────────────────────────────────────────────────────────────────
+   O rodapé da tela de login trazia um ponto VERDE piscando e a frase
+   "acesso pela nuvem" — sempre, inclusive quando a nuvem não tinha
+   carregado. Um indicador que mostra "tudo certo" sem ter verificado
+   nada é pior que indicador nenhum: ele afirma o contrário do que está
+   acontecendo, e manda procurar o problema na senha.
+
+   Agora ele espera a conexão resolver e diz o que encontrou. Quem abre
+   a tela já sabe se vale a pena digitar a senha. */
+(function estadoDoServidor(){
+  const pintar=(ok)=>{
+    const dot=document.getElementById('ls-dot');
+    const txt=document.getElementById('ls-txt');
+    const bar=dot?dot.parentElement:null;
+    if(!dot||!txt) return;
+    dot.classList.remove('ok','off');
+    if(bar) bar.classList.remove('off');
+    if(ok){
+      dot.classList.add('ok');
+      txt.textContent='Sistema Magiway · Florida, USA · servidor conectado';
+    }else{
+      dot.classList.add('off');
+      if(bar) bar.classList.add('off');
+      txt.innerHTML='<b>Servidor não conectado</b> — não vai dar para entrar agora. '
+        +'Verifique a internet; se ela estiver boa, o servidor está fora do ar.';
+    }
+  };
+  const ver=async()=>{
+    try{
+      const pronto=(window.CLOUD&&CLOUD.ready)?await CLOUD.ready:false;
+      pintar(!!(pronto&&CLOUD.enabled));
+    }catch(e){ pintar(false); }
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',ver);
+  else ver();
 })();
 
 // Grava direto no localStorage nativo (sem re-namespacing e sem re-enviar para a nuvem)
