@@ -8172,7 +8172,7 @@ const NAV={
   comparativo:['COTAÇÕES × VENDAS','O que foi cotado contra o que fechou · por que tanta cotação vira tão pouca venda · e o que isso cobra da equipe'],
   histresv:['HISTÓRICO DE RESERVAS','Reservas de outros meses · a aba 📦 HISTÓRICO da planilha'],
   orienta:['ORIENTAÇÕES & MÉTODO','O que marketing, tráfego e gestão precisam fazer · o mês contra o anterior · e o método de venda, passo a passo'],
-  curso:['CURSO · NEUROCIÊNCIA DA VENDA','22 módulos com referências, evidência, limites e aplicação — o método explicado por dentro'],
+  curso:['CURSO · NEUROCIÊNCIA DA VENDA','30 módulos com referências, evidência, limites, leitura dirigida e questões — o método explicado por dentro'],
   manual:['MANUAL DE VENDAS','Scripts para cada situação · o arcabouço completo do vendedor Magiway'],
   evolucao:['EVOLUÇÃO — MÊS A MÊS','Todos os KPIs, ciclo a ciclo, com a leitura do que mudou e por quê'],
   rentab:['RENTABILIDADE & OCUPAÇÃO','O que sobra de cada reserva, quanto a frota roda e com que antecedência a venda fecha'],
@@ -28845,6 +28845,20 @@ details.rx-bloco[open]>.rx-h::after{content:' ▴'}
 .rx-olho{border-left-color:#1AFF9D;background:rgba(26,255,157,.05)}
 .rx-alerta{color:#FFD11A}
 @media(max-width:820px){ .rx-c p{font-size:.92rem} .rx-f{font-size:.76rem} }
+
+/* ── Curso: leitura dirigida e questões ── */
+.cur-leit{background:rgba(59,158,255,.06);border-left:3px solid #3B9EFF;border-radius:0 12px 12px 0;
+  padding:15px 18px;margin:20px 0}
+.cur-leit .cur-tag{color:#3B9EFF}
+.cur-leit ul{margin:0;padding-left:20px}
+.cur-leit li{margin-bottom:12px;line-height:1.7}
+.cur-leit-q{color:var(--chalk2);font-size:.9rem;line-height:1.7}
+.cur-quest{background:rgba(255,209,26,.06);border-left:3px solid #FFD11A;border-radius:0 12px 12px 0;
+  padding:15px 18px;margin:20px 0}
+.cur-quest .cur-tag{color:#FFD11A}
+.cur-quest ol{margin:0;padding-left:22px}
+.cur-quest li{margin-bottom:10px;line-height:1.75}
+@media(max-width:820px){ .cur-leit li,.cur-quest li{font-size:1.02rem} }
 </style><!--/mgw-skin-v2-->
 
 
@@ -31455,6 +31469,413 @@ window.MGW_CURSO_C=[
 
 
 /* ═══════════════════════════════════════════════════════════════════
+   CURSO — MÓDULOS 23 a 30 · a camada teórica
+   ───────────────────────────────────────────────────────────────────
+   Os vinte e dois primeiros ensinam a fazer. Estes oito ensinam a
+   ENTENDER — são o aparato conceitual que permite adaptar o método a
+   uma situação que nenhum script previu.
+
+   Cada um traz, além da estrutura dos anteriores, duas seções novas:
+     LEITURA DIRIGIDA — o que ler para ir além, com o que procurar em
+       cada texto. Bibliografia sem indicação de leitura é lista.
+     QUESTÕES — perguntas sem resposta no material, para discutir em
+       reunião. Quem responde uma pergunta aprende mais do que quem lê
+       a resposta (efeito de teste, Roediger & Karpicke 2006).
+   ═══════════════════════════════════════════════════════════════════ */
+window.MGW_CURSO_D=[
+
+{id:'m23', n:23, eixo:'Teoria',
+ t:'A curva do esquecimento e por que o treinamento não pega',
+ sub:'O que a memória faz com este curso depois que você fecha a aba',
+ tempo:'30 min',
+ porque:'Você vai esquecer a maior parte deste curso. Isso não é falha sua nem do material — é como a memória humana funciona, e está medido desde 1885. O módulo existe para transformar esse fato de desculpa em ferramenta: sabendo a forma da curva, dá para colocar reforço exatamente onde ela cai.',
+ teoria:[
+  {h:'A curva do esquecimento — Ebbinghaus (1885)',
+   p:'Hermann Ebbinghaus decorou milhares de sílabas sem sentido e mediu, em si mesmo, quanto sobrava depois de intervalos crescentes. Encontrou uma curva com forma muito característica: <b>a perda é brutal nas primeiras horas e depois desacelera</b>. Boa parte do que se aprende numa sessão se perde no mesmo dia; o que sobrevive à primeira semana tende a durar bem mais.<br><br>O achado que interessa não é a perda — é que <b>a curva pode ser achatada por repetição espaçada</b>. Cada revisão não só recupera o que caiu: torna a queda seguinte mais lenta.',
+   ref:'Ebbinghaus, H. (1885). Über das Gedächtnis. Leipzig: Duncker & Humblot. [trad. Memory: A Contribution to Experimental Psychology, 1913]'},
+  {h:'Efeito do espaçamento — Cepeda et al. (2006)',
+   p:'Uma meta-análise de mais de 300 experimentos confirmou o que Ebbinghaus sugeriu: <b>estudar a mesma coisa em sessões separadas produz muito mais retenção do que estudar tudo de uma vez</b>, mesmo com o tempo total idêntico. O intervalo ótimo cresce com o prazo que se quer reter: para lembrar daqui a um mês, revisar a cada poucos dias; para lembrar daqui a um ano, a cada poucas semanas.<br><br>É por isso que um treinamento de oito horas num sábado rende menos que oito conversas de uma hora ao longo de dois meses. A prática do mercado é exatamente a menos eficiente.',
+   ref:'Cepeda, N., Pashler, H., Vul, E., Wixted, J., & Rohrer, D. (2006). Distributed practice in verbal recall tasks: A review and quantitative synthesis. Psychological Bulletin, 132(3), 354-380.'},
+  {h:'Efeito de teste — Roediger e Karpicke (2006)',
+   p:'Recuperar da memória fortalece mais do que reler. Em experimentos diretos, grupos que <b>testaram</b> o que sabiam superaram com folga grupos que estudaram o mesmo material pelo mesmo tempo — e a diferença crescia com o prazo. O detalhe cruel: os que releram <b>previam</b> que iriam melhor. A sensação de fluência ao reler é confundida com aprendizado.<br><br>Aplicado aqui: fechar esta aba e tentar dizer em voz alta os sete passos vale mais do que ler os sete passos de novo.',
+   ref:'Roediger, H., & Karpicke, J. (2006). Test-Enhanced Learning: Taking Memory Tests Improves Long-Term Retention. Psychological Science, 17(3), 249-255.'}
+ ],
+ evidencia:'Nos estudos de Roediger e Karpicke, a vantagem do grupo que se autotestou apareceu com clareza nas medições feitas dias depois, e não na medida imediata — em prazo curto, reler chega a parecer melhor. É exatamente o desenho que engana quem avalia treinamento pelo teste feito no fim do dia.',
+ limite:'Nada disso diz que a aula não serve, nem que basta testar. O espaçamento e o teste organizam a prática de algo que já foi ensinado — não substituem a instrução inicial, e não compensam material ruim. E a curva de Ebbinghaus foi medida com sílabas sem sentido: material com significado e ligado à prática esquece bem mais devagar. O que fica é a forma, não os números exatos.',
+ aplicacao:[
+  'Um módulo por semana, não o curso inteiro num domingo.',
+  'Antes de reabrir um módulo lido, tente dizer o que ele dizia. Só então releia.',
+  'Revisão na semana 1, na 3 e na 8 — os pontos onde a curva mais cai.',
+  'Na reunião, alguém explica um módulo em voz alta para os outros. Explicar é a forma mais forte de recuperar.',
+  'Anote a data em que leu cada módulo. Sem data não há espaçamento, há acaso.'
+ ],
+ scripts:[],
+ erros:[
+  'Ler oito módulos de uma vez e achar que aprendeu oito.',
+  'Confundir a facilidade de reler com domínio — é a ilusão de fluência.',
+  'Marcar tudo como lido no primeiro dia e nunca voltar.'
+ ],
+ exercicio:'Feche esta aba. Numa folha, escreva os sete passos do método na ordem, com uma frase cada. Depois abra e confira. O que você errou é exatamente o que precisa de revisão — e o que acertou já está mais firme por ter sido recuperado.',
+ leitura:[
+  {o:'Brown, Roediger & McDaniel — <i>Make It Stick</i> (2014)', q:'Procure os capítulos sobre prática intercalada e sobre a ilusão de saber. É a ponte entre a pesquisa e a rotina.'},
+  {o:'Cepeda et al. (2006), a meta-análise', q:'Vá direto à tabela de intervalos ótimos por prazo de retenção. É o que define quando revisar.'}
+ ],
+ questoes:[
+  'Se a curva do esquecimento vale para o vendedor, ela vale para o CLIENTE. O que ele lembra da sua proposta três dias depois — e o que isso muda no follow-up?',
+  'Qual parte do nosso método é a mais esquecida na prática? Por que justamente ela?'
+ ],
+ grafico:{tipo:'linha', t:'Retenção com e sem revisão espaçada',
+   sub:'forma da curva de Ebbinghaus, em índice',
+   labels:['20 min','1 dia','2 dias','6 dias','31 dias'],
+   vals:[58,44,36,25,21], cor:'#FF2D2D',
+   exp:'Os pontos seguem a forma clássica medida por Ebbinghaus em si mesmo, em índice sobre o aprendido: a maior parte da perda acontece <b>logo</b>, e depois a curva quase deita. Duas consequências práticas: a revisão mais valiosa é a mais próxima da leitura, e treinamento sem nenhum reforço nas primeiras 48 horas perde a maior parte do investimento antes da primeira segunda-feira. <b>Cada revisão levanta a curva e deixa a queda seguinte mais lenta.</b>'}},
+
+{id:'m24', n:24, eixo:'Teoria',
+ t:'O que é confiança, tecnicamente',
+ sub:'Habilidade, benevolência e integridade — e por que faltar uma derruba as outras',
+ tempo:'30 min',
+ porque:'A Magiway vende confiança antes de vender carro — é a premissa de toda a operação. Mas "confiança" usada como palavra bonita não orienta ninguém. Existe um modelo com décadas de teste que a decompõe em três coisas separadas, cada uma construída de um jeito diferente. Saber qual das três está faltando é a diferença entre corrigir e insistir.',
+ teoria:[
+  {h:'O modelo ABI — Mayer, Davis e Schoorman (1995)',
+   p:'Confiar é <b>aceitar ficar vulnerável a outro</b> com base na expectativa de que ele agirá bem, mesmo sem poder monitorá-lo. A disposição de confiar depende de três percepções independentes:<br><br><b>Ability</b> (habilidade) — ele é competente NAQUILO. Competência é específica de domínio: confiar no seu médico não é confiar no seu mecânico.<br><b>Benevolence</b> (benevolência) — ele quer o meu bem, para além do interesse próprio.<br><b>Integrity</b> (integridade) — ele age por princípios que eu aceito, e é consistente.<br><br>As três são <b>necessárias</b>. Alta habilidade com baixa integridade produz alguém competente de quem se desconfia — que é como o mercado enxerga vendedor por padrão.',
+   ref:'Mayer, R., Davis, J., & Schoorman, F. (1995). An Integrative Model of Organizational Trust. Academy of Management Review, 20(3), 709-734.'},
+  {h:'Confiança e risco são inseparáveis',
+   p:'Não existe confiança sem exposição. Se não há nada em jogo, não se está confiando — apenas prevendo. O cliente que paga antes de viajar, para uma empresa que ele não conhece, no outro hemisfério, está <b>genuinamente vulnerável</b>, e é por isso que a decisão dele é pesada.<br><br>Isso reposiciona todo o trabalho: reduzir o risco percebido não é retórica, é remover objetivamente o que ele tem a perder — zero caução, seguro incluso, suporte com nome e rosto, o passo a passo por escrito.',
+   ref:'Rousseau, D., Sitkin, S., Burt, R., & Camerer, C. (1998). Not So Different After All: A Cross-Discipline View of Trust. Academy of Management Review, 23(3), 393-404.'},
+  {h:'A assimetria: confiança sobe devagar e cai de uma vez',
+   p:'Eventos negativos pesam mais que positivos na formação de julgamento, e no caso da integridade o efeito é extremo: <b>um único ato claramente desonesto</b> reconfigura a avaliação inteira, enquanto muitos atos honestos movem pouco — porque honestidade é o esperado. Já para a habilidade a assimetria é inversa: um erro isolado é perdoado se o padrão for bom.<br><br>Consequência direta: exagerar uma cobertura para fechar uma venda não é um risco proporcional ao ganho. É apostar o ativo inteiro numa reserva.',
+   ref:'Baumeister, R., Bratslavsky, E., Finkenauer, C., & Vohs, K. (2001). Bad Is Stronger Than Good. Review of General Psychology, 5(4), 323-370.'}
+ ],
+ evidencia:'Revisões do modelo ABI em contextos organizacionais encontram as três dimensões separáveis empiricamente — pessoas avaliam competência, boa intenção e coerência como coisas distintas, e a confiança resultante depende da combinação, não da média. É por isso que "ele é ótimo, mas eu não deixaria minha viagem na mão dele" é uma frase coerente.',
+ limite:'O modelo descreve como a confiança se forma; não é um roteiro para produzi-la. E há um limite ético que o próprio modelo torna óbvio: as três dimensões são <b>percepções</b>, e percepção pode ser manipulada sem substância. Fabricar sinais de benevolência sem benevolência funciona por um tempo e falha exatamente quando é testado — que é quando o cliente já está do outro lado do mundo, dependendo de você.',
+ aplicacao:[
+  'Habilidade: demonstre conhecimento específico de Orlando, não competência genérica. Detalhe verificável vale mais que adjetivo.',
+  'Benevolência: entregue algo que não te beneficia. Dizer "esse seguro de saúde eu não vendo, mas contrate" é benevolência demonstrada, não declarada.',
+  'Integridade: diga o limite antes de ser perguntado. O que NÃO está coberto, dito por você primeiro, é a prova mais barata que existe.',
+  'Quando o cliente hesita, descubra QUAL das três falta. "Não sei se vocês dão conta" é habilidade; "acho que estão me empurrando" é benevolência; "e se não for o que está escrito?" é integridade. As três pedem respostas diferentes.',
+  'Nunca arredonde para cima uma cobertura. O ganho é uma venda; a perda é a categoria inteira.'
+ ],
+ scripts:[
+  '{nome}, vou te falar o que NÃO está incluso antes de falar do que está: {exclusoes}. Prefiro que você saiba agora.',
+  'Uma dica que não me dá dinheiro nenhum: {dicaUtil}. Vale mesmo que você alugue com outra empresa.',
+  'Se em algum momento você achar que eu te empurrei alguma coisa, me fala. Eu prefiro perder a venda a perder isso aqui.'
+ ],
+ erros:[
+  'Tratar "confiança" como simpatia. Simpatia é uma pista de benevolência e não diz nada sobre habilidade ou integridade.',
+  'Responder uma dúvida de integridade com prova de competência — mostrar quantos carros temos não responde "vocês cumprem o que dizem?".',
+  'Prometer cobertura por cima para fechar. É o único erro deste curso cujo custo não é a venda, é a empresa.'
+ ],
+ exercicio:'Pegue os últimos 5 clientes que NÃO fecharam. Para cada um, classifique a hesitação em habilidade, benevolência ou integridade. Se você não conseguir classificar, é porque não perguntou o suficiente — e essa é a descoberta do exercício.',
+ leitura:[
+  {o:'Mayer, Davis & Schoorman (1995), o artigo original', q:'Leia a seção que separa confiança de propensão a confiar. Explica por que o mesmo atendimento funciona com um cliente e não com outro.'},
+  {o:'Baumeister et al. (2001) — <i>Bad Is Stronger Than Good</i>', q:'Procure a discussão sobre assimetria em relacionamentos. É o argumento contra qualquer exagero tático.'}
+ ],
+ questoes:[
+  'Das três dimensões, qual a Magiway tem mais dificuldade de demonstrar para quem nunca ouviu falar dela? O que hoje é feito para isso — e funciona?',
+  'Se integridade cai de uma vez e sobe devagar, quanto vale uma venda fechada com um exagero? Faça a conta em número de indicações perdidas.'
+ ],
+ grafico:{tipo:'barra', t:'As três dimensões e o que cada uma exige',
+   sub:'esforço relativo para construir e para destruir',
+   labels:['Habilidade','Benevolência','Integridade'],
+   vals:[100,100,100], cor:'#1FA9A6',
+   exp:'As três valem igual na formação da confiança — a barra é a mesma de propósito. O que muda é a <b>assimetria</b>: habilidade tolera um erro isolado se o padrão for bom; benevolência se constrói com gestos repetidos e sem cobrança; <b>integridade se perde inteira num único ato</b>. Por isso o exagero de cobertura não é um risco proporcional: a barra da integridade não cai um pedaço, ela zera.'}}
+,
+{id:'m25', n:25, eixo:'Teoria',
+ t:'Comunicar risco em números que o cliente entende',
+ sub:'Por que "99% de cobertura" informa menos que "1 em cada 100"',
+ tempo:'30 min',
+ porque:'Metade do nosso trabalho é falar de risco: seguro, franquia, caução, o que acontece se der errado. E existe um corpo de pesquisa mostrando que o mesmo risco, escrito de duas maneiras, produz decisões opostas — inclusive em médicos e juízes. Comunicar mal um risco não é detalhe de redação: é induzir o cliente a uma decisão que ele não tomaria se tivesse entendido.',
+ teoria:[
+  {h:'Formatos de frequência natural — Gigerenzer e Hoffrage (1995)',
+   p:'Probabilidades em porcentagem são difíceis até para especialistas. Reescritas como <b>frequências naturais</b> — "4 em cada 1.000" em vez de "0,4%" —, as mesmas perguntas passam a ser respondidas corretamente por uma proporção muito maior de pessoas, sem nenhum treinamento.<br><br>A razão é que a frequência natural preserva a informação sobre o tamanho do grupo, que a porcentagem descarta. O cérebro lida bem com contagem e mal com razão abstrata.',
+   ref:'Gigerenzer, G., & Hoffrage, U. (1995). How to Improve Bayesian Reasoning Without Instruction: Frequency Formats. Psychological Review, 102(4), 684-704.'},
+  {h:'Enquadramento — Tversky e Kahneman (1981)',
+   p:'O mesmo desfecho descrito como ganho ou como perda muda a escolha da maioria. No experimento clássico da doença asiática, "salva 200 de 600" e "morrem 400 de 600" descrevem o mesmo resultado, e as pessoas preferem a opção segura no primeiro enquadramento e a arriscada no segundo.<br><br>Para nós: "cobre 90% dos casos" e "não cobre 1 em cada 10" são o mesmo fato. Escolher o enquadramento é inevitável — <b>não existe versão neutra</b>. Por isso a escolha tem de ser feita com critério declarado, e o nosso é: quando o risco é do cliente, enquadre pela perda, porque é ela que ele precisa enxergar para decidir.',
+   ref:'Tversky, A., & Kahneman, D. (1981). The Framing of Decisions and the Psychology of Choice. Science, 211(4481), 453-458.'},
+  {h:'Risco como sentimento — Loewenstein et al. (2001)',
+   p:'A reação emocional ao risco e a avaliação cognitiva dele <b>divergem sistematicamente</b>, e quando divergem é a emoção que costuma dirigir o comportamento. Fatores que quase não mudam a probabilidade — vividez da imagem, proximidade no tempo, se a pessoa já viu acontecer — mudam muito o medo sentido.<br><br>Daí o cliente que tem pavor de bater num país estranho e nenhum medo de dirigir 400 km no mesmo dia, sendo o segundo objetivamente mais perigoso. Discutir a estatística com ele não resolve: o medo não veio de estatística.',
+   ref:'Loewenstein, G., Weber, E., Hsee, C., & Welch, N. (2001). Risk as Feelings. Psychological Bulletin, 127(2), 267-286.'}
+ ],
+ evidencia:'Nos estudos de frequência natural, problemas de diagnóstico que quase ninguém resolvia em formato de porcentagem passaram a ser resolvidos por uma parcela substancial dos participantes apenas com a reescrita em contagens — mesma matemática, mesma pergunta, apresentação diferente.',
+ limite:'Frequência natural melhora a compreensão; não garante decisão melhor, e não anula o medo, que tem outra origem. E há um risco ético embutido: quem domina enquadramento pode escolher o que faz o cliente decidir como convém a quem fala. A regra que adotamos é simples de auditar — <b>use o enquadramento que o cliente usaria para se proteger</b>, não o que fecha mais rápido. Na dúvida, dê os dois.',
+ aplicacao:[
+  'Troque porcentagem por contagem: "1 em cada 20 viagens" em vez de "5%".',
+  'Ao explicar cobertura, diga o que NÃO cobre no mesmo formato do que cobre. Formatos diferentes escondem a comparação.',
+  'Quando o medo do cliente não bate com o risco real, não corrija com estatística — reconheça o medo e reduza a exposição concreta.',
+  'Nunca use dois enquadramentos diferentes para o nosso lado e o do concorrente. É a manipulação mais fácil de fazer e a mais fácil de detectar.',
+  'Números redondos e verificáveis. "Praticamente sempre" não é informação, é impressão.'
+ ],
+ scripts:[
+  'Deixa eu te dar em número de gente, que fica mais claro: de cada 100 famílias que a gente atende, {n} passam por {situacao}. Nessas, o que acontece é {oQue}.',
+  'Vou te falar o lado ruim também: {exclusao}. É {n} em cada 100. Pequeno, mas existe, e você tem que saber.',
+  'Entendo o medo de dirigir lá — é normal e quase todo mundo sente. Não vou te convencer com estatística. Vou te contar o que a gente faz para isso ficar mais fácil: {medidas}.'
+ ],
+ erros:[
+  'Dizer "cobertura total" quando existe exclusão. É enquadramento que vira mentira.',
+  'Responder medo com número. O medo não veio de número e não sai por número.',
+  'Usar porcentagem para o que é bom e contagem para o que é ruim (ou o contrário).'
+ ],
+ exercicio:'Pegue as três explicações de seguro que você mais usa. Reescreva cada uma em frequência natural ("x em cada 100") e inclua a exclusão no mesmo formato. Use por uma semana e repare em quantas perguntas de acompanhamento você recebe — menos perguntas significa que entenderam.',
+ leitura:[
+  {o:'Gigerenzer — <i>Calculated Risks</i> / <i>Reckoning with Risk</i>', q:'Os capítulos sobre exames médicos. Troque "paciente" por "cliente" e o argumento é o mesmo.'},
+  {o:'Tversky & Kahneman (1981), o artigo da Science', q:'São quatro páginas. Leia o problema da doença asiática e tente prever sua própria resposta antes de virar a página.'}
+ ],
+ questoes:[
+  'Quais enquadramentos nós usamos hoje que passariam mal no teste "o cliente usaria este para se proteger?"',
+  'Qual medo dos nossos clientes é maior que o risco real? E qual risco real é maior que o medo — que é o caso perigoso?'
+ ],
+ grafico:{tipo:'barra', t:'Mesma informação, dois formatos',
+   sub:'proporção que responde corretamente ao problema de diagnóstico',
+   labels:['em porcentagem','em frequência natural'],
+   vals:[16,46], cor:'#FFD11A',
+   exp:'Ordem de grandeza observada nos estudos de Gigerenzer e Hoffrage: o mesmo problema, com os mesmos números, é resolvido por uma parcela muito maior quando escrito como contagem em vez de porcentagem. <b>Nada mudou na matemática — mudou o que o cérebro precisa fazer para chegar lá.</b> Toda vez que você escreve 5%, está escolhendo o formato que a pesquisa mostra ser o mais difícil. "1 em cada 20" custa o mesmo espaço e é entendido.'}},
+
+{id:'m26', n:26, eixo:'Teoria',
+ t:'Justiça percebida: por que o cliente aceita um preço e recusa outro igual',
+ sub:'Distributiva, procedimental e interacional — as três justiças',
+ tempo:'30 min',
+ porque:'Vender acima do mercado exige que o preço pareça JUSTO, não que pareça baixo. E justiça percebida não é sinônimo de valor: o mesmo número é aceito quando a pessoa entende como ele foi formado e recusado quando parece arbitrário. Este módulo é sobre a diferença entre caro e injusto — que é onde a Magiway vive.',
+ teoria:[
+  {h:'Teoria da equidade — Adams (1963)',
+   p:'As pessoas avaliam uma troca comparando a razão entre o que dão e o que recebem <b>com a razão de outro alguém</b>. O que incomoda não é dar muito: é dar mais do que o outro deu pelo mesmo. Daí a força devastadora de "meu amigo pagou menos" — o valor absoluto nem entra na conta.<br><br>A implicação prática é dura: descontos concedidos sem critério explícito criam injustiça percebida em todos os outros clientes assim que a informação circula. E ela circula.',
+   ref:'Adams, J. S. (1963). Toward an Understanding of Inequity. Journal of Abnormal and Social Psychology, 67(5), 422-436.'},
+  {h:'As três dimensões da justiça — Colquitt (2001)',
+   p:'A pesquisa organizacional separa três julgamentos distintos:<br><br><b>Distributiva</b> — o resultado é justo? (quanto paguei pelo que recebi)<br><b>Procedimental</b> — a REGRA que produziu o resultado é justa? (como esse preço foi formado, vale para todo mundo?)<br><b>Interacional</b> — fui tratado com respeito e me explicaram? (o tom, a transparência)<br><br>O achado que mais importa aqui: quando a distributiva é desfavorável — o cliente paga caro —, <b>a procedimental e a interacional passam a pesar muito mais</b>. Preço alto com regra clara e trato respeitoso é aceito; preço alto sem explicação é sentido como abuso.',
+   ref:'Colquitt, J. (2001). On the Dimensionality of Organizational Justice: A Construct Validation of a Measure. Journal of Applied Psychology, 86(3), 386-400.'},
+  {h:'Justiça de preço e o princípio do direito adquirido — Kahneman, Knetsch e Thaler (1986)',
+   p:'As pessoas julgam aumentos de preço como justos ou injustos por uma regra bastante estável: <b>é justo repassar aumento de custo; é injusto explorar um aumento de demanda</b>. A loja que sobe o preço da pá de neve durante a nevasca é condenada por ampla maioria, mesmo sendo economicamente racional.<br><br>Para nós, em alta temporada: dizer "está mais caro porque tem mais gente procurando" ativa exatamente o julgamento de exploração. Dizer "nesta época a diária que a gente paga sobe" — quando for verdade — é a mesma alta com o enquadramento que a pesquisa mostra ser aceito.',
+   ref:'Kahneman, D., Knetsch, J., & Thaler, R. (1986). Fairness as a Constraint on Profit Seeking: Entitlements in the Market. American Economic Review, 76(4), 728-741.'}
+ ],
+ evidencia:'No estudo de Kahneman, Knetsch e Thaler, a proporção que considerou injusto subir o preço na alta demanda foi esmagadora, enquanto a mesma alta justificada por aumento de custo foi majoritariamente aceita — sendo o preço final idêntico nos dois casos.',
+ limite:'Justiça percebida é percepção, e ela pode ser fabricada com uma justificativa falsa de custo. Além de desonesto, é frágil: numa praça em que o cliente compara com Hub e Orlando Rental Car, uma justificativa inventada é conferida em minutos. A regra é usar a explicação verdadeira — e, quando a verdadeira for "somos mais caros porque entregamos mais", dizer isso, que também passa no teste de justiça procedimental.',
+ aplicacao:[
+  'Toda vez que der desconto, declare o critério. "Por ser 12 diárias" é procedimental; "porque você insistiu" ensina que insistir funciona.',
+  'Tenha UMA regra de preço e aplique igual. A regra é mais defensável que qualquer número.',
+  'Na alta temporada, explique pela sua estrutura de custo, nunca pela procura — se a alta for de custo.',
+  'Quando o cliente citar um preço menor, compare o pacote item a item antes de falar de valor. Justiça distributiva se discute com o que está dentro.',
+  'Trate bem quem não fecha. A justiça interacional é a que sobra na memória e vira indicação.'
+ ],
+ scripts:[
+  'Nosso preço segue uma regra que vale para todo mundo: {regra}. Não é negociação caso a caso — se fosse, quem grita mais pagaria menos, e não é assim que eu trabalho.',
+  'Consigo ajustar por um motivo concreto: são {dias} diárias. Não é favor nem exceção — é a nossa faixa para viagem longa, e vale para qualquer cliente nessa situação.',
+  'Somos mais caros, sim. O que está dentro é {inclusos} — se você tirar tudo isso, o número fica parecido. A diferença não é margem, é o que vem junto.'
+ ],
+ erros:[
+  'Dar desconto "porque o cliente pediu". Ensina que pedir é o caminho e torna o preço injusto para todos os outros.',
+  'Justificar alta de preço pela demanda. É o enquadramento que a pesquisa mostra ser rejeitado.',
+  'Tratar mal quem não fechou. É onde a justiça interacional cobra mais caro, porque é o que ele conta.'
+ ],
+ exercicio:'Escreva em uma frase a REGRA do nosso preço, de um jeito que você diria em voz alta para um cliente. Mostre para dois colegas. Se as três frases forem diferentes, não existe regra — existem três, e é isso que o cliente sente.',
+ leitura:[
+  {o:'Kahneman, Knetsch & Thaler (1986)', q:'Leia os cenários do questionário. São situações de comércio comum, e as respostas são o mapa do que o mercado tolera.'},
+  {o:'Colquitt (2001)', q:'Vá à tabela com os itens de cada dimensão. Cada item é, na prática, uma pergunta que o cliente se faz.'}
+ ],
+ questoes:[
+  'Nosso preço tem uma regra que qualquer um da equipe enunciaria igual? Se não, qual é o custo disso?',
+  'Em que situações a gente hoje justifica preço pela procura? O que aconteceria se trocássemos pela justificativa de custo real?'
+ ],
+ grafico:{tipo:'barra', t:'A mesma alta de preço, duas justificativas',
+   sub:'proporção que considera a alta aceitável',
+   labels:['justificada por aumento de custo','justificada por aumento de procura'],
+   vals:[79,18], cor:'#1AFF9D',
+   exp:'Ordem de grandeza dos cenários de Kahneman, Knetsch e Thaler: <b>o preço final é o mesmo nos dois casos</b>. O que muda é só a frase que acompanha, e ela decide entre aceitação ampla e rejeição ampla. Não é técnica de venda — é o julgamento de justiça funcionando. Por isso, na alta temporada, a frase que se usa importa tanto quanto o número; e por isso ela precisa ser verdadeira, já que numa praça comparável a justificativa falsa é conferida.'}}
+,
+{id:'m27', n:27, eixo:'Teoria',
+ t:'Identidade e pertencimento: por que "gente como a gente" compra',
+ sub:'Grupo, semelhança e o limite ético de usar isso',
+ tempo:'25 min',
+ porque:'Nosso cliente é o brasileiro em Orlando. Isso não é só um recorte de mercado — é uma identidade, e identidade muda como a pessoa avalia quem está do outro lado. Entender o mecanismo explica por que "atendimento em português" vale muito mais do que a tradução que ele oferece, e onde usar isso deixa de ser legítimo.',
+ teoria:[
+  {h:'Teoria da identidade social — Tajfel e Turner (1979)',
+   p:'Basta uma categorização mínima — mesmo arbitrária, sorteada na hora — para as pessoas favorecerem os do próprio grupo. Nos experimentos de grupo mínimo, participantes divididos por critérios sem nenhum significado já distribuíam recursos favorecendo os "seus".<br><br>O mecanismo: parte da autoimagem vem dos grupos a que se pertence, então favorecer o grupo é, indiretamente, sustentar a própria imagem. Não exige história comum nem afinidade real.',
+   ref:'Tajfel, H., & Turner, J. (1979). An Integrative Theory of Intergroup Conflict. In: The Social Psychology of Intergroup Relations. Monterey: Brooks/Cole.'},
+  {h:'Semelhança e confiança',
+   p:'Semelhança percebida aumenta simpatia e disposição de confiar — e vale para semelhanças triviais: mesma região, mesmo time, filhos da mesma idade, o mesmo receio de dirigir do outro lado da pista. A pesquisa sobre atração interpessoal encontra o efeito de forma consistente.<br><br>Para o atendimento, isso significa que o vendedor brasileiro falando com o cliente brasileiro <b>já começa dentro do grupo</b>. Esse crédito inicial é um ativo — e, como todo crédito, pode ser gasto rápido se o que vier depois não sustentar.',
+   ref:'Montoya, R., Horton, R., & Kirchner, J. (2008). Is actual similarity necessary for attraction? Journal of Social and Personal Relationships, 25(6), 889-922.'},
+  {h:'Pertencimento como necessidade — Baumeister e Leary (1995)',
+   p:'A necessidade de pertencer é uma motivação humana fundamental, não uma preferência. Pessoas em ambiente estranho — outro país, outra língua, com a família dependendo delas — têm essa necessidade <b>ativada</b>, e a reação a alguém que representa o próprio grupo fica proporcionalmente mais forte.<br><br>É a situação exata do nosso cliente pousando em Orlando. O que a gente chama de "suporte em português" é, na experiência dele, alguém do lado dele num lugar onde ele não tem ninguém.',
+   ref:'Baumeister, R., & Leary, M. (1995). The Need to Belong. Psychological Bulletin, 117(3), 497-529.'}
+ ],
+ evidencia:'Nos paradigmas de grupo mínimo, o favorecimento aparece mesmo quando os participantes sabem que a divisão foi feita por sorteio e nunca encontram os outros membros — o que mostra que o efeito não depende de vínculo real, e sim da categorização.',
+ limite:'Este é o módulo com o limite ético mais estreito do curso, e por dois motivos. Primeiro: o mesmo mecanismo que aproxima o de dentro <b>afasta o de fora</b>, e usar identidade para vender resvala facilmente em desqualificar quem não é do grupo. Segundo: fabricar semelhança — inventar filho da mesma idade, time, cidade — é mentira, e mentira sobre identidade é das que mais ofendem quando descoberta.<br><br>A regra: use as semelhanças que <b>existem</b>, e nunca use o pertencimento para insinuar que o concorrente estrangeiro vai maltratar o cliente. Se a nossa vantagem é real, ela se descreve sozinha.',
+ aplicacao:[
+  'Fale como brasileiro fala. Formalidade importada quebra justamente o que nos coloca dentro do grupo.',
+  'Nomeie a experiência compartilhada quando ela for real: dirigir do outro lado, o susto do pedágio eletrônico, a mala que não cabe.',
+  'Suporte em português é a nossa vantagem de pertencimento — descreva o que ele significa na prática, não como slogan.',
+  'Nunca sugira que a locadora americana vai enganar o cliente. Compare o que a gente entrega, ponto.',
+  'Semelhança inventada é mentira. Se não tem filho, não diga que tem.'
+ ],
+ scripts:[
+  'Sei exatamente o que você tá pensando, porque é a pergunta que 9 em cada 10 famílias me fazem: e se der problema e eu não souber explicar em inglês?',
+  'Você vai falar comigo, em português, do jeito que a gente tá falando agora. Não é call center, não é tradutor — sou eu.',
+  'A primeira vez dirigindo lá dá um frio na barriga. Todo mundo sente. O que ajuda é {dica} — é o que eu falo pra minha família também.'
+ ],
+ erros:[
+  'Falar "prezado cliente" com quem está do seu lado do grupo. Formalidade é distância.',
+  'Insinuar que estrangeiro vai passar a perna. É usar pertencimento para desqualificar, e é o uso que não se sustenta.',
+  'Inventar semelhança para criar vínculo. Funciona até a primeira pergunta de acompanhamento.'
+ ],
+ exercicio:'Liste cinco experiências que você DE FATO compartilha com o cliente típico da Magiway. Para cada uma, escreva a frase que a nomeia sem exagero. São suas — não invente a sexta.',
+ leitura:[
+  {o:'Baumeister & Leary (1995) — <i>The Need to Belong</i>', q:'A seção sobre efeitos da privação de pertencimento. Ajuda a entender o cliente recém-chegado, sozinho, com a família olhando para ele.'},
+  {o:'Tajfel & Turner (1979)', q:'Procure a descrição dos experimentos de grupo mínimo. O quanto basta para criar "nós" é a parte que assusta.'}
+ ],
+ questoes:[
+  'Onde a nossa comunicação usa pertencimento de um jeito que não passaria no teste "isso é verdade e não desqualifica ninguém"?',
+  'Se a vantagem do português é tão grande, por que ela não aparece com mais força na proposta? O que a substitui hoje?'
+ ],
+ grafico:{tipo:'barra', t:'O que o cliente diz que mais pesa na escolha',
+   sub:'ordem relativa declarada em atendimento — não é pesquisa formal',
+   labels:['Suporte em português','Zero caução','Seguro incluso','Preço'],
+   vals:[100,86,74,62], cor:'#3B9EFF',
+   exp:'Ordem relativa do que aparece nas conversas quando se pergunta ao cliente o que pesou — não é levantamento estatístico, e está aqui como <b>hipótese a testar</b>, não como dado. Se a ordem for mesmo esta, ela diz uma coisa importante: o item que mais pesa é o único que o concorrente estrangeiro não consegue copiar, e é justamente o que costuma aparecer por último na proposta. <b>Vale medir de verdade antes de reorganizar a comunicação em cima disso.</b>'}},
+
+{id:'m28', n:28, eixo:'Teoria',
+ t:'Negociar ampliando, em vez de dividir',
+ sub:'Interesses e posições, BATNA, e por que desconto é a pior moeda',
+ tempo:'35 min',
+ porque:'Quando o cliente diz "está caro", a saída óbvia é ceder preço — e é a pior de todas, porque preço é a única moeda que sai inteira do nosso bolso. A negociação integrativa oferece um repertório maior, e ele é ensinável.',
+ teoria:[
+  {h:'Posições × interesses — Fisher e Ury (1981)',
+   p:'Posição é o que a pessoa <b>pede</b>; interesse é o que ela <b>quer</b>. "Me dá 15% de desconto" é posição. O interesse por trás pode ser caber no orçamento, sentir que negociou bem, justificar a escolha para o cônjuge, ou não se sentir passado para trás.<br><br>Posições colidem — só uma pode vencer. Interesses frequentemente não colidem, e é aí que existe acordo melhor para os dois. A pergunta que abre isso é sempre a mesma: <b>por quê?</b>',
+   ref:'Fisher, R., & Ury, W. (1981). Getting to Yes: Negotiating Agreement Without Giving In. Boston: Houghton Mifflin.'},
+  {h:'BATNA — a alternativa, e o poder que ela dá',
+   p:'O poder numa negociação vem da qualidade da <b>melhor alternativa caso não haja acordo</b>. Quem tem alternativa boa negocia sem medo; quem não tem, cede.<br><br>Duas leituras para nós. A do cliente: em plena alta temporada, com minivan escassa, a alternativa dele é pior do que ele imagina — e o trabalho é <b>informar</b>, não pressionar. A nossa: quando o mês está fraco, a nossa alternativa piora e a tentação de ceder cresce. Reconhecer isso é o que evita transformar um mês ruim numa tabela de preços destruída.',
+   ref:'Fisher, R., & Ury, W. (1981), op. cit., cap. 6.'},
+  {h:'A âncora e o custo de ceder rápido — Galinsky e Mussweiler (2001)',
+   p:'Quem faz a primeira oferta ancora o resultado, e a vantagem é robusta. Mas há um segundo efeito, mais relevante no dia a dia: <b>a velocidade da concessão informa o valor</b>. Ceder 10% em trinta segundos ensina que o preço era inflado e que há mais para ceder. A mesma concessão, feita devagar e com contrapartida, preserva a percepção de valor.',
+   ref:'Galinsky, A., & Mussweiler, T. (2001). First offers as anchors: The role of perspective-taking and negotiator focus. Journal of Personality and Social Psychology, 81(4), 657-669.'}
+ ],
+ evidencia:'Em experimentos de negociação, participantes instruídos a investigar interesses chegam com mais frequência a acordos integrativos — que deixam os dois lados melhor — do que participantes que apenas trocam propostas de valor. A diferença não está em habilidade retórica: está em ter feito perguntas antes de contrapropor.',
+ limite:'Nem toda negociação tem espaço integrativo. Quando o orçamento do cliente está de fato abaixo do nosso piso, ampliar o bolo é conversa fiada e o honesto é dizer que não dá — que é o conteúdo do grupo "Quando a resposta é não" do manual. Insistir em criatividade quando o número não fecha é fazer a pessoa perder tempo com jeitinho.',
+ aplicacao:[
+  'Antes de qualquer contraproposta, pergunte por quê. "O que faria esse valor fazer sentido pra você?"',
+  'Tenha uma lista de moedas que não são preço: diárias extras, upgrade quando houver, flexibilidade de horário, motorista adicional, entrega em outro ponto.',
+  'Toda concessão pede contrapartida — pagamento à vista, mais diárias, indicação, prazo. Concessão sem troca vira expectativa.',
+  'Nunca ceda rápido. A velocidade comunica que havia gordura.',
+  'Se a alternativa do cliente for pior do que ele pensa, informe com fato verificável. Informar é legítimo; assustar não.'
+ ],
+ scripts:[
+  'Antes de eu ver o que dá pra fazer, me ajuda com uma coisa: o que faria esse valor fazer sentido pra vocês? É o número em si, ou é comparado com alguma coisa que você viu?',
+  'Desconto direto eu não consigo. Agora, se vocês puderem {contrapartida}, aí eu consigo {concessao} — e aí o valor por diária cai de verdade.',
+  'Posso fazer diferente: em vez de baixar o preço, incluo {item}. Custa parecido pra vocês e vale mais na viagem.'
+ ],
+ erros:[
+  'Contrapropor antes de perguntar por quê. Perde-se toda a informação que abriria uma saída melhor.',
+  'Dar desconto de graça e rápido. Ensina duas coisas erradas de uma vez.',
+  'Insistir em alternativa criativa quando o orçamento não fecha de jeito nenhum.'
+ ],
+ exercicio:'Nos próximos 5 pedidos de desconto, não conte a proposta: conte quantas perguntas você fez antes de responder. Meta: pelo menos duas. Anote também o que você descobriu com elas que não sabia.',
+ leitura:[
+  {o:'Fisher & Ury — <i>Como Chegar ao Sim</i>', q:'O capítulo sobre interesses e o sobre BATNA. Os dois somam menos de 50 páginas e são a base de tudo aqui.'},
+  {o:'Bazerman & Neale — <i>Negotiating Rationally</i>', q:'Os capítulos sobre a "mítica torta fixa" — a crença de que o que um ganha o outro perde. É o erro mais caro em negociação.'}
+ ],
+ questoes:[
+  'Que moedas que não são preço a Magiway pode oferecer hoje, sem custo relevante? Elas estão escritas em algum lugar ou dependem da memória de cada um?',
+  'Em que situações a NOSSA alternativa é ruim e a gente cede por isso, sem admitir? Como reconhecer isso antes de destruir a tabela?'
+ ],
+ grafico:{tipo:'barra', t:'O que acontece depois de uma concessão',
+   sub:'esquema do efeito da velocidade — ilustrativo',
+   labels:['concessão rápida e sem troca','concessão lenta com contrapartida'],
+   vals:[100,34], cor:'#FF2D2D',
+   exp:'Índice do quanto o cliente <b>volta a pedir</b> depois da primeira concessão. Ceder rápido e de graça comunica duas coisas ao mesmo tempo: que o preço tinha gordura e que pedir funciona — então ele pede de novo, e agora com razão. A mesma concessão, feita devagar e trocada por algo, encerra o assunto. <b>O que muda o comportamento seguinte não é o tamanho do desconto, é o que a forma de dá-lo ensinou.</b>'}}
+,
+{id:'m29', n:29, eixo:'Teoria',
+ t:'Você não sabe o quanto você sabe',
+ sub:'Calibração, excesso de confiança e como a prática vira competência',
+ tempo:'30 min',
+ porque:'Todo vendedor acha que sabe vender. É uma crença especialmente resistente porque o feedback do ofício é lento, ruidoso e enviesado: a venda perdida quase nunca diz por quê. Este módulo é sobre como saber o que você realmente domina — e é o módulo que torna todos os outros úteis, porque sem calibração ninguém revisa o que já acha que sabe.',
+ teoria:[
+  {h:'Excesso de confiança e o efeito Dunning-Kruger (1999)',
+   p:'Quem tem pouco domínio de uma habilidade tende a <b>superestimar</b> o próprio desempenho, e por um motivo específico: as competências necessárias para executar bem são as mesmas necessárias para avaliar a execução. Quem não as tem não tem como perceber que não as tem.<br><br>O outro lado é menos citado e importa igual: com o aumento do domínio, a autoavaliação melhora — e especialistas frequentemente <b>subestimam</b> a própria posição relativa, por supor que o que é fácil para eles é fácil para todos.',
+   ref:'Kruger, J., & Dunning, D. (1999). Unskilled and Unaware of It. Journal of Personality and Social Psychology, 77(6), 1121-1134.'},
+  {h:'Prática deliberada — Ericsson, Krampe e Tesch-Römer (1993)',
+   p:'Tempo de exercício não produz competência sozinho. O que separa quem melhora de quem apenas acumula anos é a <b>prática deliberada</b>: atividade escolhida para atacar uma fraqueza específica, com feedback imediato e repetição com correção.<br><br>Dez anos atendendo sem nunca revisar um atendimento produzem dez anos do mesmo nível. É a diferença entre praticar e repetir — e explica por que veterano nem sempre é melhor.',
+   ref:'Ericsson, K. A., Krampe, R., & Tesch-Römer, C. (1993). The Role of Deliberate Practice in the Acquisition of Expert Performance. Psychological Review, 100(3), 363-406.'},
+  {h:'Ambientes de aprendizado gentis e cruéis — Hogarth (2001)',
+   p:'A intuição só se torna confiável em ambientes que dão feedback rápido, claro e não enviesado. Vendas é um ambiente <b>cruel</b> nesse sentido: o resultado demora, a causa é ambígua e o feedback é assimétrico — o cliente que fecha explica, o que some não explica nada.<br><br>Em ambiente cruel, a experiência produz confiança sem produzir acurácia. A correção não é confiar menos na intuição: é <b>construir feedback artificialmente</b>, com registro, revisão e comparação.',
+   ref:'Hogarth, R. (2001). Educating Intuition. Chicago: University of Chicago Press.'}
+ ],
+ evidencia:'No estudo original de Kruger e Dunning, participantes no quartil inferior de desempenho estimaram estar acima da média — e, o mais relevante para nós, a autoavaliação deles <b>melhorou depois de receberem treinamento na habilidade</b>. Aprender a fazer é o que ensina a enxergar o próprio nível.',
+ limite:'O efeito é objeto de disputa metodológica ativa: parte do padrão pode vir de regressão à média e do fato de que quase todo mundo se avalia perto da média. O que sobrevive à crítica, e é o que interessa aqui, é mais modesto e ainda assim decisivo: <b>autoavaliação sem medida externa é pouco confiável</b>, para qualquer nível. Não é uma acusação de incompetência — é um argumento a favor de medir.',
+ aplicacao:[
+  'Registre a cotação no app SEMPRE. Sem registro não há feedback, e sem feedback a experiência não vira competência.',
+  'Escolha UMA fraqueza por mês e trabalhe só nela. Prática deliberada é estreita por definição.',
+  'Peça a um colega para ler três dos seus atendimentos. Feedback externo é o que falta no ambiente cruel.',
+  'Depois de perder uma venda, escreva sua hipótese ANTES de saber o motivo. Depois confira. É assim que se calibra.',
+  'Desconfie da frase "eu sei fazer isso". Ela é o sintoma, não a prova.'
+ ],
+ scripts:[],
+ erros:[
+  'Achar que anos de casa equivalem a competência. Equivalem a repetição, que é outra coisa.',
+  'Treinar tudo ao mesmo tempo. Prática deliberada difusa não é prática deliberada.',
+  'Explicar toda venda perdida por preço. É a explicação que não exige mudar nada — e por isso é a mais escolhida.'
+ ],
+ exercicio:'Antes de abrir o Dashboard de Cotações, escreva num papel: quantas cotações você fez no mês, quantas fecharam, e a sua taxa de conversão. Depois abra e compare. A distância entre o palpite e o número é a sua calibração — e ela melhora só de fazer isso todo mês.',
+ leitura:[
+  {o:'Ericsson & Pool — <i>Peak</i>', q:'Os capítulos sobre prática deliberada e sobre representações mentais. Traduzem a pesquisa para rotina.'},
+  {o:'Hogarth — <i>Educating Intuition</i>', q:'A distinção entre ambientes gentis e cruéis. É o diagnóstico do nosso ofício.'},
+  {o:'Kahneman & Klein (2009), <i>Conditions for Intuitive Expertise</i>', q:'Dois pesquisadores que discordavam escreveram juntos onde a intuição funciona. Raro e honesto.'}
+ ],
+ questoes:[
+  'Qual feedback nós NÃO temos hoje e poderíamos ter com pouco esforço? O que impede de perguntar ao cliente que não fechou?',
+  'Se "preço" explica toda venda perdida, o que essa explicação nos poupa de olhar?'
+ ],
+ grafico:{tipo:'barra', t:'Desempenho real × desempenho que a pessoa acha que teve',
+   sub:'esquema do padrão de Kruger e Dunning, em percentil',
+   labels:['quartil 1','quartil 2','quartil 3','quartil 4'],
+   vals:[62,63,70,75], cor:'#A855F7',
+   exp:'As barras são a <b>autoavaliação</b> por quartil de desempenho real. O padrão que interessa é o achatamento: quem está no quartil mais baixo se avalia perto de quem está no mais alto. Duas leituras. A primeira, óbvia: quem sabe pouco não tem como saber que sabe pouco. A segunda, mais útil aqui: <b>a autoavaliação varia pouco com o desempenho real</b>, ou seja, ela quase não carrega informação. É por isso que medir — cotação registrada, conversão calculada, atendimento revisado por outro — não é burocracia, é o único jeito de saber onde você está.'}},
+
+{id:'m30', n:30, eixo:'Teoria',
+ t:'Onde a neurociência é usada como enfeite',
+ sub:'Como ler uma afirmação sobre o cérebro sem ser enganado',
+ tempo:'30 min',
+ porque:'Este curso inteiro se apoia em pesquisa, e por isso precisa terminar ensinando a duvidar dele. O mercado de treinamento de vendas está cheio de afirmações sobre "cérebro reptiliano", "95% das decisões são inconscientes" e "neurovendas" — números que circulam há décadas sem fonte. Saber separar o que tem base do que é enfeite protege a equipe de perder tempo e dinheiro, e protege este material de virar mais um.',
+ teoria:[
+  {h:'O apelo sedutor da explicação neurocientífica — Weisberg et al. (2008)',
+   p:'Explicações ruins de fenômenos psicológicos passam a ser julgadas como <b>boas</b> quando recebem uma menção irrelevante ao cérebro. No experimento, adicionar "varreduras cerebrais mostram" a uma explicação circular aumentou a aprovação de leigos — e a informação neural acrescentada não explicava nada.<br><br>É por isso que "neuro" vende: não porque esclareça, mas porque a menção ao cérebro <b>funciona como selo de credibilidade</b> mesmo quando é decorativa.',
+   ref:'Weisberg, D., Keil, F., Goodstein, J., Rawson, E., & Gray, J. (2008). The Seductive Allure of Neuroscience Explanations. Journal of Cognitive Neuroscience, 20(3), 470-477.'},
+  {h:'Neuromitos que não morrem — Pasquinelli (2012)',
+   p:'Várias crenças amplamente repetidas não têm sustentação: o "cérebro reptiliano" como camada que decide compras é uma simplificação de um modelo dos anos 1960 há muito abandonado; "usamos 10% do cérebro" é falso; "hemisfério esquerdo lógico e direito criativo" é uma caricatura de lateralização real, porém muito mais sutil.<br><br>Os números redondos sobre decisão inconsciente — 90%, 95%, 99% — circulam sem fonte primária localizável. <b>Que muito do processamento é não consciente é bem estabelecido; a porcentagem específica é invenção.</b>',
+   ref:'Pasquinelli, E. (2012). Neuromyths: Why Do They Exist and Persist? Mind, Brain, and Education, 6(2), 89-96.'},
+  {h:'A crise de replicação — Open Science Collaboration (2015)',
+   p:'Ao repetir 100 estudos publicados em psicologia, uma colaboração internacional obteve resultado significativo em cerca de <b>um terço a metade</b> deles, com tamanhos de efeito bem menores que os originais. Isso não invalida a psicologia: obriga a tratar achado isolado como hipótese, e a confiar em <b>replicação e meta-análise</b>.<br><br>Aplicado a este curso: os módulos que se apoiam em achados muito replicados — ancoragem, aversão à perda, espaçamento, reciprocidade — são bem mais sólidos que os que se apoiam num experimento célebre. E é por isso que cada módulo tem a seção do limite.',
+   ref:'Open Science Collaboration (2015). Estimating the reproducibility of psychological science. Science, 349(6251), aac4716.'}
+ ],
+ evidencia:'No estudo de Weisberg e colegas, a informação neurocientífica irrelevante melhorou a avaliação de explicações RUINS entre leigos e estudantes, e não teve o mesmo efeito entre especialistas — ou seja, o efeito depende exatamente de não se saber avaliar o conteúdo.',
+ limite:'A crítica também tem limite. Nada disso autoriza descartar tudo com um dar de ombros: negar em bloco é tão preguiçoso quanto aceitar em bloco, e é a saída de quem não quer mudar nada. O critério é comparativo, não absoluto — <b>achado replicado com efeito modesto vale mais que achado espetacular com um estudo só</b>.',
+ aplicacao:[
+  'Diante de uma afirmação sobre o cérebro, pergunte: qual estudo? Quantas pessoas? Foi replicado?',
+  'Desconfie de porcentagem redonda sem fonte. "95% das decisões são emocionais" é slogan, não achado.',
+  'Prefira o material que declara o que NÃO sabe. Curso sem limites declarados está vendendo certeza.',
+  'Se uma técnica só funciona quando o cliente não sabe que está sendo usada, ela não é técnica — é manipulação, e o teste do arrependimento reprova.',
+  'Duvide deste curso também. Os módulos com a seção de limite mais curta são os que precisam de mais cuidado.'
+ ],
+ scripts:[],
+ erros:[
+  'Repetir "cérebro reptiliano" para soar técnico. Quem conhece o assunto ouve o contrário do pretendido.',
+  'Citar porcentagem sem fonte porque ela ajuda o argumento.',
+  'Tratar um experimento célebre como lei. O célebre costuma ser o que teve efeito grande — e efeito grande é o que menos replica.'
+ ],
+ exercicio:'Pegue a última propaganda de curso de vendas que você viu. Liste as afirmações sobre cérebro ou comportamento e, para cada uma, procure a fonte primária por 5 minutos. Anote quantas você encontrou. É o exercício mais barato de defesa intelectual que existe.',
+ leitura:[
+  {o:'Weisberg et al. (2008)', q:'Quatro páginas. Leia os exemplos de explicação com e sem a menção ao cérebro e repare em qual você teria aprovado.'},
+  {o:'Open Science Collaboration (2015)', q:'Veja o gráfico de tamanhos de efeito original × replicação. Vale mais que qualquer discussão sobre o tema.'},
+  {o:'Chabris & Simons — <i>O Gorila Invisível</i>', q:'Sobre as ilusões cotidianas de atenção, memória e confiança. É o antídoto em formato legível.'}
+ ],
+ questoes:[
+  'Quais afirmações DESTE curso você aceitaria hoje sem conferir? Por quê justamente essas?',
+  'Se um fornecedor de treinamento nos apresentar "neurovendas", quais três perguntas fazemos antes de contratar?'
+ ],
+ grafico:{tipo:'barra', t:'O que sobrou ao repetir 100 estudos de psicologia',
+   sub:'Open Science Collaboration (2015)',
+   labels:['originais com resultado significativo','replicações com resultado significativo'],
+   vals:[97,36], cor:'#FFD11A',
+   exp:'Praticamente todos os estudos originais publicados tinham resultado significativo — porque resultado não significativo raramente é publicado. Ao repetir os mesmos 100 experimentos com mais participantes, cerca de um terço se sustentou, e os efeitos que sobreviveram vieram bem menores. <b>Isto não diz que psicologia não presta.</b> Diz que achado isolado é hipótese, e que a confiança tem de vir de replicação — critério que este curso aplicou ao escolher o que ensinar, e que você deveria aplicar a ele.'}}
+];
+
+/* ═══════════════════════════════════════════════════════════════════
    CURSO — a tela
    ───────────────────────────────────────────────────────────────────
    Um módulo por vez, com menu lateral. A alternativa — tudo numa
@@ -31472,8 +31893,9 @@ var PROG_K='mgw_curso_prog_v1';
 var atual=0;
 
 function modulos(){
-  var a=(window.MGW_CURSO_A||[]), b=(window.MGW_CURSO_B||[]), c=(window.MGW_CURSO_C||[]);
-  var todos=a.concat(b).concat(c);
+  var a=(window.MGW_CURSO_A||[]), b=(window.MGW_CURSO_B||[]),
+      c=(window.MGW_CURSO_C||[]), e=(window.MGW_CURSO_D||[]);
+  var todos=a.concat(b).concat(c).concat(e);
   /* O menu agrupa por eixo, e os módulos de um mesmo eixo chegaram em
      levas diferentes: na ordem crua o menu mostrava 10, 21, 22, 11, 12.
      Número que salta faz a pessoa procurar o que não existe. Então a
@@ -31574,6 +31996,23 @@ function renderModulo(){
     +m.erros.map(function(e){ return '<li>'+e+'</li>'; }).join('')+'</ul></div>');
 
   H.push('<div class="cur-exe"><div class="cur-tag">EXERCÍCIO DA SEMANA</div><p>'+m.exercicio+'</p></div>');
+
+  /* Bibliografia sem indicação de leitura é lista. Cada obra vem com o
+     que procurar dentro dela — é o que separa referência de enfeite. */
+  if(m.leitura&&m.leitura.length){
+    H.push('<div class="cur-leit"><div class="cur-tag">LEITURA DIRIGIDA</div><ul>'
+      +m.leitura.map(function(l){
+        return '<li><b>'+l.o+'</b><br><span class="cur-leit-q">'+esc6(l.q)+'</span></li>';
+      }).join('')+'</ul></div>');
+  }
+
+  /* Perguntas sem resposta no material. Quem responde uma pergunta
+     aprende mais do que quem lê a resposta — é o efeito de teste do
+     módulo 23, aplicado ao próprio curso. */
+  if(m.questoes&&m.questoes.length){
+    H.push('<div class="cur-quest"><div class="cur-tag">PARA DISCUTIR NA REUNIÃO</div><ol>'
+      +m.questoes.map(function(q){ return '<li>'+esc6(q)+'</li>'; }).join('')+'</ol></div>');
+  }
 
   H.push('<div class="cur-rodape">'
     +'<button class="mgw-btn'+(lido?' cur-ok':'')+'" onclick="MGW_CURSO.lido(\''+m.id+'\','+(lido?'false':'true')+')">'
@@ -34417,7 +34856,7 @@ function resgatar(painel){
 }
 
 var SEL=['.cur-porque','.cur-teo','.cur-evid','.cur-lim','.cur-graf','.cur-apl','.cur-scr',
-         '.cur-err','.cur-exe','.cur-cab','.cur-rodape',
+         '.cur-err','.cur-exe','.cur-leit','.cur-quest','.cur-cab','.cur-rodape',
          '.man-bloco','.man-sec','.man-fala','.man-cab','.man-grupo',
          '.or-sec','.or-card','.or-bloco','.or-passo','.met-passo','.card'].join(',');
 
