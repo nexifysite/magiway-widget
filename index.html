@@ -839,7 +839,7 @@ select.ffi option{background:#000020;color:#FF0000}
     <button class="lg-btn" onclick="doLogin()">ENTRAR NO SISTEMA</button>
     <div class="lg-rec" id="l-rec"></div>
     <script>(function(){var p=document.getElementById('l-pass');if(p){p.value='';setTimeout(function(){try{p.focus();}catch(e){}},250);}})();</script>
-    <div class="lg-err" id="l-err" style="display: none;">Credenciais inválidas. Tente novamente.</div>
+    <div class="lg-err" id="l-err" style="display: none;"></div>
     <div class="lg-status"><div class="ls-dot"></div>Sistema Magiway · Florida, USA · acesso pela nuvem <span id="lg-versao" style="opacity:.55"></span></div>
   </div>
 
@@ -8418,15 +8418,62 @@ async function mgwSalvarNovaSenha(){
   else tentar();
 })();
 
+/* ═══════════════════════════════════════════════════════════════════
+   POR QUE O LOGIN FALHOU — dito com precisão
+   ───────────────────────────────────────────────────────────────────
+   Antes, TODA falha mostrava "Credenciais inválidas". Duas situações
+   completamente diferentes davam a mesma frase:
+
+     a) a nuvem nunca carregou (sem internet, CDN bloqueado, projeto
+        fora do ar) — e aí a senha não tem nada a ver com o problema;
+     b) a nuvem respondeu e recusou a senha.
+
+   No caso (a) a pessoa redigita a senha para sempre e nunca entra,
+   porque o app nem chegou a perguntar ao servidor. Mensagem errada não
+   é detalhe de texto: manda procurar no lugar errado.
+   ═══════════════════════════════════════════════════════════════════ */
+function _loginErro(tipo, detalhe){
+  const box=document.getElementById('l-err'); if(!box) return;
+  const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  let h='';
+  if(tipo==='sem-nuvem'){
+    h='<b>Não consegui falar com o servidor.</b><br>'
+     +'A senha não é o problema — o app nem chegou a perguntar. Verifique a conexão e tente de novo. '
+     +'Se a internet estiver boa e continuar assim, é o servidor que está fora do ar.';
+  } else if(tipo==='senha'){
+    h='<b>E-mail ou senha não conferem.</b><br>'
+     +'O servidor respondeu e recusou. Confira o e-mail e tente de novo — '
+     +'ou use <b>Recuperar acesso</b> logo acima para definir uma senha nova.';
+  } else if(tipo==='nao-confirmado'){
+    h='<b>Este e-mail ainda não foi confirmado.</b><br>'
+     +'Procure o e-mail de confirmação (veja também o spam) e clique no link antes de entrar.';
+  } else if(tipo==='espera'){
+    h='<b>Muitas tentativas seguidas.</b><br>Aguarde um minuto e tente de novo.';
+  } else if(tipo==='servidor'){
+    h='<b>O servidor recusou por outro motivo.</b><br>'+esc(detalhe||'sem detalhe');
+  } else {
+    h='<b>Não foi possível entrar.</b><br>'+esc(detalhe||'motivo não identificado');
+  }
+  /* uma linha de diagnóstico para poder ser relatada sem adivinhação */
+  const nuvem=(window.CLOUD&&CLOUD.enabled)?'conectado':'NÃO conectado';
+  h+='<div style="margin-top:9px;font-family:\'DM Mono\',monospace;font-size:.58rem;opacity:.6">'
+    +'diagnóstico: servidor '+nuvem+(detalhe?(' · '+esc(String(detalhe).slice(0,80))):'')+'</div>';
+  box.innerHTML=h;
+  box.style.display='block';
+}
+
 async function doLogin(){
   const e=document.getElementById('l-email').value.trim();
   const p=document.getElementById('l-pass').value;
+  /* guarda o que a nuvem respondeu, para a mensagem final saber o motivo */
+  let _motivo=null, _nuvemRespondeu=false;
 
   // ── NUVEM (Supabase): se configurada, autentica primeiro na nuvem ──
   try{
     const ready = (window.CLOUD && CLOUD.ready) ? await CLOUD.ready : false;
     if(ready && CLOUD.enabled){
       const {data, error} = await CLOUD.client.auth.signInWithPassword({email:e, password:p});
+      _nuvemRespondeu=true; _motivo=error?(error.message||String(error)):null;
       if(!error && data && data.user){
         const uid=data.user.id;
         let role='vendedor', prof=null;
@@ -8500,8 +8547,34 @@ async function doLogin(){
     return;
   }
 
-  // 3) Nenhum acesso válido
-  document.getElementById('l-err').style.display='block';
+  // 3) Nenhum acesso válido — e aqui se diz QUAL dos motivos
+  if(!_nuvemRespondeu){
+    /* A nuvem não respondeu. Só faz sentido falar em senha errada se
+       existir um acesso local cadastrado neste computador; senão, o que
+       houve foi falta de servidor. */
+    /* "Existe acesso local" não é "existe lista de vendedores": a lista
+       vem povoada de fábrica com o cadastro do Luciano e SEM senha, então
+       testar só o tamanho dela dá verdadeiro em qualquer instalação nova
+       — e a mensagem voltava a acusar a senha justamente quando o
+       problema era o servidor. Só conta quem tem senha gravada, que é
+       quem poderia de fato entrar sem a nuvem. */
+    const temLocal=(function(){
+      try{
+        if(typeof cfgLoad==='function') cfgLoad();
+        if(typeof _CFG!=='undefined' && _CFG.login && _CFG.login.email && _CFG.login.pass) return true;
+        const l=(typeof vendorsLoad==='function')?vendorsLoad():[];
+        return (l||[]).some(function(v){ return v && v.email && String(v.pass||'').length>0; });
+      }catch(_){ return false; }
+    })();
+    _loginErro(temLocal?'senha':'sem-nuvem', _motivo);
+    return;
+  }
+  const m=String(_motivo||'').toLowerCase();
+  if(/invalid login credentials|invalid credentials/.test(m)) _loginErro('senha', _motivo);
+  else if(/not confirmed|email not confirmed/.test(m))        _loginErro('nao-confirmado', _motivo);
+  else if(/security purposes|rate limit|too many/.test(m))    _loginErro('espera', _motivo);
+  else if(_motivo)                                            _loginErro('servidor', _motivo);
+  else                                                        _loginErro('senha', null);
 }
 
 function _enterApp(){
