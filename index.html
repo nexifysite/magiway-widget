@@ -6772,55 +6772,6 @@ Data de retirada = din"></textarea>
   <div id="sp-lista"></div>
 </div>
 
-<div class="panel" id="panel-auditoria">
-  <div class="au-wrap">
-    <div class="au-selo">
-      <h3>🔒 Canal anônimo — só o Luciano lê</h3>
-      <p>Esta mensagem vai <b>direto para o Luciano</b> e não passa por mais ninguém.
-         Nem gestora, nem coordenação, nem colega de equipe. Ele responde pessoalmente
-         por isso: <b>o cargo dele e o contrato dele são a garantia</b> de que o sigilo
-         será respeitado.</p>
-      <p>O app <b>não grava</b> quem escreveu: não guarda seu nome, seu login, seu
-         aparelho nem a hora exata — essas informações <b>nem existem</b> no lugar
-         onde a mensagem é armazenada, e o servidor só entrega a caixa para ele.
-         Se você quiser resposta, escreva um jeito de te encontrar dentro do
-         texto — aí é escolha sua, não obrigação.</p>
-      <p>Pode ser reclamação, denúncia, sugestão ou agradecimento. Fala o que precisa
-         ser falado.</p>
-    </div>
-    <div class="au-tipos">
-      <div class="au-tipo on" id="au-t-rec" onclick="MGW_AUDITORIA.tipo('reclamacao')">
-        <span class="e">⚠️</span><div class="t">Reclamação</div><div class="s">algo está errado</div>
-      </div>
-      <div class="au-tipo" id="au-t-agr" onclick="MGW_AUDITORIA.tipo('agradecimento')">
-        <span class="e">🙏</span><div class="t">Agradecimento</div><div class="s">alguém merece crédito</div>
-      </div>
-      <div class="au-tipo" id="au-t-sug" onclick="MGW_AUDITORIA.tipo('sugestao')">
-        <span class="e">💡</span><div class="t">Sugestão</div><div class="s">dá para melhorar</div>
-      </div>
-    </div>
-    <div class="fr-f" style="margin-bottom:12px">
-      <label>Assunto (opcional)</label>
-      <input id="au-assunto" placeholder="Em uma linha, do que se trata">
-    </div>
-    <div class="fr-f">
-      <label>Sua mensagem</label>
-      <textarea id="au-texto" rows="9" placeholder="Escreva com suas palavras. Quanto mais concreto (o que aconteceu, quando, o que você esperava), mais o Luciano consegue agir."></textarea>
-    </div>
-    <div class="fr-acoes" style="justify-content:flex-start">
-      <button class="fr-ok" onclick="MGW_AUDITORIA.enviar()">Enviar anonimamente</button>
-      <button class="fr-cancel" onclick="MGW_AUDITORIA.limpar()">Limpar</button>
-    </div>
-    <div class="au-nota" id="au-nota">
-      A mensagem vai direto para a caixa do Luciano. Quem guarda o segredo é o
-      servidor, não o aplicativo: ele <b>se recusa a entregar</b> essas mensagens
-      para qualquer outra conta — gestora, coordenação, ninguém. Não é enviada
-      pelo seu e-mail: se fosse, sairia com o seu nome, e aí de anônimo não teria
-      nada. Precisa de internet no momento do envio.
-    </div>
-  </div>
-</div>
-
 <div class="fr-modal" id="fr-modal"><div class="fr-box" id="fr-modal-box"></div></div>
 
 <div class="panel" id="panel-nps">
@@ -7017,75 +6968,6 @@ Data de retirada = din"></textarea>
 }
 </style>
 
-<div class="panel" id="panel-tarefas">
-  <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">NOTAS &amp; PENDÊNCIAS</span><div class="sec-line"></div></div>
-
-  <div class="tf-wrap">
-    <!-- KPIs -->
-    <div class="tf-kpis" id="tf-kpis"></div>
-
-    <!-- Reuniões da semana -->
-    <div class="tf-card">
-      <div class="tf-ttl">▸ REUNIÕES DA SEMANA — 1× TRÁFEGO · 1× OPERACIONAL · 1× COMERCIAL</div>
-      <div class="tf-reus" id="tf-reus"></div>
-    </div>
-
-    <!-- Nova tarefa -->
-    <div class="tf-card">
-      <div class="tf-ttl" id="tf-form-ttl">▸ NOVA PENDÊNCIA</div>
-      <div class="tf-form">
-        <div class="tf-f" style="grid-column:span 2"><label>Tarefa *</label><input id="tf-tit" type="text" placeholder="O que precisa ser feito"></div>
-        <div class="tf-f"><label>Responsável</label><select id="tf-resp"></select></div>
-        <div class="tf-f"><label>Reunião</label><select id="tf-reu" onchange="tfSugerirData()">
-          <option value="TRÁFEGO">Tráfego</option><option value="OPERACIONAL">Operacional</option><option value="COMERCIAL">Comercial</option>
-        </select></div>
-        <div class="tf-f"><label>Entrega *</label><input id="tf-data" type="date" style="color-scheme:dark"></div>
-        <div class="tf-f"><label>Prioridade</label><select id="tf-prio">
-          <option value="alta">🔴 Alta</option><option value="media" selected>🟡 Média</option><option value="baixa">🔵 Baixa</option>
-        </select></div>
-        <div class="tf-f" style="grid-column:1/-1"><label>Descrição / nota</label><textarea id="tf-desc" rows="2" placeholder="Detalhes, contexto, o que foi combinado na reunião..."></textarea></div>
-        <div class="tf-f"><button class="tf-btn" id="tf-btn-add" onclick="tfAdd()">+ Adicionar pendência</button></div>
-        <div class="tf-f" id="tf-btn-cancel-wrap" style="display:none"><button class="tf-btn ghost" onclick="tfCancelarEdicao()">✕ Cancelar edição</button></div>
-      </div>
-    </div>
-
-    <!-- Abas -->
-    <div class="tf-tab">
-      <button id="tf-v-quadros" class="on" onclick="tfView('quadros')">👥 Quadros da equipe</button>
-      <button id="tf-v-lista" onclick="tfView('lista')">📋 Lista</button>
-      <button id="tf-v-cal" onclick="tfView('cal')">📅 Calendário</button>
-    </div>
-
-    <!-- Filtros -->
-    <div class="tf-card">
-      <div class="tf-filtros">
-        <select id="tf-f-resp" onchange="tfRender()"><option value="">Todos os responsáveis</option></select>
-        <select id="tf-f-reu" onchange="tfRender()"><option value="">Todas as reuniões</option><option>TRÁFEGO</option><option>OPERACIONAL</option><option>COMERCIAL</option></select>
-        <select id="tf-f-st" onchange="tfRender()"><option value="">Todos os status</option><option value="pend">Pendentes</option><option value="feito">Concluídas</option><option value="atraso">Atrasadas</option></select>
-        <button class="tf-btn ghost" onclick="tfLimparFeitas()">🗑 Limpar concluídas</button>
-        <button class="tf-btn ghost" onclick="tfImprimir()">💾 Salvar quadros em PDF</button>
-      </div>
-
-      <!-- Visão quadros (um quadro grande por pessoa) -->
-      <div id="tf-quadros"></div>
-
-      <!-- Visão lista -->
-      <div id="tf-lista" style="display:none"></div>
-
-      <!-- Visão calendário -->
-      <div id="tf-cal" style="display:none">
-        <div class="tf-cal-head">
-          <button class="tf-btn ghost" onclick="tfMes(-1)">‹ Anterior</button>
-          <div class="tf-cal-mes" id="tf-cal-mes">—</div>
-          <button class="tf-btn ghost" onclick="tfMes(1)">Próximo ›</button>
-        </div>
-        <div class="tf-cal-grid" id="tf-cal-dows"></div>
-        <div class="tf-cal-grid" id="tf-cal-grid"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
 /* ═══════════════════════════════════════════════════════════════════
    MIGRAÇÃO — chaves locais viram chaves DA EMPRESA
@@ -7119,407 +7001,6 @@ Data de retirada = din"></textarea>
 })();
 </script>
 
-<script>
-/* ═══════════════════════════════════════════════════════════════════
-   NOTAS & PENDÊNCIAS
-   Cada pendência sai de uma das 3 reuniões semanais (tráfego,
-   operacional, comercial), tem um responsável, uma data de entrega e
-   uma prioridade. Quem executa marca o quadradinho quando termina.
-   Atrasada = passou da data de entrega e ainda não foi concluída.
-   ═══════════════════════════════════════════════════════════════════ */
-(function(){
-var TF_KEY='gs_tarefas_v1';
-var RESPONSAVEIS=['JANES','DICKSON','CARLOS','MARIANA','LEANDRO','LUCIANO'];
-var MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-var DOWS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-var DOWS_LONGO=['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
-var REUNIOES=['TRÁFEGO','OPERACIONAL','COMERCIAL'];
-/* dia da semana padrão de cada reunião — cada uma acontece 1× por semana */
-var AGENDA_PADRAO={'TRÁFEGO':2,'OPERACIONAL':3,'COMERCIAL':5};   /* ter · qua · sex */
-var TAREFAS=[], AGENDA={}, vista='quadros', calRef=new Date(), editandoId='';
-
-/* Aceita tanto o formato antigo (array puro) quanto o novo ({tarefas,agenda}) */
-function load(){
-  TAREFAS=[]; AGENDA={};
-  try{
-    var s=JSON.parse(localStorage.getItem(TF_KEY)||'[]');
-    if(Array.isArray(s)) TAREFAS=s;
-    else if(s&&typeof s==='object'){ TAREFAS=s.tarefas||[]; AGENDA=s.agenda||{}; }
-  }catch(e){}
-  REUNIOES.forEach(function(r){ if(typeof AGENDA[r]!=='number') AGENDA[r]=AGENDA_PADRAO[r]; });
-}
-function save(){ try{ localStorage.setItem(TF_KEY,JSON.stringify({tarefas:TAREFAS,agenda:AGENDA})); }catch(e){} }
-function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
-function hojeISO(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function fmtBR(iso){ var m=String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})/); return m?(m[3]+'/'+m[2]+'/'+m[1]):(iso||''); }
-function atrasada(t){ return !t.feito && t.data && t.data < hojeISO(); }
-function diffDias(isoA,isoB){ return Math.round((new Date(isoB+'T00:00:00')-new Date(isoA+'T00:00:00'))/86400000); }
-function diasAtraso(t){ return atrasada(t) ? diffDias(t.data,hojeISO()) : 0; }
-/* concluída depois do prazo — o "caso atrase" fica registrado na tarefa */
-function atrasoNaEntrega(t){ return (t.feito && t.feitoEm && t.data && t.feitoEm>t.data) ? diffDias(t.data,t.feitoEm) : 0; }
-function quemSouEu(){
-  try{ if(typeof getActiveVendor==='function'){ var v=getActiveVendor(); if(v&&v.nome) return String(v.nome).split(' ')[0].toUpperCase(); } }catch(e){}
-  return '';
-}
-/* JANES → Janes. O nome pode vir de dado salvo, não só da lista fixa, então
-   quem imprime na tela tem de passar por esc() depois. */
-function bonito(n){ n=String(n||''); return n.charAt(0)+n.slice(1).toLowerCase(); }
-/* próxima ocorrência (hoje inclusive) do dia da semana de uma reunião */
-function proximaReuniao(reu){
-  var dow=AGENDA[reu]; if(typeof dow!=='number') dow=AGENDA_PADRAO[reu];
-  var d=new Date(); d.setHours(0,0,0,0);
-  var delta=(dow-d.getDay()+7)%7;
-  d.setDate(d.getDate()+delta);
-  return d;
-}
-function isoDe(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-
-/* popula os selects de responsável (form + filtro) */
-function popularResp(){
-  var s=document.getElementById('tf-resp'), f=document.getElementById('tf-f-resp');
-  if(s && !s.dataset.ok){ RESPONSAVEIS.forEach(function(r){ var o=document.createElement('option'); o.value=r; o.textContent=r.charAt(0)+r.slice(1).toLowerCase(); s.appendChild(o); }); s.dataset.ok='1'; }
-  if(f && !f.dataset.ok){ RESPONSAVEIS.forEach(function(r){ var o=document.createElement('option'); o.value=r; o.textContent=r.charAt(0)+r.slice(1).toLowerCase(); f.appendChild(o); }); f.dataset.ok='1'; }
-}
-
-/* Ao trocar a reunião, sugere a data de entrega: véspera da próxima reunião
-   do mesmo tipo, que é quando a tarefa precisa estar pronta para ser cobrada. */
-window.tfSugerirData=function(){
-  var dt=document.getElementById('tf-data'); if(!dt||editandoId) return;
-  var reu=(document.getElementById('tf-reu')||{}).value||'OPERACIONAL';
-  var d=proximaReuniao(reu);
-  if(isoDe(d)===hojeISO()) d.setDate(d.getDate()+7);   /* a reunião é hoje: entrega na próxima */
-  dt.value=isoDe(d);
-};
-
-window.tfAgendaSet=function(reu,dow){
-  AGENDA[reu]=+dow; save(); tfRender();
-  if(typeof toast==='function') toast('📅 Reunião de '+reu.toLowerCase()+' agora é '+DOWS_LONGO[+dow]);
-};
-
-window.tfAdd=function(){
-  var tit=(document.getElementById('tf-tit').value||'').trim();
-  var data=document.getElementById('tf-data').value||'';
-  if(!tit){ if(typeof toast==='function')toast('Escreva a tarefa','orange'); return; }
-  if(!data){ if(typeof toast==='function')toast('Informe a data de entrega','orange'); return; }
-  var campos={
-    tit:tit,
-    desc:(document.getElementById('tf-desc').value||'').trim(),
-    resp:document.getElementById('tf-resp').value||RESPONSAVEIS[0],
-    reuniao:document.getElementById('tf-reu').value||'OPERACIONAL',
-    data:data,
-    prio:document.getElementById('tf-prio').value||'media'
-  };
-  if(editandoId){
-    var t=TAREFAS.filter(function(x){return x.id===editandoId;})[0];
-    if(t){ for(var k in campos) t[k]=campos[k]; }
-    tfCancelarEdicao();
-    save(); tfRender();
-    if(typeof toast==='function')toast('✏️ Pendência atualizada');
-    return;
-  }
-  campos.id='t'+Date.now()+Math.random().toString(36).slice(2,6);
-  campos.feito=false; campos.feitoEm=''; campos.feitoPor='';
-  campos.criadoEm=hojeISO(); campos.criadoPor=quemSouEu();
-  TAREFAS.push(campos);
-  save();
-  document.getElementById('tf-tit').value=''; document.getElementById('tf-desc').value='';
-  tfRender();
-  if(typeof toast==='function')toast('✅ Pendência adicionada');
-};
-
-window.tfEditar=function(id){
-  var t=TAREFAS.filter(function(x){return x.id===id;})[0]; if(!t) return;
-  editandoId=id;
-  document.getElementById('tf-tit').value=t.tit||'';
-  document.getElementById('tf-desc').value=t.desc||'';
-  document.getElementById('tf-resp').value=t.resp||RESPONSAVEIS[0];
-  document.getElementById('tf-reu').value=t.reuniao||'OPERACIONAL';
-  document.getElementById('tf-data').value=t.data||'';
-  document.getElementById('tf-prio').value=t.prio||'media';
-  document.getElementById('tf-form-ttl').textContent='▸ EDITANDO PENDÊNCIA';
-  document.getElementById('tf-btn-add').textContent='💾 Salvar alteração';
-  document.getElementById('tf-btn-cancel-wrap').style.display='';
-  try{ document.getElementById('tf-tit').scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
-};
-
-window.tfCancelarEdicao=function(){
-  editandoId='';
-  ['tf-tit','tf-desc'].forEach(function(id){ var e=document.getElementById(id); if(e)e.value=''; });
-  document.getElementById('tf-form-ttl').textContent='▸ NOVA PENDÊNCIA';
-  document.getElementById('tf-btn-add').textContent='+ Adicionar pendência';
-  document.getElementById('tf-btn-cancel-wrap').style.display='none';
-};
-
-window.tfToggle=function(id){
-  var t=TAREFAS.filter(function(x){return x.id===id;})[0]; if(!t) return;
-  t.feito=!t.feito;
-  t.feitoEm=t.feito?hojeISO():'';
-  t.feitoPor=t.feito?quemSouEu():'';
-  save(); tfRender();
-  if(t.feito && typeof toast==='function'){
-    var atr=atrasoNaEntrega(t);
-    toast(atr?('✅ Concluída — com '+atr+' dia'+(atr>1?'s':'')+' de atraso'):'✅ Concluída no prazo');
-  }
-};
-
-window.tfDel=function(id){
-  if(!confirm('Remover esta pendência?')) return;
-  if(editandoId===id) tfCancelarEdicao();
-  TAREFAS=TAREFAS.filter(function(x){return x.id!==id;});
-  save(); tfRender();
-};
-
-window.tfLimparFeitas=function(){
-  var n=TAREFAS.filter(function(t){return t.feito;}).length;
-  if(!n){ if(typeof toast==='function')toast('Nenhuma concluída para limpar'); return; }
-  if(!confirm('Remover '+n+' pendência(s) já concluída(s)?')) return;
-  TAREFAS=TAREFAS.filter(function(t){return !t.feito;});
-  save(); tfRender();
-};
-
-window.tfView=function(v){
-  vista=v;
-  [['quadros','tf-v-quadros','tf-quadros'],['lista','tf-v-lista','tf-lista'],['cal','tf-v-cal','tf-cal']]
-    .forEach(function(p){
-      var b=document.getElementById(p[1]), box=document.getElementById(p[2]);
-      if(b) b.classList.toggle('on',v===p[0]);
-      if(box) box.style.display=(v===p[0])?'':'none';
-    });
-  tfRender();
-};
-
-window.tfMes=function(d){ calRef=new Date(calRef.getFullYear(),calRef.getMonth()+d,1); tfRender(); };
-
-/* Leva o painel para fora do #app durante a impressão, senão ele herda a
-   rolagem e o posicionamento do layout e sai cortado. */
-var _tfImprimindo=false;
-window.tfImprimir=function(){
-  var pan=document.getElementById('panel-tarefas');
-  if(!pan){ try{ window.print(); }catch(e){} return; }
-  if(_tfImprimindo) return;   /* dois cliques seguidos deixariam o painel preso no <body> */
-  _tfImprimindo=true;
-  var pai=pan.parentNode, marca=document.createComment('panel-tarefas');
-  pai.insertBefore(marca,pan);
-  document.body.appendChild(pan);
-  document.body.classList.add('tf-imprimindo');
-  var restaurar=function(){
-    if(!_tfImprimindo) return;
-    _tfImprimindo=false;
-    document.body.classList.remove('tf-imprimindo');
-    try{ pai.insertBefore(pan,marca); marca.remove(); }catch(e){}
-    window.removeEventListener('afterprint',restaurar);
-  };
-  window.addEventListener('afterprint',restaurar);
-  setTimeout(function(){
-    try{ window.print(); }finally{ setTimeout(restaurar,1200); }
-  },80);
-};
-
-function filtradas(){
-  var fr=(document.getElementById('tf-f-resp')||{}).value||'';
-  var fu=(document.getElementById('tf-f-reu')||{}).value||'';
-  var fs=(document.getElementById('tf-f-st')||{}).value||'';
-  return TAREFAS.filter(function(t){
-    if(fr && t.resp!==fr) return false;
-    if(fu && t.reuniao!==fu) return false;
-    if(fs==='pend' && t.feito) return false;
-    if(fs==='feito' && !t.feito) return false;
-    if(fs==='atraso' && !atrasada(t)) return false;
-    return true;
-  });
-}
-
-function renderKpis(){
-  var box=document.getElementById('tf-kpis'); if(!box) return;
-  var pend=TAREFAS.filter(function(t){return !t.feito;}).length;
-  var atr=TAREFAS.filter(atrasada).length;
-  var hoje=TAREFAS.filter(function(t){return !t.feito && t.data===hojeISO();}).length;
-  var ok=TAREFAS.filter(function(t){return t.feito;}).length;
-  var comAtraso=TAREFAS.filter(function(t){return atrasoNaEntrega(t)>0;}).length;
-  box.innerHTML=
-     '<div class="tf-kpi"><div class="n" style="color:var(--ice)">'+pend+'</div><div class="l">Pendentes</div></div>'
-    +'<div class="tf-kpi"><div class="n" style="color:#FFD11A">'+hoje+'</div><div class="l">Entregam hoje</div></div>'
-    +'<div class="tf-kpi"><div class="n" style="color:#FF4757">'+atr+'</div><div class="l">Atrasadas agora</div></div>'
-    +'<div class="tf-kpi"><div class="n" style="color:#1AFF9D">'+ok+'</div><div class="l">Concluídas</div></div>'
-    +'<div class="tf-kpi"><div class="n" style="color:#C964FF">'+comAtraso+'</div><div class="l">Entregues com atraso</div></div>';
-}
-
-/* agenda fixa das 3 reuniões semanais */
-function renderReunioes(){
-  var box=document.getElementById('tf-reus'); if(!box) return;
-  box.innerHTML=REUNIOES.map(function(reu){
-    var d=proximaReuniao(reu), iso=isoDe(d);
-    var abertas=TAREFAS.filter(function(t){ return t.reuniao===reu && !t.feito; }).length;
-    var atrasadas=TAREFAS.filter(function(t){ return t.reuniao===reu && atrasada(t); }).length;
-    var opts=DOWS_LONGO.map(function(nome,i){
-      return '<option value="'+i+'"'+(AGENDA[reu]===i?' selected':'')+'>'+nome+'</option>'; }).join('');
-    return '<div class="tf-reu-card '+reu+'">'
-      +'<div class="rn">'+reu+'</div>'
-      +'<div class="rp">Próxima: <b>'+DOWS_LONGO[d.getDay()]+', '+fmtBR(iso)+'</b>'+(iso===hojeISO()?' <span style="color:var(--fire)">— é hoje</span>':'')+'</div>'
-      +'<div class="rq">'+abertas+' em aberto'+(atrasadas?(' · <span style="color:#FF4757">'+atrasadas+' atrasada(s)</span>'):'')+'</div>'
-      +'<select onchange="tfAgendaSet(\''+reu+'\',this.value)" title="Dia da semana desta reunião">'+opts+'</select>'
-    +'</div>';
-  }).join('');
-}
-
-/* ── QUADROS: um quadro grande por pessoa, para conferir e confirmar ── */
-function renderQuadros(){
-  var box=document.getElementById('tf-quadros'); if(!box) return;
-  var arr=filtradas();
-  /* A lista de quadros sai dos RESPONSAVEIS fixos MAIS qualquer responsável que
-     apareça nas tarefas. Sem isso, uma tarefa gravada com outro nome (dado
-     antigo, alguém que saiu da equipe) sumia da tela sem aviso — ficava salva,
-     contava nos KPIs, mas não tinha quadro para aparecer. */
-  var extras=[];
-  arr.forEach(function(t){
-    var r=(t.resp||'').trim();
-    if(r && RESPONSAVEIS.indexOf(r)<0 && extras.indexOf(r)<0) extras.push(r);
-  });
-  var f=(document.getElementById('tf-f-resp')||{}).value||'';
-  var pessoas=RESPONSAVEIS.concat(extras.sort()).filter(function(p){
-    if(f) return f===p;
-    return RESPONSAVEIS.indexOf(p)>=0 || arr.some(function(t){ return t.resp===p; });
-  });
-  box.innerHTML='<div class="tf-quadros">'+pessoas.map(function(p){
-    var minhas=arr.filter(function(t){ return t.resp===p; }).sort(function(a,b){
-      if(a.feito!==b.feito) return a.feito?1:-1;
-      var atA=atrasada(a)?0:1, atB=atrasada(b)?0:1;
-      if(atA!==atB) return atA-atB;
-      var pa={alta:0,media:1,baixa:2}, dp=pa[a.prio]-pa[b.prio];
-      if(dp) return dp;
-      return (a.data||'').localeCompare(b.data||'');
-    });
-    var nAtr=minhas.filter(atrasada).length;
-    var nFeito=minhas.filter(function(t){return t.feito;}).length;
-    var nPend=minhas.length-nFeito;
-    var tot=Math.max(1,minhas.length);
-    var pctOk=Math.round(nFeito/tot*100), pctAtr=Math.round(nAtr/tot*100);
-    var corpo=minhas.length ? minhas.map(function(t){
-      var atr=atrasada(t), dAtr=diasAtraso(t), entregueAtrasada=atrasoNaEntrega(t);
-      return '<div class="tf-q-item p-'+t.prio+(t.feito?' feito':'')+(atr?' atrasado':'')+'">'
-        +'<button class="tf-q-conf'+(t.feito?' on':'')+'" onclick="tfToggle(\''+t.id+'\')" '
-          +'title="'+(t.feito?'Desmarcar':'Confirmar que já fiz')+'">'+(t.feito?'✔':'')+'</button>'
-        +'<div style="flex:1;min-width:0">'
-          +'<div class="tit">'+esc(t.tit)+'</div>'
-          +(t.desc?'<div class="tf-i-desc" style="margin-top:4px">'+esc(t.desc)+'</div>':'')
-          +'<div class="tf-i-meta" style="margin-top:6px">'
-            +'<span class="tf-tag reuniao">'+esc(t.reuniao)+'</span>'
-            +'<span class="tf-tag">📅 '+fmtBR(t.data)+'</span>'
-            +(atr?'<span class="tf-tag atraso">⚠ '+dAtr+' dia'+(dAtr>1?'s':'')+' de atraso</span>':'')
-            +(t.feito&&!entregueAtrasada?'<span class="tf-tag ok">✔ no prazo'+(t.feitoPor?' · '+esc(t.feitoPor):'')+'</span>':'')
-            +(entregueAtrasada?'<span class="tf-tag" style="background:rgba(201,100,255,.15);border-color:rgba(201,100,255,.4);color:#C964FF">✔ entregue com '+entregueAtrasada+' dia'+(entregueAtrasada>1?'s':'')+' de atraso</span>':'')
-          +'</div>'
-        +'</div>'
-        +'<div style="display:flex;flex-direction:column;gap:2px">'
-          +'<button class="tf-del" onclick="tfEditar(\''+t.id+'\')" title="Editar">✎</button>'
-          +'<button class="tf-del" onclick="tfDel(\''+t.id+'\')" title="Remover">✕</button>'
-        +'</div>'
-      +'</div>';
-    }).join('') : '<div class="tf-q-nada">Sem pendências para '+esc(bonito(p))+'.<br>As tarefas saem das reuniões semanais.</div>';
-    return '<div class="tf-quadro'+(nAtr?' tem-atraso':'')+'">'
-      +'<div class="tf-q-head">'
-        +'<div class="tf-q-av">'+esc(p.slice(0,2))+'</div>'
-        +'<div style="flex:1;min-width:0">'
-          +'<div class="tf-q-nome">'+esc(p)+'</div>'
-          +'<div class="tf-q-sub">'+nPend+' em aberto · '+nFeito+' feita(s)'+(nAtr?(' · ⚠ '+nAtr+' atrasada(s)'):'')+'</div>'
-        +'</div>'
-      +'</div>'
-      +'<div class="tf-q-barra"><i class="ok" style="width:'+pctOk+'%"></i><i class="atr" style="width:'+pctAtr+'%"></i><i class="pend" style="flex:1"></i></div>'
-      +'<div class="tf-q-body">'+corpo+'</div>'
-    +'</div>';
-  }).join('')+'</div>';
-}
-
-function renderLista(){
-  var box=document.getElementById('tf-lista'); if(!box) return;
-  var arr=filtradas().slice().sort(function(a,b){
-    if(a.feito!==b.feito) return a.feito?1:-1;                 /* pendentes primeiro */
-    var pa={alta:0,media:1,baixa:2}, dp=pa[a.prio]-pa[b.prio];
-    if(dp) return dp;                                          /* depois por prioridade */
-    return (a.data||'').localeCompare(b.data||'');             /* depois por data */
-  });
-  if(!arr.length){ box.innerHTML='<div class="tf-vazio">Nenhuma pendência aqui. Use o formulário acima para lançar as tarefas da reunião.</div>'; return; }
-  box.innerHTML=arr.map(function(t){
-    var atr=atrasada(t), d=diasAtraso(t), entregueAtrasada=atrasoNaEntrega(t);
-    return '<div class="tf-item p-'+t.prio+(t.feito?' feito':'')+(atr?' atrasado':'')+'">'
-      +'<div class="tf-chk'+(t.feito?' on':'')+'" onclick="tfToggle(\''+t.id+'\')" title="Marcar como concluída">'+(t.feito?'✔':'')+'</div>'
-      +'<div class="tf-i-body">'
-        +'<div class="tf-i-tit">'+esc(t.tit)+'</div>'
-        +(t.desc?'<div class="tf-i-desc">'+esc(t.desc)+'</div>':'')
-        +'<div class="tf-i-meta">'
-          +'<span class="tf-tag resp">'+esc(t.resp)+'</span>'
-          +'<span class="tf-tag reuniao">'+esc(t.reuniao)+'</span>'
-          +'<span class="tf-tag">📅 '+fmtBR(t.data)+'</span>'
-          +(atr?'<span class="tf-tag atraso">⚠ '+d+' dia'+(d>1?'s':'')+' de atraso</span>':'')
-          +(t.feito&&!entregueAtrasada?'<span class="tf-tag ok">✔ concluída em '+fmtBR(t.feitoEm)+(t.feitoPor?' por '+esc(t.feitoPor):'')+'</span>':'')
-          +(entregueAtrasada?'<span class="tf-tag" style="background:rgba(201,100,255,.15);border-color:rgba(201,100,255,.4);color:#C964FF">✔ '+fmtBR(t.feitoEm)+' — '+entregueAtrasada+' dia'+(entregueAtrasada>1?'s':'')+' de atraso</span>':'')
-        +'</div>'
-      +'</div>'
-      +'<button class="tf-del" onclick="tfEditar(\''+t.id+'\')" title="Editar">✎</button>'
-      +'<button class="tf-del" onclick="tfDel(\''+t.id+'\')" title="Remover">✕</button>'
-    +'</div>';
-  }).join('');
-}
-
-function renderCal(){
-  var g=document.getElementById('tf-cal-grid'), dw=document.getElementById('tf-cal-dows'), lb=document.getElementById('tf-cal-mes');
-  if(!g) return;
-  if(dw && !dw.dataset.ok){ dw.innerHTML=DOWS.map(function(d){return '<div class="tf-cal-dow">'+d+'</div>';}).join(''); dw.dataset.ok='1'; }
-  var y=calRef.getFullYear(), m=calRef.getMonth();
-  if(lb) lb.textContent=MESES[m]+' '+y;
-  var prim=new Date(y,m,1).getDay();                 /* dia da semana do 1º */
-  var ndias=new Date(y,m+1,0).getDate();
-  var arr=filtradas(), hj=hojeISO(), html='';
-  /* qual reunião cai em cada dia da semana */
-  var reuPorDow={}; REUNIOES.forEach(function(r){ reuPorDow[AGENDA[r]]=r; });
-  for(var i=0;i<prim;i++) html+='<div class="tf-cel vazio"></div>';
-  for(var d=1;d<=ndias;d++){
-    var iso=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    var dow=new Date(y,m,d).getDay();
-    var reu=reuPorDow[dow];
-    var doDia=arr.filter(function(t){return t.data===iso;});
-    html+='<div class="tf-cel'+(iso===hj?' hoje':'')+'">'
-      +'<div class="tf-cel-top"><div class="tf-cel-d">'+d+'</div>'
-      +(reu?'<span class="tf-reuniao '+reu+'" title="Reunião de '+reu.toLowerCase()+'">'+reu.slice(0,4)+'</span>':'')+'</div>'
-      +doDia.map(function(t){
-          return '<div class="tf-mini p-'+t.prio+(t.feito?' feito':'')+(atrasada(t)?' atrasado':'')+'" '
-            +'onclick="tfToggle(\''+t.id+'\')" title="'+esc(t.resp+' · '+t.reuniao+' — '+t.tit)+' (clique para marcar/desmarcar)">'
-            +(t.feito?'✔ ':'')+esc(t.resp.slice(0,3))+' · '+esc(t.tit)+'</div>';
-        }).join('')
-      +'</div>';
-  }
-  g.innerHTML=html;
-}
-
-window.tfRender=function(){
-  popularResp();
-  renderKpis();
-  renderReunioes();
-  if(vista==='quadros') renderQuadros();
-  else if(vista==='lista') renderLista();
-  else renderCal();
-};
-
-/* chamado quando outra pessoa da equipe mexe nas pendências (Supabase) */
-window.tfReload=function(){
-  try{
-    load();
-    var p=document.getElementById('panel-tarefas');
-    if(p && p.classList.contains('active')) tfRender();
-  }catch(e){}
-};
-
-/* inicialização + entra no roteador de abas sem quebrar os handlers atuais */
-load();
-(function(){
-  var prev=window.onNavChange;
-  window.onNavChange=function(id){
-    if(typeof prev==='function'){ try{ prev(id); }catch(e){} }
-    if(id==='tarefas'){ try{ load(); var dt=document.getElementById('tf-data'); if(dt&&!dt.value)tfSugerirData(); calRef=new Date(); tfRender(); }catch(e){} }
-  };
-})();
-})();
-</script>
 <!-- ═══════════════════════════════════════════════════════════════════
      FLUXO DE CAIXA — área protegida por senha
      Sub-abas: Dashboard · Lançamentos · Projeções · Categorias
@@ -7837,7 +7318,13 @@ function somaT(arr,t){ return arr.filter(function(l){return l.tipo===t;}).reduce
 
 /* ── senha ── */
 window.fxLogin=function(){
-  var v=(document.getElementById('fx-senha').value||'').trim();
+  /* Compara sem diferenciar maiúscula, igual à senha que revela os
+     valores. As duas eram a mesma palavra e se comportavam diferente:
+     "Carioteca" abria uma e recusava a outra, e o teclado do celular
+     capitaliza a primeira letra sozinho. Senha que depende de uma
+     maiúscula que o aparelho põe sem avisar não protege nada — só
+     tranca quem tem a senha certa. */
+  var v=(document.getElementById('fx-senha').value||'').trim().toLowerCase();
   if(v===SENHA){ try{ sessionStorage.setItem(FX_SESS,'1'); }catch(e){}
     document.getElementById('fx-senha').value=''; document.getElementById('fx-erro').textContent='';
     fxAbrir(); }
@@ -8246,416 +7733,6 @@ load();
   @page{size:A4;margin:0}
 }
 </style>
-
-<div class="panel" id="panel-relatorios">
-  <div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">EMISSÃO DE RELATÓRIOS</span><div class="sec-line"></div></div>
-
-  <div class="rl-wrap">
-    <div class="rl-card">
-      <div class="rl-ttl">▸ DADOS DO RELATÓRIO</div>
-      <div class="rl-form">
-        <div class="rl-f" style="grid-column:span 2"><label>Título *</label><input id="rl-titulo" type="text" placeholder="Ex.: Relatório de Performance Comercial — Julho/2026" oninput="rlRender()"></div>
-        <div class="rl-f"><label>Data</label><input id="rl-data" type="date" style="color-scheme:dark" onchange="rlRender()"></div>
-        <div class="rl-f"><label>Responsável</label><select id="rl-resp" onchange="rlRender()"></select></div>
-        <div class="rl-f"><label>Função / cargo</label><input id="rl-func" type="text" placeholder="Ex.: Gerente Comercial" oninput="rlRender()"></div>
-        <div class="rl-f"><label>Área / protocolo</label><input id="rl-area" type="text" placeholder="Ex.: Diretrizes Comerciais" oninput="rlRender()"></div>
-        <div class="rl-f" style="grid-column:1/-1"><label>Descrição — escreva do seu jeito, a IA ajusta</label><textarea id="rl-desc" placeholder="Escreva solto, sem se preocupar com formalidade. Ex.: esse mês vendemos bem, a equipe bateu a meta, o Dickson fechou 12 reservas, tivemos problema com atraso de entrega em Miami duas vezes..." oninput="rlRender()"></textarea></div>
-      </div>
-      <div class="rl-acoes">
-        <button class="rl-btn ia" id="rl-btn-ia" onclick="rlRevisarIA()">✨ Ajustar para linguagem corporativa (Gemini)</button>
-        <button class="rl-btn ghost" onclick="rlDesfazer()">↺ Desfazer revisão</button>
-        <button class="rl-btn" onclick="rlImprimir()">💾 Salvar PDF</button>
-        <button class="rl-btn ghost" onclick="rlArquivar()">💾 Salvar no histórico</button>
-        <button class="rl-btn ghost" onclick="rlLimpar()">🗑 Limpar</button>
-      </div>
-      <div class="rl-status" id="rl-status"></div>
-    </div>
-
-    <div class="rl-card">
-      <div class="rl-ttl">▸ CHAVE DA IA — vale para o app inteiro</div>
-      <div class="rl-hint" style="margin:-4px 0 10px">
-        Uma chave só liga <b>tudo</b>: revisão de texto do relatório, cotação automática pelo chat do cliente,
-        leitura de CNH e passaporte por foto, e o briefing do dashboard.
-        Cole uma vez — ela é salva e <b>sincroniza com a equipe</b>.
-      </div>
-      <div class="rl-form">
-        <div class="rl-f" style="grid-column:span 2"><label>Chave do Claude (principal) — <b>console.anthropic.com</b></label><input id="rl-key-claude" type="password" placeholder="sk-ant-…"></div>
-        <div class="rl-f"><button class="rl-btn" onclick="rlSalvarKeyClaude()">💾 Salvar para a equipe</button></div>
-        <div class="rl-f" style="grid-column:span 2"><label>Chave do Gemini (reserva, opcional) — <b>aistudio.google.com/apikey</b></label><input id="rl-key" type="password" placeholder="AIza…"></div>
-        <div class="rl-f"><button class="rl-btn ghost" onclick="rlSalvarKey()">💾 Salvar chave reserva</button></div>
-        <div class="rl-f" style="grid-column:1/-1"><div class="rl-hint" id="rl-key-st">—</div></div>
-        <div class="rl-f" style="grid-column:1/-1"><div class="rl-hint" style="color:var(--fire)">
-          ⚠️ A chave fica guardada no navegador e sincroniza para a equipe — quem abrir o app consegue lê-la.
-          Configure um <b>limite de gasto</b> na conta da Anthropic e use uma chave que dê para revogar.
-        </div></div>
-      </div>
-    </div>
-
-    <!-- RELATÓRIOS JÁ EMITIDOS -->
-    <div class="rl-card">
-      <div class="rl-ttl">▸ RELATÓRIOS EMITIDOS</div>
-      <div id="rl-hist"></div>
-    </div>
-
-    <!-- PRÉ-VISUALIZAÇÃO / FOLHA -->
-    <div class="rl-scroll">
-      <div class="rl-folha" id="rl-folha">
-        <div class="rl-hd">
-          <div>
-            <div id="rl-logo"><div class="marca">MAGI<b>WAY</b></div></div>
-            <div class="sub" id="rl-sub">Diretrizes Comerciais &amp; Protocolo Executivo</div>
-          </div>
-          <div class="meta">
-            <div>Documento Interno</div>
-            <div id="rl-metadata">—</div>
-            <div>Magiway Rental Car</div>
-          </div>
-        </div>
-        <div class="rl-rule"></div>
-
-        <div class="rl-titulo" id="rl-h1">TÍTULO DO RELATÓRIO</div>
-
-        <div class="rl-ident">
-          <div><div class="l">Responsável</div><div class="v" id="rl-vresp">—</div></div>
-          <div><div class="l">Função</div><div class="v" id="rl-vfunc">—</div></div>
-          <div><div class="l">Data de emissão</div><div class="v" id="rl-vdata">—</div></div>
-        </div>
-
-        <div class="rl-secao">Conteúdo</div>
-        <div class="rl-corpo" id="rl-vcorpo"><span class="rl-exemplo">Preencha a descrição no formulário acima. O texto aparece aqui já formatado no padrão Magiway.</span></div>
-
-        <div class="rl-div">✦</div>
-
-        <div class="rl-ass">
-          <div class="box">
-            <div class="linha" id="rl-aresp">—</div>
-            <div class="cargo" id="rl-afunc">—</div>
-          </div>
-        </div>
-
-        <div class="rl-ft">
-          <div>Magiway · Padrão Magiway</div>
-          <div id="rl-fdata">—</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-/* ═══════════════════════════════════════════════════════════════════
-   RELATÓRIOS
-   O usuário preenche título, data, responsável, função e uma descrição
-   solta. O Gemini reescreve a descrição em linguagem corporativa,
-   mantendo os fatos. A folha segue o layout dos documentos Magiway e
-   sai em PDF pela impressão do navegador.
-   A chave da API vive só no localStorage — nunca no arquivo publicado.
-   ═══════════════════════════════════════════════════════════════════ */
-(function(){
-var RL_HIST='gs_relatorios_v1', MODELO_PADRAO='gemini-2.0-flash';
-var RESPONSAVEIS=['LUCIANO','JANES','DICKSON','CARLOS','MARIANA','LEANDRO'];
-var MESES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-var _antes='';   /* guarda o texto original para o "desfazer" */
-var HIST=[];
-
-function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
-function hojeISO(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function extenso(iso){ var m=String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})/);
-  return m?(+m[3]+' de '+MESES[(+m[2])-1]+' de '+m[1]):'—'; }
-function fmtBR(iso){ var m=String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})/); return m?(m[3]+'/'+m[2]+'/'+m[1]):'—'; }
-function v(id){ var e=document.getElementById(id); return e?(e.value||'').trim():''; }
-function setSt(h){ var e=document.getElementById('rl-status'); if(e) e.innerHTML=h; }
-
-/* ── chave do Gemini ──
-   Usa a MESMA chave que já existe em Configurações (gs_ai_keys). Essa chave é
-   um dado da empresa: sobe para o Supabase e vale para a equipe inteira, então
-   basta uma pessoa colar uma vez. O campo aqui é só um atalho para o mesmo
-   lugar — não existe mais "cada um cola a sua". */
-function getKey(){
-  try{
-    if(typeof AI_KEYS!=='undefined' && Array.isArray(AI_KEYS)){
-      var g=AI_KEYS.filter(function(k){ return k.provider==='gemini' && k.key && k.key.trim(); })[0];
-      if(g) return g.key.trim();
-    }
-  }catch(e){}
-  return '';
-}
-function temClaude(){
-  try{
-    if(typeof AI_KEYS!=='undefined' && Array.isArray(AI_KEYS))
-      return AI_KEYS.some(function(k){ return k.provider==='claude' && k.key && k.key.trim(); });
-  }catch(e){}
-  return false;
-}
-function getModel(){ try{ return (typeof AI_GEMINI_MODEL!=='undefined' && AI_GEMINI_MODEL) || MODELO_PADRAO; }catch(e){ return MODELO_PADRAO; } }
-function statusChave(){
-  var e=document.getElementById('rl-key-st'); if(!e) return;
-  var temG=!!getKey(), temC=temClaude();
-  var modeloC=''; try{ modeloC=(typeof AI_CLAUDE_MODEL!=='undefined')?AI_CLAUDE_MODEL:''; }catch(_){}
-  if(temC && temG)
-    e.innerHTML='<span style="color:#1AFF9D">✓ Claude e Gemini conectados</span> — o app usa o <b>Claude</b> ('+esc(modeloC)+') e cai no Gemini se ele falhar. Vale para o app inteiro.';
-  else if(temC)
-    e.innerHTML='<span style="color:#1AFF9D">✓ Claude conectado</span> ('+esc(modeloC)+') — cotação automática, leitura de CNH, briefing e revisão de texto já funcionam. O Gemini é opcional, só serve de reserva.';
-  else if(temG)
-    e.innerHTML='<span style="color:var(--gold)">Só o Gemini está conectado</span> ('+esc(getModel())+'). Funciona, mas o Claude é o principal — cole a chave acima para o app usar ele.';
-  else
-    e.innerHTML='<span style="color:var(--fire)">Nenhuma chave de IA configurada.</span> Sem ela ficam parados: cotação automática pelo chat, leitura de CNH por foto, briefing do dashboard e revisão de texto. Cole a chave do Claude acima.';
-}
-
-/* As duas salvam no MESMO lugar (gs_ai_keys, via atualizarChaveAI), que é de
-   onde aiCall() lê. Por isso "a chave vale para o app inteiro": não existe
-   chave separada por tela. */
-function _rlSalvarChave(campo, provider, rotulo){
-  var k=v(campo);
-  if(!k){ setSt('<span style="color:var(--fire)">⚠️ Cole a chave do '+rotulo+' antes de salvar.</span>'); return; }
-  try{
-    if(typeof atualizarChaveAI==='function') atualizarChaveAI(provider,k,0);
-    else throw new Error('sem gerenciador de chaves');
-  }catch(e){ setSt('<span style="color:var(--fire)">⚠️ Não consegui salvar: '+esc(e.message||e)+'</span>'); return; }
-  var el=document.getElementById(campo); if(el) el.value='';
-  statusChave();
-  setSt('<span style="color:#1AFF9D">✓ Chave do '+rotulo+' salva — vale para o app inteiro e sincroniza com a equipe.</span>');
-}
-window.rlSalvarKey=function(){ _rlSalvarChave('rl-key','gemini','Gemini'); };
-window.rlSalvarKeyClaude=function(){
-  var k=v('rl-key-claude');
-  /* erro clássico: colar a chave do Gemini no campo do Claude */
-  if(k && !/^sk-ant-/.test(k)){
-    setSt('<span style="color:var(--fire)">⚠️ Isso não parece uma chave do Claude — ela começa com <b>sk-ant-</b>. '+
-          'Se for a do Gemini (começa com <b>AIza</b>), cole no campo de reserva abaixo.</span>');
-    return;
-  }
-  _rlSalvarChave('rl-key-claude','claude','Claude');
-};
-
-function popularResp(){
-  var s=document.getElementById('rl-resp'); if(!s||s.dataset.ok) return;
-  RESPONSAVEIS.forEach(function(r){ var o=document.createElement('option');
-    o.value=r; o.textContent=r.charAt(0)+r.slice(1).toLowerCase(); s.appendChild(o); });
-  s.dataset.ok='1';
-}
-
-/* logo real da empresa, se disponível */
-function aplicarLogo(){
-  var box=document.getElementById('rl-logo'); if(!box||box.dataset.ok) return;
-  try{
-    if(typeof mgwDocLogo==='function'){
-      var src=mgwDocLogo();
-      if(src){ box.innerHTML='<img src="'+src+'" alt="MAGIWAY">'; box.dataset.ok='1'; }
-    }
-  }catch(e){}
-}
-
-window.rlRender=function(){
-  popularResp(); aplicarLogo();
-  var d=v('rl-data')||hojeISO();
-  var resp=v('rl-resp')||RESPONSAVEIS[0];
-  var func=v('rl-func')||'—';
-  var tit=v('rl-titulo')||'TÍTULO DO RELATÓRIO';
-  var area=v('rl-area')||'Diretrizes Comerciais & Protocolo Executivo';
-  var corpo=v('rl-desc');
-  var el=function(id){ return document.getElementById(id); };
-  el('rl-h1').textContent=tit.toUpperCase();
-  el('rl-sub').textContent=area;
-  el('rl-vresp').textContent=resp.charAt(0)+resp.slice(1).toLowerCase();
-  el('rl-vfunc').textContent=func;
-  el('rl-vdata').textContent=extenso(d);
-  el('rl-aresp').textContent=resp.charAt(0)+resp.slice(1).toLowerCase();
-  el('rl-afunc').textContent=func;
-  el('rl-metadata').textContent=fmtBR(d);
-  el('rl-fdata').textContent=fmtBR(d);
-  /* O texto de exemplo é ajuda de tela, não conteúdo: leva a classe rl-exemplo
-     e o CSS de impressão o esconde. Já saiu impresso uma vez; não sai mais. */
-  el('rl-vcorpo').innerHTML=corpo
-    ? corpo.split(/\n\s*\n/).map(function(p){ return '<p>'+esc(p).replace(/\n/g,'<br>')+'</p>'; }).join('')
-    : '<span class="rl-exemplo">Preencha a descrição no formulário acima. O texto aparece aqui já formatado no padrão Magiway.</span>';
-};
-
-/* ── revisão pelo Gemini ── */
-var PROMPT_REVISAO=
-  'Você é redator corporativo da Magiway Rental Car, locadora de veículos para brasileiros na Flórida.\n'+
-  'Reescreva o texto abaixo em português do Brasil, em linguagem corporativa, clara e objetiva, própria de um relatório executivo interno.\n\n'+
-  'REGRAS:\n'+
-  '- Não invente fatos, números, nomes ou datas que não estejam no texto original.\n'+
-  '- Mantenha todos os dados que aparecerem (valores, quantidades, nomes, locais).\n'+
-  '- Use terceira pessoa e tom institucional; evite gírias e informalidade.\n'+
-  '- Organize em parágrafos curtos separados por linha em branco.\n'+
-  '- Não use marcadores, títulos, markdown, asteriscos nem emojis.\n'+
-  '- Devolva SOMENTE o texto reescrito, sem comentários ou introdução.\n\n';
-
-async function revisarComGemini(texto){
-  var key=getKey();
-  var url='https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(getModel())+':generateContent?key='+encodeURIComponent(key);
-  var r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({contents:[{parts:[{text:PROMPT_REVISAO+'TEXTO ORIGINAL:\n'+texto}]}],
-      generationConfig:{temperature:0.4,maxOutputTokens:2048}})});
-  var j=await r.json();
-  if(!r.ok) throw new Error((j&&j.error&&j.error.message)||('erro '+r.status));
-  var out='';
-  try{ out=(j.candidates[0].content.parts||[]).map(function(p){return p.text||'';}).join('').trim(); }catch(e){}
-  if(!out) throw new Error('o Gemini não devolveu texto (confira a chave e o modelo)');
-  return out;
-}
-
-window.rlRevisarIA=async function(){
-  var texto=v('rl-desc');
-  if(!texto){ setSt('<span style="color:var(--fire)">⚠️ Escreva a descrição primeiro — a IA reescreve o que você digitar.</span>'); return; }
-  var temGemini=!!getKey();
-  if(!temGemini && !temClaude()){
-    setSt('<span style="color:var(--fire)">⚠️ Nenhuma chave de IA configurada. Cole a chave do Gemini no card acima (ou em Configurações › Chaves API).</span>');
-    return;
-  }
-  var btn=document.getElementById('rl-btn-ia');
-  if(btn){ btn.disabled=true; btn.textContent='⏳ Revisando…'; }
-  setSt('<span style="color:var(--ice)">⏳ '+(temGemini?'Enviando ao Gemini…':'Sem chave Gemini — usando a IA configurada no app…')+'</span>');
-
-  try{
-    var out;
-    if(temGemini) out=await revisarComGemini(texto);
-    else out=(await aiCall([{role:'user',content:'TEXTO ORIGINAL:\n'+texto}],PROMPT_REVISAO,2048)||'').trim();
-    if(!out) throw new Error('a IA não devolveu texto');
-    _antes=texto;
-    document.getElementById('rl-desc').value=out;
-    rlRender();
-    setSt('<span style="color:#1AFF9D">✓ Texto ajustado para linguagem corporativa. Use "Desfazer revisão" se quiser o original de volta.</span>');
-    if(typeof toast==='function') toast('✨ Texto revisado pela IA');
-  }catch(e){
-    setSt('<span style="color:var(--fire)">⚠️ Falhou: '+esc(e&&e.message||e)+'</span>');
-  }finally{
-    if(btn){ btn.disabled=false; btn.textContent='✨ Ajustar para linguagem corporativa (Gemini)'; }
-  }
-};
-
-window.rlDesfazer=function(){
-  if(!_antes){ setSt('<span style="color:var(--chalk3)">Não há revisão para desfazer.</span>'); return; }
-  document.getElementById('rl-desc').value=_antes; _antes=''; rlRender();
-  setSt('<span style="color:var(--chalk3)">Texto original restaurado.</span>');
-};
-
-/* ── impressão ──
-   A folha é levada para fora do painel e colada direto no <body> só durante a
-   impressão. Sem isso ela herda o posicionamento e a rolagem do painel e sai
-   cortada ou deslocada na página. Volta para o lugar assim que termina. */
-var _rlImprimindo=false;
-window.rlImprimir=function(){
-  if(!v('rl-titulo')){ setSt('<span style="color:var(--fire)">⚠️ Informe ao menos o título antes de imprimir.</span>'); return; }
-  /* sem descrição a folha sai com o corpo em branco — melhor avisar do que
-     deixar a pessoa descobrir na impressora */
-  if(!v('rl-desc') && !confirm('A descrição está vazia — o relatório vai sair sem o corpo do texto.\n\nImprimir mesmo assim?')) return;
-  /* Sem esta trava, clicar duas vezes seguidas fazia a 2ª chamada guardar o
-     <body> como "lugar de origem" da folha (a 1ª já a tinha movido para lá).
-     A folha então era devolvida para o body e a pré-visualização sumia da aba. */
-  if(_rlImprimindo) return;
-  rlRender();
-  var folha=document.getElementById('rl-folha');
-  var pai=folha&&folha.parentNode;
-  if(!folha||!pai){ window.print(); return; }
-  _rlImprimindo=true;
-  var marca=document.createComment('rl-folha');
-  pai.insertBefore(marca,folha);
-  document.body.appendChild(folha);
-  document.body.classList.add('rl-imprimindo');
-  var restaurar=function(){
-    if(!_rlImprimindo) return;
-    _rlImprimindo=false;
-    document.body.classList.remove('rl-imprimindo');
-    try{ pai.insertBefore(folha,marca); marca.remove(); }catch(e){}
-    window.removeEventListener('afterprint',restaurar);
-  };
-  window.addEventListener('afterprint',restaurar);
-  setTimeout(function(){
-    try{ window.print(); }finally{ setTimeout(restaurar,1200); }   /* rede de segurança p/ navegador sem afterprint */
-  },120);
-};
-
-window.rlLimpar=function(){
-  if(!confirm('Limpar os campos do relatório?')) return;
-  ['rl-titulo','rl-func','rl-area','rl-desc'].forEach(function(id){ var e=document.getElementById(id); if(e)e.value=''; });
-  _antes=''; rlRender(); setSt('');
-};
-
-/* ── histórico de relatórios emitidos (compartilhado com a equipe) ── */
-function loadHist(){ try{ HIST=JSON.parse(localStorage.getItem(RL_HIST)||'[]')||[]; }catch(e){ HIST=[]; } }
-function saveHist(){ try{ localStorage.setItem(RL_HIST,JSON.stringify(HIST)); }catch(e){} }
-
-window.rlArquivar=function(){
-  var tit=v('rl-titulo');
-  if(!tit){ setSt('<span style="color:var(--fire)">⚠️ Informe o título antes de salvar no histórico.</span>'); return; }
-  HIST.unshift({
-    id:'r'+Date.now()+Math.random().toString(36).slice(2,5),
-    titulo:tit, data:v('rl-data')||hojeISO(), resp:v('rl-resp')||RESPONSAVEIS[0],
-    func:v('rl-func'), area:v('rl-area'), desc:v('rl-desc'), emitidoEm:new Date().toISOString()
-  });
-  if(HIST.length>60) HIST=HIST.slice(0,60);
-  saveHist(); renderHist();
-  setSt('<span style="color:#1AFF9D">✓ Relatório guardado no histórico — a equipe inteira consegue reabrir.</span>');
-  if(typeof toast==='function') toast('💾 Relatório arquivado');
-};
-
-window.rlAbrirHist=function(id){
-  var h=HIST.filter(function(x){return x.id===id;})[0]; if(!h) return;
-  var set=function(el,val){ var e=document.getElementById(el); if(e)e.value=val||''; };
-  set('rl-titulo',h.titulo); set('rl-data',h.data); set('rl-func',h.func);
-  set('rl-area',h.area); set('rl-desc',h.desc);
-  var r=document.getElementById('rl-resp'); if(r&&h.resp) r.value=h.resp;
-  _antes=''; rlRender();
-  setSt('<span style="color:var(--ice)">Relatório carregado do histórico. Edite e imprima normalmente.</span>');
-  try{ document.getElementById('rl-titulo').scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
-};
-
-window.rlApagarHist=function(id){
-  if(!confirm('Remover este relatório do histórico?')) return;
-  HIST=HIST.filter(function(x){return x.id!==id;});
-  saveHist(); renderHist();
-};
-
-function renderHist(){
-  var box=document.getElementById('rl-hist'); if(!box) return;
-  if(!HIST.length){ box.innerHTML='<div class="rl-hint">Nenhum relatório salvo ainda. Preencha acima e use <b>💾 Salvar no histórico</b> para guardar — fica disponível para toda a equipe.</div>'; return; }
-  box.innerHTML=HIST.map(function(h){
-    return '<div class="tf-item" style="border-left-color:var(--ice)">'
-      +'<div class="tf-i-body">'
-        +'<div class="tf-i-tit">'+esc(h.titulo)+'</div>'
-        +'<div class="tf-i-meta">'
-          +'<span class="tf-tag resp">'+esc((h.resp||'').charAt(0)+(h.resp||'').slice(1).toLowerCase())+'</span>'
-          +(h.func?'<span class="tf-tag">'+esc(h.func)+'</span>':'')
-          +'<span class="tf-tag">📅 '+fmtBR(h.data)+'</span>'
-        +'</div>'
-      +'</div>'
-      +'<button class="tf-del" title="Reabrir este relatório" onclick="rlAbrirHist(\''+h.id+'\')">📂</button>'
-      +'<button class="tf-del" title="Remover do histórico" onclick="rlApagarHist(\''+h.id+'\')">✕</button>'
-    +'</div>';
-  }).join('');
-}
-
-/* outra pessoa arquivou um relatório (Supabase) */
-window.rlReload=function(){
-  try{
-    loadHist();
-    var p=document.getElementById('panel-relatorios');
-    if(p && p.classList.contains('active')) renderHist();
-  }catch(e){}
-};
-
-/* entra no roteador de abas sem quebrar os handlers atuais */
-loadHist();
-(function(){
-  var prev=window.onNavChange;
-  window.onNavChange=function(id){
-    if(typeof prev==='function'){ try{ prev(id); }catch(e){} }
-    if(id==='relatorios'){
-      try{
-        var dt=document.getElementById('rl-data'); if(dt&&!dt.value)dt.value=hojeISO();
-        loadHist(); renderHist(); statusChave(); rlRender();
-      }catch(e){}
-    }
-  };
-})();
-})();
-</script>
-
-
-
 
 </div>
     </main>
@@ -9082,15 +8159,12 @@ const NAV={
   agenda:['AGENDA DO DIA','Entregas (saídas) e devoluções (retornos) por data'],
   frota:['FROTA','Carros da empresa · placa, VIN, documento, seguro, oficina e histórico de suporte'],
   suporte:['SUPORTE','Chamados por categoria · tempo de resposta, resolução e reversão do cliente'],
-  auditoria:['CANAL ANÔNIMO','Reclamação, agradecimento ou sugestão — lida só pelo Luciano'],
   nova:['NOVA VENDA','Registrar nova reserva'],
   emitir:['EMITIR DOCUMENTOS','Reserva completa · voucher e contrato · assinatura DocuSign'],
   vouchers:['VOUCHERS','Arquivos de reservas'],
   metas:['METAS','Comissão e conquistas'],
   nps:['NPS','Satisfação dos clientes · Net Promoter Score'],
-  tarefas:['NOTAS & PENDÊNCIAS','Tarefas por responsável · reuniões de tráfego, operacional e comercial'],
   fluxo:['FLUXO DE CAIXA','Entradas, saídas, projeções e indicadores · área restrita'],
-  relatorios:['RELATÓRIOS','Modelo corporativo Magiway · texto ajustado pela IA · PDF para impressão'],
   analitico:['ANÁLISE AVANÇADA','Métricas calculadas'],
   historico:['HISTÓRICO DE COTAÇÕES','Todas as cotações registradas automaticamente'],
   dashcot:['DASHBOARD COTAÇÕES','KPIs e análise completa das cotações geradas'],
@@ -14437,9 +13511,22 @@ function cotTodasAsCotacoes(){
          Agrupar pela chave fazia agosto parecer curto — metade das
          cotações de agosto (as dos dias 1 a 12) mora na chave de
          julho. Quando a cotação não tem data, a chave é o que sobra. */
-      var m=String(c.dtISO||c.dt||'').match(/^(\d{4})-(\d{2})/);
+      var m=String(c.dtISO||c.dt||'').match(/^(\d{4})-(\d{2})-(\d{2})/);
       copia._ymChave=ym;
       copia._ym = m ? (m[1]+'_'+m[2]) : ym;
+      /* _ymCiclo — o mês do app, do dia 13 ao dia 12, calculado da DATA
+         da cotação e não da chave em que ela por acaso foi parar. Chave
+         errada acontece (importação, versão antiga, relógio do outro
+         computador); a data, não. É este o campo que todas as telas usam
+         para recortar mês, porque no app inteiro "agosto" quer dizer
+         13/08 a 12/09. */
+      if(m){
+        var _a=+m[1], _me=+m[2], _d=+m[3];
+        if(_d<=12){ _me-=1; if(_me<1){ _me=12; _a-=1; } }
+        copia._ymCiclo=_a+'_'+String(_me).padStart(2,'0');
+      } else {
+        copia._ymCiclo=ym;
+      }
       out.push(copia);
     });
   }
@@ -14460,7 +13547,15 @@ function cotTodasAsCotacoes(){
 function _cotYMRotulo(k){
   var M=['','jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
   var p=String(k||'').split('_');
-  return (p.length===2)?(M[+p[1]]+'/'+p[0]):(k||'—');
+  if(p.length!==2) return k||'—';
+  /* Diz o intervalo junto do nome. "ago/2026" sozinho é lido como o mês
+     do calendário, e aqui ele significa 13/08 a 12/09 — a diferença é de
+     doze dias e muda o número na tela. Escrever o intervalo custa um
+     pedaço de linha e evita a pergunta "por que agosto está curto?". */
+  var a=+p[0], m=+p[1];
+  var pm=(m===12)?1:(m+1), pa=(m===12)?(a+1):a;
+  var dd=function(x){ return x<10?('0'+x):String(x); };
+  return M[m]+'/'+a+' (13/'+dd(m)+' a 12/'+dd(pm)+(pa!==a?('/'+pa):'')+')';
 }
 
 function renderHistorico(){
@@ -14486,20 +13581,21 @@ function renderHistorico(){
   const selM=document.getElementById('hq-mes');
   if(selM){
     const porMes={};
-    TODAS.forEach(h=>{ const k=h._ym||'—'; porMes[k]=(porMes[k]||0)+1; });
+    TODAS.forEach(h=>{ const k=h._ymCiclo||h._ym||'—'; porMes[k]=(porMes[k]||0)+1; });
     const ordem=Object.keys(porMes).sort().reverse();
     const assin=ordem.join(',');
     if(selM.getAttribute('data-assin')!==assin){
       const atual=selM.value;
       selM.innerHTML='<option value="">Todos os meses ('+TODAS.length+')</option>'
         +ordem.map(k=>'<option value="'+k+'">'+_cotYMRotulo(k)+' · '+porMes[k]+'</option>').join('');
-      selM.title='Mês do calendário em que a cotação foi feita — não a chave onde ela está guardada.';
+      selM.title='Mês do app: do dia 13 ao dia 12 do mês seguinte, igual ao faturamento, à meta e à comissão.';
       selM.setAttribute('data-assin',assin);
       if(atual) selM.value=atual;
     }
   }
   const fm=(selM&&selM.value)||'';
-  const BASE=fm?TODAS.filter(h=>h._ym===fm):TODAS;
+  /* recorta pelo mês do CICLO (13→12), o mesmo de todas as outras telas */
+  const BASE=fm?TODAS.filter(h=>(h._ymCiclo||h._ym)===fm):TODAS;
 
   let rows=BASE.filter(h=>{
     const matchQ=!q||h.cliente.toLowerCase().includes(q)||h.cat.toLowerCase().includes(q);
@@ -14705,29 +13801,16 @@ function renderDashCot(){
      pergunta é pior do que qualquer um dos dois estar errado.
      Agora as duas contam igual. O número do ciclo não se perde: ele
      aparece logo abaixo, dito com todas as letras. */
-  const _modo=(window.CAL_STATE&&CAL_STATE.dc&&CAL_STATE.dc.mode)||'mes';
-  const _mSel=document.getElementById('cal-mes-sel-dc');
-  const _aSel=document.getElementById('cal-ano-sel-dc');
-  let _ymAlvo='';
-  if(_modo==='mes'){
-    let _m=_mSel?parseInt(_mSel.value,10):NaN, _y=_aSel?parseInt(_aSel.value,10):NaN;
-    if(!(_y>=2000)||!(_m>=0&&_m<=11)){
-      const n=new Date(); const v=(window.MGW_CICLO&&MGW_CICLO.DIA_VIRADA)||12;
-      _y=n.getFullYear(); _m=n.getMonth();
-      if(n.getDate()<=v){ _m-=1; if(_m<0){ _m=11; _y-=1; } }
-    }
-    _ymAlvo=_y+'_'+String(_m+1).padStart(2,'0');
-  }
-
+  /* O recorte é o CICLO — dia 13 de um mês ao dia 12 do seguinte —, igual
+     ao resto do app. Chegou a contar pelo mês do calendário por um dia,
+     para responder "quantas cotações a gente fez em agosto?"; a decisão
+     foi voltar ao ciclo em TODAS as telas, para que faturamento, meta,
+     comissão, cotação e conversão falem do mesmo período. Uma taxa de
+     conversão só significa alguma coisa quando o numerador e o
+     denominador cobrem os mesmos dias. */
   let data=[...TODAS];
-  if(_ymAlvo){
-    data=data.filter(h=>h._ym===_ymAlvo);
-  }else{
-    if(from)data=data.filter(h=>h.dtISO>=from);
-    if(to)data=data.filter(h=>h.dtISO<=to);
-  }
-  /* quantas caem no ciclo 13→12, para a linha comparativa */
-  const _noCiclo=TODAS.filter(h=>(!from||h.dtISO>=from)&&(!to||h.dtISO<=to)).length;
+  if(from)data=data.filter(h=>h.dtISO>=from);
+  if(to)data=data.filter(h=>h.dtISO<=to);
 
   /* O seletor de período abre no ciclo em vigência. Se ainda não houve
      cotação nesse ciclo — o que é o normal nos primeiros dias do mês —,
@@ -14746,17 +13829,12 @@ function renderDashCot(){
     var _per=(from||to)
       ? ((from?from.split('-').reverse().join('/'):'início')+' a '+(to?to.split('-').reverse().join('/'):'hoje'))
       : 'todo o período';
-    var _MES=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-    var _rot=_ymAlvo?(_MES[+_ymAlvo.split('_')[1]]+'/'+_ymAlvo.split('_')[0]):_per;
     _orig.innerHTML='☁️ Base: <b>'+TODAS.length+'</b> cotação(ões) de <b>'+nMeses+'</b> mês(es), '
       +'somando o que existe neste computador e o que veio da nuvem de outras máquinas. '
-      +'Mostrando <b>'+data.length+'</b> em <b>'+_rot+'</b>.'
-      +(_ymAlvo
-        ? ('<br><span style="color:var(--chalk3)">Contando pelo <b>mês do calendário</b> — a data em que a cotação foi feita —, '
-           +'igual à aba Histórico Cotações. No <b>ciclo do dia 13 ao 12</b> o mesmo recorte daria <b>'+_noCiclo+'</b>. '
-           +'Faturamento, comissão e meta continuam correndo pelo ciclo; cotação conta pelo calendário, porque a pergunta é '
-           +'"quantas a gente fez em '+_rot+'".</span>')
-        : '')
+      +'Mostrando <b>'+data.length+'</b> em <b>'+_per+'</b>.'
+      +'<br><span style="color:var(--chalk3)">O mês aqui é o do app: <b>do dia 13 ao dia 12</b> do seguinte. '
+      +'Uma cotação feita em 05/08 pertence ao mês de <b>julho</b>, e uma de 03/09 pertence a <b>agosto</b> — '
+      +'igual ao faturamento, à meta e à comissão, para que a conversão compare os mesmos dias dos dois lados.</span>'
       +(_ampliou
         ? ' <span style="color:var(--gold)">Não há cotação no período selecionado na barra acima, então a tela está mostrando <b>todos os meses</b>. Escolha outro período para recortar.</span>'
         : '');
@@ -16916,25 +15994,8 @@ function updateCalLabel(p){
   const r=calGetRange(p);
   const lbl=document.getElementById('cal-label-'+p);
   if(!lbl)return;
-  const st0=CAL_STATE[p]||{};
-  /* O painel de cotações conta pelo mês do CALENDÁRIO, não pelo ciclo.
-     O rótulo tem de dizer a mesma coisa que a tela conta — dizer
-     "13/08 a 12/09" ao lado de um número que é do agosto inteiro é
-     colocar a contradição na cara de quem lê e ainda assim errar. */
-  if(p==='dc' && (st0.mode==='mes' || !st0.mode)){
-    const mS=document.getElementById('cal-mes-sel-dc');
-    const aS=document.getElementById('cal-ano-sel-dc');
-    let m=mS?parseInt(mS.value,10):NaN, y=aS?parseInt(aS.value,10):NaN;
-    if(!(y>=2000)||!(m>=0&&m<=11)){
-      const n=new Date(); const v=(window.MGW_CICLO&&MGW_CICLO.DIA_VIRADA)||12;
-      y=n.getFullYear(); m=n.getMonth();
-      if(n.getDate()<=v){ m-=1; if(m<0){ m=11; y-=1; } }
-    }
-    lbl.textContent=CAL_MONTHS[m]+' '+y+' · mês do calendário';
-    return;
-  }
   if(r.from&&r.to){
-    const st=st0;
+    const st=CAL_STATE[p]||{};
     if(st.mode==='mes'){
       const mSel=document.getElementById('cal-mes-sel-'+p);
       const aSel=document.getElementById('cal-ano-sel-'+p);
@@ -28278,190 +27339,6 @@ window.MGW_SUPORTE={
   exportarCSV:exportarSupCSV
 };
 
-/* ════════════════ CANAL ANÔNIMO ════════════════
-
-   Combinado: a mensagem é para o Luciano e só para ele.
-
-   Por que NÃO é um e-mail: um link mailto abriria o programa de e-mail da
-   própria pessoa — o endereço do Luciano ficaria à vista (que era justamente
-   para não acontecer) e a mensagem sairia com o nome e o endereço de quem
-   escreveu, ou seja, sem anonimato nenhum. O oposto do pedido.
-
-   Como funciona: a mensagem vai direto para a tabela `auditoria` do Supabase,
-   que tem política de INSERT para todo mundo e SELECT só para o gerente. Quem
-   guarda o segredo é o SERVIDOR — ele se recusa a devolver as mensagens para
-   qualquer outra conta.
-
-   A primeira versão disto guardava as mensagens junto com as outras chaves
-   compartilhadas e filtrava no navegador. Não servia: o servidor mandava as
-   linhas para todo mundo e só o JavaScript é que jogava fora — bastava abrir
-   o DevTools para ler tudo. Num canal de denúncia isso não é detalhe.
-
-   E repare no que a tabela NÃO tem: coluna de autor, de login, de aparelho ou
-   de hora. Só a data do dia. Não é promessa, é a estrutura — não há de onde
-   tirar quem escreveu.                                                      */
-
-var tipoAud='reclamacao';
-var audCache=[], audLendo=false;
-
-/* ── Tranca da caixa (pedido do Luciano, 08/08/2026) ──
-   O servidor já se recusa a devolver as mensagens para qualquer conta que não
-   seja a do gerente — essa é a proteção de verdade e ela continua sendo a
-   principal. A senha aqui resolve OUTRO problema, físico: o Luciano deixa o
-   app aberto e alguém passa pelo computador. Sem ela, basta clicar na aba
-   para ler denúncia de colega.
-   Vale por sessão (sessionStorage): fechou o navegador, pede de novo. */
-var AUD_SENHA='carioteca', AUD_SESS='mgw_aud_ok';
-function audDestrancada(){
-  try{ return sessionStorage.getItem(AUD_SESS)==='1'; }catch(e){ return false; }
-}
-function audTelaSenha(box){
-  box.innerHTML='<div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">CAIXA DO LUCIANO — TRANCADA</span><div class="sec-line"></div></div>'
-    +'<div class="fr-vazio" style="text-align:left;padding:18px 20px">'
-    +'<div style="font-size:.8rem;color:var(--chalk);margin-bottom:4px">🔒 Esta caixa é lida só por você.</div>'
-    +'<div style="font-size:.72rem;color:var(--chalk3);line-height:1.6;margin-bottom:12px">'
-    +'A senha impede que alguém leia as mensagens no seu computador enquanto o app está aberto.'
-    +' Ela é pedida uma vez por sessão.</div>'
-    +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'
-    +'<input id="au-senha" type="password" class="mgw-input" placeholder="senha" style="max-width:190px" '
-    +'onkeydown="if(event.key===\'Enter\')MGW_AUDITORIA.destrancar()">'
-    +'<button class="fr-b" onclick="MGW_AUDITORIA.destrancar()">Abrir caixa</button>'
-    +'</div><div id="au-senha-erro" style="font-size:.7rem;color:var(--fire);margin-top:8px;min-height:14px"></div>'
-    +'</div>';
-  setTimeout(function(){ var i=document.getElementById('au-senha'); if(i) i.focus(); },60);
-}
-
-function audCliente(){
-  try{ return (window.CLOUD && CLOUD.enabled && CLOUD.session) ? CLOUD.client : null; }catch(e){ return null; }
-}
-async function audEnviar(){
-  var texto=val('au-texto');
-  if(texto.length<10){ aviso('Escreva um pouco mais — com 2 linhas o Luciano não consegue agir','orange'); return; }
-  var cli=audCliente();
-  if(!cli){ aviso('⚠ Sem conexão — o envio anônimo precisa de internet. Tente de novo daqui a pouco.','red'); return; }
-  var btn=document.querySelector('#panel-auditoria .fr-ok');
-  if(btn){ btn.disabled=true; btn.textContent='Enviando…'; }
-  try{
-    var r=await cli.from('auditoria').insert({
-      tipo:tipoAud,
-      assunto:val('au-assunto')||null,
-      texto:texto
-      /* dia fica com o padrão do banco: só a data, sem hora */
-    });
-    if(r && r.error) throw r.error;
-    var t=document.getElementById('au-texto'), a=document.getElementById('au-assunto');
-    if(t) t.value=''; if(a) a.value='';
-    aviso('🔒 Enviado. Só o Luciano vai ler.','green');
-    audRender();
-  }catch(e){
-    aviso('⚠ Não consegui enviar: '+((e&&e.message)||'falha de rede')+'. Nada foi gravado.','red');
-  }finally{
-    if(btn){ btn.disabled=false; btn.textContent='Enviar anonimamente'; }
-  }
-}
-/* A caixa de entrada só existe na conta do gerente — e não é o app que decide
-   isso: nas outras contas o Supabase devolve lista vazia. */
-async function audRender(){
-  var box=document.getElementById('au-caixa');
-  var ehAdm=!!window.IS_MASTER;
-  if(!box){
-    if(!ehAdm) return;
-    var wrap=document.querySelector('#panel-auditoria .au-wrap'); if(!wrap) return;
-    box=document.createElement('div'); box.id='au-caixa'; box.style.marginTop='26px';
-    wrap.appendChild(box);
-  }
-  if(!ehAdm){ box.innerHTML=''; return; }
-  if(!audDestrancada()){ audTelaSenha(box); return; }
-  var cli=audCliente();
-  if(!cli){ box.innerHTML='<div class="fr-vazio">Sem conexão — a caixa de mensagens vem do servidor.</div>'; return; }
-  if(audLendo) return;
-  audLendo=true;
-  try{
-    var r=await cli.from('auditoria').select('id,tipo,assunto,texto,dia').order('dia',{ascending:false});
-    audCache=(r && r.data) ? r.data : [];
-    if(r && r.error) throw r.error;
-  }catch(e){
-    box.innerHTML='<div class="fr-vazio">Não consegui ler a caixa: '+esc((e&&e.message)||'falha')+'<br>'
-      +'<span style="font-size:.7rem">Se aparecer erro de permissão, rode o arquivo <b>supabase/banco.sql</b> no SQL Editor.</span></div>';
-    audLendo=false; return;
-  }
-  audLendo=false;
-  var rot={reclamacao:['⚠️','Reclamação'],agradecimento:['🙏','Agradecimento'],sugestao:['💡','Sugestão']};
-  box.innerHTML='<div class="sec-head"><div class="sec-dot"></div><span class="sec-ttl">CAIXA DO LUCIANO — '+audCache.length+' MENSAGEM(NS)</span><div class="sec-line"></div>'
-    +'<button class="fr-b" style="margin-left:10px" onclick="MGW_AUDITORIA.trancar()" title="Fecha a caixa; a senha volta a ser pedida">🔒 Trancar</button></div>'
-    +(audCache.length?audCache.map(function(m){
-        var r2=rot[m.tipo]||['✉️','Mensagem'];
-        return '<div class="sp-card aberto" style="border-left-color:var(--ice)">'
-          +'<div class="sp-h"><span class="sp-tipo">'+r2[0]+' '+esc(m.assunto||r2[1])+'</span>'
-            +'<span class="sp-tag terceiro">'+esc(r2[1])+'</span></div>'
-          +'<div class="sp-meta">'+brData(m.dia)+' · autor não registrado</div>'
-          +'<div class="sp-desc">'+esc(m.texto)+'</div>'
-          +'<div class="fr-btns" style="margin-top:0"><button class="fr-b perigo" onclick="MGW_AUDITORIA.apagar(\''+m.id+'\')">🗑 Apagar</button></div>'
-        +'</div>';
-      }).join('')
-      :'<div class="fr-vazio">Nenhuma mensagem até agora.</div>');
-}
-window.MGW_AUDITORIA={
-  tipo:function(t){
-    tipoAud=t;
-    var m={reclamacao:'au-t-rec',agradecimento:'au-t-agr',sugestao:'au-t-sug'};
-    Object.keys(m).forEach(function(k){
-      var el=document.getElementById(m[k]); if(el) el.classList.toggle('on',k===t);
-    });
-  },
-  enviar:audEnviar,
-  limpar:function(){
-    var t=document.getElementById('au-texto'), a=document.getElementById('au-assunto');
-    if(t) t.value=''; if(a) a.value='';
-  },
-  destrancar:function(){
-    var i=document.getElementById('au-senha'), e=document.getElementById('au-senha-erro');
-    var v=i?String(i.value||''):'';
-    if(v!==AUD_SENHA){
-      if(e) e.textContent='Senha incorreta.';
-      if(i){ i.value=''; i.focus(); }
-      return;
-    }
-    try{ sessionStorage.setItem(AUD_SESS,'1'); }catch(_){}
-    audRender();
-  },
-  trancar:function(){
-    try{ sessionStorage.removeItem(AUD_SESS); }catch(_){}
-    audRender();
-    aviso('🔒 Caixa trancada','green');
-  },
-  apagar:async function(id){
-    if(!window.IS_MASTER) return;
-    if(!audDestrancada()) return;
-    if(!confirm('Apagar esta mensagem? Ela some para sempre.')) return;
-    var cli=audCliente();
-    if(!cli){ aviso('⚠ Sem conexão — apagar precisa falar com o servidor.','red'); return; }
-    try{
-      /* O .select() no fim NÃO é enfeite: sem ele o Supabase responde "sucesso"
-         mesmo quando a política de segurança bloqueia a exclusão, e zero linha
-         é apagada. O botão parecia funcionar (a mensagem sumia da tela) e ela
-         voltava no próximo carregamento. Com o select, sabemos o que de fato
-         saiu — e conseguimos dizer ao usuário qual é o problema real. */
-      var r=await cli.from('auditoria').delete().eq('id',id).select();
-      if(r && r.error) throw r.error;
-      var apagadas=(r && r.data) ? r.data.length : 0;
-      if(!apagadas){
-        alert('A mensagem NÃO foi apagada.\n\n'+
-              'O servidor aceitou o pedido mas não removeu nada — isso acontece quando a tabela '+
-              '"auditoria" não tem política de DELETE no Supabase.\n\n'+
-              'Para resolver: Supabase → SQL Editor → rode o arquivo supabase/banco.sql '+
-              '(ou crie a policy de DELETE para o gerente na tabela auditoria).\n\n'+
-              'Nada foi perdido: a mensagem continua na caixa.');
-        audRender();
-        return;
-      }
-    }catch(e){ aviso('⚠ Não consegui apagar: '+((e&&e.message)||'falha'),'red'); return; }
-    aviso('🗑 Mensagem apagada','green');
-    audRender();
-  },
-  render:audRender
-};
-
 /* entra no roteador sem apagar os handlers que já existem */
 (function(){
   var prev=window.onNavChange;
@@ -28470,7 +27347,6 @@ window.MGW_AUDITORIA={
     try{
       if(id==='frota')     fRender();
       if(id==='suporte')   sRender();
-      if(id==='auditoria') audRender();
     }catch(e){ console.warn('[frota/suporte] render',e); }
   };
 })();
