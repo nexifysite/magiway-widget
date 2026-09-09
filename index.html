@@ -11891,6 +11891,160 @@ function mgwFmtNum(v,sufixo){
   return txt+(sufixo||'');
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   AMPLIAR E FECHAR — as duas funções que faltavam
+   ───────────────────────────────────────────────────────────────────
+   mgwAbrirZoom e mgwFecharZoom eram chamadas em quatro lugares e não
+   existiam em lugar nenhum. O efeito de cada uma:
+
+     mgwAbrirZoom  — clicar em qualquer gráfico do app não fazia nada.
+       O listener chamava a função, ela não existia, o erro morria dentro
+       do próprio listener. A dica "toque no gráfico para ampliar", que
+       está escrita em várias telas, era falsa.
+
+     mgwFecharZoom — esta era grave. O quadro do Comparativo ABRIA (esse
+       código existe), cobrindo a tela com z-index 9000, e nem o ✕, nem o
+       clique no fundo, nem a tecla Esc fechavam: as três chamam esta
+       função. Trocar de aba também não adiantava — a aba de baixo mudava
+       e o painel continuava por cima. O app ficava preso, e o único
+       jeito de sair era recarregar a página.
+
+   Ficam definidas antes de qualquer uso, e o fechamento agora tem três
+   redes: as próprias chamadas, a troca de aba e o Esc.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Lê o gráfico e monta o resumo que os verbetes esperam.
+   Os nomes dos campos não são escolha minha — são o contrato que os
+   textos de MGW_VERBETES já usam: lMax, vMax, iMax, pctMax, total,
+   zeros, labels, vals, n. */
+function mgwResumoGrafico(ch){
+  var d={labels:[],vals:[],total:0,n:0,zeros:0,lMax:'—',vMax:null,iMax:-1,pctMax:'0'};
+  try{
+    if(!ch||!ch.data) return d;
+    d.labels=(ch.data.labels||[]).map(function(x){ return String(x); });
+    /* Soma os datasets posição a posição: num gráfico de duas séries
+       (cotado × fechado) o que interessa ao texto é o total da coluna. */
+    (ch.data.datasets||[]).forEach(function(ds){
+      (ds.data||[]).forEach(function(v,i){
+        var num=(v&&typeof v==='object')?(+v.y||0):(+v||0);
+        d.vals[i]=(d.vals[i]||0)+num;
+      });
+    });
+    d.n=d.vals.length;
+    d.total=d.vals.reduce(function(a,b){ return a+(+b||0); },0);
+    d.zeros=d.vals.filter(function(v){ return !v; }).length;
+    var max=-Infinity;
+    d.vals.forEach(function(v,i){ if((+v||0)>max){ max=+v||0; d.iMax=i; } });
+    if(d.iMax>=0){
+      d.vMax=max;
+      d.lMax=d.labels[d.iMax]||('posição '+(d.iMax+1));
+      d.pctMax=d.total>0?((max/d.total)*100).toFixed(1):'0';
+    }
+  }catch(e){ console.warn('[zoom] resumo',e); }
+  return d;
+}
+
+/* Quando não há verbete escrito para aquele gráfico, esta descrição é
+   gerada do próprio dado — então nunca fica desatualizada e vale para
+   gráfico que ainda nem existe. */
+function mgwExplicacaoGenerica(d){
+  if(!d.n) return 'Este gráfico está sem dados no período escolhido.';
+  var t=[];
+  t.push('São <b>'+d.n+'</b> faixa(s), somando <b>'+mgwFmtNum(d.total)+'</b>.');
+  if(d.lMax!=='—'){
+    t.push('O maior valor está em <b>'+d.lMax+'</b>, com <b>'+mgwFmtNum(d.vMax)+'</b>'
+      +(d.total>0?(' — '+d.pctMax+'% do total'):'')+'.');
+    if(+d.pctMax>=50) t.push('Mais da metade concentrada numa faixa só: o resultado do conjunto é, na prática, o resultado dela.');
+    else if(+d.pctMax<=20) t.push('A distribuição é equilibrada, sem uma faixa que domine o conjunto.');
+  }
+  if(d.zeros) t.push('<b>'+d.zeros+'</b> faixa(s) sem nenhum valor.');
+  return t.join(' ');
+}
+
+function mgwFecharZoom(){
+  var m=document.getElementById('mgw-zoom');
+  if(m) m.classList.remove('on');
+  /* Chart.js não move de canvas: a instância do modal é criada ao abrir
+     e destruída aqui. Sem isto, cada abertura deixa um gráfico vivo
+     preso a um canvas invisível. */
+  try{ if(_mgwZoomChart){ _mgwZoomChart.destroy(); _mgwZoomChart=null; } }catch(e){ _mgwZoomChart=null; }
+  try{ document.body.style.overflow=''; }catch(e){}
+}
+window.mgwFecharZoom=mgwFecharZoom;
+
+function mgwAbrirZoom(cv){
+  if(!cv) return;
+  var ch=null;
+  try{ ch=(typeof Chart!=='undefined'&&Chart.getChart)?Chart.getChart(cv):null; }catch(e){}
+  if(!ch) return;                              /* canvas sem gráfico: nada a ampliar */
+
+  var card=cv.closest('.card');
+  var ttl=(card&&card.querySelector('.card-title')||{}).textContent||'Gráfico';
+  var sub=(card&&card.querySelector('.card-sub')||{}).textContent||'';
+
+  var m=mgwGarantirZoom();
+  document.getElementById('mgwz-ttl').textContent=ttl;
+  document.getElementById('mgwz-sub').textContent=sub;
+
+  /* a tela do modal precisa voltar a ter o canvas: o quadro do
+     Comparativo troca o innerHTML dela por conteúdo de texto */
+  var tela=m.querySelector('.mgwz-tela');
+  tela.innerHTML='<canvas id="mgwz-canvas"></canvas>';
+  tela.style.height='';
+
+  m.querySelector('.mgwz-exp-t').textContent='O QUE ESTE GRÁFICO DIZ';
+  var d=mgwResumoGrafico(ch);
+  var verbete=null;
+  try{ var f=(window.MGW_VERBETES||{})[cv.id]; if(typeof f==='function') verbete=f(d); }catch(e){ console.warn('[zoom] verbete',e); }
+  document.getElementById('mgwz-exp-c').innerHTML=verbete||mgwExplicacaoGenerica(d);
+
+  m.classList.add('on');
+
+  /* clona a configuração e monta uma instância nova no canvas grande */
+  try{
+    if(_mgwZoomChart){ try{ _mgwZoomChart.destroy(); }catch(e){} _mgwZoomChart=null; }
+    var cfg=JSON.parse(JSON.stringify({type:ch.config.type, data:ch.data, options:ch.options||{}}));
+    cfg.options=cfg.options||{};
+    cfg.options.responsive=true;
+    cfg.options.maintainAspectRatio=false;
+    cfg.options.animation=false;
+    _mgwZoomChart=new Chart(document.getElementById('mgwz-canvas'), cfg);
+  }catch(e){ console.warn('[zoom] desenho',e); }
+}
+window.mgwAbrirZoom=mgwAbrirZoom;
+
+/* Monta o modal uma vez só e devolve sempre o mesmo. Fica separado
+   porque DUAS telas o abrem — o zoom de gráfico e o quadro do
+   Comparativo — e as duas precisam encontrar a mesma estrutura, com
+   .mgwz-tela, .mgwz-exp-t e #mgwz-exp-c no lugar. */
+function mgwGarantirZoom(){
+  var m=document.getElementById('mgw-zoom');
+  if(m) return m;
+  m=document.createElement('div'); m.id='mgw-zoom';
+  m.innerHTML='<div class="mgwz-fundo" onclick="mgwFecharZoom()"></div>'
+    +'<div class="mgwz-cx" role="dialog" aria-modal="true">'
+    +'<div class="mgwz-hd"><div><div class="mgwz-ttl" id="mgwz-ttl"></div>'
+    +'<div class="mgwz-sub" id="mgwz-sub"></div></div>'
+    +'<button class="mgwz-x" onclick="mgwFecharZoom()" aria-label="Fechar">✕</button></div>'
+    +'<div class="mgwz-tela"><canvas id="mgwz-canvas"></canvas></div>'
+    +'<div class="mgwz-exp"><div class="mgwz-exp-t">O QUE ESTE GRÁFICO DIZ</div>'
+    +'<div id="mgwz-exp-c"></div></div></div>';
+  document.body.appendChild(m);
+  return m;
+}
+window.mgwGarantirZoom=mgwGarantirZoom;
+
+/* Rede de segurança: trocar de aba fecha qualquer sobreposição aberta.
+   Antes, o painel continuava por cima da aba nova — e essa é a diferença
+   entre "um botão não funcionou" e "o app travou". */
+(function(){
+  var antes=window.onNavChange;
+  window.onNavChange=function(id){
+    try{ mgwFecharZoom(); }catch(e){}
+    if(typeof antes==='function'){ try{ antes.apply(this,arguments); }catch(e){ console.warn('[zoom] handler anterior',e); } }
+  };
+})();
+
 /* Lê o gráfico e escreve, em português, o que ele mostra. */
 /* ═══════════════════════════════════════════════════════════════════
    DESFECHO DA COTAÇÃO — inferência por pareamento com a reserva
@@ -14758,26 +14912,58 @@ function cpAbrirQuadro(id){
   if(!card) return;
   var raiz=card.classList.contains('card')?card:card.closest('.card');
   if(!raiz) return;
-  var m=document.getElementById('mgw-zoom');
-  if(!m){
-    m=document.createElement('div'); m.id='mgw-zoom';
-    m.innerHTML='<div class="mgwz-fundo" onclick="mgwFecharZoom()"></div>'
-      +'<div class="mgwz-cx" role="dialog" aria-modal="true">'
-      +'<div class="mgwz-hd"><div><div class="mgwz-ttl" id="mgwz-ttl"></div>'
-      +'<div class="mgwz-sub" id="mgwz-sub"></div></div>'
-      +'<button class="mgwz-x" onclick="mgwFecharZoom()" aria-label="Fechar">✕</button></div>'
-      +'<div class="mgwz-tela"><canvas id="mgwz-canvas"></canvas></div>'
-      +'<div class="mgwz-exp"><div class="mgwz-exp-t">O QUE ESTE GRÁFICO DIZ</div>'
-      +'<div id="mgwz-exp-c"></div></div></div>';
-    document.body.appendChild(m);
-  }
+  /* mesma caixa do zoom de gráfico — uma estrutura só, para as duas
+     telas encontrarem sempre .mgwz-tela, .mgwz-exp-t e #mgwz-exp-c */
+  var m=(typeof mgwGarantirZoom==='function')?mgwGarantirZoom():document.getElementById('mgw-zoom');
+  if(!m) return;
+  /* o gráfico do zoom anterior tem de morrer: esta tela troca o conteúdo
+     da área onde ele vive */
+  try{ if(typeof mgwFecharZoom==='function'&&_mgwZoomChart){ _mgwZoomChart.destroy(); _mgwZoomChart=null; } }catch(e){}
   var ttl=(raiz.querySelector('.card-title')||{}).textContent||'Detalhe';
   var sub=(raiz.querySelector('.card-sub')||{}).textContent||'';
   document.getElementById('mgwz-ttl').textContent=ttl;
   document.getElementById('mgwz-sub').textContent=sub;
   var tela=m.querySelector('.mgwz-tela');
-  tela.innerHTML='<div class="mgwz-conteudo">'+ (document.getElementById(id)||raiz).innerHTML +'</div>';
+  var fonte=document.getElementById(id)||raiz;
+  /* Clona o conteúdo em vez de copiar innerHTML como texto, por duas
+     razões que apareciam na tela:
+       1. o título e o subtítulo do cartão vinham junto e apareciam DUAS
+          vezes — uma no cabeçalho do modal e outra dentro dele;
+       2. canvas não se copia por innerHTML: o elemento vem, o desenho
+          não, e a área do gráfico abria em branco. */
+  var copia=fonte.cloneNode(true);
+  Array.prototype.forEach.call(copia.querySelectorAll('.card-title,.card-sub'),
+    function(n){ n.parentNode.removeChild(n); });
+
+  var caixa=document.createElement('div');
+  caixa.className='mgwz-conteudo';
+  /* A caixa do modal (.mgwz-cx) já rola. Deixar .mgwz-conteudo rolando
+     também cria dois scrolls aninhados: o dedo move o de fora, o texto
+     de dentro não anda, e o conteúdo parece cortado no meio da frase —
+     que foi o que aconteceu. Aqui o conteúdo flui inteiro e quem rola é
+     só a caixa de fora. */
+  caixa.style.maxHeight='none';
+  caixa.style.overflow='visible';
+  caixa.appendChild(copia);
+  tela.innerHTML='';
+  tela.appendChild(caixa);
+
+  /* repinta cada canvas a partir do original, já desenhado */
+  var orig=fonte.querySelectorAll('canvas'), novos=copia.querySelectorAll('canvas');
+  for(var i=0;i<novos.length && i<orig.length;i++){
+    try{
+      var o=orig[i], n=novos[i];
+      if(!o.width||!o.height) continue;
+      n.width=o.width; n.height=o.height;
+      n.style.width=(o.clientWidth||o.width)+'px';
+      n.style.height=(o.clientHeight||o.height)+'px';
+      n.getContext('2d').drawImage(o,0,0);
+    }catch(e){ console.warn('[quadro] canvas',e); }
+  }
+  /* .mgwz-tela tem altura fixa para caber um gráfico; para conteúdo de
+     texto ela precisa crescer com o que tem dentro. */
   tela.style.height='auto';
+  tela.style.minHeight='0';
   var fundo=CP_FUNDO[id]||CP_FUNDO[raiz.id]||'';
   m.querySelector('.mgwz-exp-t').textContent='POR TRÁS DO NÚMERO';
   document.getElementById('mgwz-exp-c').innerHTML=fundo||'—';
