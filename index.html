@@ -32638,8 +32638,29 @@ function cp(){
 }
 
 /* ── o mês de uma reserva / de uma cotação ───────────────────────── */
-function ymDeData(d){ return d? (d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)) : ''; }
-function ymDeISO(s){ var m=String(s||'').match(/^(\d{4})-(\d{2})/); return m?(m[1]+'-'+m[2]):''; }
+/* ── o mês de uma data é o CICLO dela: dia 13 → dia 12 ──────────────
+   Estas duas devolviam o mês do calendário puro (getMonth, ou os dois
+   primeiros grupos do ISO). Com isso a tabela "mês a mês" desta aba
+   comparava agosto-calendário contra julho-calendário, enquanto o
+   faturamento, a meta, a comissão e a aba Evolução comparavam ciclos —
+   e as duas telas mostravam receitas diferentes para "agosto".
+   Uma venda do dia 05/08 pertence ao ciclo de JULHO. */
+function _ymCicloDe(ano, mes1a12, dia){
+  var a=ano, m=mes1a12;
+  if(dia<=12){ m-=1; if(m<1){ m=12; a-=1; } }
+  return a+'-'+('0'+m).slice(-2);
+}
+function ymDeData(d){
+  return d? _ymCicloDe(d.getFullYear(), d.getMonth()+1, d.getDate()) : '';
+}
+function ymDeISO(s){
+  var m=String(s||'').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m) return _ymCicloDe(+m[1], +m[2], +m[3]);
+  /* sem o dia não dá para saber de que lado da virada a data caiu;
+     devolve o mês do calendário, que é o melhor palpite disponível */
+  var m2=String(s||'').match(/^(\d{4})-(\d{2})/);
+  return m2?(m2[1]+'-'+m2[2]):'';
+}
 var MESPT=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 function rotuloYM(k){ var p=String(k).split('-'); return p.length===2?(MESPT[(+p[1]||1)-1]+'/'+p[0]):k; }
 
