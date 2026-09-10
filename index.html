@@ -17774,7 +17774,7 @@ async function aiDashBriefing(){
     el.innerHTML=r.replace(/\n/g,'<br>');
   }catch(e){
     el.innerHTML = (String(e.message)==='SEM_CHAVE')
-      ? `<span style="color:var(--chalk3);font-size:.78rem">🔑 Chave da IA não configurada.<br>Vá em <strong style="color:var(--fire);cursor:pointer" onclick="nav('relatorios',document.querySelector('.sb-item[onclick*=relatorios]'))">Relatórios → Chave da IA</strong> e cole a chave do Claude. Uma vez só — vale para o app inteiro.</span>`
+      ? `<span style="color:var(--chalk3);font-size:.78rem">🔑 Chave da IA não configurada.<br>Vá em <strong style="color:var(--fire);cursor:pointer" onclick="openConfigFromControle()">Controle → Configurações → Chave da IA</strong> e cole a chave do Claude. Uma vez só — vale para o app inteiro.</span>`
       : `<span style="color:var(--red)">⚠️ ${mgwErroIA(e)}</span>`;
   }
 }
