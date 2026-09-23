@@ -537,23 +537,18 @@ var CFG={
   pedagioOutros:6,       /* por diária, qualquer outra combinação */
   juros10x:0.0988,       /* o app embute o parcelamento em 10x no valor de tabela */
   temporada:{ iniMes:12, iniDia:15, fimMes:1, fimDia:15 },
-  /* ⚠ ATENÇÃO — A ALTA TEMPORADA DA MINIVAN ESTÁ EM DISPUTA NO APP PRINCIPAL
-     Em 23/09/2026 encontrei TRÊS valores diferentes para a mesma diária:
-        $129  — o padrão embutido no index.html (linha ~20121). É ESTE que
-                a conta do app principal usa de verdade.
-        $159  — a configuração plantada na instalação, e o rótulo que o
-                seletor de categoria MOSTRA na tela.
-        $149  — a foto da tabela de preços enviada pelo Luciano em agosto.
-     Ou seja: o app principal exibe 159 e cobra 129.
-     Aqui ficou 129, para os dois apps darem o MESMO total enquanto a
-     dúvida não é resolvida — uma cotação divergente entre as duas telas
-     seria pior que o valor errado, porque ninguém perceberia.
-     A tabela é editável na própria tela e fica salva neste navegador. */
+  /* Alta temporada da minivan: US$159 — confirmado pelo Luciano em
+     23/09/2026, em dólar. Havia três números circulando (129 no padrão do
+     app, 159 no rótulo, 149 numa foto antiga da tabela) e o app principal
+     chegou a exibir 159 e cobrar 129. Os dois apps foram corrigidos na
+     mesma data e conferidos um contra o outro.
+     A tabela continua editável na própria tela e salva neste navegador:
+     preço é do dono do negócio, não do programa. */
   cats:[
     {nome:'Sedan',       baixa:65,  alta:89,  lugares:4},
     {nome:'SUV',         baixa:69,  alta:99,  lugares:4},
-    {nome:'Minivan 7L',  baixa:79,  alta:129, lugares:6, disputa:true},
-    {nome:'Minivan 8L',  baixa:79,  alta:129, lugares:7, disputa:true},
+    {nome:'Minivan 7L',  baixa:79,  alta:159, lugares:6},
+    {nome:'Minivan 8L',  baixa:79,  alta:159, lugares:7},
     {nome:'Mustang',     baixa:199, alta:199, lugares:2},
     {nome:'Van 12L',     baixa:129, alta:199, lugares:11},
     {nome:'SUV Premium', baixa:199, alta:199, lugares:5},
@@ -935,14 +930,12 @@ function desenharPrecos(){
   document.getElementById('aj-cambio').value=P.CFG.cambio;
 
   document.getElementById('aviso-disputa').innerHTML=
-    '<div class="disputa"><b>⚠ A alta temporada da Minivan está em disputa.</b><br>'
-    +'Em 23/09/2026 apareceram três valores diferentes para a mesma diária:'
-    +'<table><tr><td>Padrão embutido no app principal — <b>é o que a conta usa</b></td><td>$129</td></tr>'
-    +'<tr><td>Configuração da instalação, e o rótulo que o seletor <b>mostra</b></td><td>$159</td></tr>'
-    +'<tr><td>A foto da tabela de preços de agosto</td><td>$149</td></tr></table>'
-    +'O app principal <b>mostra $159 e cobra $129</b>. Aqui ficou <b>$129</b>, para os dois darem o mesmo '
-    +'total enquanto a dúvida não é resolvida — duas telas com preços diferentes seria pior, porque '
-    +'ninguém perceberia. <b>Corrija aqui assim que souber qual é o certo.</b></div>';
+    '<div class="disputa" style="border-left-color:var(--green);background:rgba(26,255,157,.07)">'
+    +'<b style="color:var(--green)">Valores conferidos contra o app principal em 23/09/2026.</b><br>'
+    +'A alta temporada da minivan é <b style="color:var(--green)">US$ 159</b>. Havia três números '
+    +'circulando — o app chegou a mostrar $159 na tela e cobrar $129 na conta, 30 dólares a menos por '
+    +'diária. Os dois foram corrigidos na mesma data.<br>'
+    +'Esta tabela é sua: o que você mudar aqui vale para as próximas cotações deste navegador.</div>';
 }
 function mudarPreco(nome,campo,v){
   if(P.definir(nome,campo,v)){ avisarSalvo(); recalc(); }

@@ -20118,12 +20118,16 @@ let _CFG={
   cats:[
     {id:'sedan',   nome:'Sedan',        taxa:65,  taxaAlta:89,  taxaBaixa:65},
     {id:'suv',     nome:'SUV',          taxa:69,  taxaAlta:99,  taxaBaixa:69},
-    {id:'mini7',   nome:'Minivan 7L',   taxa:79,  taxaAlta:129, taxaBaixa:79},
+    /* Alta temporada da minivan: US$159. Este padrao esteve em 129 e o
+       rotulo do seletor dizia 159 — o app MOSTRAVA um preco e COBRAVA
+       outro, 30 dolares por diaria a menos, em toda alta temporada.
+       Confirmado com o Luciano em 23/09/2026: e 159, em dolar. */
+    {id:'mini7',   nome:'Minivan 7L',   taxa:79,  taxaAlta:159, taxaBaixa:79},
     /* 8L e Limited nascem com o MESMO preco da 7L. Nascem, nao ficam presas:
        sao linhas de verdade na tabela, entao da para mexer em cada uma em
        Configuracoes. Espelhar para sempre tiraria esse controle. */
-    {id:'mini8',   nome:'Minivan 8L',   taxa:79,  taxaAlta:129, taxaBaixa:79},
-    {id:'mini7lim',nome:'Minivan Limited', taxa:79, taxaAlta:129, taxaBaixa:79},
+    {id:'mini8',   nome:'Minivan 8L',   taxa:79,  taxaAlta:159, taxaBaixa:79},
+    {id:'mini7lim',nome:'Minivan Limited', taxa:79, taxaAlta:159, taxaBaixa:79},
     {id:'mustang', nome:'Mustang',      taxa:199, taxaAlta:199, taxaBaixa:199},
     {id:'van12',   nome:'Van 12L',      taxa:129, taxaAlta:199, taxaBaixa:129},
     {id:'suvprem', nome:'SUV Premium',  taxa:199, taxaAlta:199, taxaBaixa:199}
@@ -20923,7 +20927,7 @@ function cfgLoad(){
   try{
     const _rawGet=localStorage.__proto__.getItem.bind(localStorage);
     const _rawSet=localStorage.__proto__.setItem.bind(localStorage);
-    const _MIGVER=5;
+    const _MIGVER=6;
     let _cur=0; try{_cur=parseInt(_rawGet('gs_cfg_migver')||'0',10)||0;}catch(_){}
     if(_cur<_MIGVER){
       /* v3 (2026-08): o modelo do contrato foi reeditado no DocuSign, o que gerou
@@ -20953,6 +20957,25 @@ function cfgLoad(){
         try{ _rawSet('gs_ds_mapa_travado','1'); }catch(_){}
         _CFG.docusign.contratoUrl='https://na4.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=075ae2f7-5b6d-4c08-a992-9f47c2ba8afb&env=na4&acct=db09479d-3111-493a-ad4c-3b2588ef4580&v=2';
       }catch(_){}
+      /* ── v6 (23/09/2026): a alta temporada da minivan volta para 159 ──
+         O padrao de fabrica estava em 129 enquanto o rotulo do seletor
+         dizia 159. Quem instalou o app nesse periodo tem 129 gravado no
+         navegador, e continuaria cobrando 30 dolares a menos por diaria
+         em toda alta temporada mesmo depois desta versao — porque o valor
+         salvo vence o padrao.
+         Corrige SO quem esta exatamente em 129, que e a marca do padrao
+         errado. Quem tiver qualquer outro numero decidiu esse numero, e
+         decisao de preco nao se desfaz por migracao. */
+      try{
+        if(Array.isArray(_CFG.cats)){
+          _CFG.cats.forEach(function(c){
+            if(!c) return;
+            if(!/minivan\s*(7\s*l|8\s*l|limited)/i.test(String(c.nome||''))) return;
+            if(+c.taxaAlta===129) c.taxaAlta=159;
+          });
+        }
+      }catch(_){}
+
       if(Array.isArray(_CFG.cats)){
         // Convertible não existe — remove das categorias
         _CFG.cats=_CFG.cats.filter(c=>!(c&&(/convert/i.test(c.id||'')||/convert/i.test(c.nome||''))));
