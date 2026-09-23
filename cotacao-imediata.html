@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#04101e">
+<title>Cotação Imediata · Magiway</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+/* ═══ Identidade visual herdada do app principal ═══ */
+:root{
+  --fire:#FF2D2D; --fireD:rgba(255,45,45,.12); --ice:#1FA9A6; --gold:#FFD11A;
+  --green:#1AFF9D; --chalk:#E8F0F8; --chalk2:#B6C8DA; --chalk3:#7C90A6;
+  --bg:#04101e; --card:#0a1420; --edge:rgba(255,255,255,.09); --edgeO:rgba(255,255,255,.16);
+  --mono:'DM Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--chalk);font:15px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  min-height:100vh;padding:0 0 40px}
+a{color:var(--ice)}
+
+.topo{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,#071726,#04101e);
+  border-bottom:1px solid var(--edge);padding:14px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.marca{font-weight:800;letter-spacing:.04em;font-size:1.05rem}
+.marca i{color:var(--fire);font-style:normal}
+.topo-sub{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--chalk3)}
+.topo-dir{margin-left:auto;font-family:var(--mono);font-size:.6rem;color:var(--chalk3);text-align:right;line-height:1.5}
+
+.wrap{max-width:1180px;margin:0 auto;padding:18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:900px){ .grid{grid-template-columns:1fr} }
+
+.cx{background:var(--card);border:1px solid var(--edge);border-radius:16px;padding:16px 18px;margin-bottom:16px}
+.cx-t{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--chalk3);margin-bottom:4px}
+.cx-s{font-size:.78rem;color:var(--chalk3);margin-bottom:12px;line-height:1.55}
+
+textarea{width:100%;min-height:170px;background:rgba(255,255,255,.04);border:1px solid var(--edgeO);
+  border-radius:12px;color:var(--chalk);padding:14px 15px;font:inherit;font-size:1rem;line-height:1.7;
+  resize:vertical;outline:none;transition:border-color .2s}
+textarea:focus{border-color:var(--ice)}
+textarea::placeholder{color:#55697e}
+
+.btn{background:linear-gradient(135deg,var(--fire),#b30000);color:#fff;border:none;border-radius:11px;
+  padding:12px 20px;font-weight:700;font-size:.88rem;cursor:pointer;letter-spacing:.02em}
+.btn:hover{filter:brightness(1.12)}
+.btn-g{background:rgba(255,255,255,.07);border:1px solid var(--edgeO);color:var(--chalk);font-weight:600}
+.btn-ok{background:linear-gradient(135deg,#1AFF9D,#0d9c60);color:#04101e}
+.linha-btn{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center}
+
+/* ── o que eu entendi ── */
+.campo{display:flex;gap:11px;padding:9px 0;border-top:1px solid var(--edge);align-items:flex-start}
+.campo:first-of-type{border-top:none}
+.campo-n{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--chalk3);min-width:92px;padding-top:3px;flex-shrink:0}
+.campo-v{flex:1;min-width:0}
+.campo-v b{color:#fff;font-size:1rem}
+.prova{font-family:var(--mono);font-size:.62rem;color:var(--chalk3);margin-top:3px;line-height:1.5}
+.prova em{color:var(--gold);font-style:normal}
+.falta{border-left:3px solid var(--gold);background:rgba(255,209,26,.07);border-radius:0 9px 9px 0;
+  padding:9px 12px;margin:8px 0}
+.falta-t{color:var(--gold);font-weight:700;font-size:.85rem}
+.falta-p{font-size:.78rem;color:var(--chalk2);margin-top:2px;line-height:1.55}
+.aviso{border-left:3px solid var(--ice);background:rgba(31,169,166,.07);border-radius:0 9px 9px 0;
+  padding:9px 12px;margin:8px 0;font-size:.8rem;line-height:1.6;color:var(--chalk2)}
+.chip-rec{display:inline-block;font-family:var(--mono);font-size:.55rem;letter-spacing:.08em;
+  text-transform:uppercase;background:rgba(31,169,166,.16);color:var(--ice);
+  border:1px solid rgba(31,169,166,.4);border-radius:20px;padding:2px 8px;margin-left:7px;vertical-align:middle}
+
+/* ── ajustes manuais ── */
+.ajustes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:6px}
+.aj label{display:block;font-family:var(--mono);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--chalk3);margin-bottom:4px}
+.aj input,.aj select{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--edgeO);
+  border-radius:9px;color:var(--chalk);padding:8px 10px;font:inherit;font-size:.86rem;outline:none;color-scheme:dark}
+.aj input:focus,.aj select:focus{border-color:var(--ice)}
+.extras{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ex{font-size:.76rem;background:rgba(255,255,255,.05);border:1px solid var(--edgeO);border-radius:20px;
+  padding:6px 12px;cursor:pointer;user-select:none;transition:all .15s}
+.ex.on{background:rgba(26,255,157,.16);border-color:var(--green);color:var(--green)}
+
+/* ── a cotação ── */
+.tot{text-align:center;padding:16px 0 8px}
+.tot-lbl{font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--chalk3)}
+.tot-brl{font-family:var(--mono);font-size:clamp(2rem,7vw,2.9rem);font-weight:800;color:#fff;line-height:1.1;margin:4px 0}
+.tot-usd{font-family:var(--mono);font-size:.9rem;color:var(--ice)}
+.tot-parc{font-size:.82rem;color:var(--chalk2);margin-top:7px}
+.tot-parc b{color:var(--green)}
+.lin{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px solid var(--edge);font-size:.85rem}
+.lin:first-child{border-top:none}
+.lin span{color:var(--chalk2)}
+.lin b{font-family:var(--mono);color:#fff;white-space:nowrap}
+.lin.somatorio{border-top:1px solid var(--edgeO);margin-top:4px;padding-top:10px}
+.lin.somatorio b{color:var(--gold);font-size:1rem}
+.mini{font-size:.72rem;color:var(--chalk3);line-height:1.6;margin-top:10px}
+
+/* ── mensagem pronta ── */
+.msg{background:#0d1b2a;border:1px solid var(--edgeO);border-radius:12px;padding:15px 16px;
+  white-space:pre-wrap;font-size:.92rem;line-height:1.75;color:#DCE8F4;max-height:460px;overflow:auto}
+.vazio{color:var(--chalk3);font-size:.85rem;text-align:center;padding:26px 10px;line-height:1.7}
+.ok-copia{color:var(--green);font-size:.78rem;font-family:var(--mono);opacity:0;transition:opacity .25s}
+.ok-copia.on{opacity:1}
+.exemplos{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.exemplos button{background:none;border:1px dashed var(--edgeO);color:var(--chalk3);border-radius:18px;
+  padding:5px 11px;font-size:.72rem;cursor:pointer}
+.exemplos button:hover{border-color:var(--ice);color:var(--ice)}
+
+/* ── tabela de preços ── */
+.tp{width:100%;border-collapse:collapse;margin-top:8px}
+.tp th{font-family:var(--mono);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--chalk3);text-align:left;padding:7px 8px;border-bottom:1px solid var(--edge);font-weight:400}
+.tp td{padding:6px 8px;border-bottom:1px solid var(--edge);font-size:.86rem}
+.tp input{width:84px;background:rgba(255,255,255,.05);border:1px solid var(--edgeO);border-radius:8px;
+  color:var(--chalk);padding:6px 8px;font:inherit;font-size:.84rem;outline:none;text-align:right}
+.tp input:focus{border-color:var(--ice)}
+.tp tr.emdisputa td{background:rgba(255,209,26,.05)}
+.tp .lug{font-family:var(--mono);font-size:.7rem;color:var(--chalk3)}
+.disputa{border-left:3px solid var(--gold);background:rgba(255,209,26,.09);border-radius:0 10px 10px 0;
+  padding:12px 14px;margin:10px 0;font-size:.84rem;line-height:1.68;color:var(--chalk2)}
+.disputa b{color:var(--gold)}
+.disputa table{margin:8px 0;border-collapse:collapse;font-size:.8rem}
+.disputa td{padding:3px 12px 3px 0;color:var(--chalk2)}
+.disputa td:last-child{font-family:var(--mono);color:#fff}
+.rodape{text-align:center;font-family:var(--mono);font-size:.58rem;color:var(--chalk3);
+  margin-top:22px;line-height:1.8}
+</style>
+</head>
+<body>
+
+<div class="topo">
+  <div>
+    <div class="marca">MAGI<i>WAY</i> · COTAÇÃO IMEDIATA</div>
+    <div class="topo-sub">cole a mensagem do cliente — a proposta sai pronta</div>
+  </div>
+  <div class="topo-dir">
+    funciona sem internet<br>
+    <span id="rod-versao"></span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="cx">
+    <div class="cx-t">1 · A mensagem do cliente</div>
+    <div class="cx-s">Cole exatamente como ela chegou no WhatsApp. Não precisa arrumar nada — quanto mais cru, melhor.</div>
+    <textarea id="txt" placeholder="Ex.: Oi, boa tarde! Queria uma cotação de uma minivan de 10 a 20 de dezembro, somos 5 adultos e 2 crianças, retirada no aeroporto de Orlando"></textarea>
+    <div class="linha-btn">
+      <button class="btn" onclick="rodar()">LER E MONTAR A COTAÇÃO</button>
+      <button class="btn btn-g" onclick="limpar()">Limpar</button>
+      <span class="ok-copia" id="lido">✓ lido</span>
+    </div>
+    <div class="exemplos">
+      <span style="font-size:.7rem;color:var(--chalk3);align-self:center">exemplos:</span>
+      <button onclick="exemplo(0)">família com crianças</button>
+      <button onclick="exemplo(1)">Miami → Orlando</button>
+      <button onclick="exemplo(2)">só o número de dias</button>
+      <button onclick="exemplo(3)">mensagem vaga</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="cx">
+        <div class="cx-t">2 · O que eu entendi</div>
+        <div class="cx-s">Cada linha mostra <b>de onde</b> saiu a informação. O que não estiver aqui, eu não achei — e não inventei.</div>
+        <div id="entendi"><div class="vazio">Cole a mensagem acima e clique em <b>Ler e montar</b>.</div></div>
+      </div>
+      <div class="cx" id="cx-ajustes" style="display:none">
+        <div class="cx-t">3 · Ajuste o que faltou ou o que eu errei</div>
+        <div class="cx-s">Mudou aqui, a cotação recalcula na hora.</div>
+        <div class="ajustes">
+          <div class="aj"><label>Retirada</label><input type="date" id="aj-din" onchange="recalc()"></div>
+          <div class="aj"><label>Devolução</label><input type="date" id="aj-dout" onchange="recalc()"></div>
+          <div class="aj"><label>Categoria</label><select id="aj-cat" onchange="recalc()"></select></div>
+          <div class="aj"><label>Pessoas</label><input type="number" id="aj-pax" min="1" max="15" onchange="recalc()"></div>
+          <div class="aj"><label>Retira em</label><select id="aj-lr" onchange="recalc()"></select></div>
+          <div class="aj"><label>Devolve em</label><select id="aj-ld" onchange="recalc()"></select></div>
+          <div class="aj"><label>Desconto US$</label><input type="number" id="aj-desc" min="0" step="1" value="0" onchange="recalc()"></div>
+          <div class="aj"><label>Cliente</label><input type="text" id="aj-nome" placeholder="nome" onchange="recalc()"></div>
+        </div>
+        <div class="extras" id="aj-extras"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="cx" id="cx-cot" style="display:none">
+        <div class="cx-t">4 · A cotação</div>
+        <div id="cot"></div>
+      </div>
+      <div class="cx" id="cx-msg" style="display:none">
+        <div class="cx-t">5 · Mensagem pronta para enviar</div>
+        <div class="cx-s">Escrita na ordem do método: o que está incluso <b>antes</b> do preço.</div>
+        <div class="msg" id="msg"></div>
+        <div class="linha-btn">
+          <button class="btn btn-ok" onclick="copiar()">COPIAR MENSAGEM</button>
+          <button class="btn btn-g" onclick="abrirWhats()">Abrir no WhatsApp</button>
+          <span class="ok-copia" id="copiado">✓ copiado</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <details class="cx" id="cx-precos">
+    <summary style="cursor:pointer;list-style:none">
+      <span class="cx-t" style="display:inline">6 · Tabela de preços que estou usando</span>
+      <span style="float:right;color:var(--chalk3);font-size:.8rem">abrir ▾</span>
+    </summary>
+    <div class="cx-s" style="margin-top:10px">Editável. Fica salva neste navegador e vale para todas as próximas cotações.</div>
+    <div id="aviso-disputa"></div>
+    <div id="tabela-precos"></div>
+    <div class="linha-btn">
+      <div class="aj" style="max-width:180px"><label>Câmbio R$</label>
+        <input type="number" id="aj-cambio" step="0.01" min="0.01" onchange="mudarCambio(this.value)"></div>
+      <span class="ok-copia" id="salvo">✓ salvo</span>
+    </div>
+  </details>
+
+  <div class="rodape" id="rodape"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   LEITOR — transforma a mensagem do cliente em dados de cotação
+   ───────────────────────────────────────────────────────────────────
+   Regra que vale para o arquivo inteiro: NUNCA INVENTAR. Cada campo
+   extraído guarda o pedaço exato do texto que o produziu, e o que não
+   foi encontrado sai marcado como falta — não com um palpite bonito.
+
+   O motivo é prático, não filosófico: uma cotação errada enviada ao
+   cliente custa mais do que uma cotação que demorou dez segundos a
+   mais para ser conferida. O agente acelera a digitação; quem decide
+   continua sendo o vendedor.
+   ═══════════════════════════════════════════════════════════════════ */
+(function(raiz){
+'use strict';
+
+var MESES={janeiro:1,jan:1,fevereiro:2,fev:2,marco:3,mar:3,abril:4,abr:4,maio:5,mai:5,
+  junho:6,jun:6,julho:7,jul:7,agosto:8,ago:8,setembro:9,set:9,sete:9,
+  outubro:10,out:10,novembro:11,nov:11,dezembro:12,dez:12};
+
+function limpa(s){
+  return String(s||'').toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'');   /* tira acento */
+}
+function so2(n){ return n<10?('0'+n):String(n); }
+function iso(a,m,d){ return a+'-'+so2(m)+'-'+so2(d); }
+
+/* ── o ano que faz sentido ──────────────────────────────────────────
+   O cliente quase nunca escreve o ano. "10 a 20 de dezembro" em
+   setembro é dezembro DESTE ano; em janeiro é dezembro do ano passado?
+   Não — é do ano corrente também, porque ninguém cota viagem no
+   passado. A regra: usa o ano corrente; se a data já passou, joga para
+   o ano seguinte. */
+function anoProvavel(mes, dia, hoje){
+  var h=hoje||new Date();
+  var a=h.getFullYear();
+  var alvo=new Date(a, mes-1, dia, 12);
+  var hj=new Date(h.getFullYear(), h.getMonth(), h.getDate(), 12);
+  if(alvo<hj) a+=1;
+  return a;
+}
+
+/* ── datas ──────────────────────────────────────────────────────────
+   Formas que aparecem de verdade no WhatsApp, em ordem de prioridade.
+   A primeira que casar com DUAS datas ganha; texto de viagem quase
+   sempre traz ida e volta na mesma frase. */
+function acharDatas(txt, hoje){
+  var t=limpa(txt), achados=[];
+
+  function push(a,m,d,trecho){
+    if(!(m>=1&&m<=12)||!(d>=1&&d<=31)) return;
+    achados.push({iso:iso(a,m,d), trecho:trecho});
+  }
+
+  /* 1) "de 10/12 a 20/12"  ·  "10/12/2026 até 20/12/2026"  ·  "10-12 a 20-12" */
+  var re1=/(\d{1,2})[\/\-.](\d{1,2})(?:[\/\-.](\d{2,4}))?/g, m1;
+  var crus=[];
+  while((m1=re1.exec(t))!==null){
+    var dd=+m1[1], mm=+m1[2], aa=m1[3]?+m1[3]:null;
+    if(aa!=null && aa<100) aa+=2000;
+    if(mm>=1&&mm<=12&&dd>=1&&dd<=31) crus.push({d:dd,m:mm,a:aa,trecho:m1[0]});
+  }
+  if(crus.length>=1){
+    crus.forEach(function(c){ push(c.a||anoProvavel(c.m,c.d,hoje), c.m, c.d, c.trecho); });
+    if(achados.length>=2) return ajusta(achados, hoje);
+  }
+
+  /* 2) "10 a 20 de dezembro"  ·  "do dia 10 ao dia 20 de dezembro"
+        — dois dias compartilhando um mês só */
+  var re2=/(\d{1,2})\s*(?:a|ate|até|ao|\-|e)\s*(?:o\s*)?(?:dia\s*)?(\d{1,2})\s*(?:de\s*)?([a-z]{3,9})/g, m2;
+  while((m2=re2.exec(t))!==null){
+    var mes=MESES[m2[3]];
+    if(!mes) continue;
+    var d1=+m2[1], d2=+m2[2];
+    var a1=anoProvavel(mes,d1,hoje);
+    push(a1, mes, d1, m2[0]);
+    /* d2 menor que d1 com o mesmo mês = virou o mês; mas aqui o mês é
+       declarado uma vez só, então d2<d1 significa mês seguinte */
+    if(d2<d1){ var mm2=mes===12?1:mes+1, aa2=mes===12?a1+1:a1; push(aa2,mm2,d2,m2[0]); }
+    else push(a1, mes, d2, m2[0]);
+    if(achados.length>=2) return ajusta(achados, hoje);
+  }
+
+  /* 3) "20 de dezembro a 5 de janeiro" — cada data com o seu mês */
+  var re3=/(\d{1,2})\s*de\s*([a-z]{3,9})/g, m3;
+  while((m3=re3.exec(t))!==null){
+    var ms=MESES[m3[2]];
+    if(!ms) continue;
+    push(anoProvavel(ms,+m3[1],hoje), ms, +m3[1], m3[0]);
+  }
+  return ajusta(achados, hoje);
+}
+
+/* Ordena, tira repetição e conserta a virada de ano: se a volta ficou
+   antes da ida, a volta é do ano seguinte. */
+function ajusta(lista, hoje){
+  var vistos={}, out=[];
+  lista.forEach(function(x){ if(!vistos[x.iso]){ vistos[x.iso]=1; out.push(x); } });
+  if(out.length>=2){
+    var a=out[0], b=out[1];
+    if(b.iso<a.iso){
+      var p=b.iso.split('-');
+      b={iso:iso(+p[0]+1,+p[1],+p[2]), trecho:b.trecho};
+      out[1]=b;
+    }
+  }
+  return out;
+}
+
+/* ── quantas diárias, quando só o número de dias é dito ───────────── */
+function acharDias(txt){
+  var t=limpa(txt);
+  var m=t.match(/(\d{1,2})\s*(?:diarias?|dias?|noites?)/);
+  if(m) return {n:+m[1], trecho:m[0]};
+  return null;
+}
+
+/* ── pessoas ────────────────────────────────────────────────────────
+   Adultos e crianças entram separados porque mudam coisas diferentes:
+   o total decide a categoria, as crianças sugerem cadeirinha. */
+function acharPessoas(txt){
+  var t=limpa(txt), r={adultos:null, criancas:null, total:null, trecho:''};
+  var mA=t.match(/(\d{1,2})\s*adultos?/);
+  var mC=t.match(/(\d{1,2})\s*(?:criancas?|filhos?|bebes?)/);
+  if(mA){ r.adultos=+mA[1]; r.trecho=mA[0]; }
+  if(mC){ r.criancas=+mC[1]; r.trecho=(r.trecho?r.trecho+' + ':'')+mC[0]; }
+  if(r.adultos!=null||r.criancas!=null){
+    r.total=(r.adultos||0)+(r.criancas||0);
+    return r;
+  }
+  /* "somos 5", "em 6 pessoas", "nós 4", "5 pax" */
+  var mT=t.match(/(?:somos|sao|seremos|em|no?s|para|pra)\s*(\d{1,2})\s*(?:pessoas?|pax)?/)
+       || t.match(/(\d{1,2})\s*(?:pessoas?|pax)/);
+  if(mT && +mT[1]>=1 && +mT[1]<=15){ r.total=+mT[1]; r.trecho=mT[0]; return r; }
+  return null;
+}
+
+/* ── categoria ──────────────────────────────────────────────────────
+   Só reconhece o que o cliente REALMENTE nomeou. Quando ele não diz,
+   quem recomenda é a regra de ocupantes, e a tela diz que foi
+   recomendação — não pedido. */
+var CATS=[
+  {nome:'MINIVAN 15L', re:/minivan\s*(?:de\s*)?15|15\s*lugares|van\s*15/},
+  {nome:'Van 12L',     re:/van\s*(?:de\s*)?12|12\s*lugares|\bvan\b(?!.*minivan)/},
+  {nome:'Minivan 8L',  re:/minivan\s*(?:de\s*)?8|8\s*lugares/},
+  {nome:'Minivan 7L',  re:/minivan|monovolume|7\s*lugares/},
+  {nome:'SUV Premium', re:/suv\s*premium|premium/},
+  {nome:'Mustang',     re:/mustang|conversivel/},
+  {nome:'SUV',         re:/\bsuv\b/},
+  {nome:'Sedan',       re:/sedan|carro\s*pequeno|economico|compacto/}
+];
+function acharCategoria(txt){
+  var t=limpa(txt);
+  for(var i=0;i<CATS.length;i++){
+    var m=t.match(CATS[i].re);
+    if(m) return {nome:CATS[i].nome, trecho:m[0], pedida:true};
+  }
+  return null;
+}
+/* Recomendação por ocupantes — a mesma lógica que o vendedor usa:
+   com mala, SUV não comporta 5. */
+function recomendarPorPessoas(n){
+  if(n==null) return null;
+  if(n<=4)  return {nome:'SUV',         motivo:'até 4 pessoas com bagagem'};
+  if(n<=6)  return {nome:'Minivan 7L',  motivo:n+' pessoas com mala não cabem num SUV'};
+  if(n<=7)  return {nome:'Minivan 8L',  motivo:n+' pessoas — a de 8 lugares deixa espaço para bagagem'};
+  if(n<=11) return {nome:'Van 12L',     motivo:n+' pessoas exigem van'};
+  return {nome:'MINIVAN 15L', motivo:n+' pessoas — só a de 15 lugares comporta'};
+}
+
+/* ── locais ─────────────────────────────────────────────────────────
+   O nome que aparece é o do _CFG do app principal, para os dois
+   falarem a mesma língua. */
+var LOCS=[
+  {cod:'MIA',  nome:'Miami (MIA)',         re:/\bmia\b|miami/},
+  {cod:'FLL',  nome:'Fort Lauderdale (FLL)', re:/\bfll\b|fort\s*lauderdale/},
+  {cod:'TPA',  nome:'Tampa (TPA)',         re:/\btpa\b|tampa/},
+  {cod:'SFB',  nome:'Sanford (SFB)',       re:/\bsfb\b|sanford/},
+  {cod:'HTLO', nome:'Endereço em Orlando', re:/hotel|resort|casa|airbnb|endereco/},
+  {cod:'MCO',  nome:'MCO Orlando',         re:/\bmco\b|orlando|aeroporto/}
+];
+function acharLocais(txt){
+  var t=limpa(txt), achados=[];
+  LOCS.forEach(function(l){
+    var m=l.re.exec(t); l.re.lastIndex=0;
+    if(m) achados.push({cod:l.cod, nome:l.nome, trecho:m[0], ini:m.index, fim:m.index+m[0].length});
+  });
+  achados.sort(function(a,b){ return a.ini-b.ini; });
+
+  /* "hotel em Orlando" casa com HOTEL e com ORLANDO, e virava retirada
+     num lugar e devolução no outro — sendo a mesma frase. Quando dois
+     achados estão colados (menos de 14 caracteres entre eles), são o
+     mesmo lugar dito de dois jeitos: fica o mais específico, que é o
+     que aparece primeiro na lista LOCS. */
+  var out=[];
+  achados.forEach(function(a){
+    var colado=out.some(function(b){ return Math.abs(a.ini-b.fim)<14 || Math.abs(b.ini-a.fim)<14; });
+    if(!colado) out.push(a);
+  });
+  return out;
+}
+
+/* ── telefone e nome ────────────────────────────────────────────────
+   Nome só sai quando a pessoa se apresenta. Deduzir nome de saudação
+   dá errado e o erro aparece no topo da proposta. */
+function acharTelefone(txt){
+  var m=String(txt||'').match(/(?:\+?55\s*)?\(?\d{2}\)?\s*9?\d{4}[\s\-.]?\d{4}/);
+  return m?m[0].trim():null;
+}
+function acharNome(txt){
+  var m=String(txt||'').match(/(?:meu nome e|meu nome é|me chamo|aqui e o|aqui é o|aqui e a|aqui é a|sou o|sou a)\s+([A-Za-zÀ-ú]+(?:\s+[A-Za-zÀ-ú]+)?)/i);
+  return m?m[1].trim():null;
+}
+
+/* ── o leitor ───────────────────────────────────────────────────────
+   Devolve SEMPRE a mesma forma: o que achou, com a prova, e o que
+   faltou, nomeado. A tela não precisa adivinhar nada. */
+function ler(txt, hoje){
+  var r={ achou:{}, provas:{}, faltou:[], avisos:[] };
+
+  var datas=acharDatas(txt, hoje);
+  var dias=acharDias(txt);
+
+  if(datas.length>=2){
+    r.achou.din=datas[0].iso; r.provas.din=datas[0].trecho;
+    r.achou.dout=datas[1].iso; r.provas.dout=datas[1].trecho;
+  } else if(datas.length===1 && dias){
+    r.achou.din=datas[0].iso; r.provas.din=datas[0].trecho;
+    var p=datas[0].iso.split('-');
+    var d=new Date(+p[0],+p[1]-1,+p[2],12); d.setDate(d.getDate()+dias.n);
+    r.achou.dout=iso(d.getFullYear(),d.getMonth()+1,d.getDate());
+    r.provas.dout=dias.trecho+' a partir de '+datas[0].trecho;
+  } else if(datas.length===1){
+    r.achou.din=datas[0].iso; r.provas.din=datas[0].trecho;
+    r.faltou.push({campo:'dout', o:'data de devolução',
+      porque:'só uma data foi encontrada e o cliente não disse quantos dias'});
+  } else if(dias){
+    r.avisos.push('O cliente falou em '+dias.n+' diária(s) mas não deu a data de retirada.');
+    r.faltou.push({campo:'din', o:'data de retirada', porque:'nenhuma data no texto'});
+    r.faltou.push({campo:'dout', o:'data de devolução', porque:'depende da retirada'});
+  } else {
+    r.faltou.push({campo:'din', o:'data de retirada', porque:'nenhuma data no texto'});
+    r.faltou.push({campo:'dout', o:'data de devolução', porque:'nenhuma data no texto'});
+  }
+
+  var pes=acharPessoas(txt);
+  if(pes){
+    r.achou.pessoas=pes.total; r.provas.pessoas=pes.trecho;
+    if(pes.adultos!=null) r.achou.adultos=pes.adultos;
+    if(pes.criancas!=null){
+      r.achou.criancas=pes.criancas;
+      r.avisos.push('Tem '+pes.criancas+' criança(s): pergunte a idade — cadeirinha é exigida por lei na Flórida.');
+    }
+  } else {
+    r.faltou.push({campo:'pessoas', o:'quantas pessoas',
+      porque:'sem isso não dá para recomendar a categoria com segurança'});
+  }
+
+  var cat=acharCategoria(txt);
+  if(cat){ r.achou.cat=cat.nome; r.provas.cat=cat.trecho; r.achou.catPedida=true; }
+  else{
+    var rec=recomendarPorPessoas(pes?pes.total:null);
+    if(rec){ r.achou.cat=rec.nome; r.provas.cat='recomendação: '+rec.motivo; r.achou.catPedida=false; }
+    else r.faltou.push({campo:'cat', o:'categoria do carro',
+      porque:'o cliente não disse e não há número de pessoas para recomendar'});
+  }
+
+  var locs=acharLocais(txt);
+  if(locs.length>=2){
+    r.achou.locRet=locs[0].cod; r.provas.locRet=locs[0].trecho;
+    r.achou.locDev=locs[1].cod; r.provas.locDev=locs[1].trecho;
+  } else if(locs.length===1){
+    r.achou.locRet=locs[0].cod; r.provas.locRet=locs[0].trecho;
+    r.achou.locDev=locs[0].cod; r.provas.locDev='mesmo local (não foi dito outro)';
+  } else {
+    r.achou.locRet='MCO'; r.achou.locDev='MCO';
+    r.provas.locRet='padrão: aeroporto de Orlando';
+    r.provas.locDev='padrão: aeroporto de Orlando';
+    r.avisos.push('Nenhum local no texto — assumi MCO (Orlando) nos dois. Confirme antes de enviar.');
+  }
+
+  var tel=acharTelefone(txt); if(tel){ r.achou.tel=tel; r.provas.tel=tel; }
+  var nome=acharNome(txt);    if(nome){ r.achou.nome=nome; r.provas.nome=nome; }
+
+  return r;
+}
+
+raiz.MGW_LEITOR={ ler:ler, acharDatas:acharDatas, acharPessoas:acharPessoas,
+  acharCategoria:acharCategoria, acharLocais:acharLocais, recomendarPorPessoas:recomendarPorPessoas,
+  anoProvavel:anoProvavel };
+
+})(typeof module!=='undefined'&&module.exports?module.exports:(typeof window!=='undefined'?window:this));
+
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   PREÇO — a mesma conta do app principal, número por número
+   ───────────────────────────────────────────────────────────────────
+   Os valores abaixo foram copiados do gs_cfg_v1 do app. Se lá mudar,
+   aqui tem de mudar junto: duas tabelas de preço divergentes é o
+   defeito mais caro que este arquivo pode ter, porque a cotação sai
+   certa na tela e errada no contrato.
+
+   A conta, na ordem em que o app faz:
+     diárias  = dias de alta × preço alta + dias de baixa × preço baixa
+     base     = diárias + retirada + devolução + extras + pedágio×dias
+     subtotal = base ÷ (1 − juros de 10x)   ← o 10x já vem embutido
+     total    = subtotal − desconto
+   ═══════════════════════════════════════════════════════════════════ */
+(function(raiz){
+'use strict';
+
+var CFG={
+  cambio:5.2,
+  pedagioOrlando:5,      /* por diária, quando retirada E devolução são em Orlando */
+  pedagioOutros:6,       /* por diária, qualquer outra combinação */
+  juros10x:0.0988,       /* o app embute o parcelamento em 10x no valor de tabela */
+  temporada:{ iniMes:12, iniDia:15, fimMes:1, fimDia:15 },
+  /* ⚠ ATENÇÃO — A ALTA TEMPORADA DA MINIVAN ESTÁ EM DISPUTA NO APP PRINCIPAL
+     Em 23/09/2026 encontrei TRÊS valores diferentes para a mesma diária:
+        $129  — o padrão embutido no index.html (linha ~20121). É ESTE que
+                a conta do app principal usa de verdade.
+        $159  — a configuração plantada na instalação, e o rótulo que o
+                seletor de categoria MOSTRA na tela.
+        $149  — a foto da tabela de preços enviada pelo Luciano em agosto.
+     Ou seja: o app principal exibe 159 e cobra 129.
+     Aqui ficou 129, para os dois apps darem o MESMO total enquanto a
+     dúvida não é resolvida — uma cotação divergente entre as duas telas
+     seria pior que o valor errado, porque ninguém perceberia.
+     A tabela é editável na própria tela e fica salva neste navegador. */
+  cats:[
+    {nome:'Sedan',       baixa:65,  alta:89,  lugares:4},
+    {nome:'SUV',         baixa:69,  alta:99,  lugares:4},
+    {nome:'Minivan 7L',  baixa:79,  alta:129, lugares:6, disputa:true},
+    {nome:'Minivan 8L',  baixa:79,  alta:129, lugares:7, disputa:true},
+    {nome:'Mustang',     baixa:199, alta:199, lugares:2},
+    {nome:'Van 12L',     baixa:129, alta:199, lugares:11},
+    {nome:'SUV Premium', baixa:199, alta:199, lugares:5},
+    {nome:'MINIVAN 15L', baixa:140, alta:140, lugares:14}
+  ],
+  locs:[
+    {cod:'BASE', nome:'Base Magiway',          taxa:0,   orlando:true},
+    {cod:'MCO',  nome:'MCO Orlando',           taxa:0,   orlando:true},
+    {cod:'MIA',  nome:'Miami (MIA)',           taxa:100, orlando:false},
+    {cod:'FLL',  nome:'Fort Lauderdale (FLL)', taxa:100, orlando:false},
+    {cod:'TPA',  nome:'Tampa (TPA)',           taxa:100, orlando:false},
+    {cod:'SFB',  nome:'Sanford (SFB)',         taxa:100, orlando:false},
+    {cod:'HTLO', nome:'Endereço em Orlando',   taxa:50,  orlando:true},
+    {cod:'HTLM', nome:'Endereço em Miami',     taxa:150, orlando:false}
+  ],
+  extras:[
+    {id:'cad', nome:'Cadeirinha infantil', taxa:30},
+    {id:'con', nome:'Condutor adicional',  taxa:30},
+    {id:'tan', nome:'Tanque de combustível', taxa:80},
+    {id:'car', nome:'Carrinho de bebê',    taxa:120}
+  ]
+};
+
+function cat(nome){ return CFG.cats.find(function(c){ return c.nome===nome; })||null; }
+function loc(cod){  return CFG.locs.find(function(l){ return l.cod===cod;  })||CFG.locs[1]; }
+
+/* Alta temporada: 15/12 a 15/01, virando o ano. */
+function ehAlta(isoDia){
+  if(!isoDia) return false;
+  var p=isoDia.split('-'), m=+p[1], d=+p[2];
+  var md=m*100+d, ini=CFG.temporada.iniMes*100+CFG.temporada.iniDia,
+      fim=CFG.temporada.fimMes*100+CFG.temporada.fimDia;
+  return (ini<=fim) ? (md>=ini&&md<=fim) : (md>=ini||md<=fim);
+}
+
+function diasEntre(din,dout){
+  if(!din||!dout) return 0;
+  var a=new Date(din+'T10:00:00'), b=new Date(dout+'T10:00:00');
+  var n=(b-a)/86400000;
+  return n>0?Math.ceil(n):0;
+}
+
+/* Conta quantas diárias caem em alta e quantas em baixa — o preço de
+   uma viagem que atravessa o Natal não é nem um nem outro. */
+function mixTemporada(din, dias){
+  var alta=0, baixa=0, p=(din||'').split('-');
+  if(!din){ return {alta:0, baixa:dias}; }
+  var d=new Date(+p[0], +p[1]-1, +p[2], 12);
+  for(var i=0;i<dias;i++){
+    var x=new Date(d); x.setDate(x.getDate()+i);
+    var s=x.getFullYear()+'-'+('0'+(x.getMonth()+1)).slice(-2)+'-'+('0'+x.getDate()).slice(-2);
+    if(ehAlta(s)) alta++; else baixa++;
+  }
+  return {alta:alta, baixa:baixa};
+}
+
+function calcular(o){
+  var c=cat(o.cat);
+  var dias=diasEntre(o.din,o.dout);
+  if(!c||dias<1) return {ok:false, motivo:!c?'categoria não reconhecida':'datas inválidas ou período de zero dia'};
+
+  var mix=mixTemporada(o.din, dias);
+  var diarias=mix.alta*c.alta + mix.baixa*c.baixa;
+
+  var lr=loc(o.locRet||'MCO'), ld=loc(o.locDev||'MCO');
+  var taxaLocais=lr.taxa+ld.taxa;
+
+  var emOrlando=lr.orlando&&ld.orlando;
+  var pedDia=emOrlando?CFG.pedagioOrlando:CFG.pedagioOutros;
+  var pedagio=pedDia*dias;
+
+  var extras=0, listaExtras=[];
+  (o.extras||[]).forEach(function(id){
+    var e=CFG.extras.find(function(x){ return x.id===id; });
+    if(e){ extras+=e.taxa; listaExtras.push(e); }
+  });
+
+  var base=diarias+taxaLocais+extras+pedagio;
+  var subtotal=base/(1-CFG.juros10x);           /* 10x já embutido */
+  var desconto=Math.max(0, Math.min(+o.desconto||0, subtotal));
+  var total=subtotal-desconto;
+
+  return {
+    ok:true, dias:dias, mix:mix, cat:c,
+    diarias:diarias, precoAlta:c.alta, precoBaixa:c.baixa,
+    locRet:lr, locDev:ld, taxaLocais:taxaLocais,
+    pedDia:pedDia, pedagio:pedagio, emOrlando:emOrlando,
+    extras:extras, listaExtras:listaExtras,
+    base:base, subtotal:subtotal, desconto:desconto, total:total,
+    diariaMedia: dias>0?(total/dias):0,
+    totalBRL: total*CFG.cambio,
+    parcela10x: total/10,
+    cambio:CFG.cambio
+  };
+}
+
+/* ── a tabela é editável e fica guardada neste navegador ────────────
+   Preço é do dono do negócio, não do programa. Enquanto os três valores
+   não forem reconciliados, quem decide qual vale é quem está vendendo —
+   e a decisão precisa sobreviver ao fechar a aba. */
+var CHAVE='mgw_agente_precos_v1';
+function carregarPrecos(){
+  try{
+    var g=JSON.parse(localStorage.getItem(CHAVE)||'null');
+    if(g&&g.cats) CFG.cats.forEach(function(c){
+      var s=g.cats[c.nome];
+      if(s){ if(s.baixa>0)c.baixa=s.baixa; if(s.alta>0)c.alta=s.alta; }
+    });
+    if(g&&g.cambio>0) CFG.cambio=g.cambio;
+  }catch(e){}
+}
+function salvarPrecos(){
+  try{
+    var m={};
+    CFG.cats.forEach(function(c){ m[c.nome]={baixa:c.baixa, alta:c.alta}; });
+    localStorage.setItem(CHAVE, JSON.stringify({cats:m, cambio:CFG.cambio}));
+  }catch(e){}
+}
+function definir(nome, campo, valor){
+  var c=cat(nome); if(!c) return false;
+  var v=parseFloat(valor);
+  if(!(v>0)) return false;
+  c[campo]=v; salvarPrecos(); return true;
+}
+function definirCambio(v){
+  v=parseFloat(v); if(!(v>0&&v<100)) return false;
+  CFG.cambio=v; salvarPrecos(); return true;
+}
+carregarPrecos();
+
+raiz.MGW_PRECO={ calcular:calcular, CFG:CFG, ehAlta:ehAlta, diasEntre:diasEntre,
+  mixTemporada:mixTemporada, cat:cat, loc:loc,
+  definir:definir, definirCambio:definirCambio, salvarPrecos:salvarPrecos };
+})(typeof module!=='undefined'&&module.exports?module.exports:(typeof window!=='undefined'?window:this));
+
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   A TELA — liga o leitor ao motor de preço
+   ───────────────────────────────────────────────────────────────────
+   Estado único: EST guarda o que o leitor achou e o que o vendedor
+   ajustou por cima. Os ajustes SEMPRE vencem a leitura — quem está
+   olhando o cliente sabe mais que o texto.
+   ═══════════════════════════════════════════════════════════════════ */
+'use strict';
+var L=window.MGW_LEITOR, P=window.MGW_PRECO;
+var EST=null;
+var VERSAO='1.0';
+
+var EXEMPLOS=[
+ 'Oi, boa tarde! Queria uma cotação de uma minivan de 10 a 20 de dezembro, somos 5 adultos e 2 crianças, retirada no aeroporto de Orlando',
+ 'Bom dia, meu nome é Ricardo. Vamos em 6 pessoas, do dia 3 ao dia 14 de julho, pegando em Miami e devolvendo em Orlando. Meu whats é 11 98888-7777',
+ 'oi quero alugar por 10 dias a partir de 15/03, somos 4',
+ 'Oi! Vocês alugam carro em Orlando? Quanto custa?'
+];
+function exemplo(i){ document.getElementById('txt').value=EXEMPLOS[i]; rodar(); }
+function limpar(){ document.getElementById('txt').value='';
+  ['cx-ajustes','cx-cot','cx-msg'].forEach(function(id){ document.getElementById(id).style.display='none'; });
+  document.getElementById('entendi').innerHTML='<div class="vazio">Cole a mensagem acima e clique em <b>Ler e montar</b>.</div>';
+  EST=null; document.getElementById('txt').focus();
+}
+function esc(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtBR(iso){ if(!iso) return '—'; var p=iso.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+function fU(v){ return 'US$ '+(+v||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fR(v){ return 'R$ '+(+v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+/* ── preenche os seletores uma vez ── */
+(function montarSeletores(){
+  var c=document.getElementById('aj-cat');
+  c.innerHTML='<option value="">—</option>'+P.CFG.cats.map(function(x){
+    return '<option value="'+esc(x.nome)+'">'+esc(x.nome)+' · $'+x.baixa+'/dia (baixa)</option>'; }).join('');
+  ['aj-lr','aj-ld'].forEach(function(id){
+    document.getElementById(id).innerHTML=P.CFG.locs.map(function(l){
+      return '<option value="'+l.cod+'">'+esc(l.nome)+(l.taxa?(' — $'+l.taxa):' — grátis')+'</option>'; }).join('');
+  });
+  document.getElementById('aj-extras').innerHTML=P.CFG.extras.map(function(e){
+    return '<div class="ex" data-id="'+e.id+'" onclick="togExtra(this)">'+esc(e.nome)+' · $'+e.taxa+'</div>'; }).join('');
+  document.getElementById('rod-versao').textContent='v'+VERSAO;
+  document.getElementById('rodape').innerHTML=
+    'Preços conferidos contra o app principal · câmbio R$ '+P.CFG.cambio.toFixed(2)
+    +' · pedágio $'+P.CFG.pedagioOrlando+'/dia em Orlando, $'+P.CFG.pedagioOutros+'/dia fora'
+    +'<br>alta temporada: 15/12 a 15/01 · parcelamento em 10x já embutido no valor';
+})();
+function togExtra(el){ el.classList.toggle('on'); recalc(); }
+function extrasAtivos(){
+  return Array.prototype.slice.call(document.querySelectorAll('#aj-extras .ex.on'))
+    .map(function(e){ return e.getAttribute('data-id'); });
+}
+
+/* ── 1. ler ── */
+function rodar(){
+  var t=document.getElementById('txt').value;
+  if(!t.trim()){ limpar(); return; }
+  EST=L.ler(t);
+  var a=EST.achou;
+  document.getElementById('aj-din').value=a.din||'';
+  document.getElementById('aj-dout').value=a.dout||'';
+  document.getElementById('aj-cat').value=a.cat||'';
+  document.getElementById('aj-pax').value=a.pessoas||'';
+  document.getElementById('aj-lr').value=a.locRet||'MCO';
+  document.getElementById('aj-ld').value=a.locDev||'MCO';
+  document.getElementById('aj-nome').value=a.nome||'';
+  /* criança no texto liga a cadeirinha sozinha — é exigência legal na
+     Flórida, e esquecer disso é problema no balcão, não na proposta */
+  if(a.criancas>0){
+    var cad=document.querySelector('#aj-extras .ex[data-id="cad"]');
+    if(cad) cad.classList.add('on');
+  }
+  document.getElementById('cx-ajustes').style.display='';
+  var l=document.getElementById('lido'); l.classList.add('on'); setTimeout(function(){ l.classList.remove('on'); },1400);
+  desenharEntendi();
+  recalc();
+}
+
+/* ── 2. mostrar o que entendeu, com a prova ── */
+function desenharEntendi(){
+  var a=EST.achou, pv=EST.provas, H=[];
+  function linha(rot, val, prova){
+    if(val==null||val==='') return;
+    H.push('<div class="campo"><div class="campo-n">'+rot+'</div><div class="campo-v">'
+      +'<b>'+val+'</b>'+(prova?('<div class="prova">no texto: <em>“'+esc(prova)+'”</em></div>'):'')
+      +'</div></div>');
+  }
+  if(a.nome) linha('Cliente', esc(a.nome), pv.nome);
+  if(a.tel)  linha('Telefone', esc(a.tel), pv.tel);
+  if(a.din)  linha('Retirada', fmtBR(a.din), pv.din);
+  if(a.dout) linha('Devolução', fmtBR(a.dout), pv.dout);
+  if(a.din&&a.dout){
+    var d=P.diasEntre(a.din,a.dout);
+    var mx=P.mixTemporada(a.din,d);
+    linha('Período', d+' diária(s)',
+      mx.alta>0?(mx.alta+' em alta temporada e '+mx.baixa+' em baixa'):'todas em baixa temporada');
+  }
+  if(a.pessoas!=null){
+    var det=[];
+    if(a.adultos!=null) det.push(a.adultos+' adulto(s)');
+    if(a.criancas!=null) det.push(a.criancas+' criança(s)');
+    linha('Pessoas', a.pessoas+(det.length?(' — '+det.join(' e ')):''), pv.pessoas);
+  }
+  if(a.cat){
+    var marca=a.catPedida?'':'<span class="chip-rec">recomendação minha</span>';
+    H.push('<div class="campo"><div class="campo-n">Categoria</div><div class="campo-v">'
+      +'<b>'+esc(a.cat)+'</b>'+marca
+      +'<div class="prova">'+(a.catPedida?('no texto: <em>“'+esc(pv.cat)+'”</em>')
+        :('o cliente não pediu categoria — '+esc(pv.cat)))+'</div></div></div>');
+  }
+  if(a.locRet) linha('Retira em', esc(P.loc(a.locRet).nome), pv.locRet);
+  if(a.locDev) linha('Devolve em', esc(P.loc(a.locDev).nome), pv.locDev);
+
+  (EST.faltou||[]).forEach(function(f){
+    H.push('<div class="falta"><div class="falta-t">Não achei: '+esc(f.o)+'</div>'
+      +'<div class="falta-p">'+esc(f.porque)+' — preencha no passo 3 ou pergunte ao cliente.</div></div>');
+  });
+  (EST.avisos||[]).forEach(function(av){
+    H.push('<div class="aviso">'+esc(av)+'</div>');
+  });
+  document.getElementById('entendi').innerHTML=H.join('')||'<div class="vazio">Não consegui extrair nada dessa mensagem.</div>';
+}
+
+/* ── 3. calcular ── */
+function recalc(){
+  var o={
+    din:document.getElementById('aj-din').value,
+    dout:document.getElementById('aj-dout').value,
+    cat:document.getElementById('aj-cat').value,
+    locRet:document.getElementById('aj-lr').value,
+    locDev:document.getElementById('aj-ld').value,
+    desconto:+document.getElementById('aj-desc').value||0,
+    extras:extrasAtivos()
+  };
+  var r=P.calcular(o);
+  var cxC=document.getElementById('cx-cot'), cxM=document.getElementById('cx-msg');
+  if(!r.ok){
+    cxC.style.display=''; cxM.style.display='none';
+    document.getElementById('cot').innerHTML='<div class="vazio">Ainda não dá para calcular:<br><b>'
+      +esc(r.motivo)+'</b><br><br>Complete o passo 3.</div>';
+    return;
+  }
+  cxC.style.display=''; cxM.style.display='';
+  var H=[];
+  H.push('<div class="tot"><div class="tot-lbl">Total para o cliente</div>'
+    +'<div class="tot-brl">'+fR(r.totalBRL)+'</div>'
+    +'<div class="tot-usd">'+fU(r.total)+' · câmbio R$ '+r.cambio.toFixed(2)+'</div>'
+    +'<div class="tot-parc">ou <b>10x de '+fR(r.parcela10x*r.cambio)+'</b> sem juros</div></div>');
+
+  H.push('<div class="lin"><span>'+r.dias+' diárias de '+esc(r.cat.nome)
+    +(r.mix.alta>0?(' <small style="color:var(--gold)">('+r.mix.alta+' em alta × $'+r.precoAlta
+      +' + '+r.mix.baixa+' em baixa × $'+r.precoBaixa+')</small>'):(' × $'+r.precoBaixa+'/dia'))
+    +'</span><b>'+fU(r.diarias)+'</b></div>');
+  if(r.locRet.taxa) H.push('<div class="lin"><span>Retirada em '+esc(r.locRet.nome)+'</span><b>'+fU(r.locRet.taxa)+'</b></div>');
+  if(r.locDev.taxa) H.push('<div class="lin"><span>Devolução em '+esc(r.locDev.nome)+'</span><b>'+fU(r.locDev.taxa)+'</b></div>');
+  r.listaExtras.forEach(function(e){ H.push('<div class="lin"><span>'+esc(e.nome)+'</span><b>'+fU(e.taxa)+'</b></div>'); });
+  H.push('<div class="lin"><span>Pedágio · $'+r.pedDia+'/dia'
+    +(r.emOrlando?' (tudo em Orlando)':' (fora de Orlando)')+'</span><b>'+fU(r.pedagio)+'</b></div>');
+  H.push('<div class="lin"><span>Parcelamento em 10x embutido</span><b>'+fU(r.subtotal-r.base)+'</b></div>');
+  if(r.desconto>0) H.push('<div class="lin"><span style="color:var(--green)">Desconto</span><b style="color:var(--green)">− '+fU(r.desconto)+'</b></div>');
+  H.push('<div class="lin somatorio"><span>Total</span><b>'+fU(r.total)+'</b></div>');
+  H.push('<div class="mini">Diária média de <b>'+fU(r.diariaMedia)+'</b>. '
+    +'Seguro total, zero caução e suporte em português já estão dentro — não são extras.</div>');
+  document.getElementById('cot').innerHTML=H.join('');
+  document.getElementById('msg').textContent=montarMensagem(r);
+}
+
+/* ── 4. a mensagem, na ordem do método ──────────────────────────────
+   Inclusos ANTES do preço. Quando o número aparece primeiro, ninguém
+   lê a lista — a atenção vai direto ao valor e a lista vira defesa.
+   É o passo 4 do método, e é a única razão de a ordem ser esta. */
+function montarMensagem(r){
+  var nome=(document.getElementById('aj-nome').value||'').trim();
+  var pax=+document.getElementById('aj-pax').value||0;
+  var L=[];
+  L.push(nome?('Oi, '+nome+'! 😊'):'Oi! 😊');
+  L.push('');
+  L.push('Montei a proposta de vocês 👇');
+  L.push('');
+  L.push('🚗 ' + r.cat.nome + (pax?(' — cabe bem para '+pax+' pessoa(s) com bagagem'):''));
+  L.push('📅 ' + r.dias + ' diárias · ' + fmtBR(document.getElementById('aj-din').value)
+        + ' a ' + fmtBR(document.getElementById('aj-dout').value));
+  L.push('📍 Retirada: ' + r.locRet.nome);
+  if(r.locDev.cod!==r.locRet.cod) L.push('📍 Devolução: ' + r.locDev.nome);
+  L.push('');
+  L.push('Já está tudo dentro:');
+  L.push('✅ Seguro total');
+  L.push('✅ Zero caução — nada bloqueado no seu cartão');
+  L.push('✅ Pedágio incluso');
+  L.push('✅ Taxas de aeroporto e impostos');
+  L.push('✅ Suporte em português comigo, do começo ao fim');
+  r.listaExtras.forEach(function(e){ L.push('✅ '+e.nome); });
+  L.push('');
+  L.push('💰 ' + fR(r.totalBRL));
+  L.push('ou 10x de ' + fR(r.parcela10x*r.cambio) + ' sem juros');
+  L.push('');
+  L.push('Qualquer dúvida é só me chamar aqui — quero que vocês viajem tranquilos. 🙂');
+  return L.join('\n');
+}
+
+function copiar(){
+  var t=document.getElementById('msg').textContent;
+  var ok=document.getElementById('copiado');
+  function feito(){ ok.classList.add('on'); setTimeout(function(){ ok.classList.remove('on'); },1600); }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(feito,paraTras);
+  } else paraTras();
+  function paraTras(){
+    /* clipboard API não funciona em file:// em alguns navegadores;
+       o caminho antigo funciona em todos */
+    var ta=document.createElement('textarea'); ta.value=t;
+    ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); feito(); }catch(e){ alert('Copie manualmente:\n\n'+t); }
+    document.body.removeChild(ta);
+  }
+}
+function abrirWhats(){
+  var t=document.getElementById('msg').textContent;
+  var tel=(EST&&EST.achou.tel)?EST.achou.tel.replace(/\D/g,''):'';
+  var url='https://wa.me/'+(tel?('55'+tel.replace(/^55/,'')):'')+'?text='+encodeURIComponent(t);
+  window.open(url,'_blank');
+}
+
+/* ── a tabela de preços, à vista e editável ────────────────────────
+   Fica num bloco fechado porque não é o trabalho do dia a dia. Mas fica
+   NO APP, e não escondida num arquivo: quando três fontes discordam do
+   preço, esconder a tabela é como o defeito sobrevive. */
+function desenharPrecos(){
+  var H=['<table class="tp"><thead><tr><th>Categoria</th><th>Lugares</th>'
+    +'<th>Baixa temporada</th><th>Alta temporada</th></tr></thead><tbody>'];
+  P.CFG.cats.forEach(function(c){
+    H.push('<tr'+(c.disputa?' class="emdisputa"':'')+'>'
+      +'<td><b>'+esc(c.nome)+'</b>'+(c.disputa?' <span style="color:var(--gold)">⚠</span>':'')+'</td>'
+      +'<td class="lug">até '+c.lugares+'</td>'
+      +'<td>$ <input type="number" min="1" step="1" value="'+c.baixa+'" '
+        +'onchange="mudarPreco(\''+esc(c.nome)+'\',\'baixa\',this.value)"></td>'
+      +'<td>$ <input type="number" min="1" step="1" value="'+c.alta+'" '
+        +'onchange="mudarPreco(\''+esc(c.nome)+'\',\'alta\',this.value)"></td></tr>');
+  });
+  H.push('</tbody></table>');
+  document.getElementById('tabela-precos').innerHTML=H.join('');
+  document.getElementById('aj-cambio').value=P.CFG.cambio;
+
+  document.getElementById('aviso-disputa').innerHTML=
+    '<div class="disputa"><b>⚠ A alta temporada da Minivan está em disputa.</b><br>'
+    +'Em 23/09/2026 apareceram três valores diferentes para a mesma diária:'
+    +'<table><tr><td>Padrão embutido no app principal — <b>é o que a conta usa</b></td><td>$129</td></tr>'
+    +'<tr><td>Configuração da instalação, e o rótulo que o seletor <b>mostra</b></td><td>$159</td></tr>'
+    +'<tr><td>A foto da tabela de preços de agosto</td><td>$149</td></tr></table>'
+    +'O app principal <b>mostra $159 e cobra $129</b>. Aqui ficou <b>$129</b>, para os dois darem o mesmo '
+    +'total enquanto a dúvida não é resolvida — duas telas com preços diferentes seria pior, porque '
+    +'ninguém perceberia. <b>Corrija aqui assim que souber qual é o certo.</b></div>';
+}
+function mudarPreco(nome,campo,v){
+  if(P.definir(nome,campo,v)){ avisarSalvo(); recalc(); }
+  else desenharPrecos();
+}
+function mudarCambio(v){
+  if(P.definirCambio(v)){ avisarSalvo(); recalc(); desenharRodape(); }
+  else document.getElementById('aj-cambio').value=P.CFG.cambio;
+}
+function avisarSalvo(){
+  var s=document.getElementById('salvo');
+  s.classList.add('on'); setTimeout(function(){ s.classList.remove('on'); },1500);
+}
+function desenharRodape(){
+  document.getElementById('rodape').innerHTML=
+    'Preços conferidos contra o app principal · câmbio R$ '+P.CFG.cambio.toFixed(2)
+    +' · pedágio $'+P.CFG.pedagioOrlando+'/dia em Orlando, $'+P.CFG.pedagioOutros+'/dia fora'
+    +'<br>alta temporada: 15/12 a 15/01 · parcelamento em 10x já embutido no valor';
+}
+desenharPrecos(); desenharRodape();
+
+/* lê enquanto digita, com uma pausa para não recalcular a cada tecla */
+(function(){
+  var t=null;
+  document.getElementById('txt').addEventListener('input',function(){
+    clearTimeout(t); t=setTimeout(function(){
+      if(document.getElementById('txt').value.trim().length>14) rodar();
+    }, 650);
+  });
+  document.getElementById('txt').focus();
+})();
+</script>
+</body>
+</html>
