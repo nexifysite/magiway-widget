@@ -1,0 +1,18 @@
+{
+  "_leia": "Copie este arquivo como config.json e preencha. config.json NAO entra no Git -- confira o .gitignore do projeto. Nao mande este arquivo preenchido para ninguem, inclusive para mim.",
+
+  "subdominio": "magiway",
+  "_subdominio": "Se o seu Kommo abre em magiway.kommo.com, aqui vai apenas: magiway",
+
+  "token": "COLE_AQUI_O_TOKEN_DE_LONGA_DURACAO",
+  "_token": "Kommo: Configuracoes > Integracoes > criar integracao > token de longa duracao. Esse token da acesso a TODA a base de clientes: quem tiver ele le, altera e apaga tudo.",
+
+  "rps": 6,
+  "_rps": "Requisicoes por segundo. O Kommo permite 7 e BLOQUEIA A CONTA se o excesso se repetir. Nao aumente.",
+
+  "maxPaginas": 10,
+  "_maxPaginas": "Cada pagina traz 250 registros. 10 paginas = 2.500. Aumente so se precisar.",
+
+  "tiposDeMensagem": [],
+  "_tiposDeMensagem": "Deixe vazio e rode MGW_KOMMO.criar(cfg).descobrirTiposDeNota() -- ele le a sua conta e diz quais tipos existem de verdade. Depois cole aqui os que tem texto de conversa."
+}

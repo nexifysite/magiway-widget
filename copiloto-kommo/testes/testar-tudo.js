@@ -5,11 +5,14 @@
 var cp=require('child_process'), path=require('path');
 
 var ARQUIVOS=[
-  ['ciclo',          'testar-ciclo.js'],
-  ['reconhecimento', 'testar-reconhecimento.js'],
-  ['bibliografia',   'testar-bibliografia.js'],
+  ['ciclo',           'testar-ciclo.js'],
+  ['reconhecimento',  'testar-reconhecimento.js'],
+  ['bibliografia',    'testar-bibliografia.js'],
   ['chance de fechar','testar-chance.js'],
-  ['quando retomar', 'testar-quando.js']
+  ['quando retomar',  'testar-quando.js'],
+  ['painel de gestão','testar-painel.js'],
+  ['venda e mídia',   'testar-venda.js'],
+  ['conexão Kommo',   'testar-kommo.js']
 ];
 
 var largura=62;
@@ -54,4 +57,5 @@ if(totalErro||quebrou.length){
   console.log('  Não publique assim. Corrija e rode de novo.\n');
   process.exit(1);
 }
-console.log('  Tudo de pé. Nenhuma chamada de rede foi feita.\n');
+console.log('  Tudo de pé — e nenhuma chamada de rede foi feita: o cliente do');
+console.log('  Kommo foi testado com um fetch falso e relógio injetado.\n');
