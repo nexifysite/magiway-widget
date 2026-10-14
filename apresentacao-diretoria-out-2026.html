@@ -104,7 +104,7 @@ b,strong{font-weight:800}
 .hit{fill:transparent;cursor:crosshair}
 
 /* funnel matrix */
-.fm{display:grid;grid-template-columns:minmax(110px,1.3fr) repeat(4,minmax(0,1fr));gap:6px 10px;align-items:center;min-width:640px}
+.fm{display:grid;grid-template-columns:minmax(110px,1.3fr) repeat(3,minmax(0,1fr));gap:6px 10px;align-items:center;min-width:640px}
 .fm .h{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg3);padding-bottom:4px}
 .fm .h.now{color:var(--coral)}
 .fm .rl{font-size:14px;font-weight:700;color:var(--fg)}
@@ -206,7 +206,7 @@ table.kt th.n{text-align:right}
   .cover{min-height:0;padding-top:90px;gap:30px}
   .cover h1{font-size:108px}
   .cover .sub{font-size:23px}
-  .fm{grid-template-columns:270px repeat(4,1fr);gap:9px 14px}
+  .fm{grid-template-columns:300px repeat(3,1fr);gap:9px 14px}
   .fm .rl{font-size:17px}
   .fm .rl small{font-size:13px}
   .fm .cell{padding:10px 14px}
@@ -260,11 +260,11 @@ table.kt th.n{text-align:right}
   <p class="eyebrow rv">Apresentação à diretoria · 14 de outubro de 2026</p>
   <div class="logo rv" role="img" aria-label="Magiway Rental Car"></div>
   <h1 class="rv">Do sufoco aos<br><em>R$ 500 mil</em></h1>
-  <p class="sub rv">Análise comparativa do setor comercial de julho a outubro: leads, vendas, faturamento, tráfego pago, a sobrecarga da equipe e o plano para bater a meta.</p>
+  <p class="sub rv">Análise comparativa do setor comercial por ciclo (dia 13 ao dia 12), de agosto a outubro: leads, vendas, faturamento, tráfego pago, a sobrecarga da equipe e o plano para bater a meta.</p>
   <div class="ticker rv" aria-label="Destaques">
     <div class="tr">
-      <span>OUT 01→13 <b class="c">R$ 160.027</b></span><span>VENDAS <b>36</b></span><span>LEADS/DIA <b>146</b></span><span>ATENDIDOS <b class="r">58%</b></span><span>MÍDIA/DIA <b class="r">R$ 2.369</b></span><span>CLIENTE IDEAL <b class="r">5,9%</b></span><span>PROJEÇÃO OUT <b class="c">R$ 382 MIL</b></span><span>META <b>R$ 500 MIL</b></span>
-      <span>OUT 01→13 <b class="c">R$ 160.027</b></span><span>VENDAS <b>36</b></span><span>LEADS/DIA <b>146</b></span><span>ATENDIDOS <b class="r">58%</b></span><span>MÍDIA/DIA <b class="r">R$ 2.369</b></span><span>CLIENTE IDEAL <b class="r">5,9%</b></span><span>PROJEÇÃO OUT <b class="c">R$ 382 MIL</b></span><span>META <b>R$ 500 MIL</b></span>
+      <span>CICLO OUT 13/09→12/10 <b class="c">R$ 383.040</b></span><span>VENDAS <b>80</b></span><span>LEADS/DIA <b>122</b></span><span>ATENDIDOS <b class="r">71%</b></span><span>MÍDIA/DIA <b class="r">R$ 2.111</b></span><span>CLIENTE IDEAL <b class="r">9,3%</b></span><span>PROJEÇÃO CICLO NOV <b class="c">R$ 396 MIL</b></span><span>META <b>R$ 500 MIL</b></span>
+      <span>CICLO OUT 13/09→12/10 <b class="c">R$ 383.040</b></span><span>VENDAS <b>80</b></span><span>LEADS/DIA <b>122</b></span><span>ATENDIDOS <b class="r">71%</b></span><span>MÍDIA/DIA <b class="r">R$ 2.111</b></span><span>CLIENTE IDEAL <b class="r">9,3%</b></span><span>PROJEÇÃO CICLO NOV <b class="c">R$ 396 MIL</b></span><span>META <b>R$ 500 MIL</b></span>
     </div>
   </div>
   <p class="hint rv">Use ← → ou espaço para navegar · F para tela cheia</p>
@@ -274,75 +274,75 @@ table.kt th.n{text-align:right}
 <section class="slide" id="s2" data-name="Resumo">
   <header class="sh">
     <p class="eyebrow rv">Resumo executivo</p>
-    <h2 class="rv">Outubro em <em>seis números</em></h2>
+    <h2 class="rv">O ciclo de outubro em <em>seis números</em></h2>
   </header>
   <div class="sb">
     <div class="g g6">
-      <div class="card kpi ok rv"><span class="cap">Faturamento 01→13/10</span><span class="v" data-count="160027" data-fmt="brl">R$ 160.027</span><span class="d"><span class="tag good">+58%</span> sobre 01→13/09 (R$ 101.024)</span><div class="bar"><i style="width:100%"></i></div></div>
-      <div class="card kpi ok rv"><span class="cap">Projeção realista do mês</span><span class="v" data-count="381.6" data-fmt="k1" data-pre="R$ " data-suf=" mil">R$ 381,6 mil</span><span class="d">faixa de R$ 340 a 432 mil · meta R$ 500 mil</span><div class="bar"><i style="width:76%"></i></div></div>
-      <div class="card kpi alert rv"><span class="cap">Leads entrantes por dia</span><span class="v" data-count="146" data-fmt="int">146</span><span class="d"><span class="tag warn">+77%</span> sobre agosto (83/dia)</span><div class="bar"><i style="width:100%"></i></div></div>
-      <div class="card kpi alert rv"><span class="cap">Leads atendidos</span><span class="v" data-count="58" data-fmt="int" data-suf="%">58%</span><span class="d"><span class="tag bad">−22 pts</span> eram 80% em ago e set · 794 sem resposta</span><div class="bar"><i style="width:58%"></i></div></div>
-      <div class="card kpi alert rv"><span class="cap">Investimento Meta por dia</span><span class="v" data-count="2369" data-fmt="brl">R$ 2.369</span><span class="d"><span class="tag bad">+92%</span> sobre julho (R$ 1.234)</span><div class="bar"><i style="width:100%"></i></div></div>
-      <div class="card kpi alert rv"><span class="cap">Orçamentos de cliente ideal</span><span class="v" data-count="5.9" data-fmt="d1" data-suf="%">5,9%</span><span class="d"><span class="tag bad">era 29%</span> em julho</span><div class="bar"><i style="width:20%"></i></div></div>
+      <div class="card kpi ok rv"><span class="cap">Faturamento · 13/09 → 12/10</span><span class="v" data-count="383040" data-fmt="brl">R$ 383.040</span><span class="d"><span class="tag good">+26%</span> sobre o ciclo de setembro (R$ 304.973)</span><div class="bar"><i style="width:77%"></i></div></div>
+      <div class="card kpi ok rv"><span class="cap">Projeção do ciclo atual · 13/10 → 12/11</span><span class="v" data-count="395.8" data-fmt="k1" data-pre="R$ " data-suf=" mil">R$ 395,8 mil</span><span class="d">faixa de R$ 324 a 468 mil · meta R$ 500 mil</span><div class="bar"><i style="width:79%"></i></div></div>
+      <div class="card kpi alert rv"><span class="cap">Leads entrantes por dia</span><span class="v" data-count="122" data-fmt="int">122</span><span class="d"><span class="tag warn">+48%</span> sobre o ciclo de setembro (82/dia)</span><div class="bar"><i style="width:100%"></i></div></div>
+      <div class="card kpi alert rv"><span class="cap">Leads atendidos</span><span class="v" data-count="71" data-fmt="int" data-suf="%">71%</span><span class="d"><span class="tag bad">−9 pts</span> eram 80% no ciclo de setembro · 61% nas 2 últimas semanas</span><div class="bar"><i style="width:71%"></i></div></div>
+      <div class="card kpi alert rv"><span class="cap">Investimento Meta por dia</span><span class="v" data-count="2111" data-fmt="brl">R$ 2.111</span><span class="d"><span class="tag bad">+46%</span> sobre o ciclo de setembro (R$ 1.446)</span><div class="bar"><i style="width:100%"></i></div></div>
+      <div class="card kpi alert rv"><span class="cap">Orçamentos de cliente ideal</span><span class="v" data-count="9.3" data-fmt="d1" data-suf="%">9,3%</span><span class="d"><span class="tag bad">era 32%</span> no ciclo de agosto</span><div class="bar"><i style="width:29%"></i></div></div>
     </div>
     <div class="card flat rv" style="--d:700ms">
-      <p style="font-size:18px;line-height:1.5"><b class="hl-c">A equipe nunca vendeu tanto</b>: 2,8 vendas por dia, contra 1,0 em julho, com conversão de orçamento subindo de 2,7% para 3,9%. <b class="hl-r">Mas chegou ao teto.</b> O tráfego quase dobrou o volume de leads, piorou o perfil e a operação passou a deixar 4 em cada 10 leads sem resposta, com jornadas de até 14 horas.</p>
+      <p style="font-size:18px;line-height:1.5"><b class="hl-c">A equipe nunca vendeu tanto</b>: 2,7 vendas por dia no ciclo de outubro, contra 1,2 no de agosto, com a conversão do orçamento subindo de 2,6% para 3,8%. <b class="hl-r">Mas chegou ao teto.</b> A verba subiu 46% e os leads 48% em um ciclo, as vendas por dia só 25%. O perfil piorou e, nas duas últimas semanas, 4 em cada 10 leads ficaram sem resposta, com jornadas de até 14 horas.</p>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fontes: planilha financeira (faturamento) · painel comercial (leads, orçamentos) · Meta Ads (aba MKT do painel) · dados até 13/10/2026</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Ciclos do dia 13 ao dia 12 · faturamento: planilha financeira, aba Histórico · leads e orçamentos: painel comercial · Meta Ads: aba MKT do painel</span><span class="pg"></span></footer>
 </section>
 
 <!-- 03 FATURAMENTO -->
 <section class="slide" id="s3" data-name="Faturamento">
   <header class="sh">
-    <p class="eyebrow rv">Faturamento · mês a mês</p>
-    <h2 class="rv">Setembro bateu recorde. Outubro começou <span class="c">58% acima</span>.</h2>
+    <p class="eyebrow rv">Faturamento · ciclo a ciclo (13 → 12)</p>
+    <h2 class="rv">O ciclo de outubro foi o <span class="c">melhor do ano</span> e ficou a <em>R$ 117 mil</em> da meta</h2>
   </header>
   <div class="sb">
     <div class="g g2 c-b">
       <div class="card rv"><div class="chart" id="ch-fat" role="img" aria-label="Faturamento mensal de abril a outubro de 2026, com a projeção de outubro e a meta de 500 mil"></div></div>
       <div class="g" style="align-content:start">
-        <div class="card kpi rv"><span class="cap">Melhor mês do ano</span><span class="v hl-c" data-count="357436" data-fmt="brl">R$ 357.436</span><span class="d">setembro · 77 vendas · ticket R$ 4.642</span></div>
-        <div class="card kpi rv"><span class="cap">Julho → setembro</span><span class="v" data-count="126" data-fmt="int" data-pre="+" data-suf="%">+126%</span><span class="d">de R$ 158 mil para R$ 357 mil em dois meses</span></div>
-        <div class="card kpi alert rv"><span class="cap">Ciclo do plano anterior (17/09 → 12/10)</span><span class="v" data-count="355.1" data-fmt="k1" data-pre="R$ " data-suf=" mil">R$ 355,1 mil</span><span class="d"><span class="tag warn">71% da meta</span> de R$ 500 mil</span></div>
+        <div class="card kpi rv"><span class="cap">Melhor ciclo do ano · 13/09 → 12/10</span><span class="v hl-c" data-count="383040" data-fmt="brl">R$ 383.040</span><span class="d">80 vendas · ticket R$ 4.788</span></div>
+        <div class="card kpi rv"><span class="cap">Ciclo de agosto → ciclo de outubro</span><span class="v" data-count="106" data-fmt="int" data-pre="+" data-suf="%">+106%</span><span class="d">de R$ 186 mil para R$ 383 mil em dois ciclos</span></div>
+        <div class="card kpi alert rv"><span class="cap">Ciclo de outubro × meta</span><span class="v" data-count="77" data-fmt="int" data-suf="%">77%</span><span class="d"><span class="tag warn">faltaram R$ 116.960</span> para os R$ 500 mil</span></div>
       </div>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: planilha financeira (abas Histórico e Fechamentos), por data de fechamento; abril a partir de 14/04; 2 linhas duplicadas removidas (R$ 10.034)</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: planilha financeira, aba Histórico, por data de fechamento · ciclo de maio a partir de 14/04 · 2 linhas duplicadas removidas (R$ 10.034) · ciclo de novembro ainda sem lançamentos no Histórico</span><span class="pg"></span></footer>
 </section>
 
 <!-- 04 VENDAS E TICKET -->
 <section class="slide" id="s4" data-name="Vendas e ticket">
   <header class="sh">
-    <p class="eyebrow rv">Vendas, ticket e mix</p>
-    <h2 class="rv">Vendemos <span class="c">2,8× mais por dia</span>, mas cada venda vale <em>menos</em></h2>
+    <p class="eyebrow rv">Vendas, ticket e mix · por ciclo</p>
+    <h2 class="rv">Vendemos <span class="c">4,7× mais por dia</span> que no ciclo de julho, com ticket <em>21% menor</em></h2>
   </header>
   <div class="sb">
     <div class="g g3">
-      <div class="card rv"><h3>Vendas por dia</h3><p class="cap" style="margin-bottom:10px">jul → out (01–13)</p><div class="chart" id="ch-vdia" role="img" aria-label="Vendas por dia: julho 1,0; agosto 1,84; setembro 2,57; outubro 2,77"></div></div>
-      <div class="card rv"><h3>Ticket médio</h3><p class="cap" style="margin-bottom:10px">R$ por venda</p><div class="chart" id="ch-tkt" role="img" aria-label="Ticket médio: julho 5.104; agosto 5.160; setembro 4.642; outubro 4.445"></div></div>
-      <div class="card rv"><h3>Mix do faturamento</h3><p class="cap" style="margin-bottom:10px">% do R$ por categoria</p><div class="chart" id="ch-mix" role="img" aria-label="Participação de minivan, SUV e sedan no faturamento por mês"></div></div>
+      <div class="card rv"><h3>Vendas por dia</h3><p class="cap" style="margin-bottom:10px">ciclos jul → out</p><div class="chart" id="ch-vdia" role="img" aria-label="Vendas por dia por ciclo: julho 0,57; agosto 1,16; setembro 2,13; outubro 2,67"></div></div>
+      <div class="card rv"><h3>Ticket médio</h3><p class="cap" style="margin-bottom:10px">R$ por venda</p><div class="chart" id="ch-tkt" role="img" aria-label="Ticket médio por ciclo: julho 6.069; agosto 5.163; setembro 4.621; outubro 4.788"></div></div>
+      <div class="card rv"><h3>Mix do faturamento</h3><p class="cap" style="margin-bottom:10px">% do R$ por categoria</p><div class="chart" id="ch-mix" role="img" aria-label="Participação de minivan, SUV e sedan no faturamento por ciclo"></div></div>
     </div>
     <div class="g g3">
-      <div class="card flat rv"><p><b class="hl-r">Minivan saiu de 70% para 36% do faturamento.</b> É a categoria das famílias e das estadias longas, a que mais vale por reserva.</p></div>
-      <div class="card flat rv"><p><b>Diárias por reserva:</b> 14,3 em julho, 12,5 em agosto, 12,7 em setembro e 12,0 em outubro.</p></div>
-      <div class="card flat rv"><p><b class="hl-a">11 vendas de outubro (R$ 52,3 mil)</b> estão sem categoria na planilha, o que deixa o mix do mês incompleto.</p></div>
+      <div class="card flat rv"><p><b class="hl-r">Minivan saiu de 75% para 49% do faturamento.</b> É a categoria das famílias e das estadias longas, a que mais vale por reserva.</p></div>
+      <div class="card flat rv"><p><b>Diárias por reserva:</b> 16,7 no ciclo de julho, 14,6 no de agosto, 11,5 no de setembro e 13,3 no de outubro.</p></div>
+      <div class="card flat rv"><p><b class="hl-a">4 vendas de 12/10 (R$ 16,7 mil)</b> estão sem categoria no Histórico e aparecem como "sem categoria" no mix do ciclo.</p></div>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: planilha financeira · outubro até 13/10 · ticket = faturamento ÷ vendas do mês</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: planilha financeira, aba Histórico · ciclos do dia 13 ao dia 12 · ticket = faturamento ÷ vendas do ciclo</span><span class="pg"></span></footer>
 </section>
 
 <!-- 05 FUNIL -->
 <section class="slide" id="s5" data-name="Funil">
   <header class="sh">
-    <p class="eyebrow rv">Funil comparativo · média por dia</p>
-    <h2 class="rv">Cada etapa melhorou até setembro. Em outubro, <em>o atendimento quebrou</em>.</h2>
+    <p class="eyebrow rv">Funil comparativo por ciclo · média por dia</p>
+    <h2 class="rv">Cada etapa melhorou até o ciclo de setembro. No de outubro, <em>o atendimento não acompanhou</em>.</h2>
   </header>
   <div class="sb">
     <div class="fm-wrap rv"><div class="fm" id="funnel"></div></div>
-    <p class="lede rv" style="--d:600ms">Leads entrantes cresceram 50% de setembro para outubro. Os atendidos cresceram 9%. A conversão do orçamento segue no nível de setembro: o funil perde dinheiro antes do orçamento, na primeira resposta.</p>
+    <p class="lede rv" style="--d:600ms">Do ciclo de setembro para o de outubro, os leads entrantes cresceram 48% e os atendidos 31%. A conversão do orçamento ficou estável em 3,8%: o funil perde dinheiro antes do orçamento, na primeira resposta.</p>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: painel comercial (entrantes e atendimento: abas de leads do dia; orçamentos: leads gerais) · vendas e R$: planilha financeira</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: painel comercial (entrantes e atendimento: leads do dia; orçamentos: leads gerais) · vendas e R$: aba Histórico · ciclo de julho fora da comparação (registro do painel incompleto em junho)</span><span class="pg"></span></footer>
 </section>
 
 <!-- 06 TETO -->
@@ -354,39 +354,39 @@ table.kt th.n{text-align:right}
   <div class="sb">
     <div class="g g2 c-c">
       <div class="card rv">
-        <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:8px" class="cap"><span><i style="display:inline-block;width:14px;height:3px;background:var(--coral);vertical-align:middle;margin-right:6px"></i>Leads entrantes</span><span><i style="display:inline-block;width:14px;height:3px;background:var(--cyan);vertical-align:middle;margin-right:6px"></i>Leads atendidos</span><span>média móvel de 7 dias</span></div>
-        <div class="chart" id="ch-teto" role="img" aria-label="Leads entrantes contra leads atendidos por dia, de julho a 13 de outubro"></div>
+        <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:8px" class="cap"><span><i style="display:inline-block;width:14px;height:3px;background:var(--coral);vertical-align:middle;margin-right:6px"></i>Leads entrantes</span><span><i style="display:inline-block;width:14px;height:3px;background:var(--cyan);vertical-align:middle;margin-right:6px"></i>Leads atendidos</span><span><i style="display:inline-block;width:14px;height:0;border-top:2px dashed var(--amber);vertical-align:middle;margin-right:6px"></i>teto observado ≈ 96 atendimentos/dia</span><span>média móvel de 7 dias</span></div>
+        <div class="chart" id="ch-teto" role="img" aria-label="Leads entrantes contra leads atendidos por dia, do ciclo de agosto ao início do ciclo de novembro"></div>
       </div>
       <div class="g" style="align-content:start">
-        <div class="card kpi alert rv"><span class="cap">Leads sem resposta em outubro</span><span class="v" data-count="794" data-fmt="int">794</span><span class="d">em 13 dias · 42% dos entrantes</span></div>
-        <div class="card kpi alert rv"><span class="cap">Mídia gasta nesses leads</span><span class="v" data-count="12896" data-fmt="brl" data-pre="≈ ">≈ R$ 12.896</span><span class="d">42% dos R$ 30.795 investidos no mês</span></div>
-        <div class="card kpi rv"><span class="cap">Atendidos por dia · set → out</span><span class="v" data-count="85" data-fmt="int">85</span><span class="d">eram 77 em setembro (+9%), enquanto os entrantes subiram de 97 para 146 (+50%)</span></div>
+        <div class="card kpi alert rv"><span class="cap">Leads sem resposta no ciclo de outubro</span><span class="v" data-count="1065" data-fmt="int">1.065</span><span class="d">29% dos entrantes · 39% nas duas últimas semanas</span></div>
+        <div class="card kpi alert rv"><span class="cap">Mídia gasta nesses leads</span><span class="v" data-count="18493" data-fmt="brl" data-pre="≈ ">≈ R$ 18.493</span><span class="d">29% dos R$ 63.327 investidos no ciclo</span></div>
+        <div class="card kpi rv"><span class="cap">Atendidos por dia · ciclo set → out</span><span class="v" data-count="86" data-fmt="int">86</span><span class="d">eram 66 (+31%), enquanto os entrantes subiram de 82 para 122 (+48%)</span></div>
       </div>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: painel comercial · aba de leads entrantes do dia · mídia proporcional ao % de entrantes sem atendimento</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: painel comercial · leads entrantes do dia, 13/07 → 13/10 · mídia proporcional ao % de entrantes sem atendimento no ciclo</span><span class="pg"></span></footer>
 </section>
 
 <!-- 07 14 HORAS -->
 <section class="slide" id="s7" data-name="Jornada">
   <header class="sh">
     <p class="eyebrow rv">Trabalho exacerbado</p>
-    <h2 class="rv">O volume de trabalho <em>2,4×</em> maior virou jornadas de até <em>14 horas</em></h2>
+    <h2 class="rv">O volume de trabalho <em>quase dobrou</em> e virou jornadas de até <em>14 horas</em></h2>
   </header>
   <div class="sb">
     <div class="g g3 c-f">
       <div class="card rv" style="display:flex;flex-direction:column;align-items:center;gap:10px;justify-content:center">
         <div class="chart" id="ch-clock" style="max-width:300px" role="img" aria-label="Relógio de 14 horas de jornada, das 8h às 22h"></div>
-        <p style="text-align:center;color:var(--fg2);font-size:15px">Jornadas de até 14h relatadas pela equipe em outubro, das 8h às 22h, sem cobrir todos os leads. <span style="color:var(--cyan)">Linha interna: a jornada de 9h.</span></p>
+        <p style="text-align:center;color:var(--fg2);font-size:15px">Jornadas de até 14h relatadas pela equipe no ciclo de outubro, das 8h às 22h, sem cobrir todos os leads. <span style="color:var(--cyan)">Linha interna: a jornada de 9h.</span></p>
       </div>
       <div class="card rv">
         <h3>Horas de trabalho que a operação exige por dia</h3>
-        <p class="cap" style="margin-bottom:8px">soma da equipe · premissas ao lado</p>
-        <div class="chart" id="ch-load" role="img" aria-label="Horas de trabalho exigidas por dia em julho, agosto, setembro e outubro"></div>
+        <p class="cap" style="margin-bottom:8px">soma da equipe · por ciclo · premissas ao lado</p>
+        <div class="chart" id="ch-load" role="img" aria-label="Horas de trabalho exigidas por dia nos ciclos de agosto, setembro e outubro"></div>
         <div class="g g3" style="margin-top:12px;gap:8px">
-          <div><p class="cap">Ativos/dia</p><p class="num" style="font-size:22px"><span class="hl-r">396</span> <span class="muted" style="font-size:13px">jul 6</span></p></div>
-          <div><p class="cap">Follow-ups/dia</p><p class="num" style="font-size:22px"><span class="hl-r">71</span> <span class="muted" style="font-size:13px">jul 12</span></p></div>
-          <div><p class="cap">Orçamentos/dia</p><p class="num" style="font-size:22px"><span class="hl-r">72</span> <span class="muted" style="font-size:13px">jul 37</span></p></div>
+          <div><p class="cap">Ativos/dia</p><p class="num" style="font-size:22px"><span class="hl-r">189</span> <span class="muted" style="font-size:13px">ago 5</span></p></div>
+          <div><p class="cap">Follow-ups/dia</p><p class="num" style="font-size:22px"><span class="hl-r">146</span> <span class="muted" style="font-size:13px">ago 13</span></p></div>
+          <div><p class="cap">Orçamentos/dia</p><p class="num" style="font-size:22px"><span class="hl-r">69</span> <span class="muted" style="font-size:13px">ago 44</span></p></div>
         </div>
       </div>
       <div class="card rv" id="loadcalc">
@@ -394,20 +394,20 @@ table.kt th.n{text-align:right}
         <p class="cap" style="margin-bottom:10px">minutos por tarefa</p>
         <div class="g" style="gap:10px" id="loadctl"></div>
         <div style="margin-top:14px;border-top:1px solid var(--line);padding-top:12px">
-          <p class="cap">Outubro · horas por pessoa por dia</p>
-          <p class="out-big" style="font-size:44px" id="loadout">12,4 h</p>
+          <p class="cap">Ciclo de outubro · horas por pessoa por dia</p>
+          <p class="out-big" style="font-size:44px" id="loadout">11,6 h</p>
           <p class="muted" style="font-size:12.5px" id="loadnote">execução + outras tarefas, com 4 pessoas</p>
         </div>
       </div>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: painel comercial (atendimentos, retornos, orçamentos, follow-ups e ativos por dia) · tempos por tarefa são premissas da gestão, editáveis</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: painel comercial (atendimentos, retornos, orçamentos, follow-ups e ativos), por ciclo · tempos por tarefa são premissas da gestão, editáveis</span><span class="pg"></span></footer>
 </section>
 
 <!-- 08 LINHA DO TEMPO -->
 <section class="slide" id="s8" data-name="Percalços">
   <header class="sh">
-    <p class="eyebrow rv">Linha do tempo · julho → outubro</p>
+    <p class="eyebrow rv">Linha do tempo · ciclos de agosto a novembro</p>
     <h2 class="rv">Os percalços que nos trouxeram <em>até aqui</em></h2>
   </header>
   <div class="sb">
@@ -418,7 +418,7 @@ table.kt th.n{text-align:right}
         <line class="draw" pathLength="1" x1="0" y1="12" x2="1400" y2="12" stroke="url(#tlg)" stroke-width="4" style="--d:200ms"/>
       </svg>
       <div class="tl" id="timeline"></div>
-      <div class="chart rv" id="ch-tl" style="margin-top:auto" role="img" aria-label="Faturamento e investimento em mídia por dia, de julho a 13 de outubro, com os eventos marcados"></div>
+      <div class="chart rv" id="ch-tl" style="margin-top:auto" role="img" aria-label="Faturamento e investimento em mídia por dia, de 13 de julho a 13 de outubro, com os eventos marcados"></div>
     </div>
   </div>
   <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fontes: Diagnóstico Meta Ads de 22/09 (histórico de alterações da conta) · painel comercial · planilha financeira</span><span class="pg"></span></footer>
@@ -427,18 +427,18 @@ table.kt th.n{text-align:right}
 <!-- 09 TRÁFEGO -->
 <section class="slide" id="s9" data-name="Tráfego pago">
   <header class="sh">
-    <p class="eyebrow rv">Tráfego pago · o desastre em quatro gráficos</p>
-    <h2 class="rv">A verba por dia <em>quase dobrou</em>. O retorno por real investido caiu.</h2>
+    <p class="eyebrow rv">Tráfego pago · o desastre em quatro gráficos, por ciclo</p>
+    <h2 class="rv">A verba por dia subiu <em>46% em um ciclo</em>. As vendas por dia, 25%.</h2>
   </header>
   <div class="sb">
     <div class="g g4" id="mkt-mult"></div>
     <div class="g g3">
-      <div class="card kpi alert rv"><span class="cap">Mídia projetada para outubro</span><span class="v" data-count="73.4" data-fmt="k1" data-pre="R$ " data-suf=" mil">R$ 73,4 mil</span><span class="d">quase o dobro dos R$ 38,3 mil de julho</span></div>
-      <div class="card kpi rv"><span class="cap">Custo por conversa caiu em outubro</span><span class="v" data-count="20.05" data-fmt="brl2">R$ 20,05</span><span class="d">a armadilha: lead barato, perfil pior e quase metade sem atendimento</span></div>
-      <div class="card kpi alert rv"><span class="cap">Faturamento por R$ 1 de mídia</span><span class="v" data-count="5.2" data-fmt="d1" data-pre="R$ ">R$ 5,2</span><span class="d">era R$ 6,7 em agosto e R$ 6,8 em setembro</span></div>
+      <div class="card kpi alert rv"><span class="cap">Mídia projetada para o ciclo atual</span><span class="v" data-count="72.8" data-fmt="k1" data-pre="R$ " data-suf=" mil">R$ 72,8 mil</span><span class="d">no ritmo de 01 a 12/10 (R$ 2.347/dia) · ciclo de agosto: R$ 37,5 mil</span></div>
+      <div class="card kpi rv"><span class="cap">Custo por conversa caiu no ciclo de outubro</span><span class="v" data-count="23.40" data-fmt="brl2">R$ 23,40</span><span class="d">era R$ 28,20 no de setembro · a armadilha: lead barato, perfil pior e mais lead sem atendimento</span></div>
+      <div class="card kpi alert rv"><span class="cap">Faturamento por R$ 1 de mídia</span><span class="v" data-count="6.0" data-fmt="d1" data-pre="R$ ">R$ 6,0</span><span class="d">era R$ 6,8 no ciclo de setembro</span></div>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: Meta Ads (aba MKT_BM_DIA do painel) · faturamento e vendas: planilha financeira · outubro até 13/10</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: Meta Ads (aba MKT_BM_DIA do painel), ciclos de agosto a outubro · faturamento e vendas: aba Histórico · a aba de mídia começa em 01/07, por isso o ciclo de julho fica de fora</span><span class="pg"></span></footer>
 </section>
 
 <!-- 10 QUALIDADE DO LEAD -->
@@ -449,23 +449,23 @@ table.kt th.n{text-align:right}
   </header>
   <div class="sb">
     <div class="g g3 c-e">
-      <div class="card rv"><h3>Orçamentos de cliente ideal</h3><p class="cap" style="margin-bottom:10px">% dos orçamentos do mês</p><div class="chart" id="ch-ideal" role="img" aria-label="Cliente ideal: julho 29%, agosto 20%, setembro 10%, outubro 6%"></div><p class="muted" style="font-size:13.5px;margin-top:8px">333 em julho; 55 nos 13 dias de outubro (≈ 131 no mês).</p></div>
-      <div class="card rv"><h3>Motivos de perda por dia</h3><p class="cap" style="margin-bottom:10px"><span style="color:var(--fg3)">●</span> agosto &nbsp; <span style="color:var(--coral)">●</span> outubro (01–13)</p><div class="chart" id="ch-loss" role="img" aria-label="Motivos de perda por dia em agosto e outubro"></div></div>
+      <div class="card rv"><h3>Orçamentos de cliente ideal</h3><p class="cap" style="margin-bottom:10px">% dos orçamentos do ciclo</p><div class="chart" id="ch-ideal" role="img" aria-label="Cliente ideal por ciclo: agosto 32%, setembro 14%, outubro 9%"></div><p class="muted" style="font-size:13.5px;margin-top:8px">437 no ciclo de agosto; 193 no de outubro, com 51% mais orçamentos.</p></div>
+      <div class="card rv"><h3>Motivos de perda por dia</h3><p class="cap" style="margin-bottom:10px"><span style="color:var(--fg3)">●</span> ciclo de agosto &nbsp; <span style="color:var(--coral)">●</span> ciclo de outubro</p><div class="chart" id="ch-loss" role="img" aria-label="Motivos de perda por dia nos ciclos de agosto e outubro"></div></div>
       <div class="card rv">
-        <h3>Duas agências na mesma conta</h3><p class="cap" style="margin-bottom:10px">outubro, 01–13</p>
+        <h3>Duas agências na mesma conta</h3><p class="cap" style="margin-bottom:10px">ciclo de outubro · 13/09 → 12/10</p>
         <div class="tbl-wrap"><table class="kt">
           <tr><th></th><th class="n">Victor L.</th><th class="n">Prime 2b</th></tr>
-          <tr><td>Investimento</td><td class="n">R$ 25.868</td><td class="n">R$ 4.926</td></tr>
-          <tr><td>Conversas</td><td class="n">1.369</td><td class="n">167</td></tr>
-          <tr><td>Custo/conversa</td><td class="n">R$ 18,90</td><td class="n hl-r">R$ 29,50</td></tr>
-          <tr><td>CTR</td><td class="n">0,68%</td><td class="n hl-r">0,43%</td></tr>
+          <tr><td>Investimento</td><td class="n">R$ 58.320</td><td class="n">R$ 5.007</td></tr>
+          <tr><td>Conversas</td><td class="n">2.535</td><td class="n">171</td></tr>
+          <tr><td>Custo/conversa</td><td class="n">R$ 23,01</td><td class="n hl-r">R$ 29,28</td></tr>
+          <tr><td>CTR</td><td class="n">0,65%</td><td class="n hl-r">0,45%</td></tr>
         </table></div>
         <p class="muted" style="font-size:13px;margin-top:10px">A segunda agência entrou em 28/09 em paralelo, disputando o mesmo público.</p>
       </div>
     </div>
     <div class="g g3">
       <div class="card flat rv"><p class="num hl-r" style="font-size:28px">15.752</p><p class="muted">alterações na conta em 66 dias de histórico: a campanha é refeita toda semana e nunca aprende</p></div>
-      <div class="card flat rv"><p class="num hl-r" style="font-size:28px">10 de 37</p><p class="muted">compras vistas pelo pixel contra reservas reais em setembro: a conta otimiza para conversa barata</p></div>
+      <div class="card flat rv"><p class="num hl-r" style="font-size:28px">10 de 37</p><p class="muted">compras vistas pelo pixel contra reservas reais no setembro do diagnóstico de 22/09: a conta otimiza para conversa barata</p></div>
       <div class="card flat rv"><p class="num hl-r" style="font-size:28px">70%</p><p class="muted">da verba em um único texto genérico; o anúncio de "10 diárias ou mais" recebeu R$ 51</p></div>
     </div>
   </div>
@@ -476,24 +476,24 @@ table.kt th.n{text-align:right}
 <section class="slide" id="s11" data-name="Cotações">
   <header class="sh">
     <p class="eyebrow rv">Cotações · onde está o dinheiro</p>
-    <h2 class="rv">Um orçamento de minivan vale <span class="c">3×</span> um de SUV</h2>
+    <h2 class="rv">Um orçamento de minivan vale <span class="c">3,4×</span> um de SUV</h2>
   </header>
   <div class="sb">
     <div class="g g3 c-g">
-      <div class="card rv"><h3>Conversão do orçamento em venda</h3><p class="cap" style="margin-bottom:10px">ago → out · por categoria</p><div class="chart" id="ch-cconv" role="img" aria-label="Conversão: minivan 7,2%, SUV 2,7%, sedan 2,1%"></div></div>
-      <div class="card rv"><h3>Faturamento por orçamento emitido</h3><p class="cap" style="margin-bottom:10px">R$ faturado ÷ orçamentos</p><div class="chart" id="ch-cval" role="img" aria-label="Faturamento por orçamento: minivan R$ 377, SUV R$ 120, sedan R$ 86"></div></div>
+      <div class="card rv"><h3>Conversão do orçamento em venda</h3><p class="cap" style="margin-bottom:10px">ciclos ago → out · por categoria</p><div class="chart" id="ch-cconv" role="img" aria-label="Conversão: minivan 7,1%, SUV 2,5%, sedan 2,1%"></div></div>
+      <div class="card rv"><h3>Faturamento por orçamento emitido</h3><p class="cap" style="margin-bottom:10px">R$ faturado ÷ orçamentos</p><div class="chart" id="ch-cval" role="img" aria-label="Faturamento por orçamento: minivan R$ 374, SUV R$ 109, sedan R$ 91"></div></div>
       <div class="card rv" style="display:flex;flex-direction:column;gap:12px">
         <h3>Carteira de alta temporada</h3>
-        <p class="cap">orçamentos de set e out com retirada em dez/jan</p>
+        <p class="cap">orçamentos de 13/09 a 13/10 com retirada em dez/jan</p>
         <div style="display:flex;gap:22px;flex-wrap:wrap">
-          <div><p class="num hl-c" style="font-size:44px" data-count="728" data-fmt="int">728</p><p class="muted" style="font-size:13px">orçamentos abertos</p></div>
-          <div><p class="num" style="font-size:44px" data-count="7618" data-fmt="brl">R$ 7.618</p><p class="muted" style="font-size:13px">valor mediano cotado</p></div>
+          <div><p class="num hl-c" style="font-size:44px" data-count="591" data-fmt="int">591</p><p class="muted" style="font-size:13px">orçamentos abertos</p></div>
+          <div><p class="num" style="font-size:44px" data-count="7582" data-fmt="brl">R$ 7.582</p><p class="muted" style="font-size:13px">valor mediano cotado</p></div>
         </div>
-        <p style="font-size:15px">Se <b>4%</b> fecharem: <b class="hl-c">29 reservas ≈ R$ 221 mil</b>. Na alta (15/12 → 15/01) a diária da minivan 7L sobe de US$ 79 para US$ 149.</p>
+        <p style="font-size:15px">Se <b>4%</b> fecharem: <b class="hl-c">24 reservas ≈ R$ 182 mil</b>. Na alta (15/12 → 15/01) a diária da minivan 7L sobe de US$ 79 para US$ 149.</p>
       </div>
     </div>
     <div class="g g2 c-a">
-      <div class="card rv"><h3>Orçamentos × vendas por categoria</h3><p class="cap" style="margin-bottom:8px">ago → out · participação</p><div class="chart" id="ch-qmix" role="img" aria-label="SUV é 47% dos orçamentos e 35% das vendas; minivan é 26% dos orçamentos e 50% das vendas"></div>
+      <div class="card rv"><h3>Orçamentos × vendas por categoria</h3><p class="cap" style="margin-bottom:8px">ciclos ago → out · participação</p><div class="chart" id="ch-qmix" role="img" aria-label="SUV é 47% dos orçamentos e 33% das vendas; minivan é 27% dos orçamentos e 52% das vendas"></div>
         <p class="muted" style="font-size:14px;margin-top:6px"><b style="color:var(--fg)">O tráfego atrai quem pede SUV; a equipe fecha quem viaja em família.</b></p></div>
       <div class="card rv"><h3>Diária em dólar · baixa × alta</h3><p class="cap" style="margin-bottom:8px">alta: 15/12 → 15/01 · câmbio da planilha R$ 5,20</p>
         <div class="tbl-wrap"><table class="kt"><tr><th>Categoria</th><th class="n">Baixa</th><th class="n">Alta</th><th class="n">Alta</th></tr>
@@ -503,7 +503,7 @@ table.kt th.n{text-align:right}
         <tr><td>Minivan 8L</td><td class="n">US$ 79</td><td class="n">US$ 154</td><td class="n hl-c">+95%</td></tr></table></div></div>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: painel comercial (aba Orçamentos e lista de orçamentos, 01/08 → 13/10) · vendas por categoria: planilha financeira (exclui 11 vendas sem categoria) · tabela de preços: planilha financeira, aba Dados</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: painel comercial (aba Orçamentos e lista de orçamentos, ciclos de agosto a outubro) · vendas por categoria: aba Histórico (exclui 4 vendas sem categoria) · tabela de preços: planilha financeira, aba Dados</span><span class="pg"></span></footer>
 </section>
 
 <!-- 12 DADOS -->
@@ -522,8 +522,8 @@ table.kt th.n{text-align:right}
 <!-- 13 PROJEÇÃO -->
 <section class="slide" id="s13" data-name="Projeção">
   <header class="sh">
-    <p class="eyebrow rv">Projeção de outubro · com as taxas atuais</p>
-    <h2 class="rv">Com o ritmo de hoje, outubro fecha perto de <span class="c">R$ 382 mil</span></h2>
+    <p class="eyebrow rv">Projeção do ciclo atual · 13/10 → 12/11 · com as taxas atuais</p>
+    <h2 class="rv">No ritmo do ciclo de outubro, o ciclo atual fecha perto de <span class="c">R$ 396 mil</span></h2>
   </header>
   <div class="sb">
     <div class="g g2 c-a">
@@ -534,15 +534,15 @@ table.kt th.n{text-align:right}
           <button type="button" data-sc="2" aria-pressed="false">Otimista</button>
         </div>
         <div class="chart" id="ch-gauge" style="max-width:560px" role="img" aria-label="Medidor da projeção de outubro contra a meta de 500 mil"></div>
-        <p id="sc-desc" style="text-align:center;color:var(--fg2);font-size:15px;max-width:52ch">Ritmo médio de 01 a 13/10 (R$ 12.310 por dia) repetido nos 18 dias que faltam.</p>
+        <p id="sc-desc" style="text-align:center;color:var(--fg2);font-size:15px;max-width:52ch">Ritmo médio do ciclo de outubro (R$ 12.768 por dia) nos 31 dias do ciclo atual.</p>
       </div>
       <div class="g" style="align-content:start">
         <div class="card rv"><div class="tbl-wrap"><table class="kt" id="sc-table"></table></div></div>
-        <div class="card kpi alert rv"><span class="cap">Para bater R$ 500 mil ainda em outubro</span><span class="v" data-count="18887" data-fmt="brl" data-suf="/dia">R$ 18.887/dia</span><span class="d">4,2 vendas por dia nos 18 dias restantes, contra 2,8 hoje (+53%). Sem ampliar o atendimento, não é realista.</span></div>
+        <div class="card kpi alert rv"><span class="cap">Para bater R$ 500 mil neste ciclo</span><span class="v" data-count="16129" data-fmt="brl" data-suf="/dia">R$ 16.129/dia</span><span class="d">3,4 vendas por dia com o ticket atual, contra 2,7 no ciclo de outubro (+26%). Só fecha com as frentes do plano rodando desde a primeira semana.</span></div>
       </div>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Base: R$ 160.027 realizados em 13 dias · conservador exclui o pico de 13/10 · otimista usa o ritmo da 2ª quinzena de setembro (R$ 15.083/dia)</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Base: ciclo de outubro, R$ 383.040 em 30 dias (aba Histórico) · o Histórico ainda não tem vendas do ciclo atual; as 8 vendas de 13/10 (R$ 40,1 mil) estão só na aba Fechamentos e ficam fora</span><span class="pg"></span></footer>
 </section>
 
 <!-- 14 SIMULADOR -->
@@ -555,38 +555,38 @@ table.kt th.n{text-align:right}
     <div class="sim">
       <div class="card rv" style="display:flex;flex-direction:column;gap:12px">
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button type="button" class="btn on" data-preset="out">Outubro hoje</button>
+          <button type="button" class="btn on" data-preset="out">Ciclo de outubro</button>
           <button type="button" class="btn" data-preset="set">Taxas de setembro</button>
-          <button type="button" class="btn" data-preset="plano">Plano novembro</button>
+          <button type="button" class="btn" data-preset="plano">Plano do ciclo</button>
         </div>
-        <div class="ctl"><label for="sl-ent">Leads entrantes por dia <output id="o-ent">146</output></label><input type="range" id="sl-ent" min="80" max="220" step="1" value="146"></div>
-        <div class="ctl"><label for="sl-atd">Leads atendidos <output id="o-atd">58%</output></label><input type="range" id="sl-atd" min="40" max="95" step="1" value="58"></div>
-        <div class="ctl"><label for="sl-orc">Orçamentos por lead atendido <output id="o-orc">0,85</output></label><input type="range" id="sl-orc" min="0.5" max="1" step="0.01" value="0.85"></div>
-        <div class="ctl"><label for="sl-cv">Conversão orçamento → venda <output id="o-cv">3,9%</output></label><input type="range" id="sl-cv" min="2" max="6" step="0.01" value="3.85"></div>
-        <div class="ctl"><label for="sl-tk">Ticket médio <output id="o-tk">R$ 4.445</output></label><input type="range" id="sl-tk" min="3500" max="7000" step="5" value="4445"></div>
-        <div class="ctl"><label for="sl-d">Dias no mês <output id="o-d">31</output></label><input type="range" id="sl-d" min="28" max="31" step="1" value="31"></div>
+        <div class="ctl"><label for="sl-ent">Leads entrantes por dia <output id="o-ent">122</output></label><input type="range" id="sl-ent" min="80" max="220" step="0.01" value="121.57"></div>
+        <div class="ctl"><label for="sl-atd">Leads atendidos <output id="o-atd">71%</output></label><input type="range" id="sl-atd" min="40" max="95" step="0.1" value="70.8"></div>
+        <div class="ctl"><label for="sl-orc">Orçamentos por lead atendido <output id="o-orc">0,81</output></label><input type="range" id="sl-orc" min="0.5" max="1" step="0.001" value="0.806"></div>
+        <div class="ctl"><label for="sl-cv">Conversão orçamento → venda <output id="o-cv">3,84%</output></label><input type="range" id="sl-cv" min="2" max="6" step="0.001" value="3.844"></div>
+        <div class="ctl"><label for="sl-tk">Ticket médio <output id="o-tk">R$ 4.788</output></label><input type="range" id="sl-tk" min="3500" max="7000" step="1" value="4788"></div>
+        <div class="ctl"><label for="sl-d">Dias no ciclo <output id="o-d">31</output></label><input type="range" id="sl-d" min="28" max="31" step="1" value="31"></div>
       </div>
       <div class="card rv" style="display:flex;flex-direction:column;gap:18px;justify-content:center">
-        <p class="cap">Faturamento do mês nesse cenário</p>
-        <p class="out-big" id="sim-out">R$ 381,6 mil</p>
-        <div class="meter" aria-hidden="true"><i id="sim-bar" style="width:63.6%"></i><span class="goal" style="left:83.33%"><span>META 500 MIL</span></span></div>
+        <p class="cap">Faturamento do ciclo nesse cenário</p>
+        <p class="out-big" id="sim-out">R$ 395,8 mil</p>
+        <div class="meter" aria-hidden="true"><i id="sim-bar" style="width:66%"></i><span class="goal" style="left:83.33%"><span>META 500 MIL</span></span></div>
         <div class="g g3" style="gap:10px">
-          <div><p class="cap">Vendas no mês</p><p class="num" style="font-size:28px" id="sim-v">86</p></div>
-          <div><p class="cap">Atendidos por dia</p><p class="num" style="font-size:28px" id="sim-a">85</p></div>
-          <div><p class="cap">Distância da meta</p><p class="num" style="font-size:28px" id="sim-g">−R$ 118 mil</p></div>
+          <div><p class="cap">Vendas no ciclo</p><p class="num" style="font-size:28px" id="sim-v">83</p></div>
+          <div><p class="cap">Atendidos por dia</p><p class="num" style="font-size:28px" id="sim-a">86</p></div>
+          <div><p class="cap">Distância da meta</p><p class="num" style="font-size:28px" id="sim-g">−R$ 104 mil</p></div>
         </div>
         <p id="sim-cap" class="tag warn" style="align-self:flex-start;white-space:normal;text-transform:none;letter-spacing:0;font-size:13px">Dentro do teto atual de atendimento (≈ 96 por dia)</p>
-        <p class="muted" style="font-size:13.5px">Só levar o atendimento de 58% para 75%, sem nenhum lead a mais, leva o mês a ≈ R$ 493 mil: o lead que falta já está pago. Mas isso exige ≈ 109 atendimentos por dia, acima do teto atual. Por isso a primeira frente do plano é capacidade.</p>
+        <p class="muted" style="font-size:13.5px">Só voltar o atendimento aos 80% do ciclo de setembro, sem nenhum lead a mais, leva o ciclo a ≈ R$ 447 mil: o lead que falta já está pago. Mas isso exige ≈ 97 atendimentos por dia, no limite do teto atual. Por isso a primeira frente do plano é capacidade.</p>
       </div>
     </div>
     <div class="g g4">
-      <div class="card flat rv"><p class="cap">+10 pts de atendimento</p><p class="num hl-c" style="font-size:26px">+R$ 65,7 mil</p><p class="muted" style="font-size:13px">por mês, com os mesmos leads</p></div>
-      <div class="card flat rv"><p class="cap">+0,5 pt de conversão</p><p class="num hl-c" style="font-size:26px">+R$ 49,6 mil</p><p class="muted" style="font-size:13px">follow-up em 100% dos orçamentos</p></div>
-      <div class="card flat rv"><p class="cap">+R$ 300 de ticket</p><p class="num hl-c" style="font-size:26px">+R$ 25,8 mil</p><p class="muted" style="font-size:13px">minivan e alta temporada</p></div>
+      <div class="card flat rv"><p class="cap">+10 pts de atendimento</p><p class="num hl-c" style="font-size:26px">+R$ 55,9 mil</p><p class="muted" style="font-size:13px">por ciclo, com os mesmos leads</p></div>
+      <div class="card flat rv"><p class="cap">+0,5 pt de conversão</p><p class="num hl-c" style="font-size:26px">+R$ 51,5 mil</p><p class="muted" style="font-size:13px">follow-up em 100% dos orçamentos</p></div>
+      <div class="card flat rv"><p class="cap">+R$ 300 de ticket</p><p class="num hl-c" style="font-size:26px">+R$ 24,8 mil</p><p class="muted" style="font-size:13px">minivan e alta temporada</p></div>
       <div class="card flat rv"><p class="cap">+20 leads por dia</p><p class="num" style="font-size:26px">≈ R$ 0</p><p class="muted" style="font-size:13px">enquanto o atendimento estiver no teto</p></div>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Modelo: entrantes × % atendidos × orçamentos por atendido × conversão × ticket × dias · calibrado em 01–13/10 (reproduz a projeção realista)</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Modelo: entrantes × % atendidos × orçamentos por atendido × conversão × ticket × dias · calibrado no ciclo de outubro (reproduz a projeção realista)</span><span class="pg"></span></footer>
 </section>
 
 <!-- 15 PLANO -->
@@ -598,14 +598,14 @@ table.kt th.n{text-align:right}
   <div class="sb">
     <div class="g g4">
       <div class="card front rv"><span class="ix">01</span><h3>Capacidade de atendimento</h3>
-        <ul><li><b>+2 SDRs</b> em turnos escalonados (8h–16h e 14h–22h): 14h de cobertura sem ninguém trabalhar 14h</li><li><b>Triagem automática</b> no WhatsApp: datas, cidade, pessoas e diárias antes do humano; filtra viagem no Brasil e fora de perfil</li><li><b>Ativos e follow-ups por disparo automático</b>: hoje consomem ≈ 9h de equipe por dia</li><li>Primeira resposta em <b>10 min</b> e fila por pessoa com teto</li></ul>
-        <p class="goal">atendidos 58% → 82% · jornada ≤ 9h</p></div>
+        <ul><li><b>+2 SDRs</b> em turnos escalonados (8h–16h e 14h–22h): 14h de cobertura sem ninguém trabalhar 14h</li><li><b>Triagem automática</b> no WhatsApp: datas, cidade, pessoas e diárias antes do humano; filtra viagem no Brasil e fora de perfil</li><li><b>Ativos e follow-ups por disparo automático</b>: hoje consomem ≈ 8h de equipe por dia</li><li>Primeira resposta em <b>10 min</b> e fila por pessoa com teto</li></ul>
+        <p class="goal">atendidos 71% → 82% · jornada ≤ 9h</p></div>
       <div class="card front rv"><span class="ix">02</span><h3>Tráfego pago</h3>
-        <ul><li><b>Uma agência</b>, contrato por custo por orçamento qualificado e mídia ≤ 15% do faturamento</li><li><b>Verba presa à capacidade</b>: enquanto o atendimento estiver abaixo de 80%, volta ao patamar de agosto (≈ R$ 1.400/dia)</li><li>Compra com valor via Kommo (CAPI), públicos de família, minivan, 10+ diárias e 55+</li></ul>
-        <p class="goal">mídia/faturamento 19% → ≤ 15%</p></div>
+        <ul><li><b>Uma agência</b>, contrato por custo por orçamento qualificado e mídia ≤ 15% do faturamento</li><li><b>Verba presa à capacidade</b>: enquanto o atendimento estiver abaixo de 80%, volta ao patamar do ciclo de setembro (≈ R$ 1.450/dia)</li><li>Compra com valor via Kommo (CAPI), públicos de família, minivan, 10+ diárias e 55+</li></ul>
+        <p class="goal">mídia/faturamento 16,5% → ≤ 15%</p></div>
       <div class="card front rv"><span class="ix">03</span><h3>Ticket e conversão</h3>
-        <ul><li><b>Carteira dez/jan</b>: cadência dedicada aos 728 orçamentos de alta temporada já esta semana</li><li><b>Minivan primeiro</b> na abordagem e nos anúncios: converte 7,2% contra 2,7% do SUV</li><li>"Venda não compensa": custo total item a item, 10x sem juros, franquia zero e pedágio incluso antes do preço</li></ul>
-        <p class="goal">ticket R$ 4.445 → R$ 4.800 · conversão ≥ 4%</p></div>
+        <ul><li><b>Carteira dez/jan</b>: cadência dedicada aos 591 orçamentos de alta temporada já esta semana</li><li><b>Minivan primeiro</b> na abordagem e nos anúncios: converte 7,1% contra 2,5% do SUV</li><li>"Venda não compensa": custo total item a item, 10x sem juros, franquia zero e pedágio incluso antes do preço</li></ul>
+        <p class="goal">ticket R$ 4.788 → R$ 4.900 · conversão ≥ 4%</p></div>
       <div class="card front rv"><span class="ix">04</span><h3>Gestão e dados</h3>
         <ul><li>Venda lançada <b>no dia</b>, com vendedor, categoria, datas e pagamento</li><li><b>Placar às 18h</b>: entrantes, % atendidos, orçamentos, vendas e R$</li><li>Um painel só (fim da divergência painel × planilha) e revisão semanal de 30 min com a diretoria</li></ul>
         <p class="goal">100% das vendas completas no dia</p></div>
@@ -618,22 +618,22 @@ table.kt th.n{text-align:right}
 <section class="slide" id="s16" data-name="Cronograma e metas">
   <header class="sh">
     <p class="eyebrow rv">Cronograma e metas</p>
-    <h2 class="rv">Quatro semanas para estancar, e novembro para <em>chegar lá</em></h2>
+    <h2 class="rv">Quatro semanas para chegar aos <em>R$ 500 mil</em> no ciclo atual</h2>
   </header>
   <div class="sb">
     <div class="g g4" id="weeks"></div>
     <div class="card rv">
       <div class="tbl-wrap"><table class="kt">
-        <tr><th>Indicador</th><th class="n">Outubro hoje</th><th class="n">Meta novembro</th><th>Leitura</th></tr>
-        <tr><td>Leads entrantes por dia</td><td class="n">146</td><td class="n hl-c">125</td><td class="muted">menos volume, mais perfil</td></tr>
-        <tr><td>Leads atendidos</td><td class="n hl-r">58%</td><td class="n hl-c">82%</td><td class="muted">a principal alavanca</td></tr>
-        <tr><td>Conversão orçamento → venda</td><td class="n">3,9%</td><td class="n hl-c">4,0%</td><td class="muted">manter o nível de setembro</td></tr>
-        <tr><td>Ticket médio</td><td class="n">R$ 4.445</td><td class="n hl-c">R$ 4.800</td><td class="muted">minivan e alta temporada</td></tr>
-        <tr><td>Vendas por dia · faturamento por dia</td><td class="n">2,8 · R$ 12,3 mil</td><td class="n hl-c">3,5 · R$ 16,7 mil</td><td class="muted">≈ 104 vendas · R$ 500 mil no mês</td></tr>
+        <tr><th>Indicador</th><th class="n">Ciclo de outubro</th><th class="n">Meta ciclo atual</th><th>Leitura</th></tr>
+        <tr><td>Leads entrantes por dia</td><td class="n">122</td><td class="n hl-c">125</td><td class="muted">volume estável, perfil melhor</td></tr>
+        <tr><td>Leads atendidos</td><td class="n hl-r">71%</td><td class="n hl-c">82%</td><td class="muted">a principal alavanca</td></tr>
+        <tr><td>Conversão orçamento → venda</td><td class="n">3,8%</td><td class="n hl-c">4,0%</td><td class="muted">follow-up em 100% dos orçamentos</td></tr>
+        <tr><td>Ticket médio</td><td class="n">R$ 4.788</td><td class="n hl-c">R$ 4.900</td><td class="muted">minivan e alta temporada</td></tr>
+        <tr><td>Vendas por dia · faturamento por dia</td><td class="n">2,7 · R$ 12,8 mil</td><td class="n hl-c">3,3 · R$ 16,1 mil</td><td class="muted">≈ 102 vendas · R$ 500 mil no ciclo</td></tr>
       </table></div>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Metas calculadas com o mesmo modelo do simulador (125 × 82% × 0,85 × 30 dias × 4,0% × R$ 4.800 ≈ R$ 500 mil)</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Metas calculadas com o mesmo modelo do simulador (125 × 82% × 0,81 × 31 dias × 4,0% × R$ 4.900 ≈ R$ 504 mil) · ciclo atual: 13/10 → 12/11</span><span class="pg"></span></footer>
 </section>
 
 <!-- 17 DECISÕES -->
@@ -645,15 +645,15 @@ table.kt th.n{text-align:right}
   <div class="sb">
     <div class="g g2 c-d" style="align-items:center">
       <div style="display:flex;flex-direction:column;gap:14px" class="rv">
-        <p class="cap">Meta de novembro</p>
+        <p class="cap">Meta do ciclo atual · 13/10 → 12/11</p>
         <p class="out-big big500" style="color:var(--fg)" data-count="500000" data-fmt="brl" data-dur="2600">R$ 500.000</p>
         <div class="meter"><i class="growx hit500" style="width:100%;--d:400ms"></i></div>
-        <p class="muted" style="font-size:15px">104 vendas · 3,5 por dia · R$ 16,7 mil por dia · ticket R$ 4.800</p>
+        <p class="muted" style="font-size:15px">≈ 102 vendas · 3,3 por dia · R$ 16,1 mil por dia · ticket R$ 4.900</p>
       </div>
       <ol id="asks" style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px"></ol>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Magiway Rental Car · Gerência comercial · análise com dados até 13/10/2026</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Magiway Rental Car · Gerência comercial · ciclos do dia 13 ao dia 12 · dados até 13/10/2026</span><span class="pg"></span></footer>
 </section>
 
 </main>
@@ -669,23 +669,27 @@ table.kt th.n{text-align:right}
 (function(){
 "use strict";
 /* ================= DATA ================= */
-var DAILY = {"start": "2026-07-01", "ent": [119, 109, 54, 59, 101, 51, 67, 54, 38, 71, 72, 121, 104, 69, 70, 55, 60, 32, 85, 74, 70, 64, 61, 88, 66, 82, 93, 67, 77, 42, 36, 107, 102, 109, 99, 68, 72, 67, 62, 83, 65, 85, 74, 69, 41, 53, 71, 79, 76, 82, 89, 72, 67, 81, 90, 88, 78, 68, 63, 100, 165, 134, 88, 86, 113, 73, 43, 48, 79, 80, 83, 80, 103, 97, 105, 90, 86, 121, 107, 36, 136, 128, 110, 139, 91, 94, 61, 127, 130, 145, 116, 124, 133, 117, 112, 143, 160, 170, 122, 119, 149, 80, 204, 192, 195], "atd": [50, 58, 43, 38, 68, 37, 51, 44, 31, 50, 39, 60, 58, 58, 53, 47, 49, 23, 62, 64, 57, 52, 53, 66, 51, 68, 83, 53, 62, 35, 31, 76, 73, 71, 72, 55, 54, 57, 52, 60, 57, 75, 57, 58, 32, 47, 60, 67, 59, 69, 74, 53, 55, 66, 80, 79, 69, 55, 56, 79, 129, 104, 73, 65, 80, 53, 39, 46, 60, 62, 61, 58, 73, 72, 75, 81, 71, 101, 97, 35, 111, 107, 95, 123, 75, 82, 44, 96, 93, 115, 92, 89, 106, 80, 66, 76, 89, 120, 75, 74, 78, 49, 96, 91, 102], "orc": [27, 26, 38, 24, 54, 29, 36, 37, 26, 36, 27, 29, 39, 39, 35, 27, 33, 14, 52, 52, 51, 41, 44, 59, 46, 57, 62, 42, 56, 28, 27, 56, 54, 56, 55, 43, 44, 45, 41, 58, 43, 61, 52, 50, 27, 36, 55, 59, 56, 50, 61, 47, 49, 46, 68, 73, 67, 46, 46, 49, 101, 87, 58, 58, 55, 43, 36, 36, 47, 48, 47, 53, 55, 61, 60, 70, 64, 76, 74, 25, 86, 90, 72, 102, 59, 67, 35, 69, 67, 90, 61, 69, 81, 54, 49, 63, 73, 72, 57, 53, 57, 39, 65, 57, 49], "gasto": [1246, 1213, 1719, 1628, 3516, 1343, 1460, 1198, 740, 1329, 772, 1148, 1077, 1179, 1301, 1046, 811, 475, 1473, 1281, 1269, 1076, 849, 899, 1128, 1500, 1470, 1276, 1069, 916, 843, 2277, 1562, 1409, 1177, 965, 1124, 966, 1009, 1327, 1233, 1817, 1675, 1631, 1009, 947, 1398, 1285, 1551, 1485, 1804, 1164, 1129, 1604, 1490, 1464, 1337, 977, 1188, 1533, 2644, 1957, 1232, 1528, 1779, 1141, 1141, 913, 1401, 1068, 1304, 1442, 2055, 2230, 2417, 1697, 1578, 2483, 1931, 1418, 2537, 2597, 1950, 2162, 1700, 1478, 1204, 2421, 2096, 2002, 1742, 1745, 2295, 1904, 1753, 2304, 2395, 2955, 2441, 2702, 2560, 1237, 3212, 2411, 2627], "conv": [108, 97, 42, 40, 83, 37, 50, 33, 26, 49, 62, 107, 94, 48, 43, 40, 43, 24, 60, 41, 49, 41, 37, 59, 47, 59, 60, 45, 52, 30, 25, 85, 77, 74, 73, 50, 54, 43, 50, 66, 47, 61, 48, 51, 27, 37, 52, 57, 58, 58, 63, 49, 55, 67, 76, 66, 73, 49, 60, 95, 155, 95, 84, 100, 122, 82, 43, 49, 135, 78, 120, 124, 135, 138, 127, 95, 101, 143, 117, 62, 107, 106, 69, 94, 59, 55, 48, 110, 106, 108, 91, 85, 100, 85, 89, 109, 128, 136, 104, 105, 125, 59, 185, 162, 149], "rev": [12032, 7799, 3000, 0, 0, 0, 10500, 0, 13625, 8830, 0, 0, 0, 14508, 0, 0, 0, 0, 0, 0, 7686, 7344, 0, 0, 2711, 4700, 17000, 17150, 7500, 11120, 12713, 10795, 4400, 3000, 10246, 12005, 12557, 4000, 0, 0, 14622, 7097, 4700, 4100, 12855, 7870, 11981, 15909, 5044, 24209, 10500, 12480, 5485, 0, 3597, 0, 10934, 15894, 4500, 9800, 25425, 30100, 11280, 6444, 10720, 0, 0, 0, 6090, 22302, 3748, 17806, 6450, 9452, 6733, 3850, 5831, 11500, 12700, 8400, 5400, 0, 45900, 48575, 46298, 15881, 0, 9000, 6311, 12466, 7800, 16500, 8015, 2701, 17305, 5900, 12200, 10900, 8050, 13000, 16600, 4883, 3600, 16741, 40132], "vend": [2, 1, 1, 0, 0, 0, 2, 0, 3, 2, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 3, 3, 2, 2, 3, 2, 1, 1, 1, 2, 2, 1, 0, 0, 3, 2, 1, 1, 4, 2, 4, 4, 1, 4, 2, 2, 1, 0, 1, 0, 1, 3, 1, 1, 6, 3, 3, 2, 3, 0, 0, 0, 2, 6, 1, 4, 2, 2, 1, 2, 3, 2, 3, 2, 1, 0, 6, 8, 8, 3, 0, 2, 2, 3, 2, 4, 2, 1, 3, 2, 3, 2, 2, 3, 4, 1, 1, 4, 8]};
-var MON = ['Jul','Ago','Set','Out'];
-var F = { // monthly totals (Out = 01–13)
-  dias:[31,31,30,13],
-  ent:[2211,2559,2919,1896], atd:[1594,2050,2324,1102], orcg:[1144,1677,1865,935],
-  vendas:[31,57,77,36], fat:[158218,294104,357436,160027],
-  ret:[853,940,966,790], fup:[358,365,3851,921], rfup:[386,525,619,312],
-  ativo:[176,124,559,5152], rativo:[467,415,347,478], ideal:[333,329,182,55]
+var DAILY = {"start": "2026-07-13", "ent": [104, 69, 70, 55, 60, 32, 85, 74, 70, 64, 61, 88, 66, 82, 93, 67, 77, 42, 36, 107, 102, 109, 99, 68, 72, 67, 62, 83, 65, 85, 74, 69, 41, 53, 71, 79, 76, 82, 89, 72, 67, 81, 90, 88, 78, 68, 63, 100, 165, 134, 88, 86, 113, 73, 43, 48, 79, 80, 83, 80, 103, 97, 105, 90, 86, 121, 107, 36, 136, 128, 110, 139, 91, 94, 61, 127, 130, 145, 116, 124, 133, 117, 112, 143, 160, 170, 122, 119, 149, 80, 204, 192, 195], "atd": [58, 58, 53, 47, 49, 23, 62, 64, 57, 52, 53, 66, 51, 68, 83, 53, 62, 35, 31, 76, 73, 71, 72, 55, 54, 57, 52, 60, 57, 75, 57, 58, 32, 47, 60, 67, 59, 69, 74, 53, 55, 66, 80, 79, 69, 55, 56, 79, 129, 104, 73, 65, 80, 53, 39, 46, 60, 62, 61, 58, 73, 72, 75, 81, 71, 101, 97, 35, 111, 107, 95, 123, 75, 82, 44, 96, 93, 115, 92, 89, 106, 80, 66, 76, 89, 120, 75, 74, 78, 49, 96, 91, 102], "orc": [39, 39, 35, 27, 33, 14, 52, 52, 51, 41, 44, 59, 46, 57, 62, 42, 56, 28, 27, 56, 54, 56, 55, 43, 44, 45, 41, 58, 43, 61, 52, 50, 27, 36, 55, 59, 56, 50, 61, 47, 49, 46, 68, 73, 67, 46, 46, 49, 101, 87, 58, 58, 55, 43, 36, 36, 47, 48, 47, 53, 55, 61, 60, 70, 64, 76, 74, 25, 86, 90, 72, 102, 59, 67, 35, 69, 67, 90, 61, 69, 81, 54, 49, 63, 73, 72, 57, 53, 57, 39, 65, 57, 49], "gasto": [1077, 1179, 1301, 1046, 811, 475, 1473, 1281, 1269, 1076, 849, 899, 1128, 1500, 1470, 1276, 1069, 916, 843, 2277, 1562, 1409, 1177, 965, 1124, 966, 1009, 1327, 1233, 1817, 1675, 1631, 1009, 947, 1398, 1285, 1551, 1485, 1804, 1164, 1129, 1604, 1490, 1464, 1337, 977, 1188, 1533, 2644, 1957, 1232, 1528, 1779, 1141, 1141, 913, 1401, 1068, 1304, 1442, 2055, 2230, 2417, 1697, 1578, 2483, 1931, 1418, 2537, 2597, 1950, 2162, 1700, 1478, 1204, 2421, 2096, 2002, 1742, 1745, 2295, 1904, 1753, 2304, 2395, 2955, 2441, 2702, 2560, 1237, 3212, 2411, 2627], "conv": [94, 48, 43, 40, 43, 24, 60, 41, 49, 41, 37, 59, 47, 59, 60, 45, 52, 30, 25, 85, 77, 74, 73, 50, 54, 43, 50, 66, 47, 61, 48, 51, 27, 37, 52, 57, 58, 58, 63, 49, 55, 67, 76, 66, 73, 49, 60, 95, 155, 95, 84, 100, 122, 82, 43, 49, 135, 78, 120, 124, 135, 138, 127, 95, 101, 143, 117, 62, 107, 106, 69, 94, 59, 55, 48, 110, 106, 108, 91, 85, 100, 85, 89, 109, 128, 136, 104, 105, 125, 59, 185, 162, 149], "rev": [0, 14508, 0, 0, 0, 0, 0, 0, 7686, 7344, 0, 0, 2711, 4700, 17000, 17150, 7500, 11120, 12713, 10795, 4400, 3000, 10246, 12005, 12557, 4000, 0, 0, 14622, 7097, 4700, 4100, 12855, 7870, 11981, 15909, 5044, 24209, 10500, 12480, 5485, 0, 3597, 0, 10934, 15894, 4500, 9800, 25425, 30100, 11280, 6444, 10720, 0, 0, 0, 6090, 22302, 3748, 17806, 6450, 9452, 6733, 3850, 5831, 11500, 12700, 8400, 5400, 0, 45900, 48575, 46298, 15881, 0, 9000, 6311, 12466, 7800, 16500, 8015, 2701, 17305, 5900, 12200, 10900, 8050, 13000, 16600, 4883, 3600, 16741, 0], "vend": [0, 3, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 3, 3, 2, 2, 3, 2, 1, 1, 1, 2, 2, 1, 0, 0, 3, 2, 1, 1, 4, 2, 4, 4, 1, 4, 2, 2, 1, 0, 1, 0, 1, 3, 1, 1, 6, 3, 3, 2, 3, 0, 0, 0, 2, 6, 1, 4, 2, 2, 1, 2, 3, 2, 3, 2, 1, 0, 6, 8, 8, 3, 0, 2, 2, 3, 2, 4, 2, 1, 3, 2, 3, 2, 2, 3, 4, 1, 1, 4, 0]};
+// Ciclos do dia 13 ao dia 12 (ciclo "Out" = 13/09 → 12/10)
+var MON = ['Ago','Set','Out'];          // ciclos com painel e mídia completos
+var MON4 = ['Jul','Ago','Set','Out'];   // ciclos com faturamento (aba Histórico)
+var F = { // totais por ciclo: Ago (13/07→12/08), Set (13/08→12/09), Out (13/09→12/10)
+  dias:[31,31,30],
+  ent:[2288,2539,3647], atd:[1784,2033,2582], orcg:[1376,1751,2081],
+  vendas:[36,66,80], fat:[185854,304973,383040],
+  ret:[877,964,1337], fup:[416,479,4380], rfup:[429,557,694],
+  ativo:[145,136,5674], rativo:[448,407,643], ideal:[437,240,193]
 };
-var MKT = {gasto:[38250,44138,52393,30795], ctr:[0.88,0.86,0.69,0.64]};
-var FAT_M = [['Abr*',79706],['Mai',67083],['Jun',70965],['Jul',158218],['Ago',294104],['Set',357436],['Out',160027]];
-var REAL = 160027, DONE = 13, LEFT = 18, SPIKE13 = 40132.32, SEP2 = 256412/17;
+var H4 = {dias:[30,31,31,30], vendas:[17,36,66,80], fat:[103172,185854,304973,383040]};
+var MKT = {gasto:[37477,44831,63327], ctr:[0.81,0.80,0.64]};
+var FAT_M = [['Mai*',96606],['Jun',73763],['Jul',103172],['Ago',185854],['Set',304973],['Out',383040],['Nov',0]];
+var REAL = 0, LEFT = 31; // ciclo atual 13/10 → 12/11; aba Histórico ainda sem vendas do ciclo
 var SC = [
-  {n:'Conservador', v: REAL + (REAL-SPIKE13)/(DONE-1)*LEFT, d:'Ritmo de 01 a 12/10 sem o pico de 13/10 (R$ 9.991 por dia) nos 18 dias restantes.'},
-  {n:'Realista', v: REAL + REAL/DONE*LEFT, d:'Ritmo médio de 01 a 13/10 (R$ 12.310 por dia) repetido nos 18 dias que faltam.'},
-  {n:'Otimista', v: REAL + SEP2*LEFT, d:'Ritmo da segunda quinzena de setembro (R$ 15.083 por dia), quando houve o pico de 21 a 23/09.'}
+  {n:'Conservador', v: 156661/15*LEFT, d:'Ritmo das duas últimas semanas do ciclo de outubro (28/09 a 12/10: R$ 10.444 por dia) nos 31 dias do ciclo atual.'},
+  {n:'Realista', v: 383040/30*LEFT, d:'Ritmo médio do ciclo de outubro (R$ 12.768 por dia) nos 31 dias do ciclo atual.'},
+  {n:'Otimista', v: 226379/15*LEFT, d:'Ritmo da primeira quinzena do ciclo de outubro (13 a 27/09, com o pico de 21 a 23/09: R$ 15.092 por dia).'}
 ];
+var CYN=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 
 /* ================= HELPERS ================= */
 var nf0 = new Intl.NumberFormat('pt-BR',{maximumFractionDigits:0});
@@ -726,18 +730,17 @@ function bindTip(el,title,body){el.addEventListener('mouseenter',function(e){sho
     if(last){ // projection ghost + range
       var pv=SC[1].v;
       var gh=S('rect',{x:x,y:y(pv),width:w,height:y(0)-y(pv),rx:6,fill:'url(#hatch)',stroke:'rgba(34,196,216,.6)','stroke-dasharray':'4 4','class':'grow',style:'--d:1300ms'},s);
-      bindTip(gh,'Outubro · projeção realista',brlk(pv)+' (faixa '+brlk(SC[0].v)+' a '+brlk(SC[2].v)+')');
+      bindTip(gh,'Ciclo de novembro (13/10 → 12/11) · projeção realista',brlk(pv)+' (faixa '+brlk(SC[0].v)+' a '+brlk(SC[2].v)+')');
       var wl=S('g',{'class':'fade',style:'--d:2000ms'},s);
       S('line',{x1:cx+w/2+10,x2:cx+w/2+10,y1:y(SC[2].v),y2:y(SC[0].v),stroke:C.cyan,'stroke-width':2},wl);
       S('line',{x1:cx+w/2+5,x2:cx+w/2+15,y1:y(SC[2].v),y2:y(SC[2].v),stroke:C.cyan,'stroke-width':2},wl);
       S('line',{x1:cx+w/2+5,x2:cx+w/2+15,y1:y(SC[0].v),y2:y(SC[0].v),stroke:C.cyan,'stroke-width':2},wl);
-      txt(wl,cx,y(pv)-10,'≈ '+nf0.format(Math.round(pv/1000))+' mil','vlbl','middle',{fill:C.cyan});
+      txt(wl,cx,y(SC[2].v)-12,'≈ '+nf0.format(Math.round(pv/1000))+' mil','vlbl','middle',{fill:C.cyan});
     }
     var r=S('rect',{x:x,y:y(v),width:w,height:y(0)-y(v),rx:6,fill:last?'#FF6A4D':(i>=3?'url(#gb)':'#3A4570'),'class':'grow',style:'--d:'+(200+i*110)+'ms'},s);
-    bindTip(r,m[0]==='Abr*'?'Abril (a partir de 14/04)':(last?'Outubro (01–13)':m[0]),brl(v));
+    bindTip(r,m[0]==='Mai*'?'Ciclo de maio (14/04 → 12/05)':(last?'Ciclo de novembro (em curso)':'Ciclo de '+m[0].toLowerCase()),brl(v));
     txt(s,cx,H-14,m[0],'lbl','middle');
     if(!last) txt(s,cx,y(v)-10,nf0.format(Math.round(v/1000))+' mil','vlbl','middle',{'class':'vlbl fade',style:'--d:'+(900+i*110)+'ms'});
-    else txt(s,cx,y(v)-10,'160 mil','vlbl','middle',{'class':'vlbl fade',fill:'#FFFFFF',style:'--d:1500ms'});
   });
   var gl=S('line',{x1:L,x2:W-R,y1:y(500000),y2:y(500000),stroke:C.coral,'stroke-width':2.5,'stroke-dasharray':'8 6','class':'growx',style:'--d:1600ms'},s);
   txt(s,L+6,y(500000)-10,'META R$ 500 MIL','lbl','start',{fill:C.coral,'font-weight':600,'class':'lbl fade',style:'--d:2000ms'});
@@ -756,13 +759,13 @@ function bars4(id,vals,o){
     txt(s,cx,H-8,(o.labels||MON)[i],'lbl','middle');});
   return s;
 }
-bars4('ch-vdia',F.vendas.map(function(v,i){return v/F.dias[i];}),{f:function(v){return nf2.format(v);},colors:[C.slate,C.teal,C.cyan,C.cyan]});
-bars4('ch-tkt',F.fat.map(function(v,i){return v/F.vendas[i];}),{f:function(v){return nf0.format(Math.round(v));},max:6000,colors:[C.slate,C.slate,C.amber,C.coral],fs:14});
-bars4('ch-ideal',F.ideal.map(function(v,i){return 100*v/F.orcg[i];}),{f:function(v){return nf0.format(Math.round(v))+'%';},max:34,colors:[C.cyan,C.teal,C.amber,C.coral]});
+bars4('ch-vdia',H4.vendas.map(function(v,i){return v/H4.dias[i];}),{f:function(v){return nf2.format(v);},labels:MON4,colors:[C.slate,C.teal,C.cyan,C.cyan]});
+bars4('ch-tkt',H4.fat.map(function(v,i){return v/H4.vendas[i];}),{f:function(v){return nf0.format(Math.round(v));},labels:MON4,max:7000,colors:[C.slate,C.amber,C.coral,C.amber],fs:14});
+bars4('ch-ideal',F.ideal.map(function(v,i){return 100*v/F.orcg[i];}),{f:function(v){return nf0.format(Math.round(v))+'%';},max:38,colors:[C.cyan,C.amber,C.coral]});
 
 // mix (100% stacked horizontal)
 (function(){
-  var data=[['Jul',[110039,31580,15452,1148]],['Ago',[195661,78397,20046,0]],['Set',[166128,130852,60456,0]],['Out',[57154,32200,18400,52273]]];
+  var data=[['Jul',[77267,25905,0,0]],['Ago',[110487,51768,22452,1148]],['Set',[186332,86737,31904,0]],['Out',[189306,116994,59999,16741]]];
   var names=['Minivan/Van','SUV','Sedan','Sem categoria / outros'],cols=[C.cyan,C.teal,C.coral,'#3A4570'];
   var host=document.getElementById('ch-mix');var W=360,H=220,L=40,R=4,T=6;var s=svg(W,H,host);var rh=30,gap=14;
   data.forEach(function(d,i){var tot=d[1].reduce(function(a,b){return a+b;},0);var x=L,yy=T+i*(rh+gap);
@@ -780,17 +783,17 @@ bars4('ch-ideal',F.ideal.map(function(v,i){return 100*v/F.orcg[i];}),{f:function
 (function(){
   var host=document.getElementById('funnel');
   var rows=[
-    ['Leads entrantes','por dia',F.ent.map(function(v,i){return v/F.dias[i];}),function(v){return nf0.format(Math.round(v));},[0,0,0,0]],
-    ['Leads atendidos','% dos entrantes',F.atd.map(function(v,i){return 100*v/F.ent[i];}),function(v){return nf0.format(Math.round(v))+'%';},[0,0,0,1]],
-    ['Orçamentos','por dia',F.orcg.map(function(v,i){return v/F.dias[i];}),function(v){return nf1.format(v);},[0,0,0,0]],
-    ['Conversão','orçamento → venda',F.vendas.map(function(v,i){return 100*v/F.orcg[i];}),function(v){return nf1.format(v)+'%';},[0,0,0,0]],
-    ['Vendas','por dia',F.vendas.map(function(v,i){return v/F.dias[i];}),function(v){return nf2.format(v);},[0,0,0,0]],
-    ['Faturamento','por dia',F.fat.map(function(v,i){return v/F.dias[i];}),function(v){return brl(v);},[0,0,0,0]]
+    ['Leads entrantes','por dia',F.ent.map(function(v,i){return v/F.dias[i];}),function(v){return nf0.format(Math.round(v));},[0,0,0]],
+    ['Leads atendidos','% dos entrantes',F.atd.map(function(v,i){return 100*v/F.ent[i];}),function(v){return nf0.format(Math.round(v))+'%';},[0,0,1]],
+    ['Orçamentos','por dia',F.orcg.map(function(v,i){return v/F.dias[i];}),function(v){return nf1.format(v);},[0,0,0]],
+    ['Conversão','orçamento → venda',F.vendas.map(function(v,i){return 100*v/F.orcg[i];}),function(v){return nf1.format(v)+'%';},[0,0,0]],
+    ['Vendas','por dia',F.vendas.map(function(v,i){return v/F.dias[i];}),function(v){return nf2.format(v);},[0,0,0]],
+    ['Faturamento','por dia',F.fat.map(function(v,i){return v/F.dias[i];}),function(v){return brl(v);},[0,0,0]]
   ];
-  var hd=['<div></div>'].concat(['Julho','Agosto','Setembro','Outubro 01–13'].map(function(m,i){return '<div class="h'+(i===3?' now':'')+'">'+m+'</div>';}));
+  var hd=['<div></div>'].concat(['Ciclo agosto · 13/07→12/08','Ciclo setembro · 13/08→12/09','Ciclo outubro · 13/09→12/10'].map(function(m,i){return '<div class="h'+(i===2?' now':'')+'">'+m+'</div>';}));
   var html=hd.join('');
   rows.forEach(function(r,ri){var mx=Math.max.apply(null,r[2]);html+='<div class="rl">'+r[0]+'<small>'+r[1]+'</small></div>';
-    r[2].forEach(function(v,i){html+='<div class="cell'+(i===3?' now':'')+(r[4][i]?' bad':'')+'"><span class="n" data-count="'+v+'" data-fmtfn="'+ri+'">'+r[3](v)+'</span><span class="t"><i style="width:'+(100*v/mx).toFixed(1)+'%;--d:'+(300+ri*90+i*60)+'ms"></i></span></div>';});});
+    r[2].forEach(function(v,i){html+='<div class="cell'+(i===2?' now':'')+(r[4][i]?' bad':'')+'"><span class="n" data-count="'+v+'" data-fmtfn="'+ri+'">'+r[3](v)+'</span><span class="t"><i style="width:'+(100*v/mx).toFixed(1)+'%;--d:'+(300+ri*90+i*60)+'ms"></i></span></div>';});});
   host.innerHTML=html;
   host.querySelectorAll('[data-fmtfn]').forEach(function(el){el._fmt=rows[+el.getAttribute('data-fmtfn')][3];});
 })();
@@ -804,13 +807,12 @@ bars4('ch-ideal',F.ideal.map(function(v,i){return 100*v/F.orcg[i];}),{f:function
   var x=function(i){return L+(W-L-R)*i/(n-1);},y=function(v){return T+(H-T-B)*(1-v/max);};
   var g=S('g',{'class':'grid'},s);[0,50,100,150,200].forEach(function(v){S('line',{x1:L,x2:W-R,y1:y(v),y2:y(v)},g);txt(s,L-8,y(v)+4,String(v),'lbl','end');});
   // month ticks
-  for(var i=0;i<n;i++){var d=new Date(start.getTime()+i*864e5);if(d.getDate()===1){S('line',{x1:x(i),x2:x(i),y1:T,y2:H-B,stroke:'#25325E','stroke-dasharray':'2 4'},s);txt(s,x(i)+6,H-12,['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][d.getMonth()],'lbl');}}
+  for(var i=0;i<n;i++){var d=new Date(start.getTime()+i*864e5);if(d.getDate()===13){S('line',{x1:x(i),x2:x(i),y1:T,y2:H-B,stroke:'#25325E','stroke-dasharray':'2 4'},s);if(i<n-1)txt(s,x(i)+6,H-12,'ciclo '+CYN[(d.getMonth()+1)%12],'lbl');}}
   // gap area where e>a
   var top=e.map(function(v,i){return x(i)+','+y(v);}),bot=a.map(function(v,i){return x(i)+','+y(v);}).reverse();
   S('polygon',{points:top.concat(bot).join(' '),fill:'rgba(255,106,77,.16)','class':'fade',style:'--d:1800ms'},s);
-  var ceil=Math.max.apply(null,a.slice(60));
+  var ceil=Math.max.apply(null,a.slice(30));
   S('line',{x1:L,x2:W-R,y1:y(ceil),y2:y(ceil),stroke:C.amber,'stroke-width':1.5,'stroke-dasharray':'6 6','class':'fade',style:'--d:2200ms'},s);
-  txt(s,L+250,y(ceil)-8,'TETO OBSERVADO ≈ '+Math.round(ceil)+' ATENDIMENTOS/DIA','lbl','start',{fill:C.amber,'font-weight':600,'class':'lbl fade',style:'--d:2300ms'});
   function path(arr){return arr.map(function(v,i){return (i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1);}).join(' ');}
   S('path',{d:path(e),fill:'none',stroke:C.coral,'stroke-width':2.5,'stroke-linejoin':'round',pathLength:1,'class':'draw'},s);
   S('path',{d:path(a),fill:'none',stroke:C.cyan,'stroke-width':2.5,'stroke-linejoin':'round',pathLength:1,'class':'draw',style:'--d:450ms'},s);
@@ -849,20 +851,20 @@ function loadHours(i){var m=F.atd[i]*loadState.atd+(F.ret[i]+F.rfup[i]+F.rativo[
 var loadBars=[];
 (function(){
   var host=document.getElementById('ch-load');var W=520,H=230,L=8,R=8,T=30,B=30;var s=svg(W,H,host);host._s=s;var max=50;
-  var y=function(v){return T+(H-T-B)*(1-v/max);};var bw=(W-L-R)/4,w=bw*.56;
+  var y=function(v){return T+(H-T-B)*(1-v/max);};var bw=(W-L-R)/3,w=bw*.5;
   S('line',{x1:L,x2:W-R,y1:y(0),y2:y(0),stroke:'#25325E'},s);
-  for(var i=0;i<4;i++){var cx=L+bw*i+bw/2;var r=S('rect',{x:cx-w/2,y:y(0),width:w,height:0,rx:6,fill:i===3?C.coral:(i===2?C.amber:C.slate),'class':'grow',style:'--d:'+(250+i*120)+'ms'},s);
-    var t=txt(s,cx,y(0)-9,'','vlbl','middle',{'class':'vlbl fade',style:'--d:'+(900+i*120)+'ms'});txt(s,cx,H-8,MON[i],'lbl','middle');loadBars.push([r,t,cx,w]);
-    (function(ii,rr){rr.addEventListener('mouseenter',function(e){var h=loadHours(ii);showTip(e,MON[ii]+(ii===3?' (01–13)':''),nf1.format(h)+' h/dia de trabalho · '+nf1.format(h/loadState.team+loadState.other)+' h por pessoa');});rr.addEventListener('mousemove',moveTip);rr.addEventListener('mouseleave',hideTip);})(i,r);}
+  for(var i=0;i<3;i++){var cx=L+bw*i+bw/2;var r=S('rect',{x:cx-w/2,y:y(0),width:w,height:0,rx:6,fill:i===2?C.coral:(i===1?C.amber:C.slate),'class':'grow',style:'--d:'+(250+i*120)+'ms'},s);
+    var t=txt(s,cx,y(0)-9,'','vlbl','middle',{'class':'vlbl fade',style:'--d:'+(900+i*120)+'ms'});txt(s,cx,H-8,'Ciclo '+MON[i].toLowerCase(),'lbl','middle');loadBars.push([r,t,cx,w]);
+    (function(ii,rr){rr.addEventListener('mouseenter',function(e){var h=loadHours(ii);showTip(e,'Ciclo de '+MON[ii].toLowerCase(),nf1.format(h)+' h/dia de trabalho · '+nf1.format(h/loadState.team+loadState.other)+' h por pessoa');});rr.addEventListener('mousemove',moveTip);rr.addEventListener('mouseleave',hideTip);})(i,r);}
   host._y=y;
 })();
 function renderLoad(){
   var y=document.getElementById('ch-load')._y;
   loadBars.forEach(function(b,i){var h=loadHours(i);b[0].setAttribute('y',y(Math.min(h,50)));b[0].setAttribute('height',Math.max(0,y(0)-y(Math.min(h,50))));b[1].setAttribute('y',y(Math.min(h,50))-9);b[1].textContent=nf1.format(h)+' h';});
-  var pp=loadHours(3)/loadState.team+loadState.other;
+  var pp=loadHours(2)/loadState.team+loadState.other;
   document.getElementById('loadout').textContent=nf1.format(pp)+' h';
   document.getElementById('loadout').style.color=pp>12?C.coral:(pp>9?C.amber:C.cyan);
-  document.getElementById('loadnote').textContent='execução ('+nf1.format(loadHours(3)/loadState.team)+' h) + outras tarefas ('+nf1.format(loadState.other)+' h), com '+loadState.team+' pessoas na linha de frente';
+  document.getElementById('loadnote').textContent='execução ('+nf1.format(loadHours(2)/loadState.team)+' h) + outras tarefas ('+nf1.format(loadState.other)+' h), com '+loadState.team+' pessoas na linha de frente';
 }
 (function(){
   var box=document.getElementById('loadctl');var items=LOAD_T.filter(function(t){return ['atd','orcg','fup','ativo'].indexOf(t[0])>=0;}).map(function(t){return [t[0],t[1],t[2],t[3],t[4],t[0]==='fup'||t[0]==='ativo'?0.5:1,' min'];});
@@ -876,7 +878,7 @@ function setP(el){var p=(el.value-el.min)/(el.max-el.min)*100;el.style.setProper
 // timeline
 (function(){
   var ev=[
-    ['27/07–02/08','good','Melhor semana de julho','16 vendas, R$ 80,7 mil; mídia em 11,7% do faturamento.'],
+    ['27/07–02/08','good','Melhor semana do ciclo de agosto','16 vendas, R$ 80,7 mil; mídia em 11,7% do faturamento.'],
     ['13/08','bad','214 anúncios num dia','A campanha que mais vendia é desligada; custo por conversa vai a R$ 37 na semana.'],
     ['22/08','bad','Conta refeita do zero','151 anúncios novos e orçamentos cortados no mesmo dia.'],
     ['04/09','bad','1.080 alterações num dia','180 criativos editados com anúncio rodando; 202 tirados do ar.'],
@@ -884,7 +886,7 @@ function setP(el){var p=(el.value-el.min)/(el.max-el.min)*100;el.style.setProper
     ['21–23/09','good','Pico de vendas','22 vendas e R$ 140,8 mil em três dias.'],
     ['28/09','warn','2ª agência em paralelo','Prime 2b entra na mesma conta: R$ 29,50 por conversa.'],
     ['01–13/10','bad','Atendimento despenca','Entrantes chegam a 204/dia; atendidos caem de 80% para 47%; 5.152 ativos; jornadas de 14h.'],
-    ['13/10','warn','Dia recorde, registro falho','R$ 40,1 mil em 8 vendas; 7 sem categoria e datas.']
+    ['13/10','warn','Ciclo novo, registro falho','8 vendas (R$ 40,1 mil) lançadas só na aba Fechamentos; 7 sem categoria e datas.']
   ];
   document.getElementById('timeline').innerHTML=ev.map(function(e,i){return '<div class="ev rv '+e[1]+'" style="--d:'+(250+i*170)+'ms"><span class="dt"><b style="display:inline;color:var(--fg);font-size:12.5px">'+(i+1)+'</b> · '+e[0]+'</span><div class="box"><b>'+e[2]+'</b><span>'+e[3]+'</span></div></div>';}).join('');
 })();
@@ -895,7 +897,7 @@ function setP(el){var p=(el.value-el.min)/(el.max-el.min)*100;el.style.setProper
   function ma(a){return a.map(function(_,i){var lo=Math.max(0,i-6),sum=0;for(var k=lo;k<=i;k++)sum+=a[k];return sum/(i-lo+1);});}
   var rv=ma(DAILY.rev),gs=ma(DAILY.gasto);var x=function(i){return L+(W-L-R)*i/(n-1);};
   var P=[{a:rv,t:24,h:86,max:30000,col:C.cyan,lab:'Faturamento/dia',f:function(v){return 'R$ '+nf1.format(v/1000)+' mil';}},{a:gs,t:138,h:86,max:3000,col:C.coral,lab:'Mídia/dia',f:function(v){return 'R$ '+nf0.format(Math.round(v));}}];
-  for(var i=0;i<n;i++){var d=new Date(start.getTime()+i*864e5);if(d.getDate()===1){S('line',{x1:x(i),x2:x(i),y1:20,y2:H-20,stroke:'#25325E','stroke-dasharray':'2 4'},s);txt(s,x(i)+6,H-4,['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][d.getMonth()],'lbl');}}
+  for(var i=0;i<n;i++){var d=new Date(start.getTime()+i*864e5);if(d.getDate()===13){S('line',{x1:x(i),x2:x(i),y1:20,y2:H-20,stroke:'#25325E','stroke-dasharray':'2 4'},s);if(i<n-1)txt(s,x(i)+6,H-4,'ciclo '+CYN[(d.getMonth()+1)%12],'lbl');}}
   P.forEach(function(p,k){var y=function(v){return p.t+p.h*(1-v/p.max);};
     S('line',{x1:L,x2:W-R,y1:p.t+p.h,y2:p.t+p.h,stroke:'#25325E'},s);
     txt(s,L-10,p.t+10,p.lab.split('/')[0],'lbl','end',{'font-size':11});txt(s,L-10,p.t+24,'/dia · 7d','lbl','end',{'font-size':10});
@@ -905,7 +907,7 @@ function setP(el){var p=(el.value-el.min)/(el.max-el.min)*100;el.style.setProper
     var mx=0;p.a.forEach(function(v,i){if(v>p.a[mx])mx=i;});
     txt(s,x(n-1)+2,y(p.a[n-1])-8,p.f(p.a[n-1]),'lbl','end',{fill:p.col,'font-weight':600,'class':'lbl fade',style:'--d:2400ms'});
   });
-  var evd=[29,43,52,65,80,83,89,98,104];
+  var evd=[17,31,40,53,68,71,77,86,92];
   evd.forEach(function(i,k){var g=S('g',{'class':'fade',style:'--d:'+(900+k*150)+'ms'},s);S('line',{x1:x(i),x2:x(i),y1:12,y2:H-22,stroke:'#B9C1D6','stroke-opacity':.35,'stroke-dasharray':'3 3'},g);S('circle',{cx:x(i),cy:10,r:9,fill:'#F2EEE9'},g);txt(g,x(i),14,String(k+1),'lbl','middle',{fill:'#0A1124','font-weight':700,'font-size':11});});
   var hit=S('rect',{x:L,y:20,width:W-L-R,height:H-40,'class':'hit'},s);
   hit.addEventListener('mousemove',function(ev){var r=s.getBoundingClientRect();var px=(ev.clientX-r.left)*W/r.width;var i=Math.max(0,Math.min(n-1,Math.round((px-L)/(W-L-R)*(n-1))));var d=new Date(start.getTime()+i*864e5);
@@ -922,8 +924,8 @@ function setP(el){var p=(el.value-el.min)/(el.max-el.min)*100;el.style.setProper
     ['Custo de mídia por venda','R$ por venda',MKT.gasto.map(function(v,i){return v/F.vendas[i];}),function(v){return nf0.format(Math.round(v));},''],
     ['CTR dos anúncios','% de cliques',MKT.ctr,function(v){return nf2.format(v)+'%';},'cai']
   ];
-  defs.forEach(function(d,k){var c=document.createElement('div');c.className='card rv';c.innerHTML='<h3>'+d[0]+'</h3><p class="cap" style="margin-bottom:8px">'+d[1]+'</p><div class="chart" id="mm'+k+'" role="img" aria-label="'+d[0]+' de julho a outubro"></div>';host.appendChild(c);
-    var cols=k===3?[C.cyan,C.teal,C.amber,C.coral]:(k===0?[C.slate,C.teal,C.amber,C.coral]:[C.coral,C.cyan,C.cyan,C.amber]);
+  defs.forEach(function(d,k){var c=document.createElement('div');c.className='card rv';c.innerHTML='<h3>'+d[0]+'</h3><p class="cap" style="margin-bottom:8px">'+d[1]+'</p><div class="chart" id="mm'+k+'" role="img" aria-label="'+d[0]+' nos ciclos de agosto a outubro"></div>';host.appendChild(c);
+    var cols=k===3?[C.cyan,C.teal,C.coral]:(k===0?[C.teal,C.amber,C.coral]:[C.coral,C.cyan,C.amber]);
     var s=bars4('mm'+k,d[2],{f:d[3],colors:cols,max:Math.max.apply(null,d[2])*1.25,fs:14});
     if(k===1){var W=360,H=220,T=30,B=30,max=Math.max.apply(null,d[2])*1.25;var yy=T+(H-T-B)*(1-15/max);S('line',{x1:6,x2:354,y1:yy,y2:yy,stroke:C.coral,'stroke-dasharray':'5 5','stroke-width':1.5,'class':'fade',style:'--d:1400ms'},s);}
   });
@@ -931,13 +933,13 @@ function setP(el){var p=(el.value-el.min)/(el.max-el.min)*100;el.style.setProper
 
 // loss reasons dumbbell (per day, Aug vs Oct)
 (function(){
-  var data=[['Fechou com a concorrência',115/31,132/13],['Venda não compensa',210/31,114/13],['Viagem dentro do Brasil',3/31,80/13],['Lead frio',82/31,79/13],['Não quer mais atendimento',49/31,45/13],['Data já passou',35/31,24/13]];
-  var host=document.getElementById('ch-loss');var W=560,H=300,L=200,R=50,T=10,rh=46;var s=svg(W,H,host);var max=11;var x=function(v){return L+(W-L-R)*v/max;};
-  [0,2,4,6,8,10].forEach(function(v){S('line',{x1:x(v),x2:x(v),y1:T,y2:T+rh*data.length,stroke:'#1A2448'},s);txt(s,x(v),H-4,String(v),'lbl','middle');});
+  var data=[['Fechou com a concorrência',135/31,365/30],['Venda não compensa',218/31,274/30],['Viagem dentro do Brasil',7/31,74/30],['Lead frio',112/31,139/30],['Não quer mais atendimento',32/31,66/30],['Data já passou',44/31,69/30]];
+  var host=document.getElementById('ch-loss');var W=560,H=300,L=200,R=50,T=10,rh=46;var s=svg(W,H,host);var max=13;var x=function(v){return L+(W-L-R)*v/max;};
+  [0,3,6,9,12].forEach(function(v){S('line',{x1:x(v),x2:x(v),y1:T,y2:T+rh*data.length,stroke:'#1A2448'},s);txt(s,x(v),H-4,String(v),'lbl','middle');});
   data.forEach(function(d,i){var yy=T+rh*i+rh/2;txt(s,0,yy+4,d[0],'lbl','start',{fill:'#B9C1D6','font-size':13});
     S('line',{x1:x(d[1]),x2:x(d[2]),y1:yy,y2:yy,stroke:'rgba(255,106,77,.45)','stroke-width':3,'class':'growx',style:'--d:'+(400+i*120)+'ms'},s);
     S('circle',{cx:x(d[1]),cy:yy,r:7,fill:'#8A95B3'},s);var c2=S('circle',{cx:x(d[2]),cy:yy,r:8,fill:C.coral,stroke:'#060A17','stroke-width':2,'class':'fade',style:'--d:'+(900+i*120)+'ms'},s);
-    bindTip(c2,d[0],'Agosto: '+nf1.format(d[1])+'/dia · Outubro: '+nf1.format(d[2])+'/dia');
+    bindTip(c2,d[0],'Ciclo de agosto: '+nf1.format(d[1])+'/dia · Ciclo de outubro: '+nf1.format(d[2])+'/dia');
     var rt=d[2]/d[1];txt(s,x(d[2])+(d[2]>=d[1]?14:-14),yy+5,rt>10?'≈ '+nf0.format(rt)+'×':'×'+nf1.format(rt),'lbl',d[2]>=d[1]?'start':'end',{fill:d[2]/d[1]>1.5?C.coral:'#B9C1D6','font-weight':600,'class':'lbl fade',style:'--d:'+(1100+i*120)+'ms'});});
 })();
 
@@ -950,23 +952,23 @@ function hbars(id,data,f,max){
 }
 (function(){
   var host=document.getElementById('ch-qmix');var W=640,H=120,L=110,R=6;var s=svg(W,H,host);
-  var rows=[['Orçamentos',[26,47,27]],['Vendas',[50,35,15]]];var cols=[C.cyan,C.teal,C.coral],nm=['Minivan','SUV','Sedan'];
+  var rows=[['Orçamentos',[27,47,26]],['Vendas',[52,33,15]]];var cols=[C.cyan,C.teal,C.coral],nm=['Minivan','SUV','Sedan'];
   rows.forEach(function(r,i){var yy=8+i*48,x0=L;txt(s,0,yy+22,r[0],'lbl','start',{fill:'#B9C1D6','font-size':13});
     r[1].forEach(function(v,j){var w=(W-L-R)*v/100;var b=S('rect',{x:x0+1,y:yy,width:w-2,height:34,rx:4,fill:cols[j],'class':'growx',style:'--d:'+(300+i*200)+'ms'},s);bindTip(b,r[0]+' · '+nm[j],v+'%');
       txt(s,x0+w/2,yy+22,nm[j]+' '+v+'%','lbl','middle',{fill:j===1?'#F2EEE9':'#0A1124','font-weight':600,'class':'lbl fade',style:'--d:'+(1000+i*200)+'ms'});x0+=w;});});
 })();
-hbars('ch-cconv',[['Minivan',7.19,C.cyan,'80 vendas / 1.112 orçamentos'],['SUV',2.73,C.teal,'55 vendas / 2.011 orçamentos'],['Sedan',2.08,C.coral,'24 vendas / 1.155 orçamentos']],function(v){return nf1.format(v)+'%';},8.5);
-hbars('ch-cval',[['Minivan',377,C.cyan,'R$ 418.943 faturados'],['SUV',120,C.teal,'R$ 241.449 faturados'],['Sedan',86,C.coral,'R$ 98.902 faturados']],function(v){return 'R$ '+nf0.format(v);},440);
+hbars('ch-cconv',[['Minivan',7.07,C.cyan,'92 vendas / 1.301 orçamentos'],['SUV',2.49,C.teal,'58 vendas / 2.334 orçamentos'],['Sedan',2.14,C.coral,'27 vendas / 1.263 orçamentos']],function(v){return nf1.format(v)+'%';},8.5);
+hbars('ch-cval',[['Minivan',374,C.cyan,'R$ 486.125 faturados'],['SUV',109,C.teal,'R$ 255.499 faturados'],['Sedan',91,C.coral,'R$ 114.355 faturados']],function(v){return 'R$ '+nf0.format(v);},440);
 
 // data quality
 (function(){
   var dq=[
-    ['bad','Crítico','11 de 36 vendas de outubro sem categoria, datas e pagamento','R$ 52,3 mil sem mix, diárias nem ocupação. Todas lançadas em 12 e 13/10.'],
-    ['bad','Crítico','36 de 36 vendas de outubro no nome do Luciano','Não dá para medir as duplas nem pagar comissão por quem fechou.'],
-    ['bad','Crítico','Evento de lead do site parado desde 19/09','Leads de site: zero em outubro. A conta de anúncios otimiza no escuro.'],
+    ['bad','Crítico','Ciclo atual ainda fora do Histórico','As 8 vendas de 13/10 (R$ 40,1 mil) estão só na aba Fechamentos, 7 sem categoria e datas. Pela regra do ciclo, não entram no faturamento.'],
+    ['bad','Crítico','73 de 80 vendas do ciclo de outubro no nome do Luciano','Não dá para medir as duplas nem pagar comissão por quem fechou.'],
+    ['bad','Crítico','Evento de lead do site parado desde 19/09','Leads de site zeraram. A conta de anúncios otimiza no escuro.'],
     ['warn','Alto','Painel sem faturamento de outubro','A aba de fechamento e a coluna de faturamento da mídia estão zeradas; o ROAS do painel não fecha.'],
-    ['warn','Médio','2 linhas duplicadas no histórico','R$ 10.034 a mais (abril e agosto). Removidas desta análise.'],
-    ['info','Conferir','Venda de 13/10 com cliente "Luciano" (R$ 3.842)','Em setembro houve 12 linhas de teste com esse nome. Confirmar antes do fechamento.']
+    ['warn','Médio','4 vendas de 12/10 sem categoria e 2 duplicadas','R$ 16,7 mil sem mix nem diárias; R$ 10.034 duplicados (abril e agosto), removidos desta análise.'],
+    ['info','Conferir','Clientes "HOMEM MISTERIOSO" e "Luciano"','R$ 8.700 em 12/10 (Histórico) e R$ 3.842 em 13/10 (Fechamentos). Em setembro houve 12 linhas de teste. Confirmar.']
   ];
   document.getElementById('dq').innerHTML=dq.map(function(d,i){return '<div class="card rv" style="display:flex;flex-direction:column;gap:10px;--d:'+(200+i*110)+'ms"><span class="tag '+d[0]+'" style="align-self:flex-start">'+d[1]+'</span><h3 style="font-size:18px;line-height:1.3">'+d[2]+'</h3><p class="muted" style="font-size:14.5px">'+d[3]+'</p></div>';}).join('');
 })();
@@ -984,9 +986,9 @@ var gauge={};
   var realArc=S('path',{d:arcPath(0,REAL,r),fill:'none',stroke:C.coral,'stroke-width':10},s);
   [0,100000,200000,300000,400000,500000].forEach(function(v){var a=pt(v,r+30),b=pt(v,r-22),c=pt(v,r+24);S('line',{x1:pt(v,r+20)[0],y1:pt(v,r+20)[1],x2:b[0],y2:b[1],stroke:'#3A4570','stroke-width':1.5},s);txt(s,a[0],a[1]+4,v?(v/1000)+'k':'0','lbl','middle');});
   var needle=S('line',{x1:cx,y1:cy,x2:cx-r+40,y2:cy,stroke:C.fg,'stroke-width':4,'stroke-linecap':'round'},s);S('circle',{cx:cx,cy:cy,r:10,fill:C.fg},s);
-  var big=txt(s,cx,cy+68,'R$ 381,6 mil','vlbl','middle',{'font-size':40,'font-weight':800});
-  var sub=txt(s,cx,cy+96,'76% da meta','lbl','middle',{'font-size':14,fill:C.cyan});
-  var leg=S('g',{transform:'translate(140,0)'},s);S('rect',{x:20,y:H-16,width:12,height:6,fill:C.coral},leg);txt(leg,38,H-9,'realizado','lbl');S('rect',{x:120,y:H-16,width:12,height:6,fill:C.cyan},leg);txt(leg,138,H-9,'projeção','lbl');S('rect',{x:220,y:H-16,width:12,height:6,fill:'rgba(34,196,216,.35)'},leg);txt(leg,238,H-9,'faixa','lbl');
+  var big=txt(s,cx,cy+68,'R$ 395,8 mil','vlbl','middle',{'font-size':40,'font-weight':800});
+  var sub=txt(s,cx,cy+96,'79% da meta','lbl','middle',{'font-size':14,fill:C.cyan});
+  var leg=S('g',{transform:'translate(150,0)'},s);S('rect',{x:20,y:H-16,width:12,height:6,fill:C.cyan},leg);txt(leg,38,H-9,'projeção realista','lbl');S('rect',{x:170,y:H-16,width:12,height:6,fill:'rgba(34,196,216,.35)'},leg);txt(leg,188,H-9,'faixa','lbl');
   var cur=REAL,anim=null;
   gauge.set=function(target,instant){cancelAnimationFrame(anim);var from=cur,t0=performance.now(),dur=instant||reduce?1:1400;
     (function step(t){var k=Math.min(1,(t-t0)/dur);var e=1-Math.pow(1-k,3);var v=from+(target-from)*e;cur=v;
@@ -997,17 +999,17 @@ var gauge={};
 function setScenario(i,instant){gauge.cur=i;document.querySelectorAll('[data-sc]').forEach(function(b){b.setAttribute('aria-pressed',String(+b.getAttribute('data-sc')===i));});document.getElementById('sc-desc').textContent=SC[i].d;gauge.set(SC[i].v,instant);
   document.querySelectorAll('#sc-table tr[data-r]').forEach(function(tr){tr.style.background=(+tr.getAttribute('data-r')===i)?'rgba(34,196,216,.08)':'';});}
 document.querySelectorAll('[data-sc]').forEach(function(b){b.addEventListener('click',function(){setScenario(+b.getAttribute('data-sc'));});});
-document.getElementById('sc-table').innerHTML='<tr><th>Cenário</th><th class="n">Por dia (restante)</th><th class="n">Outubro</th><th class="n">vs meta</th></tr>'+SC.map(function(sc,i){var pd=(sc.v-REAL)/LEFT;return '<tr data-r="'+i+'"><td>'+sc.n+'</td><td class="n">'+brl(pd)+'</td><td class="n" style="color:'+(i===1?C.cyan:'inherit')+'">'+brlk(sc.v)+'</td><td class="n hl-r">−'+brlk(500000-sc.v)+'</td></tr>';}).join('');
+document.getElementById('sc-table').innerHTML='<tr><th>Cenário</th><th class="n">Por dia</th><th class="n">Ciclo atual</th><th class="n">vs meta</th></tr>'+SC.map(function(sc,i){var pd=(sc.v-REAL)/LEFT;return '<tr data-r="'+i+'"><td>'+sc.n+'</td><td class="n">'+brl(pd)+'</td><td class="n" style="color:'+(i===1?C.cyan:'inherit')+'">'+brlk(sc.v)+'</td><td class="n hl-r">−'+brlk(500000-sc.v)+'</td></tr>';}).join('');
 setScenario(1,true);
 
 // simulator
 (function(){
-  var P={out:{ent:145.8,atd:58.1,orc:0.85,cv:3.85,tk:4445,d:31},set:{ent:145.8,atd:79.6,orc:0.80,cv:4.13,tk:4642,d:31},plano:{ent:125,atd:82,orc:0.85,cv:4.0,tk:4800,d:30}};
+  var P={out:{ent:121.57,atd:70.8,orc:0.806,cv:3.844,tk:4788,d:31},set:{ent:121.57,atd:80.1,orc:0.861,cv:3.769,tk:4621,d:31},plano:{ent:125,atd:82,orc:0.81,cv:4.0,tk:4900,d:31}};
   var ids=['ent','atd','orc','cv','tk','d'];var el={};ids.forEach(function(k){el[k]=document.getElementById('sl-'+k);});
   var CEIL=96;
   function calc(){var v={};ids.forEach(function(k){v[k]=+el[k].value;setP(el[k]);});
     var atdDia=v.ent*v.atd/100;var vendas=atdDia*v.orc*v.d*v.cv/100;var fat=vendas*v.tk;
-    document.getElementById('o-ent').textContent=nf0.format(v.ent);document.getElementById('o-atd').textContent=nf0.format(v.atd)+'%';document.getElementById('o-orc').textContent=nf2.format(v.orc);document.getElementById('o-cv').textContent=nf2.format(v.cv).replace(/0$/,'')+'%';document.getElementById('o-tk').textContent=brl(v.tk);document.getElementById('o-d').textContent=v.d;
+    document.getElementById('o-ent').textContent=nf0.format(v.ent);document.getElementById('o-atd').textContent=nf0.format(v.atd)+'%';document.getElementById('o-orc').textContent=nf2.format(v.orc);document.getElementById('o-cv').textContent=nf2.format(v.cv)+'%';document.getElementById('o-tk').textContent=brl(v.tk);document.getElementById('o-d').textContent=v.d;
     var out=document.getElementById('sim-out');out.textContent=brlk(fat);out.style.color=fat>=500000?C.green:(fat>=420000?C.cyan:C.fg);
     var bar=document.getElementById('sim-bar');bar.style.width=Math.min(100,fat/600000*100)+'%';bar.classList.toggle('hit500',fat>=500000);
     document.getElementById('sim-v').textContent=nf0.format(Math.round(vendas));document.getElementById('sim-a').textContent=nf0.format(Math.round(atdDia));
@@ -1025,17 +1027,17 @@ setScenario(1,true);
 // weeks + asks
 (function(){
   var wk=[
-    ['Semana 1','14 → 20/10','Estancar',['Realocar 1 pessoa para o turno da noite já','Bot de triagem no WhatsApp no ar','Verba limitada à capacidade','Cadência dos 728 orçamentos de dez/jan'],'atendidos ≥ 70%'],
-    ['Semana 2','21 → 27/10','Estruturar',['Contratar 2 SDRs','Uma agência, metas por orçamento qualificado','Compra com valor (CAPI) no ar','Placar diário às 18h'],'atendidos ≥ 75%'],
-    ['Semana 3','28/10 → 03/11','Acelerar',['SDRs treinados no método da casa','Campanha Natal/Réveillon e minivan','Follow-up em 100% dos orçamentos','Fechar outubro ≥ R$ 400 mil'],'atendidos ≥ 80%'],
-    ['Novembro','01 → 30/11','Escalar',['3,5 vendas por dia','R$ 16,7 mil por dia','Revisão semanal de 30 min com a diretoria','Check: R$ 117 mil por semana'],'R$ 500 mil no mês']
+    ['Semana 1','13 → 19/10','Estancar',['Realocar 1 pessoa para o turno da noite já','Bot de triagem no WhatsApp no ar','Verba limitada à capacidade','Cadência dos 591 orçamentos de dez/jan'],'R$ 95 mil · atendidos ≥ 75%'],
+    ['Semana 2','20 → 26/10','Estruturar',['Contratar 2 SDRs','Uma agência, metas por orçamento qualificado','Compra com valor (CAPI) no ar','Placar diário às 18h'],'R$ 105 mil · atendidos ≥ 78%'],
+    ['Semana 3','27/10 → 02/11','Acelerar',['SDRs treinados no método da casa','Campanha Natal/Réveillon e minivan','Follow-up em 100% dos orçamentos','Acumulado ≥ R$ 320 mil'],'R$ 120 mil · atendidos ≥ 82%'],
+    ['Fechamento','03 → 12/11','Escalar',['R$ 18 mil por dia nos 10 dias finais','3,7 vendas por dia','Placar diário com a diretoria','Ciclo fecha em 12/11'],'R$ 180 mil · total R$ 500 mil']
   ];
   document.getElementById('weeks').innerHTML=wk.map(function(w,i){return '<div class="card front rv" style="--d:'+(200+i*140)+'ms"><span class="cap">'+w[0]+' · '+w[1]+'</span><h3 style="font-family:var(--f-display);font-weight:600;font-size:22px;color:'+(i===3?C.cyan:C.fg)+'">'+w[2]+'</h3><ul>'+w[3].map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul><p class="goal">'+w[4]+'</p></div>';}).join('');
   var asks=[
-    ['Aprovar 2 SDRs e a automação da triagem','Cobertura de 8h às 22h com jornada de até 9h. É a alavanca de maior retorno: cada 10 pontos de atendimento valem ≈ R$ 65 mil por mês.'],
+    ['Aprovar 2 SDRs e a automação da triagem','Cobertura de 8h às 22h com jornada de até 9h. É a alavanca de maior retorno: cada 10 pontos de atendimento valem ≈ R$ 56 mil por ciclo.'],
     ['Consolidar o tráfego em uma agência','Contrato com meta de custo por orçamento qualificado e mídia ≤ 15% do faturamento.'],
-    ['Prender a verba à capacidade','Enquanto o atendimento estiver abaixo de 80%, verba no patamar de agosto: ≈ R$ 30 mil por mês a menos que o ritmo de outubro.'],
-    ['Aprovar a campanha de alta temporada','Natal e Réveillon com minivan e 10+ diárias, trabalhando os 728 orçamentos abertos.'],
+    ['Prender a verba à capacidade','Enquanto o atendimento estiver abaixo de 80%, verba no patamar do ciclo de setembro: ≈ R$ 28 mil a menos por ciclo que o ritmo atual.'],
+    ['Aprovar a campanha de alta temporada','Natal e Réveillon com minivan e 10+ diárias, trabalhando os 591 orçamentos abertos.'],
     ['Limitar a jornada a 9 horas','Saúde da equipe e qualidade do atendimento: escala definida e fila com teto por pessoa.']
   ];
   document.getElementById('asks').innerHTML=asks.map(function(a,i){return '<li class="card rv" style="display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start;padding:14px 18px;--d:'+(400+i*150)+'ms"><span class="num" style="font-size:26px;color:var(--coral)">'+(i+1)+'</span><div><h3 style="font-size:17px">'+a[0]+'</h3><p class="muted" style="font-size:13.5px">'+a[1]+'</p></div></li>';}).join('');
