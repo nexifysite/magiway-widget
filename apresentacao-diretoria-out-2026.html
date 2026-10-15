@@ -135,15 +135,26 @@ b,strong{font-weight:800}
 .chk{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;font-size:14.5px;line-height:1.35}
 .chk li{position:relative;padding-left:22px}
 .chk li::before{content:'';position:absolute;left:0;top:.38em;width:10px;height:10px;border-radius:3px;background:#fff}
+.chk.dark li::before{background:var(--teal)}
 a.btn{text-decoration:none;display:inline-block}
 .inp{width:100%;font:500 13px var(--f-body);padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.65);background:rgba(255,255,255,.16);color:#fff;margin-top:6px}
 .inp::placeholder{color:rgba(255,255,255,.8)}
 .inp:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .stack{display:flex;height:54px;border-radius:12px;overflow:hidden;gap:3px}
 .stack i{display:block;height:100%}
-.callout{display:grid;grid-template-columns:86px 1fr;gap:14px;align-items:center;padding:10px 0;border-top:1px solid var(--line2)}
+.callout{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:center;padding:10px 0;border-top:1px solid var(--line2)}
 .callout .num{font-size:34px;color:var(--coral)}
 .callout p{font-size:14.5px;color:var(--ink2)}
+.hm{width:100%;border-collapse:separate;border-spacing:5px;font-size:14px}
+.hm th{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:500;text-align:center;padding:0 2px 4px}
+.hm th:first-child{text-align:left}
+.hm td{text-align:center;border-radius:10px;padding:10px 4px;font-family:var(--f-mono);font-weight:700;font-size:16px}
+.hm td.p{text-align:left;font-family:var(--f-body);font-weight:700;font-size:15px;padding-left:0;white-space:nowrap}
+.hm td.p small{display:block;font-weight:500;font-size:12px;color:var(--ink3)}
+.hm td.sc{font-size:20px;color:var(--ink)}
+.hm .hi{background:rgba(20,148,95,.14);color:#0F7A4E}
+.hm .md{background:rgba(242,163,58,.2);color:#9A5F0E}
+.hm .lo{background:rgba(255,75,43,.12);color:var(--coral-d)}
 .roles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .role{display:flex;gap:10px;align-items:center;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:14.5px;font-weight:600;line-height:1.25}
 .role i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--coral)}
@@ -413,21 +424,56 @@ table.kt th.n{text-align:right}
   </header>
   <div class="sb">
     <div class="card rv">
-      <h3>Primeira e última ação de cada pessoa</h3><p class="cap" style="margin-bottom:6px">14/10 · histórico de ações do agente Kommo · tracejado: fim da jornada de referência (17h)</p>
-      <div class="chart" id="ch-day" role="img" aria-label="Primeira e última ação no Kommo em 14 de outubro: Eduardo das 8h51 às 23h17, Dickson das 8h44 às 21h35, Gledson das 8h44 às 21h02, Janes das 9h28 às 20h17 e Luciano das 11h10 às 21h47, contra a jornada de referência das 8h às 17h"></div>
+      <h3>Primeira e última ação de cada pessoa</h3><p class="cap" style="margin-bottom:6px">14/10 · operação com movimento por 14,2h (14,7h em 13/10) · tracejado: fim da jornada de referência (17h)</p>
+      <div class="chart" id="ch-day" role="img" aria-label="Primeira e última ação no Kommo em 14 de outubro: Eduardo das 8h51 às 23h17, Dickson das 8h44 às 21h35, Gledson das 8h44 às 21h02 e Janes das 9h28 às 20h17, contra a jornada de referência das 8h às 17h"></div>
     </div>
     <div class="g g4">
       <div class="card kpi alert rv"><span class="cap">Jornada do Eduardo (SDR)</span><span class="v">14h26</span><span class="d">8h51 → 23h17: 779 ações, 510 mensagens e 8 vendas</span></div>
       <div class="card kpi alert rv"><span class="cap">Média da linha de frente</span><span class="v">13h12</span><span class="d">Dickson, Eduardo e Gledson, contra a jornada de referência de 9h</span></div>
-      <div class="card kpi alert rv"><span class="cap">Clientes em um dia</span><span class="v" data-count="409" data-fmt="int">409</span><span class="d">para 3 pessoas: 1.940 ações e 1.118 mensagens (158, 136 e 115 clientes)</span></div>
-      <div class="card kpi alert rv"><span class="cap">Resposta mediana · Dickson, 13/10</span><span class="v" data-count="53" data-fmt="int" data-suf=" min">53 min</span><span class="d">só 29% em até 10 min. Após uma pausa de 16 min, 11 clientes já esperavam há +15 min</span></div>
+      <div class="card kpi alert rv"><span class="cap">Clientes atendidos no dia</span><span class="v" data-count="349" data-fmt="int">349</span><span class="d">leads distintos com resposta de pessoa; a linha de frente fez 1.940 ações e 1.118 mensagens</span></div>
+      <div class="card kpi alert rv"><span class="cap">Resposta mediana da equipe</span><span class="v" data-count="16" data-fmt="int" data-suf=" min">16 min</span><span class="d">1 em cada 4 clientes esperou mais de 51 min. Após uma pausa de 16 min, 11 já esperavam há +15 min</span></div>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: agente Kommo, 14/10 (ações e tarefas por pessoa) e 13/10 (resposta mediana, relógio das 9h às 22h) · linha de frente: Dickson, Eduardo (SDR) e Gledson (vendedor) · referência: 9h; CLT: 8h por dia, até 2h extras, 11h de descanso</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: agente Kommo, 14/10 (ações e tarefas por pessoa) (resposta mediana da equipe: relógio das 9h às 22h) · linha de frente: Dickson, Eduardo (SDR) e Gledson (vendedor); gerente fora das avaliações · referência: 9h; CLT: 8h por dia, até 2h extras, 11h de descanso</span><span class="pg"></span></footer>
+</section>
+
+<!-- 07a1 EXCELÊNCIA DA EQUIPE -->
+<section class="slide" id="s9">
+  <header class="sh">
+    <p class="eyebrow rv">A excelência da equipe · avaliação do agente Kommo, 14/10</p>
+    <h2 class="rv">Mesmo no limite, a equipe entrega: <span class="t">volume e cobertura no máximo</span></h2>
+  </header>
+  <div class="sb">
+    <div class="g g4">
+      <div class="card kpi rv"><span class="cap">Nota da equipe</span><span class="v" style="color:var(--teal)">70,4</span><span class="d">de 0 a 100, sobre 2.177 ações (sem as em lote); +2% sobre 13/10</span></div>
+      <div class="card kpi rv"><span class="cap">Conversas de uma pessoa em um dia</span><span class="v" style="color:var(--teal)" data-count="329" data-fmt="int">329</span><span class="d">Dickson em 13/10; no mesmo dia, Gledson atendeu 271</span></div>
+      <div class="card kpi rv"><span class="cap">Respostas em até 10 min</span><span class="v" style="color:var(--teal)" data-count="291" data-fmt="int">291</span><span class="d">de 627 respostas (45%), acima de 13/10; o Gledson responde em 6 min</span></div>
+      <div class="card kpi rv"><span class="cap">Vendas ganhas no dia</span><span class="v" style="color:var(--teal)" data-count="9" data-fmt="int">9</span><span class="d">uma a mais que em 13/10; o Eduardo fechou 8</span></div>
+    </div>
+    <div class="g c-d">
+      <div class="card rv">
+        <h3>Nota por dimensão · linha de frente</h3><p class="cap" style="margin-bottom:4px">0 a 100 · verde 85+, âmbar 60 a 84, coral abaixo de 60</p>
+        <div class="tbl-wrap"><table class="hm">
+          <tr><th>Pessoa</th><th>Nota</th><th>Volume</th><th>Cobertura</th><th>Presença</th><th>Registro</th><th>Funil</th><th>Velocidade</th><th>Método</th></tr>
+          <tr class="rv" style="--d:400ms"><td class="p">Dickson<small>SDR · 1º</small></td><td class="sc">76,1</td><td class="hi">100</td><td class="hi">97</td><td class="md">78</td><td class="hi">93</td><td class="hi">99</td><td class="lo">46</td><td class="lo">32</td></tr><tr class="rv" style="--d:550ms"><td class="p">Eduardo<small>SDR</small></td><td class="sc">75,8</td><td class="hi">100</td><td class="hi">100</td><td class="hi">91</td><td class="md">82</td><td class="lo">45</td><td class="md">65</td><td class="lo">27</td></tr><tr class="rv" style="--d:700ms"><td class="p">Gledson<small>vendedor · 1º</small></td><td class="sc">65,0</td><td class="hi">100</td><td class="hi">100</td><td class="hi">88</td><td class="md">66</td><td class="lo">23</td><td class="md">71</td><td class="lo">13</td></tr>
+        </table></div>
+      </div>
+      <div class="g" style="align-content:start">
+        <div class="card hot rv"><p style="font-size:15.5px"><b>Ninguém deixa de trabalhar:</b> volume 100 e cobertura de 97 a 100 para os três. No padrão de qualidade: retomadas com conteúdo 100%, marca escrita certa 97%, o que está incluso antes do preço 92%. O que fica crítico é velocidade e método, justamente o que depende de gente suficiente e de processo definido.</p></div>
+        <div class="card flat rv"><ul class="chk dark" style="font-size:14px">
+          <li><b>Dickson:</b> nota 76,1 (+6% em um dia), 57 avanços no funil e nenhum retrocesso</li>
+          <li><b>Eduardo:</b> 292 respostas (+22%) e 130 em até 10 min (+106%)</li>
+          <li><b>Gledson:</b> resposta típica de 6 min e 58% em até 10 min</li>
+          <li><b>Equipe, em um dia:</b> +28,5 pontos em novos toques após 12h e +24,5 em fechar a mensagem com pergunta</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: agente Kommo, painel de avaliações e conversas por pessoa, 14/10 comparado a 13/10 · notas de 0 a 100 em 7 dimensões e critérios de qualidade · linha de frente: Dickson e Eduardo (SDR) e Gledson (vendedor); Luciano fica fora das avaliações</span><span class="pg"></span></footer>
 </section>
 
 <!-- 07a2 QUEM ATENDEU -->
-<section class="slide" id="s9">
+<section class="slide" id="s10">
   <header class="sh">
     <p class="eyebrow rv">Quem atendeu · agente Kommo, 14/10</p>
     <h2 class="rv">Sem braço para atender, o cliente <em>fica com o robô</em></h2>
@@ -442,22 +488,23 @@ table.kt th.n{text-align:right}
         </div>
         <div class="callout rv"><p class="num" data-count="57" data-fmt="int">57</p><p>clientes escreveram duas vezes ou mais, e <b>só o robô respondeu</b></p></div>
         <div class="callout rv"><p class="num" data-count="34" data-fmt="int">34</p><p>conversas em que o cliente falou por último e <b>nenhuma pessoa respondeu</b></p></div>
+        <div class="callout rv"><p class="num">22%</p><p>das esperas passaram de <b>1 hora</b> (17% em 13/10). O robô mandou 3.226 mensagens no dia</p></div>
       </div>
       <div class="g" style="align-content:start">
         <div class="card rv">
-          <h3>Nota das conversas · 14/10</h3><p class="cap" style="margin-bottom:12px">avaliação individual do agente · 220 conversas analisadas</p>
+          <h3>Clientes por pessoa · 14/10</h3><p class="cap" style="margin-bottom:12px">leads distintos a quem cada um escreveu</p>
           <div style="display:flex;flex-direction:column;gap:12px" id="notas"></div>
-          <p class="muted" style="font-size:13px;margin-top:12px">Média de <b>5,6 de 10</b>. Luciano: 24 conversas, fora das avaliações.</p>
+          <p class="muted" style="font-size:13px;margin-top:12px">349 clientes distintos no dia: o mesmo cliente pode ter falado com mais de uma pessoa.</p>
         </div>
-        <div class="card hot rv"><p style="font-size:16px">No dia de 14h26, três pessoas atenderam 409 clientes. <b>Quem atende 400 clientes por dia não consegue atender bem.</b> Mais horas não resolvem: gente e estrutura resolvem.</p></div>
+        <div class="card hot rv"><p style="font-size:16px">No dia de 14h26, três pessoas da linha de frente escreveram para 409 clientes. <b>Não há braço para todos.</b> Mais horas não resolvem: gente e estrutura resolvem.</p></div>
       </div>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: agente Kommo, "Quem atendeu" e "Avaliação individual", 14/10 (fechamento às 23h30) · atendimento = quem escreveu na conversa · espera contada das 9h às 22h · nota só com critérios que têm evidência registrada</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: agente Kommo, "Quem atendeu" e tarefas por pessoa, 14/10 (fechamento às 23h30) · atendimento = quem escreveu na conversa · espera contada das 9h às 22h</span><span class="pg"></span></footer>
 </section>
 
 <!-- 07b BASE DA CARGA HORÁRIA -->
-<section class="slide" id="s10">
+<section class="slide" id="s11">
   <header class="sh">
     <p class="eyebrow rv">A base da carga horária</p>
     <h2 class="rv">A conta da jornada, <em>linha por linha</em></h2>
@@ -493,7 +540,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07c GERENTE COMERCIAL -->
-<section class="slide" id="s11">
+<section class="slide" id="s12">
   <header class="sh">
     <p class="eyebrow rv">O gerente comercial</p>
     <h2 class="rv">Um gerente, quinze frentes, e <em>sem hora para parar</em></h2>
@@ -505,21 +552,16 @@ table.kt th.n{text-align:right}
         <div class="roles" id="roles"></div>
       </div>
       <div class="g" style="align-content:start">
-        <div class="card rv">
-          <h3>No Kommo, em 14/10</h3><p class="cap" style="margin-bottom:10px">agente Kommo · gerente fora das avaliações</p>
-          <p class="num" style="font-size:30px">11h10 → 21h47</p>
-          <p class="muted" style="font-size:14px;margin-top:6px">83 ações e 79 mensagens no sistema. Reuniões, treinamento, tráfego, marketing, materiais e a empresa de carrinhos ficam fora do Kommo e não aparecem em nenhum painel.</p>
-        </div>
-        <div class="card flat rv"><p style="font-size:14px">No painel, 95% dos orçamentos e 98% dos follow-ups de setembro aparecem no usuário dele. No Kommo, em 13/10, foram 1.003 leads e 961 etapas no usuário dele com só 121 mensagens: volume de movimentação em massa. <b>O registro não mostra quem faz o quê.</b></p></div>
+        <div class="card flat rv"><p style="font-size:14px">No painel, 95% dos orçamentos e 98% dos follow-ups de setembro aparecem no usuário dele. Toda venda ganha sai pela conta dele, e em 14/10 caíram no usuário dele 6.226 ações em lote (5.070 leads). <b>O registro não mostra quem faz o quê.</b></p></div>
         <div class="card hot rv"><p style="font-size:16px">Quem vende para bater a meta não tem tempo de gerir, e quem gere não tem tempo de vender. <b>Hoje o gerente faz os dois, e ainda resolve os problemas da equipe.</b></p></div>
       </div>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Funções: relato da gestão · Kommo: histórico de ações do agente, 14/10 · painel comercial: usuário responsável no Kommo, 13/09 → 12/10 (orçamentos 1.959 de 2.072; follow-ups 4.255 de 4.354)</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Funções: relato da gestão · o gerente fica fora de todas as avaliações · Kommo: lotes e vendas, 14/10 · painel comercial: usuário responsável no Kommo, 13/09 → 12/10 (orçamentos 1.959 de 2.072; follow-ups 4.255 de 4.354)</span><span class="pg"></span></footer>
 </section>
 
 <!-- 08 TAXA DE ORÇAMENTO -->
-<section class="slide" id="s12">
+<section class="slide" id="s13">
   <header class="sh">
     <p class="eyebrow rv">Conversão para orçamento</p>
     <h2 class="rv">A taxa de orçamento caiu pela metade: de <span class="t">66%</span> para <em>33%</em> dos leads</h2>
@@ -538,7 +580,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 08b PADRÃO DE QUEDA DOS ORÇAMENTOS -->
-<section class="slide" id="s13">
+<section class="slide" id="s14">
   <header class="sh">
     <p class="eyebrow rv">Padrão de queda dos orçamentos · leads novos</p>
     <h2 class="rv">O orçamento novo cai <em>1,1% ao dia</em> desde 22/09, e em outubro cai mais rápido</h2>
@@ -554,15 +596,15 @@ table.kt th.n{text-align:right}
           <h3>Como estarão os orçamentos</h3><p class="cap" style="margin-bottom:8px">orçamentos de lead novo por dia</p>
           <div class="tbl-wrap"><table class="kt" id="decay-tbl"></table></div>
         </div>
-        <div class="card flat rv"><p style="font-size:14px">Do pico de 75 por dia (22/09) para 56 em 14/10: <b class="hl-c">−26% em três semanas</b>. Só 36% dos leads viram orçamento, contra 68% no pico. A gestão projeta 30 por dia, abaixo das curvas: a nova equipe de tráfego precisa de ao menos 15 dias para aprender, sem prazo garantido, e não há mais base.</p></div>
+        <div class="card flat rv"><p style="font-size:14px">Do pico de 75 por dia (22/09) para 56 em 14/10: <b class="hl-c">−26% em três semanas</b>. Só 36% dos leads viram orçamento, contra 68% no pico. No Kommo, os orçamentos enviados caíram de 92 em 13/10 para 48 em 14/10. A gestão projeta 30 por dia, abaixo das curvas: a nova equipe de tráfego precisa de ao menos 15 dias para aprender, sem prazo garantido, e não há mais base.</p></div>
       </div>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: painel comercial, orçamento de lead entrante (criado e orçado no mesmo dia), 01/09 → 14/10 · curvas: ajuste exponencial dos dados diários a partir de 22/09 e de 01/10, sem ativos e sem follow-ups</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: painel comercial, orçamento de lead entrante (criado e orçado no mesmo dia), 01/09 → 14/10 · curvas: ajuste exponencial dos dados diários a partir de 22/09 e de 01/10, sem ativos e sem follow-ups · orçamentos enviados: agente Kommo</span><span class="pg"></span></footer>
 </section>
 
 <!-- 09 BASE ESGOTADA -->
-<section class="slide" id="s14">
+<section class="slide" id="s15">
   <header class="sh">
     <p class="eyebrow rv">De onde vieram as vendas</p>
     <h2 class="rv">Os dois dias de outubro não são ritmo: <em>5.191 ativos</em> para 16 vendas, e a base acabou</h2>
@@ -579,7 +621,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 10 TRÁFEGO -->
-<section class="slide" id="s15">
+<section class="slide" id="s16">
   <header class="sh">
     <p class="eyebrow rv">Falhas no tráfego pago</p>
     <h2 class="rv">Mais verba, <em>lead pior</em> e nenhum sinal de venda na conta</h2>
@@ -597,7 +639,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 11 NOVA AGÊNCIA -->
-<section class="slide" id="s16">
+<section class="slide" id="s17">
   <header class="sh">
     <p class="eyebrow rv">Desperdício com a nova agência</p>
     <h2 class="rv">A 2ª agência paga <em>54% a mais</em> por conversa, na mesma conta</h2>
@@ -627,7 +669,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 12 LINHA DO TEMPO -->
-<section class="slide" id="s17">
+<section class="slide" id="s18">
   <header class="sh">
     <p class="eyebrow rv">Linha do tempo · julho a outubro</p>
     <h2 class="rv">Os percalços que nos trouxeram <em>até aqui</em></h2>
@@ -642,7 +684,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 13 TODAS AS DIFICULDADES -->
-<section class="slide" id="s18">
+<section class="slide" id="s19">
   <header class="sh">
     <p class="eyebrow rv">Todas as dificuldades</p>
     <h2 class="rv">Doze problemas que a equipe <em>não resolve sozinha</em></h2>
@@ -654,7 +696,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 14 PROJEÇÃO REAL -->
-<section class="slide" id="s19">
+<section class="slide" id="s20">
   <header class="sh">
     <p class="eyebrow rv">A projeção real · outubro (13/10 → 12/11)</p>
     <h2 class="rv">Com 30 orçamentos por dia e sem base, outubro fecha perto de <em>R$ 147 mil</em></h2>
@@ -690,7 +732,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15 META INALCANÇÁVEL -->
-<section class="slide divider" id="s20">
+<section class="slide divider" id="s21">
   <header class="sh">
     <p class="eyebrow rv">A conclusão</p>
     <h2 class="rv">R$ 500 mil não são alcançáveis em outubro</h2>
@@ -708,7 +750,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 16 DECISÕES -->
-<section class="slide" id="s21">
+<section class="slide" id="s22">
   <header class="sh">
     <p class="eyebrow rv">O que pedimos à diretoria</p>
     <h2 class="rv">Seis decisões para <span class="t">proteger a equipe</span> e voltar a crescer</h2>
@@ -981,8 +1023,8 @@ bars('ch-yield',[1000*30/3386,1000*4/2355],{labels:['Setembro','Outubro'],f:func
 /* ---- difficulties ---- */
 (function(){
   var d=[
-    ['Jornada desumana','Até 14h26 no Kommo em 14/10 (8h51 → 23h17); a linha de frente atendeu 409 clientes em um dia. A equipe não aguenta.'],
-    ['Gerente sobrecarregado','O gerente comercial vende, treina, gere, cuida de tráfego, marketing e da empresa de carrinhos; no Kommo, das 11h10 às 21h47.'],
+    ['Jornada desumana','Até 14h26 no Kommo em 14/10 (8h51 → 23h17); 349 clientes atendidos em um dia. A equipe não aguenta.'],
+    ['Gerente sobrecarregado','O gerente comercial vende, treina, gere, cuida de tráfego, marketing e da empresa de carrinhos, e ainda resolve os problemas da equipe.'],
     ['Atendimento em queda','41% dos leads atendidos em 14/10 (80% em agosto); 57 clientes insistiram e só o robô respondeu.'],
     ['Orçamento novo não chega','Queda de 1,1% ao dia desde 22/09; lead → orçamento de 68% para 36%.'],
     ['Base esgotada','100% das vendas de outubro vieram da base, com 5.191 ativos em 4 dias. Não há mais base para rodar.'],
@@ -999,7 +1041,7 @@ bars('ch-yield',[1000*30/3386,1000*4/2355],{labels:['Setembro','Outubro'],f:func
 
 /* ---- o absurdo em horas (Kommo, 14/10) ---- */
 (function(){
-  var host=document.getElementById('ch-day');var W=1400,H=300,L=250,R=20,T=34,B=30;var s=svg(W,H,host);
+  var host=document.getElementById('ch-day');var W=1400,H=262,L=250,R=20,T=34,B=30;var s=svg(W,H,host);
   var h0=6,h1=24;var x=function(h){return L+(W-L-R)*(h-h0)/(h1-h0);};
   function fmt(h){var hh=Math.floor(h),mm=Math.round((h-hh)*60);return hh+'h'+(mm<10?'0':'')+mm;}
   S('rect',{x:x(17),y:T-6,width:x(h1)-x(17),height:H-B-T+6,fill:'rgba(255,75,43,.06)'},s);
@@ -1011,8 +1053,7 @@ bars('ch-yield',[1000*30/3386,1000*4/2355],{labels:['Setembro','Outubro'],f:func
     ['Eduardo · SDR','779 ações · 510 mensagens',8+51/60,23+17/60,'14h26',C.coral],
     ['Dickson · SDR','726 ações · 322 mensagens',8+44/60,21+35/60,'12h51',C.coral],
     ['Gledson · vendedor','435 ações · 286 mensagens',8+44/60,21+2/60,'12h18',C.coral],
-    ['Janes · gerência','154 ações · 97 mensagens',9+28/60,20+17/60,'10h49',C.amber],
-    ['Luciano · gerente','83 ações · 79 mensagens',11+10/60,21+47/60,'10h37',C.amber]];
+    ['Janes · gerência','154 ações · 97 mensagens',9+28/60,20+17/60,'10h49',C.amber]];
   var rh=30,gap=10;
   rows.forEach(function(r,i){var y=T+i*(rh+gap);
     txt(s,L-16,y+13,r[0],'lbl','end',{fill:C.ink,'font-weight':700,'font-size':14});
@@ -1026,8 +1067,8 @@ bars('ch-yield',[1000*30/3386,1000*4/2355],{labels:['Setembro','Outubro'],f:func
 
 /* ---- quem atendeu: notas ---- */
 (function(){var el=document.getElementById('notas');if(!el)return;
-  var n=[['Gledson · vendedor',6.4,39],['Eduardo · SDR',6.1,83],['Dickson · SDR',5.2,65],['Janes · gerência',4.8,9]];
-  el.innerHTML=n.map(function(x,i){return '<div class="share" style="grid-template-columns:170px 1fr 52px"><span>'+x[0]+'<br><small class="muted">'+x[2]+' conversas</small></span><span class="bar"><i class="growx" style="width:'+(x[1]*10)+'%;--d:'+(500+i*150)+'ms"></i></span><b>'+nf1.format(x[1])+'</b></div>';}).join('');
+  var n=[['Eduardo · SDR',158,'510 mensagens'],['Dickson · SDR',136,'322 mensagens'],['Gledson · vendedor',115,'286 mensagens'],['Janes · gerência',19,'97 mensagens']];
+  el.innerHTML=n.map(function(x,i){return '<div class="share" style="grid-template-columns:170px 1fr 52px"><span>'+x[0]+'<br><small class="muted">'+x[2]+'</small></span><span class="bar"><i class="growx" style="width:'+(x[1]/160*100).toFixed(1)+'%;--d:'+(500+i*150)+'ms"></i></span><b>'+x[1]+'</b></div>';}).join('');
 })();
 
 /* ---- base da carga horária (tabela) ---- */
@@ -1147,7 +1188,7 @@ function cumPath(q0,dec,c,t){var out=[],acc=0;for(var k=1;k<=LEFT;k++){acc+=q0*M
     ['Separar gestão de venda','O gerente comercial vende, treina, gere e cuida de tráfego e marketing. Precisa de tempo para gerir.'],
     ['Rever a meta de outubro','Trocar os R$ 500 mil por uma meta entre R$ 150 e 250 mil, coerente com orçamentos em queda e sem base.'],
     ['Resolver em dias, não em semanas','Dono e prazo para cada problema: o sinal de conversão está parado desde 19/09. Uma só equipe de tráfego, com prazo de aprendizado combinado.'],
-    ['Investir em fonte nova de leads','Públicos de família, minivan e 10+ diárias, indicação de clientes e parcerias, para repor a base que acabou.']
+    ['Investir em fonte nova de leads','Públicos de família e minivan (6 das 8 vendas e 82% do valor em 14/10), 10+ diárias, indicação e parcerias, para repor a base que acabou.']
   ];
   document.getElementById('asks').innerHTML=asks.map(function(a,i){return '<li class="card rv" style="display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start;padding:14px 18px;--d:'+(300+i*140)+'ms"><span class="num" style="font-size:26px;color:var(--coral)">'+(i+1)+'</span><div><h3 style="font-size:17px">'+a[0]+'</h3><p class="muted" style="font-size:13.5px">'+a[1]+'</p></div></li>';}).join('');
 })();
