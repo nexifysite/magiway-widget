@@ -186,6 +186,19 @@ table.wk td.ref{color:#0F7A4E;font-weight:700;font-family:var(--f-mono);text-ali
 .risk p{font-size:13.8px;color:var(--ink2);line-height:1.45}
 .risk p b{color:var(--ink)}
 .risk p.lg{color:var(--coral-d)}
+.cnt{display:flex;flex-direction:column;gap:6px;padding:18px 20px}
+.cnt .num{font-size:46px;line-height:1;color:var(--coral)}
+.cnt p{font-size:14px;color:var(--ink2);line-height:1.4}
+.front{display:flex;flex-direction:column;gap:7px;padding:16px 18px}
+.front h3{font-size:16px}
+.front p{font-size:13px;color:var(--ink2);line-height:1.42}
+.front p b{color:var(--ink)}
+.front .who{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#0A7F89}
+table.wkp{font-size:14px}
+table.wkp td{padding:9px 8px}
+table.wkp tr.tot td{font-weight:800;border-top:2px solid var(--ink)}
+.sla td{padding:8px 10px;font-size:14px;vertical-align:top}
+.sla td b{font-family:var(--f-mono)}
 .roles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .role{display:flex;gap:10px;align-items:center;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:14.5px;font-weight:600;line-height:1.25}
 .role i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--coral)}
@@ -311,8 +324,8 @@ table.kt th.n{text-align:right}
   <p class="sub rv">Setembro (13/09 → 12/10) em números e o que poderia ter sido com estrutura. Outubro (13/10 → 12/11): por que a meta de R$ 500 mil é impossível com a equipe, a base e o tráfego de hoje, e o planejamento que cobramos da gestão.</p>
   <div class="ticker rv" aria-label="Destaques">
     <div class="tr">
-      <span>SETEMBRO <b class="c">R$ 383.040</b></span><span>VENDAS <b>80</b></span><span>JORNADA <b class="r">ATÉ 14H26</b></span><span>ATENDIDOS <b class="r">71% → 41%</b></span><span>LEAD → ORÇAMENTO <b class="r">66% → 33%</b></span><span>ORÇAMENTO NOVO <b class="r">−1,1% AO DIA</b></span><span>VENDAS DA BASE <b class="r">65% → 100%</b></span><span>2ª AGÊNCIA <b class="r">+54% POR CONVERSA</b></span><span>PROJEÇÃO REAL <b class="r">R$ 147–247 MIL</b></span><span>META <b>R$ 500 MIL</b></span>
-      <span>SETEMBRO <b class="c">R$ 383.040</b></span><span>VENDAS <b>80</b></span><span>JORNADA <b class="r">ATÉ 14H26</b></span><span>ATENDIDOS <b class="r">71% → 41%</b></span><span>LEAD → ORÇAMENTO <b class="r">66% → 33%</b></span><span>ORÇAMENTO NOVO <b class="r">−1,1% AO DIA</b></span><span>VENDAS DA BASE <b class="r">65% → 100%</b></span><span>2ª AGÊNCIA <b class="r">+54% POR CONVERSA</b></span><span>PROJEÇÃO REAL <b class="r">R$ 147–247 MIL</b></span><span>META <b>R$ 500 MIL</b></span>
+      <span>SETEMBRO <b class="c">R$ 383.040</b></span><span>VENDAS <b>80</b></span><span>JORNADA <b class="r">ATÉ 14H26</b></span><span>ATENDIDOS <b class="r">71% → 41%</b></span><span>LEAD → ORÇAMENTO <b class="r">66% → 33%</b></span><span>ORÇAMENTO NOVO <b class="r">−1,1% AO DIA</b></span><span>VENDAS DA BASE <b class="r">65% → 100%</b></span><span>2ª AGÊNCIA <b class="r">+54% POR CONVERSA</b></span><span>SE NADA MUDAR <b class="r">−61% SOBRE SETEMBRO</b></span><span>PLANO COMERCIAL <b class="c">R$ 200 MIL</b></span><span>META <b>R$ 500 MIL</b></span>
+      <span>SETEMBRO <b class="c">R$ 383.040</b></span><span>VENDAS <b>80</b></span><span>JORNADA <b class="r">ATÉ 14H26</b></span><span>ATENDIDOS <b class="r">71% → 41%</b></span><span>LEAD → ORÇAMENTO <b class="r">66% → 33%</b></span><span>ORÇAMENTO NOVO <b class="r">−1,1% AO DIA</b></span><span>VENDAS DA BASE <b class="r">65% → 100%</b></span><span>2ª AGÊNCIA <b class="r">+54% POR CONVERSA</b></span><span>SE NADA MUDAR <b class="r">−61% SOBRE SETEMBRO</b></span><span>PLANO COMERCIAL <b class="c">R$ 200 MIL</b></span><span>META <b>R$ 500 MIL</b></span>
     </div>
   </div>
   <p class="hint rv">Use ← → ou espaço para navegar · F para tela cheia</p>
@@ -410,8 +423,50 @@ table.kt th.n{text-align:right}
   <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: painel comercial, 11 a 14/10 · orçamentos: média de 7 dias · origem das vendas: gestão comercial · jornada: agente Kommo, 14/10</span><span class="pg"></span></footer>
 </section>
 
-<!-- 06a O QUE A META EXIGE -->
+<!-- 06a0 SE NADA MUDAR -->
 <section class="slide" id="s7">
+  <header class="sh">
+    <p class="eyebrow rv">Se nada mudar · outubro sem plano</p>
+    <h2 class="rv">Sem plano, outubro cai <em>61%</em> e volta ao patamar de junho e julho</h2>
+  </header>
+  <div class="sb">
+    <div class="g c-d">
+      <div class="card rv">
+        <h3>Faturamento por semana</h3><p class="cap" style="margin-bottom:6px">setembro real × outubro real e projetado sem plano · traço: faixa entre o pior caso e o padrão de queda</p>
+        <div class="chart" id="ch-cliff" role="img" aria-label="Faturamento semanal: setembro entre 54 e 166 mil por semana; outubro, depois dos dois dias da base, cerca de 15 mil por semana"></div>
+      </div>
+      <div class="g" style="align-content:start">
+        <div class="card kpi alert rv"><span class="cap">Outubro contra setembro</span><span class="v">−61%</span><span class="d">R$ 383 mil → R$ 148 mil; faixa de −53% a −64% sem plano</span></div>
+        <div class="card kpi alert rv"><span class="cap">Faturamento por dia, depois da base</span><span class="v">−84%</span><span class="d">R$ 12.768 por dia em setembro → R$ 2.103 por dia até 12/11</span></div>
+        <div class="card kpi alert rv"><span class="cap">Vendas por dia</span><span class="v">−84%</span><span class="d">2,7 em setembro → 0,44 de leads novos</span></div>
+        <div class="card hot rv"><p style="font-size:15.5px">R$ 148 mil ficam entre junho (R$ 103 mil) e julho (R$ 186 mil). <b>Sem plano, três meses de crescimento se apagam em um.</b></p></div>
+      </div>
+    </div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Setembro: planilha financeira por dia, semanas de 7 dias a partir de 13/09 · outubro: realizado em 13 e 14/10 + projeção sem base (30 orçamentos por dia × 1,46% × R$ 4.788) · faixa: pior caso (30 por dia caindo 1,5% ao dia) a padrão de queda (54 por dia caindo 1,1% ao dia)</span><span class="pg"></span></footer>
+</section>
+
+<!-- 06a1 PARA ONDE VAI O FATURAMENTO -->
+<section class="slide" id="s8">
+  <header class="sh">
+    <p class="eyebrow rv">Se nada mudar · de setembro para outubro</p>
+    <h2 class="rv">Para onde vão <em>R$&nbsp;236&nbsp;mil</em> de faturamento</h2>
+  </header>
+  <div class="sb">
+    <div class="g c-d">
+      <div class="card rv"><h3>Ponte de setembro para outubro</h3><p class="cap" style="margin-bottom:6px">R$ mil · estimativa</p><div class="chart" id="ch-bridge" role="img" aria-label="Setembro 383 mil, menos 162 mil da base que acabou, menos 73 mil de leads novos rendendo menos, igual a 148 mil em outubro sem plano"></div></div>
+      <div class="g" style="align-content:start">
+        <div class="card rv"><h3>Base que acabou · −R$ 162,5 mil</h3><p style="font-size:14px;color:var(--ink2);margin-top:6px">52 das 80 vendas de setembro vieram da base (≈ R$ 249 mil). Em outubro, a base rendeu R$ 86,5 mil em dois dias, depois de 5.191 ativos, e acabou.</p></div>
+        <div class="card rv"><h3>Leads novos rendendo menos · −R$ 73,1 mil</h3><p style="font-size:14px;color:var(--ink2);margin-top:6px">28 vendas de lead novo em setembro; sem plano, 12,7 até 12/11. Orçamento novo caindo 1,1% ao dia, cliente ideal de 9% para 4% e tráfego sem sinal de venda desde 19/09.</p></div>
+        <div class="card hot rv"><p style="font-size:15.5px">Os dois dias de outubro foram a base respirando pela última vez. <b>Daqui até 12/11, a operação roda com um sexto do ritmo de setembro.</b></p></div>
+      </div>
+    </div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Estimativa: vendas da base e de lead novo de setembro × ticket médio de setembro (R$ 4.788) · outubro sem plano: R$ 86,5 mil realizados + 30 orçamentos por dia × 1,46% × R$ 4.788 × 29 dias · base: painel comercial (52 de 80)</span><span class="pg"></span></footer>
+</section>
+
+<!-- 06a O QUE A META EXIGE -->
+<section class="slide" id="s9">
   <header class="sh">
     <p class="eyebrow rv">A meta de outubro · R$ 500 mil de 13/10 a 12/11</p>
     <h2 class="rv">O que a meta exige <em>não existe</em> na operação</h2>
@@ -436,7 +491,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 06b PLACAR MÊS A MÊS -->
-<section class="slide" id="s8">
+<section class="slide" id="s10">
   <header class="sh">
     <p class="eyebrow rv">Placar de indicadores · mês a mês</p>
     <h2 class="rv">O que melhorou veio da base. <em>O resto piorou</em></h2>
@@ -448,7 +503,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07 JORNADA -->
-<section class="slide" id="s9">
+<section class="slide" id="s11">
   <header class="sh">
     <p class="eyebrow rv">Jornada e carga de trabalho</p>
     <h2 class="rv">O trabalho por pessoa <em>triplicou</em>, e a jornada virou desumana</h2>
@@ -485,7 +540,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07a O ABSURDO EM HORAS -->
-<section class="slide" id="s10">
+<section class="slide" id="s12">
   <header class="sh">
     <p class="eyebrow rv">O absurdo, em horas · agente Kommo, quarta-feira 14/10</p>
     <h2 class="rv">Até <em>14h26</em> no Kommo, com quase uma ação por minuto</h2>
@@ -506,7 +561,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07a0 O CUSTO HUMANO -->
-<section class="slide" id="s11">
+<section class="slide" id="s13">
   <header class="sh">
     <p class="eyebrow rv">O custo humano · e o risco para a empresa</p>
     <h2 class="rv">Sem almoço, sem pausa, <em>sem hora para acabar</em></h2>
@@ -534,7 +589,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07a0b A CONTA POR HORA -->
-<section class="slide" id="s12">
+<section class="slide" id="s14">
   <header class="sh">
     <p class="eyebrow rv">"Pagamos acima da média" · a conta por hora</p>
     <h2 class="rv">Pagar acima da média por mês <em>não é pagar acima por hora</em></h2>
@@ -563,7 +618,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07a1 EXCELÊNCIA DA EQUIPE -->
-<section class="slide" id="s13">
+<section class="slide" id="s15">
   <header class="sh">
     <p class="eyebrow rv">A excelência da equipe · avaliação do agente Kommo, 14/10</p>
     <h2 class="rv">Mesmo no limite, a equipe entrega: <span class="t">volume e cobertura no máximo</span></h2>
@@ -598,7 +653,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07a2 QUEM ATENDEU -->
-<section class="slide" id="s14">
+<section class="slide" id="s16">
   <header class="sh">
     <p class="eyebrow rv">Quem atendeu · agente Kommo, 14/10</p>
     <h2 class="rv">70% das conversas <em>param no robô</em>: o lead chega frio</h2>
@@ -629,7 +684,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07b BASE DA CARGA HORÁRIA -->
-<section class="slide" id="s15">
+<section class="slide" id="s17">
   <header class="sh">
     <p class="eyebrow rv">A base da carga horária</p>
     <h2 class="rv">A conta da jornada, <em>linha por linha</em></h2>
@@ -665,7 +720,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07c GERENTE COMERCIAL -->
-<section class="slide" id="s16">
+<section class="slide" id="s18">
   <header class="sh">
     <p class="eyebrow rv">O gerente comercial</p>
     <h2 class="rv">Um gerente, quinze frentes, e <em>sem hora para parar</em></h2>
@@ -694,7 +749,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07d O QUE O GERENTE CONSTRUIU -->
-<section class="slide" id="s17">
+<section class="slide" id="s19">
   <header class="sh">
     <p class="eyebrow rv">O gerente comercial · além das 15 frentes</p>
     <h2 class="rv">Ele também <em>construiu as ferramentas</em> que a operação usa</h2>
@@ -707,7 +762,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 08 TAXA DE ORÇAMENTO -->
-<section class="slide" id="s18">
+<section class="slide" id="s20">
   <header class="sh">
     <p class="eyebrow rv">Conversão para orçamento</p>
     <h2 class="rv">A taxa de orçamento caiu pela metade: de <span class="t">66%</span> para <em>33%</em> dos leads</h2>
@@ -726,7 +781,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 08b PADRÃO DE QUEDA DOS ORÇAMENTOS -->
-<section class="slide" id="s19">
+<section class="slide" id="s21">
   <header class="sh">
     <p class="eyebrow rv">Padrão de queda dos orçamentos · leads novos</p>
     <h2 class="rv">O orçamento novo cai <em>1,1% ao dia</em> desde 22/09, e em outubro cai mais rápido</h2>
@@ -750,7 +805,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 09 BASE ESGOTADA -->
-<section class="slide" id="s20">
+<section class="slide" id="s22">
   <header class="sh">
     <p class="eyebrow rv">De onde vieram as vendas</p>
     <h2 class="rv">Os dois dias de outubro não são ritmo: <em>5.191 ativos</em> para 16 vendas, e a base acabou</h2>
@@ -767,7 +822,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 10 TRÁFEGO -->
-<section class="slide" id="s21">
+<section class="slide" id="s23">
   <header class="sh">
     <p class="eyebrow rv">Falhas no tráfego pago</p>
     <h2 class="rv">Mais verba, <em>lead pior</em> e nenhum sinal de venda na conta</h2>
@@ -785,7 +840,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 11 NOVA AGÊNCIA -->
-<section class="slide" id="s22">
+<section class="slide" id="s24">
   <header class="sh">
     <p class="eyebrow rv">Desperdício com a nova agência</p>
     <h2 class="rv">A 2ª agência paga <em>54% a mais</em> por conversa, na mesma conta</h2>
@@ -815,7 +870,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 12 LINHA DO TEMPO -->
-<section class="slide" id="s23">
+<section class="slide" id="s25">
   <header class="sh">
     <p class="eyebrow rv">Linha do tempo · julho a outubro</p>
     <h2 class="rv">Os percalços que nos trouxeram <em>até aqui</em></h2>
@@ -830,7 +885,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 13 TODAS AS DIFICULDADES -->
-<section class="slide" id="s24">
+<section class="slide" id="s26">
   <header class="sh">
     <p class="eyebrow rv">Todas as dificuldades</p>
     <h2 class="rv">Doze problemas que a equipe <em>não resolve sozinha</em></h2>
@@ -842,7 +897,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 13a OPERAÇÃO E PÓS-VENDA -->
-<section class="slide" id="s25">
+<section class="slide" id="s27">
   <header class="sh">
     <p class="eyebrow rv">Operação e pós-venda · o que o comercial vende e não controla</p>
     <h2 class="rv">O comercial vende uma categoria, <em>a operação entrega outra</em></h2>
@@ -860,18 +915,19 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 14 PROJEÇÃO REAL -->
-<section class="slide" id="s26">
+<section class="slide" id="s28">
   <header class="sh">
     <p class="eyebrow rv">A projeção real · outubro (13/10 → 12/11)</p>
-    <h2 class="rv">Com 30 orçamentos por dia e sem base, outubro fecha perto de <em>R$ 147 mil</em></h2>
+    <h2 class="rv">Sem plano, outubro fecha perto de <em>R$ 147 mil</em>, 61% abaixo de setembro</h2>
   </header>
   <div class="sb">
     <div class="g c-e">
       <div class="card rv" style="display:flex;flex-direction:column;gap:12px">
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button type="button" class="btn on" data-preset="a">Sem base · 30/dia</button>
+          <button type="button" class="btn" data-preset="w">Pior caso</button>
           <button type="button" class="btn" data-preset="b">Padrão de queda</button>
-          <button type="button" class="btn" data-preset="c">Conversão de setembro</button>
+          <button type="button" class="btn" data-preset="p">Plano comercial</button>
           <button type="button" class="btn" data-preset="d">Para 500 mil</button>
         </div>
         <div class="ctl"><label for="sl-q">Orçamentos por dia (15/10) <output id="o-q">30</output></label><input type="range" id="sl-q" min="10" max="90" step="1" value="30"></div>
@@ -896,7 +952,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15 META INALCANÇÁVEL -->
-<section class="slide divider" id="s27">
+<section class="slide divider" id="s29">
   <header class="sh">
     <p class="eyebrow rv">A conclusão</p>
     <h2 class="rv">A meta de R$ 500 mil em outubro é impossível</h2>
@@ -906,30 +962,161 @@ table.kt th.n{text-align:right}
       <div class="rv"><p class="big" data-count="14259" data-fmt="brl" style="white-space:nowrap;font-size:56px">R$ 14.259</p><p class="lbl2">por dia, todos os dias até 12/11. Sem a base, a operação gera ≈ R$ 2.100.</p></div>
       <div class="rv"><p class="big" data-count="5.7" data-fmt="d1">5,7</p><p class="lbl2">vendas por dia de 30/10 a 12/11, no melhor caso de o tráfego novo performar em 15 dias: 2,1× setembro, que tinha base.</p></div>
       <div class="rv"><p class="big" data-count="6.8" data-fmt="d1" data-suf="×">6,8×</p><p class="lbl2">a conversão atual dos leads novos seria preciso, com equipe exausta.</p></div>
-      <div class="rv"><p class="big">0</p><p class="lbl2">vendas de lead novo em outubro: as 16 vieram da base, que já foi usada.</p></div>
+      <div class="rv"><p class="big">−61%</p><p class="lbl2">sobre setembro, se nada mudar: o mês volta ao patamar de junho e julho.</p></div>
     </div>
     <p class="rv" style="font-size:20px;max-width:74ch;color:#fff"><b>A prioridade é a equipe.</b> Insistir na meta só aprofunda o desgaste: mais horas, menos atendimento, menos orçamento e mais lead perdido. Os R$ 86,5 mil de 13 e 14/10 custaram 5.191 ativos e não se repetem.</p>
   </div>
   <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Cálculos do slide anterior · outubro: R$ 86.482 em 13 e 14/10, faltam R$ 413.518 em 29 dias · melhor caso: 15 dias sem base a ≈ R$ 2.100 por dia, depois 14 dias com tráfego performando</span><span class="pg"></span></footer>
 </section>
 
-<!-- 15a A META VEIO SEM PLANO -->
-<section class="slide" id="s28">
+<!-- 15a0 DEIXARAM ACONTECER -->
+<section class="slide" id="s30">
   <header class="sh">
-    <p class="eyebrow rv">Cobrança à gestão · planejamento do mês</p>
-    <h2 class="rv">O plano comercial existe. <em>O plano da gestão para a meta, não</em></h2>
+    <p class="eyebrow rv">Sem plano · os dias sem decisão</p>
+    <h2 class="rv">Ninguém decidiu: <em>o mês foi deixado acontecer</em></h2>
+  </header>
+  <div class="sb">
+    <div class="g g4" id="nodec"></div>
+    <div class="card hot rv"><p style="font-size:16px">Nada disso é falta de esforço da equipe: são decisões que não foram tomadas. <b>Sem plano, o resultado depende da sorte, e a sorte da base acabou em 14/10.</b></p></div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Contagem até 15/10 · sinal de conversão: Diagnóstico Meta Ads de 22/09 · agências: Meta Ads (28/09 → 14/10) · ativos: painel comercial · viagem, contratos, CRM, feedback e plano: relato da gestão comercial</span><span class="pg"></span></footer>
+</section>
+
+<!-- P0 PLANO COMERCIAL · DIVISOR -->
+<section class="slide divider" id="s31">
+  <header class="sh">
+    <p class="eyebrow rv">Parte 3 · O plano comercial · 15/10 → 12/11</p>
+    <h2 class="rv">O que o comercial faz com o que tem</h2>
+  </header>
+  <div class="sb" style="justify-content:center">
+    <div class="g g3" style="gap:40px">
+      <div class="rv"><p class="big" style="font-size:76px">R$ 200 mil</p><p class="lbl2">de meta do plano, sem base, sem contratar e sem verba nova.</p></div>
+      <div class="rv"><p class="big">6 frentes</p><p class="lbl2">com indicador, meta semanal e responsável.</p></div>
+      <div class="rv"><p class="big">9h</p><p class="lbl2">de jornada com almoço, em turnos que cobrem das 8h às 22h.</p></div>
+    </div>
+    <p class="rv" style="font-size:20px;max-width:74ch;color:#fff">O plano usa a esteira que já funciona, as ferramentas próprias e os clientes que já compraram. O que passar disso depende da entrega de leads combinada com a gestão.</p>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Plano da gestão comercial · números nos slides seguintes</span><span class="pg"></span></footer>
+</section>
+
+<!-- P1 META DO PLANO -->
+<section class="slide" id="s32">
+  <header class="sh">
+    <p class="eyebrow rv">Plano comercial · a meta</p>
+    <h2 class="rv">Com o que temos, <em>R$&nbsp;200&nbsp;mil</em> é a meta que se sustenta</h2>
+  </header>
+  <div class="sb">
+    <div class="g c-d">
+      <div class="card rv"><h3>Do mês sem plano ao teto do plano</h3><p class="cap" style="margin-bottom:6px">R$ mil · outubro (13/10 → 12/11)</p><div class="chart" id="ch-planbridge" role="img" aria-label="Sem plano 147 mil; mais 20 mil com 40 orçamentos por dia; mais 30 mil com conversão de 2%; mais 7 mil com ticket de 5.100; mais 31 mil com indicações; teto de 235 mil"></div></div>
+      <div class="g" style="align-content:start">
+        <div class="card kpi rv"><span class="cap">Piso sem plano</span><span class="v" style="color:var(--coral)">R$ 136 a 148 mil</span><span class="d">o que acontece se nada mudar</span></div>
+        <div class="card kpi rv"><span class="cap">Meta do plano</span><span class="v" style="color:var(--teal)">R$ 200 mil</span><span class="d">40% da meta atual, com margem sobre a rampa semanal (R$ 209 mil)</span></div>
+        <div class="card kpi rv"><span class="cap">Teto do plano</span><span class="v" style="color:var(--navy)">R$ 235 mil</span><span class="d">com todas as frentes funcionando desde já</span></div>
+        <div class="card flat rv"><p style="font-size:13.5px"><b>Premissa:</b> tráfego mantido em torno de 150 leads por dia. Acima disso, vale o acordo de entrega e conversão.</p></div>
+      </div>
+    </div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Sem plano: 30 orçamentos/dia × 1,46% × R$ 4.788 × 29 dias + R$ 86,5 mil realizados · orçamentos: 40 por dia é o que a tendência sustenta até 12/11 · conversão de 2,0% e ticket de R$ 5.100: metas do plano · indicação: 6 vendas entre os clientes das 182 vendas de julho a setembro</span><span class="pg"></span></footer>
+</section>
+
+<!-- P2 AS SEIS FRENTES -->
+<section class="slide" id="s33">
+  <header class="sh">
+    <p class="eyebrow rv">Plano comercial · as frentes</p>
+    <h2 class="rv">Seis frentes, cada uma com <span class="t">indicador e responsável</span></h2>
+  </header>
+  <div class="sb">
+    <div class="g g3" id="fronts"></div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Valores de hoje: agente Kommo (14/10), painel comercial e planilha financeira · metas: plano da gestão comercial · carrinho e cadeirinha: empresa de carrinhos do grupo</span><span class="pg"></span></footer>
+</section>
+
+<!-- P3 ESCALA E ROTINA -->
+<section class="slide" id="s34">
+  <header class="sh">
+    <p class="eyebrow rv">Plano comercial · escala e rotina</p>
+    <h2 class="rv">Das 8h às 22h com a equipe que temos, <em>em 9 horas por pessoa</em></h2>
+  </header>
+  <div class="sb">
+    <div class="g c-d">
+      <div class="card rv"><h3>Escala proposta</h3><p class="cap" style="margin-bottom:6px">turnos de 9h com 1h de almoço · o robô responde fora do horário e avisa o retorno às 8h</p><div class="chart" id="ch-shift" role="img" aria-label="Escala: SDR 1 das 8h às 17h, vendedor das 10h às 19h, SDR 2 das 13h às 22h, gerência e gerente das 9h às 18h, com almoços alternados"></div></div>
+      <div class="card rv"><h3>Rotina</h3><p class="cap" style="margin-bottom:10px">o mínimo para o plano andar</p><ul class="chk dark" style="font-size:14.5px">
+        <li><b>Todo dia, 9h15, 15 min:</b> placar do dia e prioridades da fila</li>
+        <li><b>Todo dia, 17h:</b> passagem de turno com orçamentos e sinais de compra pendentes</li>
+        <li><b>Toda segunda, 30 min:</b> placar da semana, entrega de leads e conversão</li>
+        <li><b>A cada 15 dias:</b> conversa individual de feedback, inclusive com o gerente</li>
+        <li><b>Depois das 22h:</b> ninguém responde; o robô avisa o retorno às 8h</li>
+      </ul></div>
+    </div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Picos de atividade no Kommo entre 11h e 17h (hora do dia, 14/10) · jornada de referência: 9h com almoço · turnos a confirmar com cada pessoa</span><span class="pg"></span></footer>
+</section>
+
+<!-- P4 SEMANA A SEMANA -->
+<section class="slide" id="s35">
+  <header class="sh">
+    <p class="eyebrow rv">Plano comercial · semana a semana</p>
+    <h2 class="rv">Até 12/11, o plano soma <em>R$&nbsp;209&nbsp;mil</em> com a rampa das frentes</h2>
+  </header>
+  <div class="sb">
+    <div class="card rv" style="padding-top:10px;padding-bottom:6px"><div class="tbl-wrap"><table class="kt wkp" id="wkplan"></table></div></div>
+    <div class="card flat rv"><p style="font-size:14.5px">Cada segunda, o placar compara o realizado com esta tabela. <b>Se a entrega de leads mudar, a meta da semana é recalculada pela mesma conta</b>: orçamentos × conversão × ticket.</p></div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Realizado até 14/10: R$ 86,5 mil · orçamentos: 40 por dia · conversão, ticket e indicações em rampa, conforme as frentes · resposta e diagnóstico: metas do agente Kommo</span><span class="pg"></span></footer>
+</section>
+
+<!-- 15a A META VEIO SEM PLANO -->
+<section class="slide" id="s36">
+  <header class="sh">
+    <p class="eyebrow rv">Planejamento do mês · pontos de pauta</p>
+    <h2 class="rv">O que precisa estar na <em>pauta da gestão</em> para o mês</h2>
   </header>
   <div class="sb">
     <div class="card flat rv" style="padding:14px 20px"><p style="font-size:15px"><b style="color:#0A7F89">Já entregue pelo comercial:</b> funções definidas e equipe em sintonia · esteira que fechou 16 vendas em 2 dias · nota da equipe 70,4 · curso de vendas, apps e agente de conversas.</p></div>
     <div class="g g4" id="plan-gaps"></div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Números dos slides anteriores (painel comercial, agente Kommo, Meta Ads e planilha financeira) · "o plano precisa definir": o mínimo para uma meta mensal sair do papel</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Pontos de pauta da gestão comercial para a diretoria · Black Friday: 27/11 · alta temporada de Natal e Réveillon: 15/12 a 15/01 · o comercial não define estes pontos, mas depende deles para assumir metas</span><span class="pg"></span></footer>
+</section>
+
+<!-- 15a0b ENTREGA × CONVERSÃO -->
+<section class="slide" id="s37">
+  <header class="sh">
+    <p class="eyebrow rv">Planejamento do mês · o acordo entre marketing e comercial</p>
+    <h2 class="rv">Quanto o marketing entrega, <em>quanto o comercial converte</em></h2>
+  </header>
+  <div class="sb">
+    <div class="g c-d">
+      <div class="card rv" style="display:flex;flex-direction:column;gap:12px">
+        <h3>A conta da meta pela entrega</h3><p class="cap" style="margin-top:-6px">outubro · 29 dias restantes · ajuste ao vivo</p>
+        <div class="ctl"><label for="sl-l">Leads entregues por dia (marketing) <output id="o-l">156</output></label><input type="range" id="sl-l" min="50" max="600" step="2" value="156"></div>
+        <div class="ctl"><label for="sl-a">Lead → orçamento (comercial assume) <output id="o-a">45%</output></label><input type="range" id="sl-a" min="20" max="70" step="1" value="45"></div>
+        <div class="ctl"><label for="sl-v">Orçamento → venda (comercial assume) <output id="o-v">2,0%</output></label><input type="range" id="sl-v" min="0.5" max="5" step="0.05" value="2"></div>
+        <div class="ctl"><label for="sl-k">Ticket médio <output id="o-k">R$ 5.100</output></label><input type="range" id="sl-k" min="3000" max="7000" step="50" value="5100"></div>
+        <div class="g g3" style="gap:12px;border-top:1px solid var(--line);padding-top:12px">
+          <div><p class="cap">Outubro nessa conta</p><p class="out-big" id="sla-o1" style="font-size:30px;white-space:nowrap;color:var(--teal)">R$ 294 mil</p></div>
+          <div><p class="cap">Vendas até 12/11</p><p class="out-big" id="sla-o2" style="font-size:30px;color:var(--ink)">41</p></div>
+          <div><p class="cap">Leads/dia para R$ 500 mil</p><p class="out-big" id="sla-o3" style="font-size:30px;color:var(--coral)">311</p></div>
+        </div>
+      </div>
+      <div class="g" style="align-content:start">
+        <div class="card rv"><h3>O acordo proposto</h3><p class="cap" style="margin-bottom:8px">uma entrega mínima de cada lado, medida toda segunda</p>
+          <table class="kt sla"><tr><th>Marketing entrega</th><th>Comercial assume</th></tr>
+          <tr><td>Leads por dia: <b>≥ 150</b><br><small class="muted">hoje 156, frios</small></td><td>Resposta em até 10 min: <b>≥ 70%</b><br><small class="muted">hoje 45%</small></td></tr>
+          <tr><td>Cliente ideal nos orçamentos: <b>≥ 15%</b><br><small class="muted">hoje 4%</small></td><td>Lead → orçamento: <b>≥ 45%</b><br><small class="muted">hoje 33%</small></td></tr>
+          <tr><td>Custo por conversa: <b>≤ R$ 18,81</b><br><small class="muted">hoje R$ 28,93 na 2ª agência</small></td><td>Orçamento → venda: <b>≥ 2,0%</b><br><small class="muted">hoje 1,46%</small></td></tr>
+          <tr><td>Campanhas e postagens publicadas antes do mês</td><td>Ticket médio: <b>≥ R$ 5.100</b><br><small class="muted">hoje R$ 4.788</small></td></tr>
+          </table></div>
+        <div class="card hot rv"><p style="font-size:15px">Com a entrega combinada, o comercial responde pela conversão. <b>Com entrega menor, a meta é recalculada pela mesma conta.</b></p></div>
+      </div>
+    </div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Realizado até 14/10: R$ 86,5 mil · hoje: agente Kommo (14/10), painel comercial (7 dias até 14/10) e Meta Ads (28/09 → 14/10) · cliente ideal: 15%, acima de agosto (14%) · metas do comercial: plano da gestão comercial</span><span class="pg"></span></footer>
 </section>
 
 <!-- 15a1 QUEM RESPONDE POR QUÊ -->
-<section class="slide" id="s29">
+<section class="slide" id="s38">
   <header class="sh">
-    <p class="eyebrow rv">Cobrança à gestão · responsabilidades</p>
+    <p class="eyebrow rv">Planejamento do mês · responsabilidades</p>
     <h2 class="rv">O comercial planeja o comercial. <em>Meta, verba e estrutura são da diretoria</em></h2>
   </header>
   <div class="sb">
@@ -943,7 +1130,7 @@ table.kt th.n{text-align:right}
       </ul></div>
       <div class="card hot rv"><h3 style="color:#fff">Diretoria · gestão</h3><p class="cap" style="margin-bottom:12px">o que só ela pode decidir e entregar</p><ul class="chk" style="font-size:15px">
         <li>Meta do mês com premissas: leads, orçamentos, conversão e ticket</li>
-        <li>Verba, agência e tráfego trazendo lead qualificado</li>
+        <li>Marketing: estratégia, campanhas, calendário de postagens e tráfego com entrega definida</li>
         <li>Fonte nova de leads para repor a base</li>
         <li>Contratação, escala e jornada com almoço e pausas</li>
         <li>Contratos assinados, com função e remuneração por escrito</li>
@@ -957,9 +1144,9 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15a2 PERGUNTAS À GESTÃO -->
-<section class="slide" id="s30">
+<section class="slide" id="s39">
   <header class="sh">
-    <p class="eyebrow rv">Cobrança à gestão · o que precisamos ouvir da diretoria</p>
+    <p class="eyebrow rv">Planejamento do mês · o que precisamos ouvir da diretoria</p>
     <h2 class="rv">Antes de cobrar a meta, a gestão <em>precisa responder</em></h2>
   </header>
   <div class="sb">
@@ -970,7 +1157,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15a3 MOMENTO DE ALINHAMENTO -->
-<section class="slide" id="s31">
+<section class="slide" id="s40">
   <header class="sh">
     <p class="eyebrow rv">Momento de alinhamento · com a diretoria, nesta reunião</p>
     <h2 class="rv">O que a gestão espera, <em>e qual é o plano</em> para chegar lá</h2>
@@ -993,21 +1180,21 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15b O PLANEJAMENTO QUE COBRAMOS -->
-<section class="slide" id="s32">
+<section class="slide" id="s41">
   <header class="sh">
-    <p class="eyebrow rv">Cobrança à gestão · o que precisa estar decidido, e quando</p>
-    <h2 class="rv">O planejamento que <span class="t">cobramos da gestão</span>, com data e dono</h2>
+    <p class="eyebrow rv">Planejamento do mês · quando pautar</p>
+    <h2 class="rv">Calendário de pauta: <span class="t">o que apresentar, e o que o comercial assume</span></h2>
   </header>
   <div class="sb">
     <div class="card rv" style="padding-top:10px;padding-bottom:6px"><div class="tbl-wrap"><table class="kt plan" id="plan-tbl"></table></div></div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Prazos contados a partir desta reunião (quinta, 15/10) · outubro comercial termina em 12/11; novembro começa em 13/11</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Datas propostas a partir desta reunião (quinta, 15/10) · Black Friday: 27/11 · alta temporada de Natal e Réveillon: 15/12 a 15/01 · outubro comercial termina em 12/11</span><span class="pg"></span></footer>
 </section>
 
 <!-- 15c PLACAR SEMANAL -->
-<section class="slide" id="s33">
+<section class="slide" id="s42">
   <header class="sh">
-    <p class="eyebrow rv">Cobrança à gestão · acompanhamento</p>
+    <p class="eyebrow rv">Planejamento do mês · acompanhamento</p>
     <h2 class="rv">O placar que a gestão precisa olhar <em>toda semana</em></h2>
   </header>
   <div class="sb">
@@ -1017,10 +1204,10 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 16 DECISÕES -->
-<section class="slide" id="s34">
+<section class="slide" id="s43">
   <header class="sh">
-    <p class="eyebrow rv">O que pedimos à diretoria</p>
-    <h2 class="rv">Seis decisões para <span class="t">proteger a equipe</span> e voltar a crescer</h2>
+    <p class="eyebrow rv">O que levamos para decisão</p>
+    <h2 class="rv">Seis pontos para <span class="t">decidir hoje</span></h2>
   </header>
   <div class="sb">
     <div class="g c-d" style="align-items:start">
@@ -1030,14 +1217,15 @@ table.kt th.n{text-align:right}
           <h3>Meta compatível com a capacidade</h3><p class="cap" style="margin-bottom:10px">outubro · 13/10 → 12/11</p>
           <div class="tbl-wrap"><table class="kt">
             <tr><th>Cenário</th><th class="n">Outubro</th><th class="n">vs meta</th></tr>
-            <tr><td>Sem base, 30 orçamentos/dia</td><td class="n">R$ 147,5 mil</td><td class="n hl-c">30%</td></tr>
-            <tr><td>Padrão de queda dos orçamentos</td><td class="n">R$ 180,9 mil</td><td class="n hl-c">36%</td></tr>
-            <tr><td>Conversão total de setembro</td><td class="n">R$ 247,3 mil</td><td class="n hl-c">49%</td></tr>
+            <tr><td>Pior caso, sem plano</td><td class="n">R$ 136,2 mil</td><td class="n hl-c">27%</td></tr>
+            <tr><td>Sem plano, 30 orçamentos/dia</td><td class="n">R$ 147,5 mil</td><td class="n hl-c">30%</td></tr>
+            <tr><td><b>Plano comercial</b></td><td class="n"><b>R$ 200,0 mil</b></td><td class="n"><b>40%</b></td></tr>
+            <tr><td>Teto do plano</td><td class="n">R$ 235,4 mil</td><td class="n">47%</td></tr>
             <tr><td>Meta atual</td><td class="n">R$ 500,0 mil</td><td class="n">100%</td></tr>
           </table></div>
-          <p class="muted" style="font-size:13.5px;margin-top:10px">Proposta: meta de outubro entre R$ 150 e 250 mil, revista quando a estrutura (equipe e fontes novas) estiver de pé.</p>
+          <p class="muted" style="font-size:13.5px;margin-top:10px">Proposta: meta de outubro de R$ 200 mil, revista toda segunda pela entrega de leads.</p>
         </div>
-        <div class="card hot rv"><p style="font-size:16px"><b>Com estrutura, setembro chegaria a ≈ R$ 469 mil.</b> O caminho para os R$ 500 mil existe, mas passa por equipe dimensionada, fonte nova de leads e uma só agência, não por mais horas da mesma equipe.</p></div>
+        <div class="card hot rv"><p style="font-size:16px"><b>Com estrutura, setembro chegaria a ≈ R$ 469 mil.</b> O caminho para os R$ 500 mil passa por entrega de leads qualificados e estrutura, não por mais horas da mesma equipe.</p></div>
       </div>
     </div>
   </div>
@@ -1370,22 +1558,103 @@ bars('ch-yield',[1000*30/3386,1000*4/2355],{labels:['Setembro','Outubro'],f:func
     return h+'</table></div></div>';}).join('');
 })();
 
-/* ---- cobrança: meta sem plano ---- */
+/* ---- ponte genérica ---- */
+function wfall(id,steps,o){var host=document.getElementById(id);if(!host)return;o=o||{};var W=o.W||640,H=o.H||400,L=10,R=10,T=38,B=62;var s=svg(W,H,host);var max=o.max;var y=function(v){return T+(H-T-B)*(1-v/max);};
+  var n=steps.length,bw=(W-L-R)/n,w=bw*.62;S('line',{x1:L,x2:W-R,y1:y(0),y2:y(0),stroke:C.line,'stroke-width':1.5},s);
+  (o.lines||[]).forEach(function(l){S('line',{x1:L,x2:W-R,y1:y(l[0]),y2:y(l[0]),stroke:l[2],'stroke-dasharray':'6 5','stroke-width':1.5,'class':'fade',style:'--d:1500ms'},s);txt(s,L+4,y(l[0])-7,l[1],'lbl','start',{fill:l[2],'font-weight':700,'class':'lbl fade',style:'--d:1500ms'});});
+  steps.forEach(function(st,i){var cx=L+bw*i+bw/2,a=st[1],b=st[2],top=Math.max(a,b),bot=Math.min(a,b);
+    S('rect',{x:cx-w/2,y:y(top),width:w,height:Math.max(2,y(bot)-y(top)),rx:5,fill:st[3],'class':'grow',style:'--d:'+(250+i*220)+'ms'},s);
+    txt(s,cx,y(top)-9,st[4],'vlbl','middle',{'font-size':16,'class':'vlbl fade',style:'--d:'+(800+i*220)+'ms'});
+    st[0].split('\n').forEach(function(t,k){txt(s,cx,H-B+20+k*15,t,'lbl','middle',{'font-size':12});});
+    if(i<n-1){var nx=L+bw*(i+1)+bw/2;S('line',{x1:cx+w/2,x2:nx-w/2,y1:y(b),y2:y(b),stroke:C.slate,'stroke-dasharray':'3 3'},s);}});}
+wfall('ch-bridge',[['Setembro',0,383040,C.teal,'383,0'],['Base que\nacabou',383040,220546,C.coral,'−162,5'],['Leads novos\nrendendo menos',220546,147478,C.coral2,'−73,1'],['Outubro\nsem plano',0,147478,C.coral,'147,5']],{max:420000,W:600,H:420,lines:[[383040,'',C.slate]]});
+wfall('ch-planbridge',[['Sem\nplano',0,147478,C.slate,'147,5'],['Orçamentos\n30 → 40/dia',147478,167810,C.teal,'+20,3'],['Conversão\n1,46% → 2,0%',167810,197566,C.teal,'+29,8'],['Ticket\nR$ 5.100',197566,204804,C.teal,'+7,2'],['Indicação\n6 vendas',204804,235404,C.teal,'+30,6'],['Teto do\nplano',0,235404,C.navy,'235,4']],{max:260000,W:700,H:430,lines:[[200000,'meta do plano · R$ 200 mil',C.coral]]});
+
+/* ---- penhasco semanal ---- */
+(function(){var host=document.getElementById('ch-cliff');if(!host)return;var W=780,H=420,L=46,R=10,T=26,B=58;var s=svg(W,H,host);var max=180000;var y=function(v){return T+(H-T-B)*(1-v/max);};
+  var wk=[['13–19/09',54414],['20–26/09',165654],['27/09–03/10',71098],['04–10/10',71533],['11–12/10',20341,'2 dias'],['13–19/10',96999,'',86482,96688,105000],['20–26/10',14723,'',0,13052,24263],['27/10–02/11',14723,'',0,11742,22456],['03–09/11',14723,'',0,10563,20783],['10–12/11',6310,'3 dias',0,4196,8426]];
+  var g=S('g',{'class':'grid'},s);[0,50000,100000,150000].forEach(function(v){S('line',{x1:L,x2:W-R,y1:y(v),y2:y(v)},g);txt(s,L-8,y(v)+4,v?(v/1000)+'k':'0','lbl','end');});
+  var n=wk.length,bw=(W-L-R)/n,w=bw*.62;
+  var mx=L+bw*5;S('line',{x1:mx,x2:mx,y1:T-8,y2:H-B+4,stroke:C.ink,'stroke-opacity':.4,'stroke-dasharray':'3 4'},s);
+  txt(s,L+bw*2.5,T-8,'SETEMBRO · REAL','lbl','middle',{'font-weight':700,fill:C.teal});txt(s,L+bw*7.5,T-8,'OUTUBRO · SEM PLANO','lbl','middle',{'font-weight':700,fill:C.coralD});
+  wk.forEach(function(x,i){var cx=L+bw*i+bw/2,v=x[1],oct=i>=5;
+    if(!oct){var r=S('rect',{x:cx-w/2,y:y(v),width:w,height:y(0)-y(v),rx:4,fill:C.teal,'class':'grow',style:'--d:'+(200+i*120)+'ms'},s);bindTip(r,x[0],brl(v));}
+    else{var real=x[3]||0;if(real){S('rect',{x:cx-w/2,y:y(real),width:w,height:y(0)-y(real),rx:4,fill:C.coral,'class':'grow',style:'--d:'+(200+i*120)+'ms'},s);}
+      var pr=S('rect',{x:cx-w/2,y:y(v),width:w,height:Math.max(2,y(real)-y(v)),rx:4,fill:'rgba(255,75,43,.22)',stroke:C.coral,'stroke-dasharray':'4 3','class':'grow',style:'--d:'+(300+i*120)+'ms'},s);
+      bindTip(pr,x[0],(real?'Realizado: '+brl(real)+'<br>':'')+'Projeção sem plano: '+brl(v-real)+'<br>Faixa: '+brl(x[4])+' a '+brl(x[5]));
+      var gg=S('g',{'class':'fade',style:'--d:'+(1200+i*100)+'ms'},s);S('line',{x1:cx,x2:cx,y1:y(x[5]),y2:y(x[4]),stroke:C.ink,'stroke-width':1.4},gg);S('line',{x1:cx-6,x2:cx+6,y1:y(x[5]),y2:y(x[5]),stroke:C.ink,'stroke-width':1.4},gg);S('line',{x1:cx-6,x2:cx+6,y1:y(x[4]),y2:y(x[4]),stroke:C.ink,'stroke-width':1.4},gg);}
+    txt(s,cx,y(Math.max(v,x[5]||0))-8,nf1.format(v/1000),'lbl','middle',{'font-weight':700,fill:oct?C.coralD:C.ink,'class':'lbl fade',style:'--d:'+(900+i*100)+'ms'});
+    txt(s,cx,H-B+18,x[0],'lbl','middle',{'font-size':11});if(x[2])txt(s,cx,H-B+32,x[2],'lbl','middle',{'font-size':10.5,fill:C.ink3});});
+  txt(s,L+bw*5+bw/2,y(86482)+18,'base','lbl','middle',{fill:'#fff','font-weight':700});
+})();
+
+/* ---- dias sem decisão ---- */
+(function(){var el=document.getElementById('nodec');if(!el)return;
+  var d=[['26 dias','com o sinal de conversão do site parado, desde 19/09'],['17 dias','com duas agências disputando a mesma conta, desde 28/09'],['4 dias','para esgotar a base (5.191 ativos), sem fonte nova para repor'],['1 semana','de gestão viajando na reta final da meta'],['0','contratos, notas fiscais ou recibos'],['0','feedbacks ao gerente comercial'],['0','acompanhamento da gestão no CRM'],['0','plano semanal para os R$ 500 mil']];
+  el.innerHTML=d.map(function(x,i){return '<div class="card cnt rv" style="--d:'+(150+i*80)+'ms"><p class="num">'+x[0]+'</p><p>'+x[1]+'</p></div>';}).join('');
+})();
+
+/* ---- frentes do plano ---- */
+(function(){var el=document.getElementById('fronts');if(!el)return;
+  var f=[['Qualificar na entrada','o robô faz a triagem; o SDR responde em até 10 min e separa o lead frio do quente, que vai direto para orçamento','respostas em até 10 min 45% → 70% · lead → orçamento 33% → 45%','SDRs'],
+    ['Orçamento que vende valor','pergunta de diagnóstico em todo orçamento, o incluso antes do preço e a objeção de preço explorada com pergunta','diagnóstico 0% → 90% · conversão 1,46% → 2,0%','SDRs e vendedor'],
+    ['Follow-up curto dos orçamentos novos','3 toques em 7 dias (no dia seguinte, no 3º e no 7º dia) para cada orçamento de outubro; sinal de compra respondido em 15 min','sinais de compra em 15 min 40% → 80%','vendedor'],
+    ['Ticket e venda adicional','prioridade para minivan e 10+ diárias; seguro, carrinho e cadeirinha em toda reserva; desconto só com aprovação','ticket R$ 4.788 → R$ 5.100 · vendas abaixo da tabela 78% → 50%','vendedor e gerente'],
+    ['Indicação e pós-venda','contato com os clientes das 182 vendas de julho a setembro: avaliação, indicação e recompra','6 vendas por indicação até 12/11','gerência'],
+    ['Pré-venda da alta temporada','prioridade para viagens de 15/12 a 15/01, com diária de alta e reserva antecipada','vendas com retirada em dezembro e janeiro, semana a semana','SDRs e vendedor']];
+  el.innerHTML=f.map(function(x,i){return '<div class="card front rv" style="--d:'+(150+i*90)+'ms"><span class="ix" style="font-family:var(--f-display);font-weight:800;font-size:24px;color:var(--coral);line-height:1">'+String(i+1).padStart(2,'0')+'</span><h3>'+x[0]+'</h3><p><b>O que fazer:</b> '+x[1]+'.</p><p><b>Indicador:</b> '+x[2]+'.</p><span class="who">'+x[3]+'</span></div>';}).join('');
+})();
+
+/* ---- escala ---- */
+(function(){var host=document.getElementById('ch-shift');if(!host)return;var W=760,H=330,L=120,R=14,T=30,B=34;var s=svg(W,H,host);var h0=7,h1=23;var x=function(h){return L+(W-L-R)*(h-h0)/(h1-h0);};
+  S('rect',{x:x(h0),y:T-6,width:x(8)-x(h0),height:H-T-B+6,fill:'rgba(14,22,48,.05)'},s);S('rect',{x:x(22),y:T-6,width:x(h1)-x(22),height:H-T-B+6,fill:'rgba(14,22,48,.05)'},s);
+  txt(s,x(7.5),T-12,'robô','lbl','middle',{fill:C.ink3});txt(s,x(22.5),T-12,'robô','lbl','middle',{fill:C.ink3});
+  for(var h=8;h<=22;h+=2){S('line',{x1:x(h),x2:x(h),y1:T-6,y2:H-B,stroke:C.line},s);txt(s,x(h),H-12,h+'h','lbl','middle');}
+  var rows=[['SDR 1',8,17,12,C.teal],['Vendedor',10,19,14,C.teal],['SDR 2',13,22,17,C.teal],['Gerência',9,18,12,C.slate],['Gerente',9,18,13,C.slate]];var rh=30,gap=14;
+  rows.forEach(function(r,i){var yy=T+i*(rh+gap);txt(s,L-14,yy+20,r[0],'lbl','end',{fill:C.ink,'font-weight':700,'font-size':13});
+    S('rect',{x:x(r[1]),y:yy,width:x(r[2])-x(r[1]),height:rh,rx:7,fill:r[4],'class':'growx',style:'--d:'+(300+i*150)+'ms'},s);
+    S('rect',{x:x(r[3]),y:yy,width:x(r[3]+1)-x(r[3]),height:rh,fill:'#fff','fill-opacity':.75,'class':'fade',style:'--d:'+(1000+i*150)+'ms'},s);
+    txt(s,x(r[3]+.5),yy+19,'almoço','lbl','middle',{'font-size':10,fill:C.ink2,'class':'lbl fade',style:'--d:'+(1000+i*150)+'ms'});
+    txt(s,x(r[1])+8,yy+19,r[1]+'h–'+r[2]+'h','lbl','start',{'font-size':11,fill:'#fff','font-weight':700});});
+  var yy=T+rows.length*(rh+gap);txt(s,L-14,yy+14,'Na linha','lbl','end',{'font-size':11,fill:C.ink3});
+  for(var h=8;h<22;h++){var c=0;rows.slice(0,3).forEach(function(r){if(h>=r[1]&&h<r[2]&&h!==r[3])c++;});S('rect',{x:x(h)+1,y:yy,width:x(h+1)-x(h)-2,height:18,rx:3,fill:C.teal,'fill-opacity':.25+c*.25},s);txt(s,x(h+.5),yy+13,String(c),'lbl','middle',{'font-size':10,fill:C.ink,'font-weight':700});}
+})();
+
+/* ---- plano semana a semana ---- */
+(function(){var el=document.getElementById('wkplan');if(!el)return;
+  var w=[['15–19/10',5,1.5,4800,0,50,50],['20–26/10',7,1.6,4900,1,60,80],['27/10–02/11',7,1.8,5000,1,70,90],['03–09/11',7,2.0,5100,1,70,90],['10–12/11',3,2.0,5100,1,70,90]];
+  var acc=86482,tv=0,tr=0;var h='<tr><th>Semana</th><th class="n">Dias</th><th class="n">Orçamentos/dia</th><th class="n">Em até 10 min</th><th class="n">Diagnóstico</th><th class="n">Conversão</th><th class="n">Ticket</th><th class="n">Vendas</th><th class="n">Faturamento</th><th class="n">Acumulado</th></tr>';
+  w.forEach(function(x){var v=40*x[1]*x[2]/100+x[4];var r=40*x[1]*x[2]/100*x[3]+x[4]*x[3];acc+=r;tv+=v;tr+=r;
+    h+='<tr><td>'+x[0]+'</td><td class="n">'+x[1]+'</td><td class="n">40</td><td class="n">'+x[5]+'%</td><td class="n">'+x[6]+'%</td><td class="n">'+nf1.format(x[2])+'%</td><td class="n">'+brl(x[3])+'</td><td class="n">'+nf1.format(v)+'</td><td class="n">'+brlk(r)+'</td><td class="n hl-t">'+brlk(acc)+'</td></tr>';});
+  h+='<tr class="tot"><td>Até 12/11</td><td class="n">29</td><td class="n">40</td><td class="n">70%</td><td class="n">90%</td><td class="n">2,0%</td><td class="n">—</td><td class="n">'+nf1.format(tv)+'</td><td class="n">'+brlk(tr)+'</td><td class="n hl-t">'+brlk(acc)+'</td></tr>';
+  el.innerHTML=h;
+})();
+
+/* ---- calculadora entrega × conversão ---- */
+(function(){var l=document.getElementById('sl-l'),a=document.getElementById('sl-a'),v=document.getElementById('sl-v'),k=document.getElementById('sl-k');if(!l)return;
+  function calc(){[l,a,v,k].forEach(setP);var per=(+a.value/100)*(+v.value/100)*(+k.value);var vend=(+l.value)*(+a.value/100)*(+v.value/100)*29;var tot=86482.38+per*(+l.value)*29;var need=(500000-86482.38)/(29*per);
+    document.getElementById('o-l').textContent=l.value;document.getElementById('o-a').textContent=a.value+'%';document.getElementById('o-v').textContent=nf1.format(+v.value).replace(/(,\d)$/,'$1')+'%';document.getElementById('o-k').textContent=brl(+k.value);
+    var o1=document.getElementById('sla-o1');o1.textContent='R$ '+nf0.format(Math.round(tot/1000))+' mil';o1.style.color=tot>=500000?C.green:(tot>=200000?C.teal:C.coral);
+    document.getElementById('sla-o2').textContent=nf0.format(Math.round(vend+16));document.getElementById('sla-o3').textContent=nf0.format(Math.ceil(need));}
+  [l,a,v,k].forEach(function(el){el.addEventListener('input',calc);});calc();
+})();
+
+/* ---- pauta da gestão ---- */
 (function(){var el=document.getElementById('plan-gaps');if(!el)return;
-  var g=[['Meta desdobrada','quanto por semana, por pessoa e por fonte de lead','um número só para o mês inteiro'],
-    ['Fonte dos leads','de onde vêm 572 leads por dia, e a que custo','base esgotada e 156 leads por dia'],
-    ['Capacidade da equipe','pessoas e horas para 203 orçamentos por dia','3 pessoas na linha de frente, já em 13h12 por dia'],
-    ['Tráfego','uma agência, evento de compra com valor, meta por orçamento qualificado','duas agências; sinal de conversão parado desde 19/09'],
-    ['Reposição da base','como gerar base nova depois de 5.191 ativos','retorno dos ativos caiu de 18% para 8%, e nada para repor'],
-    ['Contratos e remuneração','contratos assinados, com função, jornada e regra de remuneração','nenhum contrato, nota fiscal ou recibo; sem pagamento por hora; variável só por faixa de faturamento'],
-    ['Papel do gerente','o que é gestão e o que é venda, e quem acompanha o gerente','15 frentes, todas as vendas na conta dele e nenhum feedback recebido'],
-    ['Jornada','escala com almoço, pausas e limite de horas','12h18 a 14h26 no Kommo, sem almoço nem pausa definidos']];
-  el.innerHTML=g.map(function(x,i){return '<div class="card gap rv" style="--d:'+(150+i*80)+'ms"><span class="chip">a definir pela gestão</span><h3>'+x[0]+'</h3><p><b>O plano precisa definir:</b> '+x[1]+'.</p><p><b>Hoje:</b> '+x[2]+'.</p></div>';}).join('');
+  var g=[['Estratégia de marketing do mês','posicionamento, público e oferta do mês','que cliente vai chegar, e com qual promessa'],
+    ['Campanhas do mês','campanhas com data, oferta e verba: pré-venda de Natal e Réveillon, Black Friday (27/11), férias de janeiro','o argumento e a condição de cada campanha'],
+    ['Calendário de postagens','o que sai no Instagram e quando, alinhado às campanhas','o que o lead viu antes de chamar'],
+    ['Plano de tráfego','verba, canais, agência e evento de compra configurado','de onde e quando os leads chegam'],
+    ['Entrega de leads','leads por semana, custo por lead e % de cliente ideal','com quanto contar para assumir a conversão'],
+    ['Meta pela entrega','meta = leads × conversão × ticket, revista toda semana','uma meta que fecha a conta'],
+    ['Frota e preço','disponibilidade por categoria e data; política de troca e de preço','o que pode prometer ao cliente'],
+    ['Estrutura da equipe','jornada, escala, contratos e remuneração','as condições para sustentar o ritmo']];
+  el.innerHTML=g.map(function(x,i){return '<div class="card gap rv" style="--d:'+(150+i*80)+'ms"><span class="chip t">pauta</span><h3>'+x[0]+'</h3><p><b>Pautar:</b> '+x[1]+'.</p><p><b>O comercial precisa saber:</b> '+x[2]+'.</p></div>';}).join('');
 })();
 
 /* ---- cobrança: perguntas ---- */
 (function(){var el=document.getElementById('asks-gestao');if(!el)return;
-  var q=['Qual é o plano da gestão para os R$ 500 mil, semana a semana?','Quantos leads qualificados por dia a gestão vai entregar, de que fonte e com qual verba?','Qual equipe de tráfego fica na conta, e quando ela começa a gerar venda?','Quando entram novos SDRs para a jornada caber em 9 horas, com almoço?','Qual base nova substitui a que acabou?','Quando os contratos serão assinados, com função, jornada e remuneração por escrito?','Qual a regra de remuneração se a meta não vier com os meios para ser batida?','Como a frota, as trocas de categoria e os preços serão informados ao comercial, e quem fala com o cliente?'];
+  var q=['Qual é a estratégia de marketing do mês, e quais campanhas estão previstas?','Quantos leads por semana o tráfego vai entregar, a que custo e com que qualidade?','Qual é o calendário de postagens, e como ele conversa com as campanhas?','Qual equipe de tráfego fica na conta, e quando ela começa a gerar venda?','Qual meta fecha a conta com essa entrega de leads?','Como fica a jornada: escala, almoço e pausas?','Quando os contratos serão assinados, com função, jornada e remuneração por escrito?','Como a frota, as trocas de categoria e os preços serão informados ao comercial?'];
   el.innerHTML=q.map(function(x,i){return '<div class="card gap rv" style="--d:'+(150+i*80)+'ms;padding:18px 18px 16px"><span class="ix">'+String(i+1).padStart(2,'0')+'</span><h3 style="font-size:16px;line-height:1.35">'+x+'</h3></div>';}).join('');
 })();
 
@@ -1408,29 +1677,26 @@ bars('ch-yield',[1000*30/3386,1000*4/2355],{labels:['Setembro','Outubro'],f:func
   [p,h,d].forEach(function(el){el.addEventListener('input',calc);});calc();
 })();
 
-/* ---- cobrança: cronograma ---- */
+/* ---- calendário de pauta ---- */
 (function(){var el=document.getElementById('plan-tbl');if(!el)return;
-  var r=[['16/10 · sex','Meta de outubro revista pela capacidade (R$ 150 a 250 mil) e desdobrada por semana','Diretoria','Meta semanal publicada para a equipe'],
-    ['16/10 · sex','Uma só equipe de tráfego na conta, com evento de compra com valor','Diretoria e marketing','Sinal de conversão voltando a registrar'],
-    ['19/10 · seg','Escala com jornada de 9 horas, almoço e pausas','Gestão comercial','Jornada no Kommo de até 9h'],
-    ['23/10 · sex','Contratação de 2 SDRs aprovada, em turnos de 8h–16h e 14h–22h','Diretoria','Jornada de até 9h, com almoço'],
-    ['23/10 · sex','Frota por categoria e data visível ao comercial; troca só com aviso e aceite do cliente; contato sempre no Kommo','Diretoria e operação','Nenhuma troca sem aviso'],
-    ['23/10 · sex','Separar gestão de venda: o gerente deixa de ser a conta de todas as vendas','Diretoria e gestão comercial','Venda registrada por quem vendeu'],
-    ['30/10 · sex','Contratos assinados com todos, com função, jornada e remuneração por escrito','Diretoria','Contratos assinados'],
-    ['30/10 · sex','Plano de fonte nova de leads (família, minivan, indicação, parcerias), com volume e custo','Diretoria e marketing','Leads qualificados por dia'],
-    ['Toda segunda','30 minutos com o placar da semana e um dono para cada número','Diretoria e gestão comercial','Placar publicado toda segunda'],
-    ['06/11 · sex','Plano de novembro pronto antes de o mês começar, a partir da capacidade','Diretoria','Meta de novembro aprovada com plano']];
-  el.innerHTML='<tr><th>Prazo</th><th>Entrega</th><th>Dono</th><th>Como saber que foi feito</th></tr>'+r.map(function(x){return '<tr><td class="dt">'+x[0]+'</td><td><b>'+x[1]+'</b></td><td>'+x[2]+'</td><td class="muted">'+x[3]+'</td></tr>';}).join('');
+  var r=[['16/10 · sex','Meta de outubro','meta com as premissas de entrega: leads, conversão e ticket','meta do plano comercial: R$ 200 mil'],
+    ['16/10 · sex','Plano de tráfego e entrega de leads','verba, agência, canais e leads por semana até 12/11','as taxas do acordo de entrega e conversão'],
+    ['19/10 · seg','Jornada e escala','jornada com almoço e pausas, turnos das 8h às 22h','escala de 9h por pessoa cobrindo o horário'],
+    ['20/10 · ter','Campanhas e calendário de postagens','Natal e Réveillon, Black Friday (27/11) e férias de janeiro, com datas e ofertas','argumentos e condições de cada campanha no atendimento'],
+    ['23/10 · sex','Frota e preço','disponibilidade por categoria e data; política de troca e de preço','vender só o que existe, com preço cumprido'],
+    ['30/10 · sex','Estrutura','contratos, remuneração e papel do gerente','metas por pessoa compatíveis com o contrato'],
+    ['Toda segunda','Placar entrega × conversão','leads entregues, custo e cliente ideal da semana','resposta, orçamento, conversão e vendas da semana'],
+    ['06/11 · sex','Planejamento de novembro','estratégia, campanhas, postagens e tráfego de novembro, antes do mês','plano comercial de novembro sobre essa entrega']];
+  el.innerHTML='<tr><th>Quando</th><th>Ponto de pauta</th><th>O que precisa ser apresentado</th><th>O que o comercial assume</th></tr>'+r.map(function(x){return '<tr><td class="dt">'+x[0]+'</td><td><b>'+x[1]+'</b></td><td>'+x[2]+'</td><td class="muted">'+x[3]+'</td></tr>';}).join('');
 })();
 
 /* ---- cobrança: placar semanal ---- */
 (function(){var el=document.getElementById('weekly');if(!el)return;
-  var r=[['Leads que chegam a atendimento','41%','80%','agosto'],['Lead → orçamento','33%','66%','agosto'],['Cliente ideal nos orçamentos','4%','32%','julho'],
+  var r=[['Leads entregues por dia (marketing)','156','≥ 150, com 15% de cliente ideal','acordo de entrega'],['Leads que chegam a atendimento','41%','80%','agosto'],['Lead → orçamento','33%','66%','agosto'],['Cliente ideal nos orçamentos','4%','32%','julho'],
     ['Orçamentos de lead novo por dia','56','75','pico de 22/09'],['Respostas em até 10 min','45%','90%','meta do agente Kommo'],
     ['Sinais de compra respondidos em 15 min','40%','90%','meta do agente Kommo'],['Orçamentos com pergunta de diagnóstico','0%','90%','meta do agente Kommo'],
     ['Vendas vindas da base','100%','39%','julho'],['Jornada por pessoa','13h12','9h','linha interna'],
-    ['Custo por conversa no WhatsApp','R$ 28,93','R$ 18,81','agência principal'],['Perdas para a concorrência por dia','31','3','agosto'],
-    ['Faturamento da semana','—','meta revista ÷ semanas','plano do mês']];
+    ['Custo por conversa no WhatsApp','R$ 28,93','R$ 18,81','agência principal'],['Faturamento da semana','—','plano semana a semana','plano comercial']];
   el.innerHTML='<tr><th>Indicador</th><th class="n">Hoje</th><th class="n">Referência</th><th>De onde vem a referência</th></tr>'+r.map(function(x){return '<tr><td>'+x[0]+'</td><td class="now">'+x[1]+'</td><td class="ref">'+x[2]+'</td><td class="muted">'+x[3]+'</td></tr>';}).join('');
 })();
 
@@ -1529,7 +1795,7 @@ function cumPath(q0,dec,c,t){var out=[],acc=0;for(var k=1;k<=LEFT;k++){acc+=q0*M
 })();
 (function(){
   var q15=Math.round(DEC.pk.f(DEC.n)),d15=Math.round(100*(1-Math.exp(DEC.pk.k))/0.05)*0.05;
-  var P={a:{q:30,d:0,c:+CNEW.toFixed(3),t:4788},b:{q:q15,d:d15,c:+CNEW.toFixed(3),t:4788},c:{q:30,d:0,c:+CALL.toFixed(3),t:4788},d:{q:30,d:0,c:9.93,t:4788}};
+  var P={a:{q:30,d:0,c:+CNEW.toFixed(3),t:4788},w:{q:30,d:1.5,c:+CNEW.toFixed(3),t:4788},b:{q:q15,d:d15,c:+CNEW.toFixed(3),t:4788},p:{q:40,d:0,c:2,t:5100},c:{q:30,d:0,c:+CALL.toFixed(3),t:4788},d:{q:30,d:0,c:9.93,t:4788}};
   var q=document.getElementById('sl-q'),dd=document.getElementById('sl-d'),c=document.getElementById('sl-c'),t=document.getElementById('sl-t');var els=[q,dd,c,t];
   function calc(){els.forEach(setP);var arr=cumPath(+q.value,+dd.value,+c.value,+t.value);var add=arr[arr.length-1];var tot=REAL+add;var vend=add/(+t.value);
     document.getElementById('o-q').textContent=q.value;document.getElementById('o-d').textContent=+dd.value?('−'+nf2.format(+dd.value)+'% ao dia'):'sem queda';
@@ -1546,12 +1812,12 @@ function cumPath(q0,dec,c,t){var out=[],acc=0;for(var k=1;k<=LEFT;k++){acc+=q0*M
 /* ---- asks ---- */
 (function(){
   var asks=[
-    ['Proteger a equipe agora','Jornada máxima de 9 horas, com almoço e pausas, e contratos assinados. Nesse ritmo a equipe não aguenta.'],
-    ['Reforçar a equipe','2 SDRs em turno escalonado (8h–16h e 14h–22h) para a jornada caber em 9 horas, com almoço e pausas.'],
-    ['Separar gestão de venda','O gerente comercial vende, treina, gere e cuida de tráfego e marketing. Precisa de tempo para gerir.'],
-    ['Rever a meta de outubro','Trocar os R$ 500 mil por uma meta entre R$ 150 e 250 mil, coerente com orçamentos em queda e sem base.'],
-    ['Resolver em dias, não em semanas','Dono e prazo para cada problema: o sinal de conversão está parado desde 19/09. Uma só equipe de tráfego, com prazo de aprendizado combinado.'],
-    ['Investir em fonte nova de leads','Públicos de família e minivan (6 das 8 vendas e 82% do valor em 14/10), 10+ diárias, indicação e parcerias, para repor a base que acabou.']
+    ['Meta de outubro','Aprovar a meta do plano comercial (R$ 200 mil) ou outra, com as premissas de entrega por escrito.'],
+    ['Acordo de entrega e conversão','Leads por semana e cliente ideal do lado do marketing; resposta, orçamento e conversão do lado comercial.'],
+    ['Marketing do mês','Estratégia, campanhas (Natal e Réveillon, Black Friday) e calendário de postagens em pauta até 20/10.'],
+    ['Jornada e equipe','Jornada com almoço e pausas, escala das 8h às 22h e contratos assinados.'],
+    ['Frota e preço','Disponibilidade por categoria visível ao comercial; troca e preço com regra e registro.'],
+    ['Acompanhamento','Placar semanal de entrega e conversão, com o CRM como fonte única.']
   ];
   document.getElementById('asks').innerHTML=asks.map(function(a,i){return '<li class="card rv" style="display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start;padding:14px 18px;--d:'+(300+i*140)+'ms"><span class="num" style="font-size:26px;color:var(--coral)">'+(i+1)+'</span><div><h3 style="font-size:17px">'+a[0]+'</h3><p class="muted" style="font-size:13.5px">'+a[1]+'</p></div></li>';}).join('');
 })();
