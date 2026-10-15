@@ -178,6 +178,9 @@ table.wk td.ref{color:#0F7A4E;font-weight:700;font-family:var(--f-mono);text-ali
 .gap .chip.t{color:#0A7F89;background:rgba(12,151,163,.1)}
 .gap .ix{font-family:var(--f-display);font-weight:800;font-size:26px;color:var(--coral);line-height:1}
 .gap .chip{align-self:flex-start;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--coral-d);background:var(--tint);border-radius:6px;padding:3px 8px}
+.ta{width:100%;min-height:92px;resize:vertical;font:500 14px/1.45 var(--f-body);color:var(--ink);background:var(--bg,#fff);border:1px dashed var(--slate);border-radius:12px;padding:10px 12px;margin-top:10px}
+.ta:focus-visible{outline:2px solid var(--teal);outline-offset:1px;border-style:solid}
+.ta::placeholder{color:var(--ink3)}
 .roles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .role{display:flex;gap:10px;align-items:center;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:14.5px;font-weight:600;line-height:1.25}
 .role i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--coral)}
@@ -359,7 +362,7 @@ table.kt th.n{text-align:right}
   </header>
   <div class="sb">
     <div class="fm-wrap rv"><div class="fm" id="funnel"></div></div>
-    <p class="lede rv" style="--d:600ms">Em outubro, só 48% dos leads foram atendidos e só 1 em cada 3 virou orçamento. Em 14/10, o atendimento foi de 41%: a equipe estava disparando 2.355 ativos no mesmo dia. As 8 vendas por dia são de apenas 2 dias e vieram todas da base, depois de 5.191 ativos: não é ritmo que se repita.</p>
+    <p class="lede rv" style="--d:600ms">Em outubro, só 48% dos leads chegaram a atendimento e 1 em cada 3 virou orçamento: são leads frios, que respondem qualquer coisa ao robô e são encerrados ainda na entrada. As 8 vendas por dia são de apenas 2 dias e vieram todas da base, depois de 5.191 ativos: não é ritmo que se repita.</p>
   </div>
   <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: painel comercial (leads do dia, leads gerais e base) · vendas e R$: planilha financeira · outubro = 13 e 14/10; origem das 16 vendas: levantamento da gestão comercial</span><span class="pg"></span></footer>
 </section>
@@ -374,8 +377,8 @@ table.kt th.n{text-align:right}
     <div class="g c-b">
       <div class="card rv"><h3>Do realizado ao setembro estruturado</h3><p class="cap" style="margin-bottom:8px">R$ · estimativa linear sobre o funil do mês</p><div class="chart" id="ch-wf" role="img" aria-label="Ponte do faturamento: 383 mil realizados, mais 50 mil com atendimento de 80%, mais 36 mil com orçamento em 82% dos atendidos, total de 469 mil"></div></div>
       <div class="g" style="align-content:start">
-        <div class="card diff rv"><span class="ix">1</span><div><h3>Equipe dimensionada para o volume</h3><p>Com SDRs em turno, o atendimento ficaria nos 80% de agosto, não em 71%: <b>+R$ 50,3 mil</b>.</p></div></div>
-        <div class="card diff rv"><span class="ix">2</span><div><h3>Fila organizada até o orçamento</h3><p>82% dos atendidos orçados, como em agosto, em vez de 76%: <b>+R$ 36,0 mil</b>.</p></div></div>
+        <div class="card diff rv"><span class="ix">1</span><div><h3>Tráfego trazendo lead qualificado</h3><p>Com leads como os de agosto, 80% chegariam a atendimento, não 71%: <b>+R$ 50,3 mil</b>.</p></div></div>
+        <div class="card diff rv"><span class="ix">2</span><div><h3>Lead com intenção de compra</h3><p>82% dos atendidos pedindo orçamento, como em agosto, em vez de 76%: <b>+R$ 36,0 mil</b>.</p></div></div>
         <div class="card diff rv"><span class="ix">3</span><div><h3>Uma agência só, com rastreio de venda</h3><p>R$ 5.007 do mês na 2ª agência, com custo por conversa 27% maior. E 1.066 leads pagos sem resposta (≈ R$ 18,5 mil de mídia).</p></div></div>
         <div class="card diff rv"><span class="ix">4</span><div><h3>Registro e follow-up com dono</h3><p>73 de 80 vendas lançadas num só nome e 4 sem categoria: impossível medir dupla, comissão e mix.</p></div></div>
         <div class="card hot rv"><p style="font-size:16px"><b>Mesmo estruturado, setembro ficaria em ≈ R$ 469 mil.</b> Os R$ 500 mil pediam estrutura e capacidade que a operação não tinha.</p></div>
@@ -394,7 +397,7 @@ table.kt th.n{text-align:right}
   <div class="sb" style="justify-content:center">
     <div class="g g4" style="gap:34px">
       <div class="rv"><p class="big" style="font-size:72px">14h26</p><p class="lbl2">no Kommo em 14/10: um SDR das 8h51 às 23h17. A equipe não aguenta.</p></div>
-      <div class="rv"><p class="big" data-count="41" data-fmt="int" data-suf="%">41%</p><p class="lbl2">dos leads de 14/10 foram atendidos. Em agosto eram 80%.</p></div>
+      <div class="rv"><p class="big" data-count="41" data-fmt="int" data-suf="%">41%</p><p class="lbl2">dos leads de 14/10 chegaram a atendimento: lead frio, encerrado ainda na entrada. Em agosto eram 80%.</p></div>
       <div class="rv"><p class="big" data-count="5191" data-fmt="int">5.191</p><p class="lbl2">ativos em 4 dias para as 16 vendas de outubro. Não há mais base para rodar.</p></div>
       <div class="rv"><p class="big" data-count="26" data-fmt="int" data-pre="−" data-suf="%">−26%</p><p class="lbl2">de orçamentos de lead novo desde 22/09: de 75 para 56 por dia.</p></div>
     </div>
@@ -449,7 +452,7 @@ table.kt th.n{text-align:right}
     <div class="g c-c">
       <div class="card rv" style="display:flex;flex-direction:column;align-items:center;gap:10px;justify-content:center">
         <div class="chart" id="ch-clock" style="max-width:290px" role="img" aria-label="Relógio da jornada de 14 horas e 26 minutos, das 8h51 às 23h17, contra a jornada de 9h"></div>
-        <p style="text-align:center;color:var(--ink2);font-size:15px">Em 14/10, o Kommo registrou um SDR das 8h51 às 23h17: 14h26, sem conseguir responder todos os leads. Nesse ritmo a equipe não aguenta, e a produtividade já caiu. <span class="hl-t">Linha interna: jornada de 9h.</span></p>
+        <p style="text-align:center;color:var(--ink2);font-size:15px">Em 14/10, o Kommo registrou um SDR das 8h51 às 23h17: 14h26, sem almoço nem pausa definidos. Nesse ritmo a equipe não aguenta. <span class="hl-t">Linha interna: jornada de 9h.</span></p>
       </div>
       <div class="card rv">
         <h3>Horas que o volume exige, por pessoa</h3>
@@ -484,7 +487,7 @@ table.kt th.n{text-align:right}
   </header>
   <div class="sb">
     <div class="card rv">
-      <h3>Primeira e última ação de cada pessoa</h3><p class="cap" style="margin-bottom:6px">14/10 · operação com movimento por 14,2h (14,7h em 13/10) · tracejado: fim da jornada de referência (17h)</p>
+      <h3>Primeira e última ação de cada pessoa</h3><p class="cap" style="margin-bottom:6px">14/10 · operação com movimento por 14,2h (14,7h em 13/10) · sem almoço nem pausa definidos · tracejado: fim da jornada de referência (17h)</p>
       <div class="chart" id="ch-day" role="img" aria-label="Primeira e última ação no Kommo em 14 de outubro: Eduardo das 8h51 às 23h17, Dickson das 8h44 às 21h35, Gledson das 8h44 às 21h02 e Janes das 9h28 às 20h17, contra a jornada de referência das 8h às 17h"></div>
     </div>
     <div class="g g4">
@@ -497,8 +500,36 @@ table.kt th.n{text-align:right}
   <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: agente Kommo, 14/10 (ações e tarefas por pessoa) e 13/10 (resposta mediana, relógio das 9h às 22h) · linha de frente: Dickson, Eduardo (SDR) e Gledson (vendedor); gerente fora das avaliações · referência: 9h; CLT: 8h por dia, até 2h extras, 11h de descanso</span><span class="pg"></span></footer>
 </section>
 
-<!-- 07a1 EXCELÊNCIA DA EQUIPE -->
+<!-- 07a0 O CUSTO HUMANO -->
 <section class="slide" id="s11">
+  <header class="sh">
+    <p class="eyebrow rv">O custo humano · e o risco para a empresa</p>
+    <h2 class="rv">Sem almoço, sem pausa, <em>sem hora para acabar</em></h2>
+  </header>
+  <div class="sb">
+    <div class="g g3">
+      <div class="card kpi alert rv"><span class="cap">Almoço e pausas definidos</span><span class="v">nenhum</span><span class="d">numa jornada de 12h18 a 14h26 da linha de frente, em 14/10</span></div>
+      <div class="card kpi alert rv"><span class="cap">Esta apresentação</span><span class="v">3h da manhã</span><span class="d">foi preparada de madrugada, e o gerente entra às 9h</span></div>
+      <div class="card kpi alert rv"><span class="cap">Contratos assinados</span><span class="v">nenhum</span><span class="d">nem nota fiscal ou recibo nos pagamentos; sem pagamento por hora; variável só por faixa de faturamento</span></div>
+    </div>
+    <div class="g g2">
+      <div class="card rv"><h3>O que a saúde mostra</h3><p class="cap" style="margin-bottom:10px">riscos de jornadas longas e sem descanso</p><ul class="chk dark" style="font-size:14.5px">
+        <li>Trabalhar 55 horas ou mais por semana eleva em 35% o risco de AVC e em 17% o de morte por doença do coração (OMS e OIT, 2021).</li>
+        <li>O burnout é reconhecido pela OMS como fenômeno ligado ao trabalho (CID-11) e está na lista brasileira de doenças relacionadas ao trabalho (Ministério da Saúde, 2023).</li>
+        <li>Sem descanso, cai a qualidade: a nota das conversas ficou em 5,6 de 10 no dia de 14h26.</li>
+      </ul></div>
+      <div class="card rv"><h3>O que a lei observa</h3><p class="cap" style="margin-bottom:10px">pontos para avaliação jurídica · não é parecer</p><ul class="chk dark" style="font-size:14.5px">
+        <li>Horário cobrado, metas, ordens e monitoramento por gestor indicam subordinação. Sem contrato, nota fiscal ou recibo, nem a forma de PJ existe: a Justiça do Trabalho pode reconhecer vínculo (CLT, arts. 3º e 9º).</li>
+        <li>Com vínculo valem 8h por dia e 44h por semana, até 2h extras, 1h de almoço e 11h de descanso entre jornadas (Constituição, art. 7º; CLT, arts. 59, 66 e 71).</li>
+        <li>Jornada excessiva habitual pode gerar indenização por dano existencial, e a empresa deve gerenciar riscos psicossociais (NR-1). O risco do negócio é de quem emprega (CLT, art. 2º).</li>
+      </ul></div>
+    </div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fontes: OMS e OIT (Environment International, 2021) · CID-11 (QD85) · Portaria GM/MS 1.999/2023 · Constituição Federal e CLT · NR-1 (Portaria MTE 1.419/2024) · jornada e nota: agente Kommo, 14/10 · almoço, contratos, notas, recibos e horário: relato da gestão · leitura jurídica a confirmar com advogado trabalhista</span><span class="pg"></span></footer>
+</section>
+
+<!-- 07a1 EXCELÊNCIA DA EQUIPE -->
+<section class="slide" id="s12">
   <header class="sh">
     <p class="eyebrow rv">A excelência da equipe · avaliação do agente Kommo, 14/10</p>
     <h2 class="rv">Mesmo no limite, a equipe entrega: <span class="t">volume e cobertura no máximo</span></h2>
@@ -533,10 +564,10 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07a2 QUEM ATENDEU -->
-<section class="slide" id="s12">
+<section class="slide" id="s13">
   <header class="sh">
     <p class="eyebrow rv">Quem atendeu · agente Kommo, 14/10</p>
-    <h2 class="rv">Sem braço para atender, o cliente <em>fica com o robô</em></h2>
+    <h2 class="rv">70% das conversas <em>param no robô</em>: o lead chega frio</h2>
   </header>
   <div class="sb">
     <div class="g c-d">
@@ -556,7 +587,7 @@ table.kt th.n{text-align:right}
           <div style="display:flex;flex-direction:column;gap:12px" id="notas"></div>
           <p class="muted" style="font-size:13px;margin-top:12px">Média de <b>5,6 de 10</b>, no dia em que a linha de frente passou de 12 horas. Gerente fora das avaliações.</p>
         </div>
-        <div class="card hot rv"><p style="font-size:16px">No dia de 14h26, três pessoas da linha de frente escreveram para 409 clientes. <b>Não há braço para todos.</b> Mais horas não resolvem: gente e estrutura resolvem.</p></div>
+        <div class="card hot rv"><p style="font-size:16px">O lead chega frio, responde qualquer coisa ao robô e é encerrado ainda na entrada: 51 leads foram da entrada direto para fechado em 14/10. <b>Não é falta de atendimento: é falta de lead qualificado.</b></p></div>
       </div>
     </div>
   </div>
@@ -564,7 +595,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07b BASE DA CARGA HORÁRIA -->
-<section class="slide" id="s13">
+<section class="slide" id="s14">
   <header class="sh">
     <p class="eyebrow rv">A base da carga horária</p>
     <h2 class="rv">A conta da jornada, <em>linha por linha</em></h2>
@@ -600,7 +631,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07c GERENTE COMERCIAL -->
-<section class="slide" id="s14">
+<section class="slide" id="s15">
   <header class="sh">
     <p class="eyebrow rv">O gerente comercial</p>
     <h2 class="rv">Um gerente, quinze frentes, e <em>sem hora para parar</em></h2>
@@ -621,7 +652,7 @@ table.kt th.n{text-align:right}
           </ul>
         </div>
         <div class="card flat rv"><p style="font-size:14px">No painel, 95% dos orçamentos e 98% dos follow-ups de setembro aparecem no usuário dele. Toda venda ganha sai pela conta dele. <b>O registro não mostra quem faz o quê.</b></p></div>
-        <div class="card hot rv"><p style="font-size:16px">Quem vende para bater a meta não tem tempo de gerir, e quem gere não tem tempo de vender. <b>Hoje o gerente faz os dois, e ainda resolve os problemas da equipe.</b></p></div>
+        <div class="card hot rv"><p style="font-size:16px">Esta apresentação foi preparada às 3h da manhã, e o gerente entra às 9h. <b>Ele vende, gere, constrói as ferramentas e resolve os problemas da equipe, e a vida pessoal fica para depois.</b></p></div>
       </div>
     </div>
   </div>
@@ -629,7 +660,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07d O QUE O GERENTE CONSTRUIU -->
-<section class="slide" id="s15">
+<section class="slide" id="s16">
   <header class="sh">
     <p class="eyebrow rv">O gerente comercial · além das 15 frentes</p>
     <h2 class="rv">Ele também <em>construiu as ferramentas</em> que a operação usa</h2>
@@ -642,7 +673,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 08 TAXA DE ORÇAMENTO -->
-<section class="slide" id="s16">
+<section class="slide" id="s17">
   <header class="sh">
     <p class="eyebrow rv">Conversão para orçamento</p>
     <h2 class="rv">A taxa de orçamento caiu pela metade: de <span class="t">66%</span> para <em>33%</em> dos leads</h2>
@@ -654,14 +685,14 @@ table.kt th.n{text-align:right}
         <div class="chart" id="ch-teto" role="img" aria-label="Leads entrantes, atendidos e orçamentos por dia, de 13 de julho a 14 de outubro"></div>
       </div>
       <div class="card rv"><h3>Leads que viraram orçamento</h3><p class="cap" style="margin-bottom:8px">% dos leads entrantes · por mês</p><div class="chart" id="ch-orcrate" role="img" aria-label="Lead para orçamento: julho 62%, agosto 66%, setembro 54%, outubro 33%"></div>
-        <p class="muted" style="font-size:13.5px;margin-top:8px">Os leads chegam (150 a 200 por dia), mas a equipe, presa em ativos e follow-ups, não consegue atender nem orçar.</p></div>
+        <p class="muted" style="font-size:13.5px;margin-top:8px">Os leads chegam (150 a 200 por dia), mas chegam frios: respondem qualquer coisa ao robô, não pedem orçamento e são encerrados ainda na entrada.</p></div>
     </div>
   </div>
   <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: painel comercial, leads entrantes do dia (13/07 → 14/10) · outubro = 13 e 14/10</span><span class="pg"></span></footer>
 </section>
 
 <!-- 08b PADRÃO DE QUEDA DOS ORÇAMENTOS -->
-<section class="slide" id="s17">
+<section class="slide" id="s18">
   <header class="sh">
     <p class="eyebrow rv">Padrão de queda dos orçamentos · leads novos</p>
     <h2 class="rv">O orçamento novo cai <em>1,1% ao dia</em> desde 22/09, e em outubro cai mais rápido</h2>
@@ -685,7 +716,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 09 BASE ESGOTADA -->
-<section class="slide" id="s18">
+<section class="slide" id="s19">
   <header class="sh">
     <p class="eyebrow rv">De onde vieram as vendas</p>
     <h2 class="rv">Os dois dias de outubro não são ritmo: <em>5.191 ativos</em> para 16 vendas, e a base acabou</h2>
@@ -702,7 +733,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 10 TRÁFEGO -->
-<section class="slide" id="s19">
+<section class="slide" id="s20">
   <header class="sh">
     <p class="eyebrow rv">Falhas no tráfego pago</p>
     <h2 class="rv">Mais verba, <em>lead pior</em> e nenhum sinal de venda na conta</h2>
@@ -720,7 +751,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 11 NOVA AGÊNCIA -->
-<section class="slide" id="s20">
+<section class="slide" id="s21">
   <header class="sh">
     <p class="eyebrow rv">Desperdício com a nova agência</p>
     <h2 class="rv">A 2ª agência paga <em>54% a mais</em> por conversa, na mesma conta</h2>
@@ -750,7 +781,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 12 LINHA DO TEMPO -->
-<section class="slide" id="s21">
+<section class="slide" id="s22">
   <header class="sh">
     <p class="eyebrow rv">Linha do tempo · julho a outubro</p>
     <h2 class="rv">Os percalços que nos trouxeram <em>até aqui</em></h2>
@@ -765,7 +796,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 13 TODAS AS DIFICULDADES -->
-<section class="slide" id="s22">
+<section class="slide" id="s23">
   <header class="sh">
     <p class="eyebrow rv">Todas as dificuldades</p>
     <h2 class="rv">Doze problemas que a equipe <em>não resolve sozinha</em></h2>
@@ -777,7 +808,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 14 PROJEÇÃO REAL -->
-<section class="slide" id="s23">
+<section class="slide" id="s24">
   <header class="sh">
     <p class="eyebrow rv">A projeção real · outubro (13/10 → 12/11)</p>
     <h2 class="rv">Com 30 orçamentos por dia e sem base, outubro fecha perto de <em>R$ 147 mil</em></h2>
@@ -813,7 +844,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15 META INALCANÇÁVEL -->
-<section class="slide divider" id="s24">
+<section class="slide divider" id="s25">
   <header class="sh">
     <p class="eyebrow rv">A conclusão</p>
     <h2 class="rv">A meta de R$ 500 mil em outubro é impossível</h2>
@@ -831,19 +862,84 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15a A META VEIO SEM PLANO -->
-<section class="slide" id="s25">
+<section class="slide" id="s26">
   <header class="sh">
     <p class="eyebrow rv">Cobrança à gestão · planejamento do mês</p>
-    <h2 class="rv">A meta de R$ 500 mil veio <em>sem o plano</em> para chegar lá</h2>
+    <h2 class="rv">O plano comercial existe. <em>O plano da gestão para a meta, não</em></h2>
   </header>
   <div class="sb">
+    <div class="card flat rv" style="padding:14px 20px"><p style="font-size:15px"><b style="color:#0A7F89">Já entregue pelo comercial:</b> funções definidas e equipe em sintonia · esteira que fechou 16 vendas em 2 dias · nota da equipe 70,4 · curso de vendas, apps e agente de conversas.</p></div>
     <div class="g g4" id="plan-gaps"></div>
   </div>
   <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Números dos slides anteriores (painel comercial, agente Kommo, Meta Ads e planilha financeira) · "o plano precisa definir": o mínimo para uma meta mensal sair do papel</span><span class="pg"></span></footer>
 </section>
 
+<!-- 15a1 QUEM RESPONDE POR QUÊ -->
+<section class="slide" id="s27">
+  <header class="sh">
+    <p class="eyebrow rv">Cobrança à gestão · responsabilidades</p>
+    <h2 class="rv">O comercial planeja o comercial. <em>Meta, verba e estrutura são da diretoria</em></h2>
+  </header>
+  <div class="sb">
+    <div class="g g2">
+      <div class="card rv"><h3 style="color:#0A7F89">Comercial · gerente e equipe</h3><p class="cap" style="margin-bottom:12px">estruturado e funcionando</p><ul class="chk dark" style="font-size:15px">
+        <li>Qualificação e fechamento dos leads já na entrada</li>
+        <li>Orçamento, follow-up, retomada e fechamento</li>
+        <li>Funções definidas e equipe em sintonia: 16 vendas em 2 dias</li>
+        <li>Processo, curso de vendas e indicadores comerciais</li>
+        <li>Ferramentas próprias: apps, agente de conversas e painéis</li>
+      </ul></div>
+      <div class="card hot rv"><h3 style="color:#fff">Diretoria · gestão</h3><p class="cap" style="margin-bottom:12px">o que só ela pode decidir e entregar</p><ul class="chk" style="font-size:15px">
+        <li>Meta do mês com premissas: leads, orçamentos, conversão e ticket</li>
+        <li>Verba, agência e tráfego trazendo lead qualificado</li>
+        <li>Fonte nova de leads para repor a base</li>
+        <li>Contratação, escala e jornada com almoço e pausas</li>
+        <li>Contratos assinados, com função e remuneração por escrito</li>
+      </ul></div>
+    </div>
+    <div class="card flat rv"><p style="font-size:16px">O gerente comercial responde pelo plano comercial. <b>Meta, verba, tráfego, contratação e contratos são decisões da diretoria:</b> sem essas entregas, nenhuma projeção fica de pé.</p></div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Funções e estrutura: relato da gestão · 16 vendas: planilha financeira, 13 e 14/10</span><span class="pg"></span></footer>
+</section>
+
+<!-- 15a2 PERGUNTAS À GESTÃO -->
+<section class="slide" id="s28">
+  <header class="sh">
+    <p class="eyebrow rv">Cobrança à gestão · o que precisamos ouvir da diretoria</p>
+    <h2 class="rv">Antes de cobrar a meta, a gestão <em>precisa responder</em></h2>
+  </header>
+  <div class="sb">
+    <div class="g g4" id="asks-gestao"></div>
+    <div class="card hot rv"><p style="font-size:16.5px">O comercial se reestruturou e tem uma esteira que funciona. <b>Para projetar com segurança, precisa dessas respostas por escrito, com data.</b></p></div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Perguntas da gestão comercial à diretoria · respostas esperadas até 16/10, junto com a meta revista</span><span class="pg"></span></footer>
+</section>
+
+<!-- 15a3 MOMENTO DE ALINHAMENTO -->
+<section class="slide" id="s29">
+  <header class="sh">
+    <p class="eyebrow rv">Momento de alinhamento · com a diretoria, nesta reunião</p>
+    <h2 class="rv">O que a gestão espera, <em>e qual é o plano</em> para chegar lá</h2>
+  </header>
+  <div class="sb">
+    <div class="g g3">
+      <div class="card rv"><h3>Da empresa</h3><p class="cap" style="margin-bottom:8px">expectativa de resultado</p>
+        <p style="font-size:14px;color:var(--ink2)">Quanto a gestão espera faturar em outubro e em novembro, com qual margem e em que prazo? Que crescimento cabe na estrutura de hoje?</p>
+        <textarea class="ta" data-key="emp" aria-label="Resposta da diretoria: expectativa para a empresa" placeholder="Resposta da diretoria"></textarea></div>
+      <div class="card rv"><h3>Dos colaboradores</h3><p class="cap" style="margin-bottom:8px">o que se pede e o que se oferece</p>
+        <p style="font-size:14px;color:var(--ink2)">Qual jornada, com quais pausas e contratos? Qual meta por pessoa, e o que cada um recebe ao bater? Como a gestão vai estar presente?</p>
+        <textarea class="ta" data-key="col" aria-label="Resposta da diretoria: expectativa para os colaboradores" placeholder="Resposta da diretoria"></textarea></div>
+      <div class="card rv"><h3>O plano</h3><p class="cap" style="margin-bottom:8px">o que a gestão entrega, e quando</p>
+        <p style="font-size:14px;color:var(--ink2)">Quais leads, verba, tráfego, contratações e base nova a gestão entrega, em que data, e como isso será acompanhado toda semana?</p>
+        <textarea class="ta" data-key="plano" aria-label="Resposta da diretoria: o plano" placeholder="Resposta da diretoria"></textarea></div>
+    </div>
+    <div class="card hot rv"><p style="font-size:16px">Contexto: na última semana da meta, a gestão viajou, com pouca comunicação e sem estímulo ao time. <b>Presença, comunicação e estímulo também fazem parte do plano.</b></p></div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">As respostas digitadas aqui ficam salvas só neste navegador · contexto da última semana: relato da gestão comercial</span><span class="pg"></span></footer>
+</section>
+
 <!-- 15b O PLANEJAMENTO QUE COBRAMOS -->
-<section class="slide" id="s26">
+<section class="slide" id="s30">
   <header class="sh">
     <p class="eyebrow rv">Cobrança à gestão · o que precisa estar decidido, e quando</p>
     <h2 class="rv">O planejamento que <span class="t">cobramos da gestão</span>, com data e dono</h2>
@@ -855,7 +951,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15c PLACAR SEMANAL -->
-<section class="slide" id="s27">
+<section class="slide" id="s31">
   <header class="sh">
     <p class="eyebrow rv">Cobrança à gestão · acompanhamento</p>
     <h2 class="rv">O placar que a gestão precisa olhar <em>toda semana</em></h2>
@@ -867,7 +963,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 16 DECISÕES -->
-<section class="slide" id="s28">
+<section class="slide" id="s32">
   <header class="sh">
     <p class="eyebrow rv">O que pedimos à diretoria</p>
     <h2 class="rv">Seis decisões para <span class="t">proteger a equipe</span> e voltar a crescer</h2>
@@ -1142,10 +1238,10 @@ bars('ch-yield',[1000*30/3386,1000*4/2355],{labels:['Setembro','Outubro'],f:func
   var d=[
     ['Jornada desumana','Até 14h26 no Kommo em 14/10 (8h51 → 23h17); 349 clientes atendidos em um dia. A equipe não aguenta.'],
     ['Gerente sobrecarregado','O gerente comercial vende, treina, gere, cuida de tráfego, marketing e da empresa de carrinhos, e ainda resolve os problemas da equipe.'],
-    ['Atendimento em queda','41% dos leads atendidos em 14/10 (80% em agosto); 57 clientes insistiram e só o robô respondeu.'],
+    ['Lead frio na entrada','Só 41% chegam a atendimento (80% em agosto): respondem qualquer coisa ao robô; 51 encerrados direto da entrada em 14/10.'],
     ['Orçamento novo não chega','Queda de 1,1% ao dia desde 22/09; lead → orçamento de 68% para 36%.'],
-    ['Base esgotada','100% das vendas de outubro vieram da base, com 5.191 ativos em 4 dias. Não há mais base para rodar.'],
-    ['Sem fonte nova','Nenhuma origem nova de leads qualificados para repor o que a base dava.'],
+    ['Base esgotada','100% das vendas de outubro vieram da base, com 5.191 ativos em 4 dias. Não há mais base nem fonte nova para repor.'],
+    ['Gestão ausente na reta final','Na última semana da meta, a gestão viajou: pouca comunicação e nenhum estímulo ao time.'],
     ['Sempre barganha, nunca valor','3 em cada 4 vendas de setembro saíram abaixo do valor de tabela.'],
     ['Lead fora do perfil','Cliente ideal de 32% para 4% dos orçamentos; 27 leads por dia querendo carro no Brasil.'],
     ['Concorrência ganhando','31 perdas por dia para a concorrência em outubro, contra 4,3 em julho.'],
@@ -1199,7 +1295,7 @@ bars('ch-yield',[1000*30/3386,1000*4/2355],{labels:['Setembro','Outubro'],f:func
   var P0=function(v){return nf0.format(Math.round(v));},P1=function(v){return nf1.format(v);},PC=function(v){return nf0.format(Math.round(v))+'%';},BR=function(v){return 'R$ '+nf0.format(Math.round(v));},HH=function(v){return nf1.format(v)+'h';};
   var L=[['Demanda e funil',[
     ['Leads por dia',function(i){return F.ent[i]/F.dias[i];},P0,0],
-    ['Leads atendidos',function(i){return 100*F.atd[i]/F.ent[i];},PC,1],
+    ['Leads que chegam a atendimento',function(i){return 100*F.atd[i]/F.ent[i];},PC,1],
     ['Lead → orçamento',function(i){return 100*F.orcE[i]/F.ent[i];},PC,1],
     ['Orçamentos por dia',function(i){return F.orcG[i]/F.dias[i];},P0,1,1],
     ['Cliente ideal nos orçamentos',function(i){return 100*F.ideal[i]/F.orcG[i];},PC,1],
@@ -1227,19 +1323,33 @@ bars('ch-yield',[1000*30/3386,1000*4/2355],{labels:['Setembro','Outubro'],f:func
     ['Capacidade da equipe','pessoas e horas para 203 orçamentos por dia','3 pessoas na linha de frente, já em 13h12 por dia'],
     ['Tráfego','uma agência, evento de compra com valor, meta por orçamento qualificado','duas agências; sinal de conversão parado desde 19/09'],
     ['Reposição da base','como gerar base nova depois de 5.191 ativos','retorno dos ativos caiu de 18% para 8%, e nada para repor'],
-    ['Processo de venda','roteiro de diagnóstico, preço e fechamento','0% dos orçamentos com pergunta de diagnóstico (Kommo, 14/10)'],
+    ['Contratos e remuneração','contratos assinados, com função, jornada e regra de remuneração','nenhum contrato, nota fiscal ou recibo; sem pagamento por hora; variável só por faixa de faturamento'],
     ['Papel do gerente','o que é gestão e o que é venda','15 frentes e todas as vendas na conta dele'],
-    ['Registro confiável','quem fez o quê, no Kommo e na planilha','vendas e lotes num só usuário; 2 vendas lançadas em dobro']];
-  el.innerHTML=g.map(function(x,i){return '<div class="card gap rv" style="--d:'+(150+i*80)+'ms"><span class="chip">a definir</span><h3>'+x[0]+'</h3><p><b>O plano precisa definir:</b> '+x[1]+'.</p><p><b>Hoje:</b> '+x[2]+'.</p></div>';}).join('');
+    ['Jornada','escala com almoço, pausas e limite de horas','12h18 a 14h26 no Kommo, sem almoço nem pausa definidos']];
+  el.innerHTML=g.map(function(x,i){return '<div class="card gap rv" style="--d:'+(150+i*80)+'ms"><span class="chip">a definir pela gestão</span><h3>'+x[0]+'</h3><p><b>O plano precisa definir:</b> '+x[1]+'.</p><p><b>Hoje:</b> '+x[2]+'.</p></div>';}).join('');
+})();
+
+/* ---- cobrança: perguntas ---- */
+(function(){var el=document.getElementById('asks-gestao');if(!el)return;
+  var q=['Qual é o plano da gestão para os R$ 500 mil, semana a semana?','Quantos leads qualificados por dia a gestão vai entregar, de que fonte e com qual verba?','Qual equipe de tráfego fica na conta, e quando ela começa a gerar venda?','Quando entram novos SDRs para a jornada caber em 9 horas, com almoço?','Qual base nova substitui a que acabou?','Quando os contratos serão assinados, com função, jornada e remuneração por escrito?','Qual a regra de remuneração se a meta não vier com os meios para ser batida?','O que é responsabilidade do gerente comercial e o que é da diretoria?'];
+  el.innerHTML=q.map(function(x,i){return '<div class="card gap rv" style="--d:'+(150+i*80)+'ms;padding:18px 18px 16px"><span class="ix">'+String(i+1).padStart(2,'0')+'</span><h3 style="font-size:16px;line-height:1.35">'+x+'</h3></div>';}).join('');
+})();
+
+/* ---- momento de alinhamento: anotações ---- */
+(function(){[].slice.call(document.querySelectorAll('textarea.ta')).forEach(function(t){var k='mgw-exp-'+t.getAttribute('data-key');
+  try{t.value=localStorage.getItem(k)||'';}catch(e){}
+  t.addEventListener('input',function(){try{localStorage.setItem(k,t.value);}catch(e){}});
+  t.addEventListener('keydown',function(e){e.stopPropagation();});});
 })();
 
 /* ---- cobrança: cronograma ---- */
 (function(){var el=document.getElementById('plan-tbl');if(!el)return;
   var r=[['16/10 · sex','Meta de outubro revista pela capacidade (R$ 150 a 250 mil) e desdobrada por semana','Diretoria','Meta semanal publicada para a equipe'],
     ['16/10 · sex','Uma só equipe de tráfego na conta, com evento de compra com valor','Diretoria e marketing','Sinal de conversão voltando a registrar'],
-    ['19/10 · seg','Escala com jornada de 9 horas e teto de fila por pessoa','Gestão comercial','Jornada no Kommo de até 9h'],
-    ['23/10 · sex','Contratação de 2 SDRs aprovada, em turnos de 8h–16h e 14h–22h','Diretoria','Atendimento de volta a 80%'],
+    ['19/10 · seg','Escala com jornada de 9 horas, almoço e pausas','Gestão comercial','Jornada no Kommo de até 9h'],
+    ['23/10 · sex','Contratação de 2 SDRs aprovada, em turnos de 8h–16h e 14h–22h','Diretoria','Jornada de até 9h, com almoço'],
     ['23/10 · sex','Separar gestão de venda: o gerente deixa de ser a conta de todas as vendas','Diretoria e gestão comercial','Venda registrada por quem vendeu'],
+    ['30/10 · sex','Contratos assinados com todos, com função, jornada e remuneração por escrito','Diretoria','Contratos assinados'],
     ['30/10 · sex','Plano de fonte nova de leads (família, minivan, indicação, parcerias), com volume e custo','Diretoria e marketing','Leads qualificados por dia'],
     ['Toda segunda','30 minutos com o placar da semana e um dono para cada número','Diretoria e gestão comercial','Placar publicado toda segunda'],
     ['06/11 · sex','Plano de novembro pronto antes de o mês começar, a partir da capacidade','Diretoria','Meta de novembro aprovada com plano']];
@@ -1248,7 +1358,7 @@ bars('ch-yield',[1000*30/3386,1000*4/2355],{labels:['Setembro','Outubro'],f:func
 
 /* ---- cobrança: placar semanal ---- */
 (function(){var el=document.getElementById('weekly');if(!el)return;
-  var r=[['Leads atendidos','41%','80%','agosto'],['Lead → orçamento','33%','66%','agosto'],['Cliente ideal nos orçamentos','4%','32%','julho'],
+  var r=[['Leads que chegam a atendimento','41%','80%','agosto'],['Lead → orçamento','33%','66%','agosto'],['Cliente ideal nos orçamentos','4%','32%','julho'],
     ['Orçamentos de lead novo por dia','56','75','pico de 22/09'],['Respostas em até 10 min','45%','90%','meta do agente Kommo'],
     ['Sinais de compra respondidos em 15 min','40%','90%','meta do agente Kommo'],['Orçamentos com pergunta de diagnóstico','0%','90%','meta do agente Kommo'],
     ['Vendas vindas da base','100%','39%','julho'],['Jornada por pessoa','13h12','9h','linha interna'],
@@ -1369,8 +1479,8 @@ function cumPath(q0,dec,c,t){var out=[],acc=0;for(var k=1;k<=LEFT;k++){acc+=q0*M
 /* ---- asks ---- */
 (function(){
   var asks=[
-    ['Proteger a equipe agora','Jornada máxima de 9 horas, escala definida e fila com teto por pessoa. Nesse ritmo a equipe não aguenta e já perde produtividade.'],
-    ['Reforçar a equipe','2 SDRs em turno escalonado (8h–16h e 14h–22h) para voltar aos 80% de atendimento.'],
+    ['Proteger a equipe agora','Jornada máxima de 9 horas, com almoço e pausas, e contratos assinados. Nesse ritmo a equipe não aguenta.'],
+    ['Reforçar a equipe','2 SDRs em turno escalonado (8h–16h e 14h–22h) para a jornada caber em 9 horas, com almoço e pausas.'],
     ['Separar gestão de venda','O gerente comercial vende, treina, gere e cuida de tráfego e marketing. Precisa de tempo para gerir.'],
     ['Rever a meta de outubro','Trocar os R$ 500 mil por uma meta entre R$ 150 e 250 mil, coerente com orçamentos em queda e sem base.'],
     ['Resolver em dias, não em semanas','Dono e prazo para cada problema: o sinal de conversão está parado desde 19/09. Uma só equipe de tráfego, com prazo de aprendizado combinado.'],
