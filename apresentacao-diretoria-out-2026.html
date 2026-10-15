@@ -139,6 +139,11 @@ a.btn{text-decoration:none;display:inline-block}
 .inp{width:100%;font:500 13px var(--f-body);padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.65);background:rgba(255,255,255,.16);color:#fff;margin-top:6px}
 .inp::placeholder{color:rgba(255,255,255,.8)}
 .inp:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.stack{display:flex;height:54px;border-radius:12px;overflow:hidden;gap:3px}
+.stack i{display:block;height:100%}
+.callout{display:grid;grid-template-columns:86px 1fr;gap:14px;align-items:center;padding:10px 0;border-top:1px solid var(--line2)}
+.callout .num{font-size:34px;color:var(--coral)}
+.callout p{font-size:14.5px;color:var(--ink2)}
 .roles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .role{display:flex;gap:10px;align-items:center;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:14.5px;font-weight:600;line-height:1.25}
 .role i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--coral)}
@@ -367,7 +372,7 @@ table.kt th.n{text-align:right}
 <section class="slide" id="s7">
   <header class="sh">
     <p class="eyebrow rv">Jornada e carga de trabalho</p>
-    <h2 class="rv">O trabalho por pessoa quase <em>triplicou</em>, e a jornada virou desumana</h2>
+    <h2 class="rv">O trabalho por pessoa <em>triplicou</em>, e a jornada virou desumana</h2>
   </header>
   <div class="sb">
     <div class="g c-c">
@@ -380,9 +385,9 @@ table.kt th.n{text-align:right}
         <p class="cap" style="margin-bottom:8px">por mês · 4 pessoas · tracejado: jornada de 9h</p>
         <div class="chart" id="ch-load" role="img" aria-label="Horas por pessoa por dia em julho, agosto, setembro e outubro"></div>
         <div class="g g3" style="margin-top:12px;gap:8px">
-          <div><p class="cap">Tarefas/dia · jul</p><p class="num" style="font-size:24px">176</p></div>
-          <div><p class="cap">Tarefas/dia · set</p><p class="num hl-a" style="font-size:24px">500</p></div>
-          <div><p class="cap">Tarefas/dia · out</p><p class="num hl-c" style="font-size:24px">1.697</p></div>
+          <div><p class="cap">Tarefas/dia · jul</p><p class="num" style="font-size:24px">172</p></div>
+          <div><p class="cap">Tarefas/dia · set</p><p class="num hl-a" style="font-size:24px">387</p></div>
+          <div><p class="cap">Tarefas/dia · out</p><p class="num hl-c" style="font-size:24px">520</p></div>
         </div>
       </div>
       <div class="card rv">
@@ -391,13 +396,13 @@ table.kt th.n{text-align:right}
         <div class="g" style="gap:10px" id="loadctl"></div>
         <div style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px">
           <p class="cap">Outubro · horas necessárias por pessoa por dia</p>
-          <p class="out-big" style="font-size:42px" id="loadout">17,2 h</p>
+          <p class="out-big" style="font-size:42px" id="loadout">14,7 h</p>
           <p class="muted" style="font-size:12.5px" id="loadnote">execução + outras tarefas</p>
         </div>
       </div>
     </div>
   </div>
-  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Jornada: agente Kommo, 14/10 · horas que o volume exige: painel comercial, tarefas = atendimentos + retornos + orçamentos + follow-ups + ativos, com tempos por tarefa da gestão (editáveis)</span><span class="pg"></span></footer>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Jornada: agente Kommo, 14/10 · horas que o volume exige: painel comercial, tarefas = atendimentos + retornos + orçamentos + follow-ups (os ativos saem pelo robô), com tempos por tarefa da gestão (editáveis)</span><span class="pg"></span></footer>
 </section>
 
 <!-- 07a O ABSURDO EM HORAS -->
@@ -421,8 +426,38 @@ table.kt th.n{text-align:right}
   <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: agente Kommo, 14/10 (ações e tarefas por pessoa) e 13/10 (resposta mediana, relógio das 9h às 22h) · linha de frente: Dickson, Eduardo (SDR) e Gledson (vendedor) · referência: 9h; CLT: 8h por dia, até 2h extras, 11h de descanso</span><span class="pg"></span></footer>
 </section>
 
-<!-- 07b BASE DA CARGA HORÁRIA -->
+<!-- 07a2 QUEM ATENDEU -->
 <section class="slide" id="s9">
+  <header class="sh">
+    <p class="eyebrow rv">Quem atendeu · agente Kommo, 14/10</p>
+    <h2 class="rv">Sem braço para atender, o cliente <em>fica com o robô</em></h2>
+  </header>
+  <div class="sb">
+    <div class="g c-d">
+      <div class="card rv">
+        <h3>Quem respondeu as 1.486 conversas do dia</h3><p class="cap" style="margin-bottom:14px">a resposta automática do robô não conta como atendimento de pessoa</p>
+        <div class="stack growx" style="--d:300ms" role="img" aria-label="443 conversas com alguém da equipe, 1.041 só com o robô e 2 sem resposta"><i style="flex:443;background:var(--teal)"></i><i style="flex:1041;background:var(--slate)"></i><i style="flex:12;background:var(--coral)"></i></div>
+        <div style="display:flex;justify-content:space-between;gap:12px;margin:8px 0 14px;font-size:14px">
+          <span><b style="color:var(--teal)">443</b> com alguém da equipe (30%)</span><span><b>1.041</b> só com o robô (70%)</span><span><b style="color:var(--coral)">2</b> sem resposta</span>
+        </div>
+        <div class="callout rv"><p class="num" data-count="57" data-fmt="int">57</p><p>clientes escreveram duas vezes ou mais, e <b>só o robô respondeu</b></p></div>
+        <div class="callout rv"><p class="num" data-count="34" data-fmt="int">34</p><p>conversas em que o cliente falou por último e <b>nenhuma pessoa respondeu</b></p></div>
+      </div>
+      <div class="g" style="align-content:start">
+        <div class="card rv">
+          <h3>Nota das conversas · 14/10</h3><p class="cap" style="margin-bottom:12px">avaliação individual do agente · 220 conversas analisadas</p>
+          <div style="display:flex;flex-direction:column;gap:12px" id="notas"></div>
+          <p class="muted" style="font-size:13px;margin-top:12px">Média de <b>5,6 de 10</b>. Luciano: 24 conversas, fora das avaliações.</p>
+        </div>
+        <div class="card hot rv"><p style="font-size:16px">No dia de 14h26, três pessoas atenderam 409 clientes. <b>Quem atende 400 clientes por dia não consegue atender bem.</b> Mais horas não resolvem: gente e estrutura resolvem.</p></div>
+      </div>
+    </div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: agente Kommo, "Quem atendeu" e "Avaliação individual", 14/10 (fechamento às 23h30) · atendimento = quem escreveu na conversa · espera contada das 9h às 22h · nota só com critérios que têm evidência registrada</span><span class="pg"></span></footer>
+</section>
+
+<!-- 07b BASE DA CARGA HORÁRIA -->
+<section class="slide" id="s10">
   <header class="sh">
     <p class="eyebrow rv">A base da carga horária</p>
     <h2 class="rv">A conta da jornada, <em>linha por linha</em></h2>
@@ -450,7 +485,7 @@ table.kt th.n{text-align:right}
           <label class="cap" for="in-kommo" style="display:block;margin-top:12px">Link do Kommo (fica salvo neste navegador)</label>
           <input class="inp" id="in-kommo" type="url" inputmode="url" autocomplete="off" placeholder="https://suaconta.kommo.com">
         </div>
-        <div class="card flat rv"><p style="font-size:14px">No Kommo, em 14/10, a linha de frente ficou de 12h18 a 14h26 entre a primeira e a última ação. O volume pede 17,2h por pessoa: mesmo assim, os leads ficam sem resposta.</p></div>
+        <div class="card flat rv"><p style="font-size:14px">No Kommo, em 14/10, a linha de frente ficou de 12h18 a 14h26 entre a primeira e a última ação. A conta pelo volume dá 14,7h por pessoa: o modelo e o Kommo batem.</p></div>
       </div>
     </div>
   </div>
@@ -458,7 +493,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07c GERENTE COMERCIAL -->
-<section class="slide" id="s10">
+<section class="slide" id="s11">
   <header class="sh">
     <p class="eyebrow rv">O gerente comercial</p>
     <h2 class="rv">Um gerente, quinze frentes, e <em>sem hora para parar</em></h2>
@@ -484,7 +519,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 08 TAXA DE ORÇAMENTO -->
-<section class="slide" id="s11">
+<section class="slide" id="s12">
   <header class="sh">
     <p class="eyebrow rv">Conversão para orçamento</p>
     <h2 class="rv">A taxa de orçamento caiu pela metade: de <span class="t">66%</span> para <em>33%</em> dos leads</h2>
@@ -503,7 +538,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 08b PADRÃO DE QUEDA DOS ORÇAMENTOS -->
-<section class="slide" id="s12">
+<section class="slide" id="s13">
   <header class="sh">
     <p class="eyebrow rv">Padrão de queda dos orçamentos · leads novos</p>
     <h2 class="rv">O orçamento novo cai <em>1,1% ao dia</em> desde 22/09, e em outubro cai mais rápido</h2>
@@ -527,7 +562,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 09 BASE ESGOTADA -->
-<section class="slide" id="s13">
+<section class="slide" id="s14">
   <header class="sh">
     <p class="eyebrow rv">De onde vieram as vendas</p>
     <h2 class="rv">Os dois dias de outubro não são ritmo: <em>5.191 ativos</em> para 16 vendas, e a base acabou</h2>
@@ -544,7 +579,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 10 TRÁFEGO -->
-<section class="slide" id="s14">
+<section class="slide" id="s15">
   <header class="sh">
     <p class="eyebrow rv">Falhas no tráfego pago</p>
     <h2 class="rv">Mais verba, <em>lead pior</em> e nenhum sinal de venda na conta</h2>
@@ -562,7 +597,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 11 NOVA AGÊNCIA -->
-<section class="slide" id="s15">
+<section class="slide" id="s16">
   <header class="sh">
     <p class="eyebrow rv">Desperdício com a nova agência</p>
     <h2 class="rv">A 2ª agência paga <em>54% a mais</em> por conversa, na mesma conta</h2>
@@ -592,7 +627,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 12 LINHA DO TEMPO -->
-<section class="slide" id="s16">
+<section class="slide" id="s17">
   <header class="sh">
     <p class="eyebrow rv">Linha do tempo · julho a outubro</p>
     <h2 class="rv">Os percalços que nos trouxeram <em>até aqui</em></h2>
@@ -607,7 +642,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 13 TODAS AS DIFICULDADES -->
-<section class="slide" id="s17">
+<section class="slide" id="s18">
   <header class="sh">
     <p class="eyebrow rv">Todas as dificuldades</p>
     <h2 class="rv">Doze problemas que a equipe <em>não resolve sozinha</em></h2>
@@ -619,7 +654,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 14 PROJEÇÃO REAL -->
-<section class="slide" id="s18">
+<section class="slide" id="s19">
   <header class="sh">
     <p class="eyebrow rv">A projeção real · outubro (13/10 → 12/11)</p>
     <h2 class="rv">Com 30 orçamentos por dia e sem base, outubro fecha perto de <em>R$ 147 mil</em></h2>
@@ -655,7 +690,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15 META INALCANÇÁVEL -->
-<section class="slide divider" id="s19">
+<section class="slide divider" id="s20">
   <header class="sh">
     <p class="eyebrow rv">A conclusão</p>
     <h2 class="rv">R$ 500 mil não são alcançáveis em outubro</h2>
@@ -673,7 +708,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 16 DECISÕES -->
-<section class="slide" id="s20">
+<section class="slide" id="s21">
   <header class="sh">
     <p class="eyebrow rv">O que pedimos à diretoria</p>
     <h2 class="rv">Seis decisões para <span class="t">proteger a equipe</span> e voltar a crescer</h2>
@@ -836,7 +871,7 @@ var CYL=['Jul','Ago','Set','Out'];
 })();
 
 /* ---- workload model ---- */
-var LS={atd:6,ret:4,orc:12,fup:2,ativo:0.5,venda:40,team:4,other:2};
+var LS={atd:6,ret:4,orc:12,fup:2,ativo:0,venda:40,team:4,other:2};
 function hoursTeam(i){var m=F.atd[i]*LS.atd+(F.ret[i]+F.rfup[i]+F.rativo[i])*LS.ret+F.orcG[i]*LS.orc+F.fup[i]*LS.fup+F.ativo[i]*LS.ativo+F.vendas[i]*LS.venda;return m/F.dias[i]/60;}
 function hoursPP(i){return hoursTeam(i)/LS.team+LS.other;}
 var loadBars=[];
@@ -855,7 +890,7 @@ function renderLoad(){var y=document.getElementById('ch-load')._y;
   var pp=hoursPP(3);var o=document.getElementById('loadout');o.textContent=nf1.format(pp)+' h';o.style.color=pp>12?C.coral:(pp>9?C.amber:C.teal);
   document.getElementById('loadnote').textContent='execução ('+nf1.format(hoursTeam(3)/LS.team)+' h) + outras tarefas ('+nf1.format(LS.other)+' h), com '+LS.team+' pessoas';}
 (function(){
-  var items=[['atd','Novo lead atendido',6,1,15,1,' min'],['orc','Orçamento montado',12,4,25,1,' min'],['fup','Follow-up enviado',2,0.5,6,0.5,' min'],['ativo','Ativo disparado',0.5,0,3,0.25,' min'],['team','Pessoas na linha de frente',4,2,10,1,''],['other','Outras tarefas por pessoa (h)',2,0,4,0.5,' h']];
+  var items=[['atd','Novo lead atendido',6,1,15,1,' min'],['orc','Orçamento montado',12,4,25,1,' min'],['fup','Follow-up enviado',2,0.5,6,0.5,' min'],['ativo','Ativo disparado (robô)',0,0,3,0.25,' min'],['team','Pessoas na linha de frente',4,2,10,1,''],['other','Outras tarefas por pessoa (h)',2,0,4,0.5,' h']];
   var box=document.getElementById('loadctl');
   box.innerHTML=items.map(function(it){return '<div class="ctl"><label for="ld-'+it[0]+'">'+it[1]+' <output id="ldo-'+it[0]+'">'+nf2.format(it[2]).replace(/,00$/,'').replace(/(,\d)0$/,'$1')+it[6]+'</output></label><input type="range" id="ld-'+it[0]+'" min="'+it[3]+'" max="'+it[4]+'" step="'+it[5]+'" value="'+it[2]+'"></div>';}).join('');
   items.forEach(function(it){var el=document.getElementById('ld-'+it[0]);var up=function(){LS[it[0]]=+el.value;document.getElementById('ldo-'+it[0]).textContent=nf2.format(+el.value).replace(/,00$/,'').replace(/(,\d)0$/,'$1')+it[6];setP(el);renderLoad();};el.addEventListener('input',up);setP(el);});
@@ -948,7 +983,7 @@ bars('ch-yield',[1000*30/3386,1000*4/2355],{labels:['Setembro','Outubro'],f:func
   var d=[
     ['Jornada desumana','Até 14h26 no Kommo em 14/10 (8h51 → 23h17); a linha de frente atendeu 409 clientes em um dia. A equipe não aguenta.'],
     ['Gerente sobrecarregado','O gerente comercial vende, treina, gere, cuida de tráfego, marketing e da empresa de carrinhos; no Kommo, das 11h10 às 21h47.'],
-    ['Atendimento em queda','80% dos leads em agosto, 41% em 14/10; resposta mediana de até 53 min no Kommo (13/10).'],
+    ['Atendimento em queda','41% dos leads atendidos em 14/10 (80% em agosto); 57 clientes insistiram e só o robô respondeu.'],
     ['Orçamento novo não chega','Queda de 1,1% ao dia desde 22/09; lead → orçamento de 68% para 36%.'],
     ['Base esgotada','100% das vendas de outubro vieram da base, com 5.191 ativos em 4 dias. Não há mais base para rodar.'],
     ['Sem fonte nova','Nenhuma origem nova de leads qualificados para repor o que a base dava.'],
@@ -989,9 +1024,15 @@ bars('ch-yield',[1000*30/3386,1000*4/2355],{labels:['Setembro','Outubro'],f:func
   });
 })();
 
+/* ---- quem atendeu: notas ---- */
+(function(){var el=document.getElementById('notas');if(!el)return;
+  var n=[['Gledson · vendedor',6.4,39],['Eduardo · SDR',6.1,83],['Dickson · SDR',5.2,65],['Janes · gerência',4.8,9]];
+  el.innerHTML=n.map(function(x,i){return '<div class="share" style="grid-template-columns:170px 1fr 52px"><span>'+x[0]+'<br><small class="muted">'+x[2]+' conversas</small></span><span class="bar"><i class="growx" style="width:'+(x[1]*10)+'%;--d:'+(500+i*150)+'ms"></i></span><b>'+nf1.format(x[1])+'</b></div>';}).join('');
+})();
+
 /* ---- base da carga horária (tabela) ---- */
 function renderBasis(){var t=document.getElementById('basis');if(!t)return;
-  var rows=[['Leads atendidos',function(i){return F.atd[i];},'atd'],['Retornos respondidos',function(i){return F.ret[i]+F.rfup[i]+F.rativo[i];},'ret'],['Orçamentos montados',function(i){return F.orcG[i];},'orc'],['Follow-ups enviados',function(i){return F.fup[i];},'fup'],['Ativos disparados',function(i){return F.ativo[i];},'ativo'],['Vendas fechadas (ficha e voucher)',function(i){return F.vendas[i];},'venda']];
+  var rows=[['Leads atendidos',function(i){return F.atd[i];},'atd'],['Retornos respondidos',function(i){return F.ret[i]+F.rfup[i]+F.rativo[i];},'ret'],['Orçamentos montados',function(i){return F.orcG[i];},'orc'],['Follow-ups enviados',function(i){return F.fup[i];},'fup'],['Ativos disparados (robô)',function(i){return F.ativo[i];},'ativo'],['Vendas fechadas (ficha e voucher)',function(i){return F.vendas[i];},'venda']];
   var mn=function(v){return nf1.format(v).replace(/,0$/,'');};
   var h='<tr><th>Tarefa</th><th class="n">Min.</th><th class="n">Julho/dia</th><th class="n">Outubro/dia</th><th class="n">Horas/dia · out</th></tr>';
   rows.forEach(function(r){var j=r[1](0)/F.dias[0],o=r[1](3)/F.dias[3];h+='<tr><td>'+r[0]+'</td><td class="n">'+mn(LS[r[2]])+'</td><td class="n">'+nf0.format(Math.round(j))+'</td><td class="n">'+nf0.format(Math.round(o))+'</td><td class="n">'+nf1.format(o*LS[r[2]]/60)+' h</td></tr>';});
