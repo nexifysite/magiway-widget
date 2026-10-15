@@ -181,6 +181,11 @@ table.wk td.ref{color:#0F7A4E;font-weight:700;font-family:var(--f-mono);text-ali
 .ta{width:100%;min-height:92px;resize:vertical;font:500 14px/1.45 var(--f-body);color:var(--ink);background:var(--bg,#fff);border:1px dashed var(--slate);border-radius:12px;padding:10px 12px;margin-top:10px}
 .ta:focus-visible{outline:2px solid var(--teal);outline-offset:1px;border-style:solid}
 .ta::placeholder{color:var(--ink3)}
+.risk{display:flex;flex-direction:column;gap:8px;padding:18px 20px}
+.risk h3{font-size:16.5px}
+.risk p{font-size:13.8px;color:var(--ink2);line-height:1.45}
+.risk p b{color:var(--ink)}
+.risk p.lg{color:var(--coral-d)}
 .roles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .role{display:flex;gap:10px;align-items:center;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:14.5px;font-weight:600;line-height:1.25}
 .role i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--coral)}
@@ -528,8 +533,37 @@ table.kt th.n{text-align:right}
   <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fontes: OMS e OIT (Environment International, 2021) · CID-11 (QD85) · Portaria GM/MS 1.999/2023 · Constituição Federal e CLT · NR-1 (Portaria MTE 1.419/2024) · jornada e nota: agente Kommo, 14/10 · almoço, contratos, notas, recibos e horário: relato da gestão · leitura jurídica a confirmar com advogado trabalhista</span><span class="pg"></span></footer>
 </section>
 
-<!-- 07a1 EXCELÊNCIA DA EQUIPE -->
+<!-- 07a0b A CONTA POR HORA -->
 <section class="slide" id="s12">
+  <header class="sh">
+    <p class="eyebrow rv">"Pagamos acima da média" · a conta por hora</p>
+    <h2 class="rv">Pagar acima da média por mês <em>não é pagar acima por hora</em></h2>
+  </header>
+  <div class="sb">
+    <div class="g c-d">
+      <div class="card rv" style="display:flex;flex-direction:column;gap:14px">
+        <h3>Calculadora</h3><p class="cap" style="margin-top:-8px">comparação com um CLT na média do mercado, em 44h por semana</p>
+        <div class="ctl"><label for="pc-p">Quanto acima da média, por mês (exemplo) <output id="o-pp">+30%</output></label><input type="range" id="pc-p" min="0" max="100" step="5" value="30"></div>
+        <div class="ctl"><label for="pc-h">Jornada por dia <output id="o-ph">13h12</output></label><input type="range" id="pc-h" min="8" max="15" step="0.05" value="13.2"></div>
+        <div class="ctl"><label for="pc-d">Dias de trabalho por semana <output id="o-pd">6</output></label><input type="range" id="pc-d" min="5" max="7" step="1" value="6"></div>
+        <div class="g g3" style="gap:12px;border-top:1px solid var(--line);padding-top:14px">
+          <div><p class="cap">Por hora, contra a média</p><p class="out-big" id="pc-o1" style="font-size:44px">−28%</p><p class="muted" style="font-size:12.5px" id="pc-n1">79h por semana</p></div>
+          <div><p class="cap">Para empatar por hora</p><p class="out-big" id="pc-o2" style="font-size:44px;color:var(--ink)">+80%</p><p class="muted" style="font-size:12.5px">acima da média, por mês</p></div>
+          <div><p class="cap">Contando 13º, férias e FGTS</p><p class="out-big" id="pc-o3" style="font-size:44px;color:var(--ink)">+116%</p><p class="muted" style="font-size:12.5px">que o PJ não recebe</p></div>
+        </div>
+      </div>
+      <div class="g" style="align-content:start">
+        <div class="card rv"><h3>PJ sem os direitos do CLT</h3><p style="font-size:14.5px;color:var(--ink2);margin-top:6px">Sem 13º, férias pagas com 1/3 e FGTS, o mesmo valor mensal vale ao menos 20% menos por ano do que em CLT. "Acima da média" precisa ser comparado com o custo total de um CLT, não com o salário.</p></div>
+        <div class="card rv"><h3>Salário não compra jornada</h3><p style="font-size:14.5px;color:var(--ink2);margin-top:6px">Os limites de jornada são de ordem pública (Constituição, art. 7º, XIII). Nem o empregado de alta renda pode negociar jornada fora desses limites (CLT, arts. 444 e 611-A). E quem controla horário de PJ cria vínculo.</p></div>
+        <div class="card hot rv"><p style="font-size:15.5px">Com 13h12 por dia, seis dias por semana, <b>só pagando 80% acima da média por mês a hora empata</b>, e ainda sem 13º, férias e FGTS.</p></div>
+      </div>
+    </div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Jornada: agente Kommo, média da linha de frente em 14/10 (13h12) · referência: 44h por semana (Constituição) · 13º, férias com 1/3 e FGTS: 14,4 salários por ano no CLT contra 12 no PJ · o percentual acima da média é um exemplo ajustável · leitura jurídica a confirmar com advogado</span><span class="pg"></span></footer>
+</section>
+
+<!-- 07a1 EXCELÊNCIA DA EQUIPE -->
+<section class="slide" id="s13">
   <header class="sh">
     <p class="eyebrow rv">A excelência da equipe · avaliação do agente Kommo, 14/10</p>
     <h2 class="rv">Mesmo no limite, a equipe entrega: <span class="t">volume e cobertura no máximo</span></h2>
@@ -564,7 +598,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07a2 QUEM ATENDEU -->
-<section class="slide" id="s13">
+<section class="slide" id="s14">
   <header class="sh">
     <p class="eyebrow rv">Quem atendeu · agente Kommo, 14/10</p>
     <h2 class="rv">70% das conversas <em>param no robô</em>: o lead chega frio</h2>
@@ -595,7 +629,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07b BASE DA CARGA HORÁRIA -->
-<section class="slide" id="s14">
+<section class="slide" id="s15">
   <header class="sh">
     <p class="eyebrow rv">A base da carga horária</p>
     <h2 class="rv">A conta da jornada, <em>linha por linha</em></h2>
@@ -631,7 +665,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07c GERENTE COMERCIAL -->
-<section class="slide" id="s15">
+<section class="slide" id="s16">
   <header class="sh">
     <p class="eyebrow rv">O gerente comercial</p>
     <h2 class="rv">Um gerente, quinze frentes, e <em>sem hora para parar</em></h2>
@@ -651,7 +685,7 @@ table.kt th.n{text-align:right}
             <li>5h10 do intervalo sem ação no Kommo: é o tempo das reuniões, do tráfego, do marketing e da empresa de carrinhos</li>
           </ul>
         </div>
-        <div class="card flat rv"><p style="font-size:14px">No painel, 95% dos orçamentos e 98% dos follow-ups de setembro aparecem no usuário dele. Toda venda ganha sai pela conta dele. <b>O registro não mostra quem faz o quê.</b></p></div>
+        <div class="card flat rv"><p style="font-size:14px">No painel, 95% dos orçamentos e 98% dos follow-ups de setembro aparecem no usuário dele. Toda venda ganha sai pela conta dele. Os gestores não usam o CRM nem acompanham o desempenho da equipe: isso também fica com ele, <b>que nunca recebeu um feedback.</b></p></div>
         <div class="card hot rv"><p style="font-size:16px">Esta apresentação foi preparada às 3h da manhã, e o gerente entra às 9h. <b>Ele vende, gere, constrói as ferramentas e resolve os problemas da equipe, e a vida pessoal fica para depois.</b></p></div>
       </div>
     </div>
@@ -660,7 +694,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 07d O QUE O GERENTE CONSTRUIU -->
-<section class="slide" id="s16">
+<section class="slide" id="s17">
   <header class="sh">
     <p class="eyebrow rv">O gerente comercial · além das 15 frentes</p>
     <h2 class="rv">Ele também <em>construiu as ferramentas</em> que a operação usa</h2>
@@ -673,7 +707,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 08 TAXA DE ORÇAMENTO -->
-<section class="slide" id="s17">
+<section class="slide" id="s18">
   <header class="sh">
     <p class="eyebrow rv">Conversão para orçamento</p>
     <h2 class="rv">A taxa de orçamento caiu pela metade: de <span class="t">66%</span> para <em>33%</em> dos leads</h2>
@@ -692,7 +726,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 08b PADRÃO DE QUEDA DOS ORÇAMENTOS -->
-<section class="slide" id="s18">
+<section class="slide" id="s19">
   <header class="sh">
     <p class="eyebrow rv">Padrão de queda dos orçamentos · leads novos</p>
     <h2 class="rv">O orçamento novo cai <em>1,1% ao dia</em> desde 22/09, e em outubro cai mais rápido</h2>
@@ -716,7 +750,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 09 BASE ESGOTADA -->
-<section class="slide" id="s19">
+<section class="slide" id="s20">
   <header class="sh">
     <p class="eyebrow rv">De onde vieram as vendas</p>
     <h2 class="rv">Os dois dias de outubro não são ritmo: <em>5.191 ativos</em> para 16 vendas, e a base acabou</h2>
@@ -733,7 +767,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 10 TRÁFEGO -->
-<section class="slide" id="s20">
+<section class="slide" id="s21">
   <header class="sh">
     <p class="eyebrow rv">Falhas no tráfego pago</p>
     <h2 class="rv">Mais verba, <em>lead pior</em> e nenhum sinal de venda na conta</h2>
@@ -751,7 +785,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 11 NOVA AGÊNCIA -->
-<section class="slide" id="s21">
+<section class="slide" id="s22">
   <header class="sh">
     <p class="eyebrow rv">Desperdício com a nova agência</p>
     <h2 class="rv">A 2ª agência paga <em>54% a mais</em> por conversa, na mesma conta</h2>
@@ -781,7 +815,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 12 LINHA DO TEMPO -->
-<section class="slide" id="s22">
+<section class="slide" id="s23">
   <header class="sh">
     <p class="eyebrow rv">Linha do tempo · julho a outubro</p>
     <h2 class="rv">Os percalços que nos trouxeram <em>até aqui</em></h2>
@@ -796,7 +830,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 13 TODAS AS DIFICULDADES -->
-<section class="slide" id="s23">
+<section class="slide" id="s24">
   <header class="sh">
     <p class="eyebrow rv">Todas as dificuldades</p>
     <h2 class="rv">Doze problemas que a equipe <em>não resolve sozinha</em></h2>
@@ -807,8 +841,26 @@ table.kt th.n{text-align:right}
   <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Consolidado dos slides anteriores · painel comercial, planilha financeira, Meta Ads e Diagnóstico Meta Ads de 22/09 · valor de tabela: regras da aba DADOS (diária da temporada × dias × câmbio + taxas), 59 de 76 vendas de setembro</span><span class="pg"></span></footer>
 </section>
 
+<!-- 13a OPERAÇÃO E PÓS-VENDA -->
+<section class="slide" id="s25">
+  <header class="sh">
+    <p class="eyebrow rv">Operação e pós-venda · o que o comercial vende e não controla</p>
+    <h2 class="rv">O comercial vende uma categoria, <em>a operação entrega outra</em></h2>
+  </header>
+  <div class="sb">
+    <div class="g g2">
+      <div class="card risk rv"><h3>Troca de categoria</h3><p><b>O que acontece:</b> por falta de carro, o cliente recebe outra categoria, sem aviso ao comercial.</p><p class="lg"><b>Risco:</b> quebra de contrato. A oferta obriga (CDC, art. 30): o cliente pode exigir a categoria, aceitar outra equivalente ou cancelar com devolução e indenização (art. 35). Em categoria inferior, cabe abatimento do preço (art. 20).</p></div>
+      <div class="card risk rv"><h3>Frota invisível para o comercial</h3><p><b>O que acontece:</b> a disponibilidade por categoria e data não chega ao gerente comercial, que depende de ligações informais com a diretoria.</p><p class="lg"><b>Risco:</b> venda sem lastro. O comercial promete o que não sabe se existe, e responde ao cliente pelo que não decidiu.</p></div>
+      <div class="card risk rv"><h3>Contato com o cliente fora do registro</h3><p><b>O que acontece:</b> a diretoria liga para clientes, muitas vezes do número pessoal, sem histórico no Kommo.</p><p class="lg"><b>Risco:</b> sem prova em disputas e sem histórico para o comercial. A empresa responde por tudo o que for dito em seu nome (CDC, art. 34).</p></div>
+      <div class="card risk rv"><h3>Preço alterado perto da data</h3><p><b>O que acontece:</b> perto da retirada, o preço sobe para cobrir a sublocação de carros, e a diferença é cobrada do cliente.</p><p class="lg"><b>Risco:</b> o CDC proíbe elevar preço sem justa causa e exigir vantagem manifestamente excessiva (art. 39, V e X). Cobrança indevida pode ser devolvida em dobro (art. 42).</p></div>
+    </div>
+    <div class="card hot rv"><p style="font-size:16px">Cada troca e cada cobrança extra cai na reputação de quem vendeu, e indicação e recompra dependem de cliente satisfeito. <b>Regras: frota visível ao comercial, troca só com aviso e aceite do cliente, contato sempre registrado e preço fechado é preço cumprido.</b></p></div>
+  </div>
+  <footer class="sf"><span class="lg" aria-hidden="true"></span><span class="src">Fonte: relato da gestão comercial · o contrato com o cliente é regido pela lei brasileira · Código de Defesa do Consumidor (Lei 8.078/1990), arts. 20, 30, 34, 35, 39 e 42 · leitura jurídica a confirmar com advogado</span><span class="pg"></span></footer>
+</section>
+
 <!-- 14 PROJEÇÃO REAL -->
-<section class="slide" id="s24">
+<section class="slide" id="s26">
   <header class="sh">
     <p class="eyebrow rv">A projeção real · outubro (13/10 → 12/11)</p>
     <h2 class="rv">Com 30 orçamentos por dia e sem base, outubro fecha perto de <em>R$ 147 mil</em></h2>
@@ -844,7 +896,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15 META INALCANÇÁVEL -->
-<section class="slide divider" id="s25">
+<section class="slide divider" id="s27">
   <header class="sh">
     <p class="eyebrow rv">A conclusão</p>
     <h2 class="rv">A meta de R$ 500 mil em outubro é impossível</h2>
@@ -862,7 +914,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15a A META VEIO SEM PLANO -->
-<section class="slide" id="s26">
+<section class="slide" id="s28">
   <header class="sh">
     <p class="eyebrow rv">Cobrança à gestão · planejamento do mês</p>
     <h2 class="rv">O plano comercial existe. <em>O plano da gestão para a meta, não</em></h2>
@@ -875,7 +927,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15a1 QUEM RESPONDE POR QUÊ -->
-<section class="slide" id="s27">
+<section class="slide" id="s29">
   <header class="sh">
     <p class="eyebrow rv">Cobrança à gestão · responsabilidades</p>
     <h2 class="rv">O comercial planeja o comercial. <em>Meta, verba e estrutura são da diretoria</em></h2>
@@ -895,6 +947,8 @@ table.kt th.n{text-align:right}
         <li>Fonte nova de leads para repor a base</li>
         <li>Contratação, escala e jornada com almoço e pausas</li>
         <li>Contratos assinados, com função e remuneração por escrito</li>
+        <li>Frota por categoria visível ao comercial, e contato com cliente sempre registrado</li>
+        <li>Acompanhar o desempenho no CRM e dar feedback, inclusive ao gerente</li>
       </ul></div>
     </div>
     <div class="card flat rv"><p style="font-size:16px">O gerente comercial responde pelo plano comercial. <b>Meta, verba, tráfego, contratação e contratos são decisões da diretoria:</b> sem essas entregas, nenhuma projeção fica de pé.</p></div>
@@ -903,7 +957,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15a2 PERGUNTAS À GESTÃO -->
-<section class="slide" id="s28">
+<section class="slide" id="s30">
   <header class="sh">
     <p class="eyebrow rv">Cobrança à gestão · o que precisamos ouvir da diretoria</p>
     <h2 class="rv">Antes de cobrar a meta, a gestão <em>precisa responder</em></h2>
@@ -916,7 +970,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15a3 MOMENTO DE ALINHAMENTO -->
-<section class="slide" id="s29">
+<section class="slide" id="s31">
   <header class="sh">
     <p class="eyebrow rv">Momento de alinhamento · com a diretoria, nesta reunião</p>
     <h2 class="rv">O que a gestão espera, <em>e qual é o plano</em> para chegar lá</h2>
@@ -939,7 +993,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15b O PLANEJAMENTO QUE COBRAMOS -->
-<section class="slide" id="s30">
+<section class="slide" id="s32">
   <header class="sh">
     <p class="eyebrow rv">Cobrança à gestão · o que precisa estar decidido, e quando</p>
     <h2 class="rv">O planejamento que <span class="t">cobramos da gestão</span>, com data e dono</h2>
@@ -951,7 +1005,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 15c PLACAR SEMANAL -->
-<section class="slide" id="s31">
+<section class="slide" id="s33">
   <header class="sh">
     <p class="eyebrow rv">Cobrança à gestão · acompanhamento</p>
     <h2 class="rv">O placar que a gestão precisa olhar <em>toda semana</em></h2>
@@ -963,7 +1017,7 @@ table.kt th.n{text-align:right}
 </section>
 
 <!-- 16 DECISÕES -->
-<section class="slide" id="s32">
+<section class="slide" id="s34">
   <header class="sh">
     <p class="eyebrow rv">O que pedimos à diretoria</p>
     <h2 class="rv">Seis decisões para <span class="t">proteger a equipe</span> e voltar a crescer</h2>
@@ -1241,7 +1295,7 @@ bars('ch-yield',[1000*30/3386,1000*4/2355],{labels:['Setembro','Outubro'],f:func
     ['Lead frio na entrada','Só 41% chegam a atendimento (80% em agosto): respondem qualquer coisa ao robô; 51 encerrados direto da entrada em 14/10.'],
     ['Orçamento novo não chega','Queda de 1,1% ao dia desde 22/09; lead → orçamento de 68% para 36%.'],
     ['Base esgotada','100% das vendas de outubro vieram da base, com 5.191 ativos em 4 dias. Não há mais base nem fonte nova para repor.'],
-    ['Gestão ausente na reta final','Na última semana da meta, a gestão viajou: pouca comunicação e nenhum estímulo ao time.'],
+    ['Gestão ausente','Na última semana da meta, a gestão viajou. Gestores não usam o CRM nem acompanham o desempenho; o gerente nunca recebeu feedback.'],
     ['Sempre barganha, nunca valor','3 em cada 4 vendas de setembro saíram abaixo do valor de tabela.'],
     ['Lead fora do perfil','Cliente ideal de 32% para 4% dos orçamentos; 27 leads por dia querendo carro no Brasil.'],
     ['Concorrência ganhando','31 perdas por dia para a concorrência em outubro, contra 4,3 em julho.'],
@@ -1324,14 +1378,14 @@ bars('ch-yield',[1000*30/3386,1000*4/2355],{labels:['Setembro','Outubro'],f:func
     ['Tráfego','uma agência, evento de compra com valor, meta por orçamento qualificado','duas agências; sinal de conversão parado desde 19/09'],
     ['Reposição da base','como gerar base nova depois de 5.191 ativos','retorno dos ativos caiu de 18% para 8%, e nada para repor'],
     ['Contratos e remuneração','contratos assinados, com função, jornada e regra de remuneração','nenhum contrato, nota fiscal ou recibo; sem pagamento por hora; variável só por faixa de faturamento'],
-    ['Papel do gerente','o que é gestão e o que é venda','15 frentes e todas as vendas na conta dele'],
+    ['Papel do gerente','o que é gestão e o que é venda, e quem acompanha o gerente','15 frentes, todas as vendas na conta dele e nenhum feedback recebido'],
     ['Jornada','escala com almoço, pausas e limite de horas','12h18 a 14h26 no Kommo, sem almoço nem pausa definidos']];
   el.innerHTML=g.map(function(x,i){return '<div class="card gap rv" style="--d:'+(150+i*80)+'ms"><span class="chip">a definir pela gestão</span><h3>'+x[0]+'</h3><p><b>O plano precisa definir:</b> '+x[1]+'.</p><p><b>Hoje:</b> '+x[2]+'.</p></div>';}).join('');
 })();
 
 /* ---- cobrança: perguntas ---- */
 (function(){var el=document.getElementById('asks-gestao');if(!el)return;
-  var q=['Qual é o plano da gestão para os R$ 500 mil, semana a semana?','Quantos leads qualificados por dia a gestão vai entregar, de que fonte e com qual verba?','Qual equipe de tráfego fica na conta, e quando ela começa a gerar venda?','Quando entram novos SDRs para a jornada caber em 9 horas, com almoço?','Qual base nova substitui a que acabou?','Quando os contratos serão assinados, com função, jornada e remuneração por escrito?','Qual a regra de remuneração se a meta não vier com os meios para ser batida?','O que é responsabilidade do gerente comercial e o que é da diretoria?'];
+  var q=['Qual é o plano da gestão para os R$ 500 mil, semana a semana?','Quantos leads qualificados por dia a gestão vai entregar, de que fonte e com qual verba?','Qual equipe de tráfego fica na conta, e quando ela começa a gerar venda?','Quando entram novos SDRs para a jornada caber em 9 horas, com almoço?','Qual base nova substitui a que acabou?','Quando os contratos serão assinados, com função, jornada e remuneração por escrito?','Qual a regra de remuneração se a meta não vier com os meios para ser batida?','Como a frota, as trocas de categoria e os preços serão informados ao comercial, e quem fala com o cliente?'];
   el.innerHTML=q.map(function(x,i){return '<div class="card gap rv" style="--d:'+(150+i*80)+'ms;padding:18px 18px 16px"><span class="ix">'+String(i+1).padStart(2,'0')+'</span><h3 style="font-size:16px;line-height:1.35">'+x+'</h3></div>';}).join('');
 })();
 
@@ -1342,12 +1396,25 @@ bars('ch-yield',[1000*30/3386,1000*4/2355],{labels:['Setembro','Outubro'],f:func
   t.addEventListener('keydown',function(e){e.stopPropagation();});});
 })();
 
+/* ---- conta por hora ---- */
+(function(){var p=document.getElementById('pc-p'),h=document.getElementById('pc-h'),d=document.getElementById('pc-d');if(!p)return;
+  function hm(x){var a=Math.floor(x),m=Math.round((x-a)*60);if(m===60){a++;m=0;}return a+'h'+(m<10?'0':'')+m;}
+  function calc(){[p,h,d].forEach(setP);var pr=+p.value,hh=+h.value,dd=+d.value,wk=hh*dd;var r=(1+pr/100)*44/wk-1,be=wk/44-1,be2=wk/44*1.2-1;
+    document.getElementById('o-pp').textContent='+'+pr+'%';document.getElementById('o-ph').textContent=hm(hh);document.getElementById('o-pd').textContent=dd;
+    var o1=document.getElementById('pc-o1');o1.textContent=(r<0?'−':'+')+nf0.format(Math.abs(Math.round(r*100)))+'%';o1.style.color=r<0?C.coral:C.teal;
+    document.getElementById('pc-n1').textContent=nf0.format(Math.round(wk))+'h por semana, contra 44h';
+    document.getElementById('pc-o2').textContent=(be<0?'−':'+')+nf0.format(Math.abs(Math.round(be*100)))+'%';
+    document.getElementById('pc-o3').textContent=(be2<0?'−':'+')+nf0.format(Math.abs(Math.round(be2*100)))+'%';}
+  [p,h,d].forEach(function(el){el.addEventListener('input',calc);});calc();
+})();
+
 /* ---- cobrança: cronograma ---- */
 (function(){var el=document.getElementById('plan-tbl');if(!el)return;
   var r=[['16/10 · sex','Meta de outubro revista pela capacidade (R$ 150 a 250 mil) e desdobrada por semana','Diretoria','Meta semanal publicada para a equipe'],
     ['16/10 · sex','Uma só equipe de tráfego na conta, com evento de compra com valor','Diretoria e marketing','Sinal de conversão voltando a registrar'],
     ['19/10 · seg','Escala com jornada de 9 horas, almoço e pausas','Gestão comercial','Jornada no Kommo de até 9h'],
     ['23/10 · sex','Contratação de 2 SDRs aprovada, em turnos de 8h–16h e 14h–22h','Diretoria','Jornada de até 9h, com almoço'],
+    ['23/10 · sex','Frota por categoria e data visível ao comercial; troca só com aviso e aceite do cliente; contato sempre no Kommo','Diretoria e operação','Nenhuma troca sem aviso'],
     ['23/10 · sex','Separar gestão de venda: o gerente deixa de ser a conta de todas as vendas','Diretoria e gestão comercial','Venda registrada por quem vendeu'],
     ['30/10 · sex','Contratos assinados com todos, com função, jornada e remuneração por escrito','Diretoria','Contratos assinados'],
     ['30/10 · sex','Plano de fonte nova de leads (família, minivan, indicação, parcerias), com volume e custo','Diretoria e marketing','Leads qualificados por dia'],
